@@ -1,0 +1,8 @@
+The New Operating System Kernel is a microkernel which features
+
+- Process Management
+- Memory Management
+- Locks/Mutexes/Semaphores
+- Inter-Process Communication
+- Remote Procedure Call
+- Program Loader for user programs and drivers

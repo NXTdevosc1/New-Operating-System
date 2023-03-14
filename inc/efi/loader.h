@@ -4,7 +4,7 @@
 
 #pragma once
 #include <Uefi.h>
-#include <Library/UefiLib.h>
+
 
 typedef struct _FRAME_BUFFER_DESCRIPTOR{
 	UINT32 		HorizontalResolution;

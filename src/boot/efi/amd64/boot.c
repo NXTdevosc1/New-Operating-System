@@ -1,5 +1,7 @@
-#include "../../../../inc/efi/loader.h"
-
+// #include "../../../../inc/efi/loader.h"
+#include <Uefi.h>
+#include <Library/UefiLib.h>
+#include <Library/UefiBootServicesTableLib.h>
 /*
  * NOS AMD64 UEFI Bootloader Entry Point
 */
