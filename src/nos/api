@@ -1,0 +1,5 @@
+This section describes each prefix used in the NOS Api
+
+- Ke : Kernel
+- Ki : Kernel Internal
+- Nos : NOS Service or System Call
