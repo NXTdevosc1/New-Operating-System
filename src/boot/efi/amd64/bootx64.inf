@@ -18,13 +18,15 @@
   BaseLib
  
 [Guids]
-  gEfiFileInfoGuid
+
 [Ppis]
  
 [Protocols]
   gEfiLoadedImageProtocolGuid
   gEfiUgaIoProtocolGuid
   gEfiGraphicsOutputProtocolGuid
+  gEfiSimpleFileSystemProtocolGuid
+  gEfiBlockIoProtocolGuid
 [FeaturePcd]
  
 [Pcd]

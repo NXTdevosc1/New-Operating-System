@@ -3,18 +3,35 @@
 #include <Library/UefiBootServicesTableLib.h>
 #include <Protocol/LoadedImage.h>
 #include <Protocol/BlockIo.h>
-#include <Protocol/BlockIo2.h>
-
+#include <Protocol/SimpleFileSystem.h>
 #include "../../../../inc/efi/loader.h"
 
-/*
- * EfiInitBootGraphics
- * This function checks for GOP or UGA support and enables them
-*/
 
 NOS_INITDATA NosInitData = {0};
+EFI_LOADED_IMAGE* LoadedImage;
+EFI_BLOCK_IO_PROTOCOL* BootDrive;
+EFI_SIMPLE_FILE_SYSTEM_PROTOCOL* BootPartition;
+EFI_SIMPLE_FILE_SYSTEM_PROTOCOL* OsPartition;
+UINTN NumDrives = 0;
+UINTN NumPartitions = 0;
+
+MASTER_BOOT_RECORD Mbr;
+GUID_PARTITION_TABLE_HEADER GptHeader;
+GUID_PARTITION_ENTRY* GptEntries;
+/*
+ * BlInitBootGraphics
+ * This function sets the Graphics Output to Native Mode and claims display information
+*/
+
+static inline BOOLEAN BlNullGuid(EFI_GUID Guid) {
+	UINT64* g = (UINT64*)&Guid;
+	if(g[0] == 0 && g[1] == 0) return TRUE;
+	
+	return FALSE;
+}
 
 void BlInitBootGraphics() {
+	
 	EFI_GRAPHICS_OUTPUT_PROTOCOL* GraphicsProtocol;
 	// Check for G.O.P Support
 	EFI_STATUS Status = gBS->LocateProtocol(&gEfiGraphicsOutputProtocolGuid, NULL, (void**)&GraphicsProtocol);
@@ -44,8 +61,8 @@ void BlInitBootGraphics() {
  * NOS AMD64 UEFI Bootloader Entry Point
  * The bootloader should :
  * - Initialize Graphics Output
- * - Retreive the boot device
- * - Retreive boot partition (EfiSystemPartition) and Main Data Partition(s) (Basic Data Partition)
+ * - Retreive the boot device & partition
+ * - Query all partitions
  * - if there are multiple partitions with multiple OSes, prompt the user to select which OS to run
  * - Load kernel and drivers
  * - Get the memory map
@@ -58,31 +75,75 @@ EFI_STATUS EFIAPI UefiEntry(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TABLE* Syst
 	gST = SystemTable;
 	gBS = SystemTable->BootServices;
 	gImageHandle = ImageHandle;
+	gBS->HandleProtocol(ImageHandle, &gEfiLoadedImageProtocolGuid, (void**)&LoadedImage);
 
 	// Initialize Boot Graphics
 	BlInitBootGraphics();
 	
-	// Retreive boot device
-	EFI_LOADED_IMAGE* LoadedImage;
-	gBS->HandleProtocol(ImageHandle, &gEfiLoadedImageProtocolGuid, (void**)&LoadedImage);
-	
-	EFI_GUID bg = BLOCK_IO_PROTOCOL;
-	// EFI_FILE_IO_INTERFACE* If;
-	EFI_BLOCK_IO* BlockIo;
-	if(EFI_ERROR(gBS->HandleProtocol(LoadedImage->DeviceHandle, &bg, (void**)&BlockIo))) {
-		Print(L"Error block io");
-		while(1);
+	// Query the boot device & partition
+	if(EFI_ERROR(gBS->HandleProtocol(LoadedImage->DeviceHandle, &gEfiSimpleFileSystemProtocolGuid, (void**)&BootPartition))) {
+		Print(L"Failed to get boot partition\n");
+		gBS->Exit(gImageHandle, EFI_NOT_FOUND, 0, NULL);
 	}
-	// EFI_DEVICE_PATH_PROTOCOL* Pt;
+	if(EFI_ERROR(gBS->HandleProtocol(LoadedImage->DeviceHandle, &gEfiBlockIoProtocolGuid, (void**)&BootDrive))) {
+		Print(L"Failed to get boot drive\n");
+		gBS->Exit(gImageHandle, EFI_NOT_FOUND, 0, NULL);
+	}
 
-	Print(L"Id : %d , Block Size : %d\n", BlockIo->Media->MediaId, BlockIo->Media->BlockSize);
+	// Get a list of all drives
+	EFI_HANDLE* DriveHandles;
+	if(EFI_ERROR(gBS->LocateHandleBuffer(AllHandles, &gEfiBlockIoProtocolGuid, NULL, &NumDrives, &DriveHandles))) {
+		Print(L"Failed to get drive handle buffer.\n");
+		gBS->Exit(gImageHandle, EFI_NOT_FOUND, 0, NULL);
+	}
+	Print(L"Num drive handles : %d\n", NumDrives);
+	for(UINTN i = 0;i<NumDrives;i++) {
+		EFI_BLOCK_IO* DriveIo;
+		if(EFI_ERROR(gBS->HandleProtocol(DriveHandles[i], &gEfiBlockIoProtocolGuid, (void**)&DriveIo)) ||
+		!DriveIo->Media->MediaPresent || !DriveIo->Media->LastBlock || DriveIo->Media->ReadOnly || DriveIo->Media->BlockSize != 512
+		) {
+			// Print(L"Failed to get drive block io\n");
+		} else {
+
+			// Print(L"BlockSize : %d , MediaId : %d, NumSectors : %llu, la : %llu\n", 
+			// DriveIo->Media->BlockSize, DriveIo->Media->MediaId, DriveIo->Media->LastBlock,
+			// DriveIo->Media->LowestAlignedLba
+			// );
+			// Read MBR
+			DriveIo->ReadBlocks(DriveIo, DriveIo->Media->MediaId, 0, 512, &Mbr);
+			if(Mbr.MbrSignature != MBR_SIGNATURE || Mbr.Parititons[0].FileSystemId != FSID_GPT) {
+				Print(L"unsupported drive\n");
+				continue;
+			}
+			// Read GPT
+			DriveIo->ReadBlocks(DriveIo, DriveIo->Media->MediaId, Mbr.Parititons[0].StartLba, 512, &GptHeader);
+			if(GptHeader.Signature != 0x5452415020494645 || GptHeader.EntrySize != sizeof(GUID_PARTITION_ENTRY) || !GptHeader.NumPartitionEntries) {
+				Print(L"unsupported drive\n");
+				continue;
+			}
+			UINT32 NumSectors = ((GptHeader.NumPartitionEntries * sizeof(GUID_PARTITION_ENTRY)) >> 9) + 1;
+			if(EFI_ERROR(gBS->AllocatePool(EfiLoaderData, NumSectors << 9, (void**)&GptEntries))) {
+				Print(L"Failed to allocate memory\n");
+				gBS->Exit(gImageHandle, EFI_UNSUPPORTED, 0, NULL);
+			}
+			DriveIo->ReadBlocks(DriveIo, DriveIo->Media->MediaId, GptHeader.GptEntryStartLba, NumSectors  << 9, (void*)GptEntries);
+			Print(L"GPT_LBA : %d, GPT_ENTRIES_LBA : %d, NUM_ENTRIES : %d\n", Mbr.Parititons[0].StartLba, GptHeader.GptEntryStartLba, GptHeader.NumPartitionEntries);
+		
+			for(UINT32 c = 0;c<GptHeader.NumPartitionEntries;c++) {
+
+				if(BlNullGuid(GptEntries[c].PartitionType)) continue;
+				Print(L"Partition : %ls, StartLba : %d, EndLba : %d\n", GptEntries[c].PartitionName, GptEntries[c].StartingLba, GptEntries[c].EndingLba);
+			}
+		
+		}
+	}
 	
-	// BlockIo->Media.
+	
 
-	// Disable Watchdog Timer before calling kernel's Entry Point
-	SystemTable->BootServices->SetWatchdogTimer(0, 0, 0, NULL);
-	SystemTable->ConOut->OutputString(SystemTable->ConOut, L"Hello World\n");
+	// Disable Watchdog Timer
+	gBS->SetWatchdogTimer(0, 0, 0, NULL);
 
+	Print(L"Success.");
 	while(1);
 	return EFI_SUCCESS;
 }
