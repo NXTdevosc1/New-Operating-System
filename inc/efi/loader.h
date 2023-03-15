@@ -10,7 +10,7 @@ typedef struct _FRAME_BUFFER_DESCRIPTOR{
 	UINT32 		HorizontalResolution;
 	UINT32 		VerticalResolution;
 	UINT64      Pitch;
-	UINT32* 	BaseAddress; // for G.O.P
+	void* 	    BaseAddress; // for G.O.P
 	UINT64 	    FbSize;
 } FRAME_BUFFER_DESCRIPTOR;
 

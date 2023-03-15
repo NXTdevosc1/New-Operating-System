@@ -1,6 +1,6 @@
 [Defines]
   INF_VERSION = 1.25
-  BASE_NAME = boot
+  BASE_NAME = bootx64
   FILE_GUID = e0a78d1a-5c95-4e48-954d-88ff64af9ab1
   MODULE_TYPE = UEFI_APPLICATION
   VERSION_STRING = 1.0
@@ -24,6 +24,7 @@
 [Protocols]
   gEfiLoadedImageProtocolGuid
   gEfiUgaIoProtocolGuid
+  gEfiGraphicsOutputProtocolGuid
 [FeaturePcd]
  
 [Pcd]
