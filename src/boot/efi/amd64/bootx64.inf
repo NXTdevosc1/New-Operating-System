@@ -16,7 +16,8 @@
   UefiApplicationEntryPoint
   UefiLib
   BaseLib
- 
+  
+
 [Guids]
 
 [Ppis]
@@ -27,6 +28,7 @@
   gEfiGraphicsOutputProtocolGuid
   gEfiSimpleFileSystemProtocolGuid
   gEfiBlockIoProtocolGuid
+  
 [FeaturePcd]
  
 [Pcd]

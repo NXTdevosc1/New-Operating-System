@@ -8,6 +8,6 @@
 /*
  * The initialization entry point of the NOS Kernel
 */
-void NOSAPI __declspec(noreturn) NosInit() {
+void NOSAPI NosInit() {
 
 }

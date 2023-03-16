@@ -6,18 +6,25 @@
 #include <Protocol/SimpleFileSystem.h>
 #include "../../../../inc/efi/loader.h"
 
-
 NOS_INITDATA NosInitData = {0};
 EFI_LOADED_IMAGE* LoadedImage;
 EFI_BLOCK_IO_PROTOCOL* BootDrive;
 EFI_SIMPLE_FILE_SYSTEM_PROTOCOL* BootPartition;
-EFI_SIMPLE_FILE_SYSTEM_PROTOCOL* OsPartition;
+EFI_HANDLE OsPartitionHandle;
+EFI_FILE_PROTOCOL* OsPartition;
+#define MAX_OS_PARTITIONS 20
+EFI_HANDLE _OsPartitions[MAX_OS_PARTITIONS];
+EFI_FILE_PROTOCOL* _OsRoots[MAX_OS_PARTITIONS];
 UINTN NumDrives = 0;
 UINTN NumPartitions = 0;
+UINTN NumOsPartitions = 0;
 
 MASTER_BOOT_RECORD Mbr;
 GUID_PARTITION_TABLE_HEADER GptHeader;
 GUID_PARTITION_ENTRY* GptEntries;
+
+
+
 /*
  * BlInitBootGraphics
  * This function sets the Graphics Output to Native Mode and claims display information
@@ -31,7 +38,6 @@ static inline BOOLEAN BlNullGuid(EFI_GUID Guid) {
 }
 
 void BlInitBootGraphics() {
-	
 	EFI_GRAPHICS_OUTPUT_PROTOCOL* GraphicsProtocol;
 	// Check for G.O.P Support
 	EFI_STATUS Status = gBS->LocateProtocol(&gEfiGraphicsOutputProtocolGuid, NULL, (void**)&GraphicsProtocol);
@@ -85,59 +91,55 @@ EFI_STATUS EFIAPI UefiEntry(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TABLE* Syst
 		Print(L"Failed to get boot partition\n");
 		gBS->Exit(gImageHandle, EFI_NOT_FOUND, 0, NULL);
 	}
-	if(EFI_ERROR(gBS->HandleProtocol(LoadedImage->DeviceHandle, &gEfiBlockIoProtocolGuid, (void**)&BootDrive))) {
-		Print(L"Failed to get boot drive\n");
-		gBS->Exit(gImageHandle, EFI_NOT_FOUND, 0, NULL);
-	}
+	
 
-	// Get a list of all drives
-	EFI_HANDLE* DriveHandles;
-	if(EFI_ERROR(gBS->LocateHandleBuffer(AllHandles, &gEfiBlockIoProtocolGuid, NULL, &NumDrives, &DriveHandles))) {
-		Print(L"Failed to get drive handle buffer.\n");
+	// Get a list of all partitions
+	EFI_HANDLE* PartitionHandles;
+	if(EFI_ERROR(gBS->LocateHandleBuffer(AllHandles, &gEfiSimpleFileSystemProtocolGuid, NULL, &NumPartitions, &PartitionHandles))) {
+		Print(L"Failed to get partition handle buffer.\n");
 		gBS->Exit(gImageHandle, EFI_NOT_FOUND, 0, NULL);
 	}
-	Print(L"Num drive handles : %d\n", NumDrives);
-	for(UINTN i = 0;i<NumDrives;i++) {
-		EFI_BLOCK_IO* DriveIo;
-		if(EFI_ERROR(gBS->HandleProtocol(DriveHandles[i], &gEfiBlockIoProtocolGuid, (void**)&DriveIo)) ||
-		!DriveIo->Media->MediaPresent || !DriveIo->Media->LastBlock || DriveIo->Media->ReadOnly || DriveIo->Media->BlockSize != 512
+	Print(L"Num partition handles : %d\n", NumPartitions);
+	for(UINTN i = 0;i<NumPartitions;i++) {
+		EFI_FILE_IO_INTERFACE* FileIo;
+		EFI_FILE_PROTOCOL* Root;
+		if(!EFI_ERROR(gBS->HandleProtocol(PartitionHandles[i], &gEfiSimpleFileSystemProtocolGuid, (void**)&FileIo))
+		&& !EFI_ERROR(FileIo->OpenVolume(FileIo, &Root))
 		) {
-			// Print(L"Failed to get drive block io\n");
-		} else {
-
-			// Print(L"BlockSize : %d , MediaId : %d, NumSectors : %llu, la : %llu\n", 
-			// DriveIo->Media->BlockSize, DriveIo->Media->MediaId, DriveIo->Media->LastBlock,
-			// DriveIo->Media->LowestAlignedLba
-			// );
-			// Read MBR
-			DriveIo->ReadBlocks(DriveIo, DriveIo->Media->MediaId, 0, 512, &Mbr);
-			if(Mbr.MbrSignature != MBR_SIGNATURE || Mbr.Parititons[0].FileSystemId != FSID_GPT) {
-				Print(L"unsupported drive\n");
+			Print(L"Data partition found.\n");
+			EFI_FILE_PROTOCOL* OsDir;
+			if(EFI_ERROR(Root->Open(Root, &OsDir, L"NewOS\\", EFI_FILE_MODE_READ, EFI_FILE_DIRECTORY))) {
+				Print(L"No os was found on the partition\n");
 				continue;
 			}
-			// Read GPT
-			DriveIo->ReadBlocks(DriveIo, DriveIo->Media->MediaId, Mbr.Parititons[0].StartLba, 512, &GptHeader);
-			if(GptHeader.Signature != 0x5452415020494645 || GptHeader.EntrySize != sizeof(GUID_PARTITION_ENTRY) || !GptHeader.NumPartitionEntries) {
-				Print(L"unsupported drive\n");
-				continue;
-			}
-			UINT32 NumSectors = ((GptHeader.NumPartitionEntries * sizeof(GUID_PARTITION_ENTRY)) >> 9) + 1;
-			if(EFI_ERROR(gBS->AllocatePool(EfiLoaderData, NumSectors << 9, (void**)&GptEntries))) {
-				Print(L"Failed to allocate memory\n");
-				gBS->Exit(gImageHandle, EFI_UNSUPPORTED, 0, NULL);
-			}
-			DriveIo->ReadBlocks(DriveIo, DriveIo->Media->MediaId, GptHeader.GptEntryStartLba, NumSectors  << 9, (void*)GptEntries);
-			Print(L"GPT_LBA : %d, GPT_ENTRIES_LBA : %d, NUM_ENTRIES : %d\n", Mbr.Parititons[0].StartLba, GptHeader.GptEntryStartLba, GptHeader.NumPartitionEntries);
-		
-			for(UINT32 c = 0;c<GptHeader.NumPartitionEntries;c++) {
-
-				if(BlNullGuid(GptEntries[c].PartitionType)) continue;
-				Print(L"Partition : %ls, StartLba : %d, EndLba : %d\n", GptEntries[c].PartitionName, GptEntries[c].StartingLba, GptEntries[c].EndingLba);
-			}
-		
+			_OsPartitions[NumOsPartitions] = PartitionHandles[i];
+			_OsRoots[NumOsPartitions] = Root;
+			NumOsPartitions++;
+			if(NumOsPartitions == MAX_OS_PARTITIONS) break;
 		}
 	}
-	
+
+	if(!NumOsPartitions) {
+		Print(L"The Operating System doesn't seem to be found.\n");
+		return EFI_LOAD_ERROR;
+	}
+	if(NumOsPartitions > 1) {
+		// TODO : Prompt the user to select which OS needs to be run.
+		Print(L"Multiple Operating Systems were found, please choose an OS to run :\n");
+		while(1);
+	} else {
+		OsPartitionHandle = _OsPartitions[0];
+		OsPartition = _OsRoots[0];
+		// Get parent drive of the partition
+		if(EFI_ERROR(gBS->HandleProtocol(OsPartitionHandle, &gEfiBlockIoProtocolGuid, (void**)&BootDrive))) {
+			Print(L"Failed to get boot drive\n");
+			gBS->Exit(gImageHandle, EFI_NOT_FOUND, 0, NULL);
+		}
+		Print(L"Boot partition and boot drive selected successfully.\n");
+	}
+
+	// Load the kernel (TODO : Load Modules and drivers)
+
 	
 
 	// Disable Watchdog Timer
