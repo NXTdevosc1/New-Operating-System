@@ -19,7 +19,7 @@
   
 
 [Guids]
-
+ gEfiFileInfoGuid
 [Ppis]
  
 [Protocols]
