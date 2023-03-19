@@ -1,1 +1,1 @@
-qemu-system-x86_64 -m 4G -M q35 -no-reboot -no-shutdown  -monitor stdio -drive file=build/uefi.img,format=raw -device nvme,id=nvm,serial=deadbeef -drive file=build/uefi.img,if=none,id=nvm -drive if=pflash,format=raw,unit=0,file=build/OVMF.fd,readonly=on
+qemu-system-x86_64 -m 4G -M q35 -no-reboot -no-shutdown  -monitor stdio -drive file=build/uefi.img,format=raw -device nvme,id=nvm,serial=deadbeef -drive file=build/uefi.img,if=none,id=nvm,format=raw -drive if=pflash,format=raw,unit=0,file=build/OVMF.fd,readonly=on -serial file:serial.txt

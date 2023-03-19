@@ -4,6 +4,12 @@
 
 #pragma once
 #include <Uefi.h>
+#include <Library/UefiLib.h>
+#include <Library/UefiBootServicesTableLib.h>
+#include <Protocol/LoadedImage.h>
+#include <Protocol/BlockIo.h>
+#include <Protocol/SimpleFileSystem.h>
+#include <Guid/FileInfo.h>
 
 #define PE_SECTION_CODE 0x20
 #define PE_SECTION_INITIALIZED_DATA 0x40
@@ -17,9 +23,41 @@ typedef struct _FRAME_BUFFER_DESCRIPTOR{
 	UINT64 	    FbSize;
 } FRAME_BUFFER_DESCRIPTOR;
 
+
+#define MM_DESCRIPTOR_ALLOCATED 1
+typedef struct _NOS_MEMORY_DESCRIPTOR {
+    UINT32 Attributes;
+    void* PhysicalAddress;
+    UINT64 NumPages;
+} NOS_MEMORY_DESCRIPTOR;
+typedef struct _NOS_MEMORY_LINKED_LIST NOS_MEMORY_LINKED_LIST;
+typedef struct _NOS_MEMORY_LINKED_LIST {
+    UINT64 Full; // Bitmap indicating full slot groups
+    struct {
+        UINT64 Present; // Bitmap indicating present heaps
+        NOS_MEMORY_DESCRIPTOR MemoryDescriptors[64];
+    } Groups[0x40];
+    NOS_MEMORY_LINKED_LIST* Next;
+} NOS_MEMORY_LINKED_LIST;
+
+typedef enum _PAGE_MAP_FLAGS {
+    PM_WRITEACCESS = 1,
+    PM_GLOBAL = 2,
+    PM_LARGE_PAGES = 4
+} PAGE_MAP_FLAGS;
+
 typedef struct _NOS_INITDATA {
+    // EFI Frame Buffer
     FRAME_BUFFER_DESCRIPTOR FrameBuffer;
+    // EFI Memory Map
+    UINT64 MemoryCount;
+    UINT64 MemoryDescriptorSize;
     EFI_MEMORY_DESCRIPTOR* MemoryMap;
+    // NOS Kernel Memory Map
+    NOS_MEMORY_LINKED_LIST* NosMemoryMap;
+    UINT64 AllocatedPagesCount;
+    UINT64 FreePagesCount;
+
 
 } NOS_INITDATA;
 
@@ -223,3 +261,33 @@ typedef struct _GUID_PARTITION_ENTRY {
 } GUID_PARTITION_ENTRY;
 
 #pragma pack(pop)
+
+// util.c
+BOOLEAN BlNullGuid(EFI_GUID Guid);
+BOOLEAN isMemEqual(void* a, void* b, UINT64 Count);
+void CopyAlignedMemory(void* _dest, void* _src, UINT64 NumBytes);
+void ZeroAlignedMemory(void* _dest, UINT64 NumBytes);
+
+// bootgfx.c
+void BlInitBootGraphics();
+
+// load.c
+BOOLEAN BlLoadImage(void* Buffer, PE_IMAGE_HDR** HdrStart, void** VirtualAddressSpace, UINT64* VasSize, void* BaseAddress);
+
+// map.c
+void BlMapToSystemSpace(void* Buffer, UINT64 Num2mbPages);
+extern NOS_INITDATA NosInitData;
+extern void* BlGetCurrentPageTable();
+void BlAllocateMemoryDescriptor(EFI_PHYSICAL_ADDRESS Address, UINT64 NumPages, BOOLEAN Allocated);
+void* BlAllocateOnePage();
+void QemuWriteSerialMessage(const char* Message);
+
+const char* ToStringUint64(UINT64 value);
+
+void BlInitPageTable();
+void BlMapMemory(
+    void* VirtualAddress,
+    void* PhysicalAddress,
+    UINT64 Count,
+    UINT64 Flags);
+#define Convert2MBPages(NumBytes) ((NumBytes & 0x1FFFFF) ? ((NumBytes >> 21) + 1) : (NumBytes >> 21))

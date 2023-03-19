@@ -1,12 +1,6 @@
-#include <Uefi.h>
-#include <Library/UefiLib.h>
-#include <Library/UefiBootServicesTableLib.h>
-#include <Protocol/LoadedImage.h>
-#include <Protocol/BlockIo.h>
-#include <Protocol/SimpleFileSystem.h>
-#include <Guid/FileInfo.h>
-#include "../../../../inc/efi/loader.h"
 
+
+#include <loader.h>
 NOS_INITDATA NosInitData = {0};
 EFI_LOADED_IMAGE* LoadedImage;
 EFI_BLOCK_IO_PROTOCOL* BootDrive;
@@ -25,142 +19,14 @@ GUID_PARTITION_TABLE_HEADER GptHeader;
 GUID_PARTITION_ENTRY* GptEntries;
 
 
-/*
- * BlNullGuid
- * Checks if the Guid is NULL ({0, 0, 0, 0})
-*/
-
-static inline BOOLEAN BlNullGuid(EFI_GUID Guid) {
-	UINT64* g = (UINT64*)&Guid;
-	if(g[0] == 0 && g[1] == 0) return TRUE;
-	
-	return FALSE;
-}
-
-/*
- * isMemEqual
- * Checks if the memory at "a" contains the same value as the memory at "b"
-*/
-
-BOOLEAN isMemEqual(void* a, void* b, UINT64 Count) {
-	for(UINT64 i = 0;i<Count;i++) {
-		if(((char*)a)[i] != ((char*)b)[i]) return FALSE;
-	}
-	return TRUE;
-}
-
-
-void CopyAlignedMemory(void* _dest, void* _src, UINT64 NumBytes) {
-	NumBytes >>= 3;
-	for(UINT64 i = 0;i<NumBytes;i++) {
-		((UINT64*)_dest)[i] = ((UINT64*)_src)[i];
-	}
-}
-void ZeroAlignedMemory(void* _dest, UINT64 NumBytes) {
-	NumBytes >>= 3;
-	for(UINT64 i = 0;i<NumBytes;i++) {
-		((UINT64*)_dest)[i] = 0;
-	}
-}
-
-
-/*
- * BlInitBootGraphics
- * This function sets the Graphics Output to Native Mode and claims display information
-*/
-void BlInitBootGraphics() {
-	EFI_GRAPHICS_OUTPUT_PROTOCOL* GraphicsProtocol;
-	// Check for G.O.P Support
-	EFI_STATUS Status = gBS->LocateProtocol(&gEfiGraphicsOutputProtocolGuid, NULL, (void**)&GraphicsProtocol);
-	if(EFI_ERROR(Status)) {
-		Print(L"Graphics Output Protocol is not supported.\n");
-		gBS->Exit(gImageHandle, EFI_UNSUPPORTED, 0, NULL);
-	}
-	EFI_GRAPHICS_OUTPUT_MODE_INFORMATION* ModeInfo;
-	UINTN szInfo;
-	Status = GraphicsProtocol->QueryMode(GraphicsProtocol, GraphicsProtocol->Mode == NULL ? 0 : GraphicsProtocol->Mode->Mode, &szInfo, &ModeInfo);
-	if(Status == EFI_NOT_STARTED) {
-		if(EFI_ERROR(GraphicsProtocol->SetMode(GraphicsProtocol, 0)) || !GraphicsProtocol->Mode || !GraphicsProtocol->Mode->FrameBufferBase) {
-			Print(L"Failed to set video mode.\n");
-			gBS->Exit(gImageHandle, EFI_UNSUPPORTED, 0, NULL);
-		}
-	}
-
-	NosInitData.FrameBuffer.BaseAddress = (void*)GraphicsProtocol->Mode->FrameBufferBase;
-	NosInitData.FrameBuffer.FbSize = GraphicsProtocol->Mode->FrameBufferSize;
-	NosInitData.FrameBuffer.HorizontalResolution = ModeInfo->HorizontalResolution;
-	NosInitData.FrameBuffer.VerticalResolution = ModeInfo->VerticalResolution;
-	NosInitData.FrameBuffer.Pitch = ModeInfo->PixelsPerScanLine;
-}
-
-int BlGetPeHeaderOffset(void* hdr) {
-	if (!isMemEqual(hdr, "MZ", 2)) return 0;
-	return *(int*)((char*)hdr + 0x3c);
-}
-
-BOOLEAN BlCheckImageHeader(PE_IMAGE_HDR* hdr) {
-	if (
-		hdr->ThirdHeader.Subsystem != 1 ||
-		hdr->MachineType != 0x8664 ||
-		hdr->SizeofOptionnalHeader < sizeof(PE_OPTIONAL_HEADER) ||
-		!hdr->OptionnalHeader.EntryPointAddr ||
-		!isMemEqual(hdr->Signature, "PE\0\0", 4)
-		) {
-		return FALSE;
-	}
-	return TRUE;
-}
 
 
 
-BOOLEAN BlLoadImage(void* Buffer, PE_IMAGE_HDR** HdrStart, void** VirtualAddressSpace, UINT64* VasSize) {
-	PE_IMAGE_HDR* Header;
-	UINT64 VasBufferSize = 0;
-	void* VasBuffer;
-	EFI_PHYSICAL_ADDRESS ImageBase;
-	// Header Check
-	{
-		int Off = BlGetPeHeaderOffset(Buffer);
-		if(!Off) return FALSE;
-		Header = (PE_IMAGE_HDR*)((char*)Buffer + Off);
-		if(!BlCheckImageHeader(Header)) return FALSE;
-		*HdrStart = Header;
-	}
-	// Get virtual address buffer size
-	PE_SECTION_TABLE* Sections = (PE_SECTION_TABLE*)((char*)Header + Header->SizeofOptionnalHeader);
-	for(int i = 0;i<Header->NumSections;i++) {
-		if(Sections[i].Characteristics & ((PE_SECTION_CODE | PE_SECTION_INITIALIZED_DATA | PE_SECTION_UNINITIALIZED_DATA))) {
-			if(Sections[i].VirtualSize < Sections[i].SizeofRawData) Sections[i].VirtualSize = Sections[i].SizeofRawData;
-			if(Sections[i].VirtualAddress + Sections[i].VirtualSize > VasBufferSize) VasBufferSize = Sections[i].VirtualAddress + Sections[i].VirtualSize;
-		}
-	}
-	// Allocate virtual address buffer
-	VasBufferSize += 0x10000;
 
-	if(EFI_ERROR(gBS->AllocatePages(AllocateAnyPages, EfiLoaderData, VasBufferSize >> 12, &ImageBase))) {
-		Print(L"Failed to allocate memory\n");
-		gBS->Exit(gImageHandle, EFI_UNSUPPORTED, 0, NULL);
-	}
-	if(Header->ThirdHeader.DllCharacteristics & 0x40) {
-		// TODO : Relocation
-	}
 
-	VasBuffer = (void*)ImageBase;
-	// Copy section data to the VAS Buffer
-	for(int i = 0;i<Header->NumSections;i++) {
-		PE_SECTION_TABLE* Section = Sections + i;
-		if (Section->Characteristics & (PE_SECTION_CODE | PE_SECTION_INITIALIZED_DATA | PE_SECTION_UNINITIALIZED_DATA)) {
-			CopyAlignedMemory((void*)((char*)VasBuffer + Section->VirtualAddress), (UINT64*)((char*)Buffer + Section->PtrToRawData), Section->SizeofRawData);
-			if (Section->VirtualSize > Section->SizeofRawData) {
-				UINT64 UninitializedDataSize = Section->VirtualSize - Section->SizeofRawData;
-				ZeroAlignedMemory((void*)((char*)VasBuffer + Section->VirtualAddress + Section->SizeofRawData), UninitializedDataSize);
-			}
-		}
-	}
-	*VirtualAddressSpace = VasBuffer;
-	*VasSize = VasBufferSize;
-	return TRUE;
-}
+
+
+
 
 /*
  * NOS AMD64 UEFI Bootloader Entry Point
@@ -181,7 +47,7 @@ EFI_STATUS EFIAPI UefiEntry(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TABLE* Syst
 	gBS = SystemTable->BootServices;
 	gImageHandle = ImageHandle;
 	gBS->HandleProtocol(ImageHandle, &gEfiLoadedImageProtocolGuid, (void**)&LoadedImage);
-
+	// ZeroAlignedMemory(&NosInitData, sizeof(NOS_INITDATA));
 	// Initialize Boot Graphics
 	BlInitBootGraphics();
 	
@@ -263,7 +129,8 @@ EFI_STATUS EFIAPI UefiEntry(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TABLE* Syst
 	PE_IMAGE_HDR* ImageHeader;
 	void* Vas;
 	UINT64 VasSize;
-	if(!BlLoadImage(KernelBuffer, &ImageHeader, &Vas, &VasSize)) {
+	void* KernelBaseAddress = (void*)0xffff800000000000;
+	if(!BlLoadImage(KernelBuffer, &ImageHeader, &Vas, &VasSize, KernelBaseAddress)) {
 		Print(L"Failed to load noskx64.exe, File maybe corrupt.\n");
 		return EFI_UNSUPPORTED;
 	}
@@ -279,12 +146,18 @@ EFI_STATUS EFIAPI UefiEntry(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TABLE* Syst
 		Print(L"Failed to get memory map\n");
 		return EFI_UNSUPPORTED;
 	}
+	NosInitData.MemoryCount = MapSize / DescriptorSize;
 	MapSize += 3 * DescriptorSize;
 	gBS->AllocatePool(EfiLoaderData, MapSize, (void**)&MemoryMap);
+	
 	if(EFI_ERROR(gBS->GetMemoryMap(&MapSize, MemoryMap, &MapKey, &DescriptorSize, &DescriptorVersion))) {
 		Print(L"Failed to get memory map\n");
 		return EFI_UNSUPPORTED;
 	}
+
+	NosInitData.MemoryMap = MemoryMap;
+	NosInitData.MemoryDescriptorSize = DescriptorSize;
+
 
 	// Disable Watchdog Timer
 	gBS->SetWatchdogTimer(0, 0, 0, NULL);
@@ -298,9 +171,24 @@ EFI_STATUS EFIAPI UefiEntry(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TABLE* Syst
 		for(UINTN i = 0;i<0x1000;i++) {
 		((UINT32*)NosInitData.FrameBuffer.BaseAddress)[i] = 0xFF00;
 		while(1);
+		}
 	}
+	QemuWriteSerialMessage("Memory Count:");
+	QemuWriteSerialMessage(ToStringUint64(NosInitData.MemoryCount));
+	// Fill NOS Memory Linked List with data
+	for(UINTN i = 0;i<NosInitData.MemoryCount;i++) {
+		EFI_MEMORY_DESCRIPTOR* Desc = (EFI_MEMORY_DESCRIPTOR*)((char*)NosInitData.MemoryMap + DescriptorSize * i);
+		if(Desc->Type == EfiConventionalMemory) {
+			BlAllocateMemoryDescriptor(Desc->PhysicalStart, Desc->NumberOfPages, FALSE);
+		} else if(Desc->Type == EfiLoaderCode || Desc->Type == EfiLoaderData) {
+			BlAllocateMemoryDescriptor(Desc->PhysicalStart, Desc->NumberOfPages, TRUE);
+		}
 	}
-
+	QemuWriteSerialMessage("Booted successfully.");
+	
+	BlInitPageTable();
+	
+	BlMapToSystemSpace(Vas, Convert2MBPages(VasSize));
 	for(UINTN i = 0;i<0x1000;i++) {
 		((UINT32*)NosInitData.FrameBuffer.BaseAddress)[i] = 0xFF;
 	}

@@ -5,10 +5,16 @@
   MODULE_TYPE = UEFI_APPLICATION
   VERSION_STRING = 1.0
   ENTRY_POINT = UefiEntry
- 
+  
 [Sources]
+  ../../../../inc/efi/loader.h
   boot.c
- 
+  util.c
+  bootgfx.c
+  load.c
+  map.c
+  mm.c
+  
 [Packages]
   MdePkg/MdePkg.dec
  
@@ -17,6 +23,7 @@
   UefiLib
   BaseLib
   
+
 
 [Guids]
  gEfiFileInfoGuid
