@@ -116,7 +116,7 @@ void BlMapMemory(
     if(Flags & PM_LARGE_PAGES) {
         ModelEntry.SizePAT = 1; // 2MB Pages
         IncVaddr = 0x200;
-    }
+    } 
     for(UINT64 i = 0;i<Count;i++, TmpPhysicalAddr+=IncVaddr, TmpVirtualAddr+=IncVaddr){
 
         PtIndex = TmpVirtualAddr & 0x1FF;
