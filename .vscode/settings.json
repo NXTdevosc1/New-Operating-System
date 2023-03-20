@@ -1,9 +1,0 @@
-{
-    "files.associations": {
-        "uefilib.h": "c",
-        "uefibootservicestablelib.h": "c",
-        "blockio2.h": "c",
-        "loader.h": "c",
-        "fileinfo.h": "c"
-    }
-}
