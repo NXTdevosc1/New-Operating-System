@@ -25,9 +25,6 @@ GUID_PARTITION_ENTRY* GptEntries;
 
 
 
-
-
-
 /*
  * NOS AMD64 UEFI Bootloader Entry Point
  * The bootloader should :
@@ -95,6 +92,7 @@ EFI_STATUS EFIAPI UefiEntry(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TABLE* Syst
 	} else {
 		OsPartitionHandle = _OsPartitions[0];
 		OsPartition = _OsRoots[0];
+
 		// Get parent drive of the partition
 		if(EFI_ERROR(gBS->HandleProtocol(OsPartitionHandle, &gEfiBlockIoProtocolGuid, (void**)&BootDrive))) {
 			Print(L"Failed to get boot drive\n");
@@ -134,6 +132,9 @@ EFI_STATUS EFIAPI UefiEntry(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TABLE* Syst
 		Print(L"Failed to load noskx64.exe, File maybe corrupt.\n");
 		return EFI_UNSUPPORTED;
 	}
+
+	NosInitData.NosKernelImageBase = KernelBaseAddress;
+	NosInitData.NosKernelImageSize = VasSize;
 	
 	Print(L"StartAddr : 0x%0X , Base : 0x%llu\n", ImageHeader->OptionnalHeader.EntryPointAddr, ImageHeader->ThirdHeader.ImageBase);
 
@@ -146,7 +147,6 @@ EFI_STATUS EFIAPI UefiEntry(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TABLE* Syst
 		Print(L"Failed to get memory map\n");
 		return EFI_UNSUPPORTED;
 	}
-	NosInitData.MemoryCount = MapSize / DescriptorSize;
 	MapSize += 3 * DescriptorSize;
 	gBS->AllocatePool(EfiLoaderData, MapSize, (void**)&MemoryMap);
 	
@@ -157,6 +157,7 @@ EFI_STATUS EFIAPI UefiEntry(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TABLE* Syst
 
 	NosInitData.MemoryMap = MemoryMap;
 	NosInitData.MemoryDescriptorSize = DescriptorSize;
+	NosInitData.MemoryCount = MapSize / DescriptorSize;
 
 
 	// Disable Watchdog Timer
@@ -167,31 +168,40 @@ EFI_STATUS EFIAPI UefiEntry(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TABLE* Syst
 		Print(L"Failed to exit boot services\n");
 		return EFI_UNSUPPORTED;
 	}
-	if(EFI_ERROR(gST->RuntimeServices->SetVirtualAddressMap(MapSize, DescriptorSize, DescriptorVersion, MemoryMap))) {
-		for(UINTN i = 0;i<0x1000;i++) {
-		((UINT32*)NosInitData.FrameBuffer.BaseAddress)[i] = 0xFF00;
-		while(1);
-		}
-	}
 	QemuWriteSerialMessage("Memory Count:");
 	QemuWriteSerialMessage(ToStringUint64(NosInitData.MemoryCount));
 	// Fill NOS Memory Linked List with data
 	for(UINTN i = 0;i<NosInitData.MemoryCount;i++) {
-		EFI_MEMORY_DESCRIPTOR* Desc = (EFI_MEMORY_DESCRIPTOR*)((char*)NosInitData.MemoryMap + DescriptorSize * i);
+		EFI_MEMORY_DESCRIPTOR* Desc = (EFI_MEMORY_DESCRIPTOR*)((char*)NosInitData.MemoryMap + NosInitData.MemoryDescriptorSize * i);
 		if(Desc->Type == EfiConventionalMemory) {
 			BlAllocateMemoryDescriptor(Desc->PhysicalStart, Desc->NumberOfPages, FALSE);
 		} else if(Desc->Type == EfiLoaderCode || Desc->Type == EfiLoaderData) {
 			BlAllocateMemoryDescriptor(Desc->PhysicalStart, Desc->NumberOfPages, TRUE);
 		}
 	}
-	QemuWriteSerialMessage("Booted successfully.");
-	
 	BlInitPageTable();
 	
-	BlMapToSystemSpace(Vas, Convert2MBPages(VasSize));
-	for(UINTN i = 0;i<0x1000;i++) {
-		((UINT32*)NosInitData.FrameBuffer.BaseAddress)[i] = 0xFF;
+	if(EFI_ERROR(gST->RuntimeServices->SetVirtualAddressMap(MapSize, DescriptorSize, DescriptorVersion, MemoryMap))) {
+		for(UINTN i = 0;i<0x1000;i++) {
+		((UINT32*)NosInitData.FrameBuffer.BaseAddress)[i] = 0xFF00;
+		while(1);
+		}
 	}
-	while(1);
-	return EFI_SUCCESS;
+	
+	
+	QemuWriteSerialMessage("Booted successfully.");
+	
+	QemuWriteSerialMessage("NOS_ENTRY_POINT:");
+	NOS_ENTRY_POINT NosEntryPoint = (NOS_ENTRY_POINT)((UINT64)KernelBaseAddress + (UINT64)ImageHeader->OptionnalHeader.EntryPointAddr);
+	QemuWriteSerialMessage(ToStringUint64((UINT64)NosEntryPoint));
+	QemuWriteSerialMessage(ToStringUint64((UINT64)ImageHeader->OptionnalHeader.EntryPointAddr));
+	QemuWriteSerialMessage(ToStringUint64((UINT64)Vas));
+
+	QemuWriteSerialMessage(ToStringUint64(*(UINT64*)(0xffff800000000000)));
+	
+
+
+
+	NosEntryPoint();
+	return EFI_UNSUPPORTED;
 }

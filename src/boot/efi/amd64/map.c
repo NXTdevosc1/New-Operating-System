@@ -1,7 +1,7 @@
 #include <loader.h>
 
 UINT64 SystemSpaceOffset = 0;
-void* SystemSpace = (void*)0xffff800000000000;
+
 UINT64 SystemSpaceBaseAddress = 0x800000000000 | ((UINT64)1 << 48);
 typedef struct _PAGE_TABLE_ENTRY {
     UINT64 Present : 1;
@@ -16,12 +16,11 @@ typedef struct _PAGE_TABLE_ENTRY {
     UINT64 Ignored0 : 3;
     UINT64 PhysicalAddr : 36; // In 2-MB Pages BIT 0 Set to PAT
     UINT64 Ignored1 : 15;
-    UINT64 ExecuteDisable : 1;
+    UINT64 Rsv : 1; // XD Bit
 } PTENTRY, *RFPTENTRY;
 
 RFPTENTRY* NosKernelPageTable = NULL;
 
-PTENTRY ModelEntry = {1, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0};
 EFI_MEMORY_DESCRIPTOR* BlNewEntry = NULL;
 EFI_MEMORY_DESCRIPTOR* SourceHeap = NULL; // Largest heap in the EFI_MEMORY_MAP
 
@@ -32,6 +31,15 @@ void BlInitPageTable() {
     ZeroAlignedMemory((void*)NosKernelPageTable, 0x1000);
     for(UINT64 i = 0;i<NosInitData.MemoryCount;i++) {
         EFI_MEMORY_DESCRIPTOR* Desc = (EFI_MEMORY_DESCRIPTOR*)((char*)NosInitData.MemoryMap + i * NosInitData.MemoryDescriptorSize);
+        // if(!Desc->Type) continue;
+        // QemuWriteSerialMessage("Memory Descriptor: (PhysStart, VirtStart, NumPg, Attr, Type)");
+        // QemuWriteSerialMessage(ToStringUint64((UINT64)Desc->PhysicalStart));
+        // QemuWriteSerialMessage(ToStringUint64((UINT64)Desc->VirtualStart));
+        // QemuWriteSerialMessage(ToStringUint64((UINT64)Desc->NumberOfPages));
+        // QemuWriteSerialMessage(ToStringUint64((UINT64)Desc->Attribute));
+        // QemuWriteSerialMessage(ToStringUint64((UINT64)Desc->Type));
+        // Set virtualstart to physical start
+        Desc->VirtualStart = Desc->PhysicalStart;
         if(Desc->Type == EfiLoaderData || Desc->Type == EfiLoaderCode || Desc->Type == EfiConventionalMemory) {
             // Identity map the memory
             BlMapMemory((void*)Desc->PhysicalStart, (void*)Desc->PhysicalStart, Desc->NumberOfPages, PM_WRITEACCESS);
@@ -39,25 +47,12 @@ void BlInitPageTable() {
             BlMapMemory((void*)Desc->PhysicalStart, (void*)Desc->PhysicalStart, Desc->NumberOfPages, PM_WRITEACCESS);
         }
     }
-    // Map the GDT and the IDT of the UEFI Bootloader
-    struct __attribute__((packed)) {
-        UINT16 Size;
-        UINT64 Address;
-    } Gdtr = {0}, Idtr = {0};
-    __asm__ volatile ("sgdt %0" : "=m"(Gdtr));
-    __asm__ volatile ("sidt %0" : "=m"(Idtr));
-    QemuWriteSerialMessage("GDT-IDT :");
-    QemuWriteSerialMessage(ToStringUint64(Gdtr.Address));
-    QemuWriteSerialMessage(ToStringUint64(Gdtr.Size));
-
-    QemuWriteSerialMessage(ToStringUint64(Idtr.Address));
-    QemuWriteSerialMessage(ToStringUint64(Idtr.Size));
-
-    
-
-    BlMapMemory((void*)Gdtr.Address, (void*)Gdtr.Address, 1, 0);
-    BlMapMemory((void*)Idtr.Address, (void*)Idtr.Address, 1, 0);
-
+    // // Map frame buffer
+    // BlMapMemory(NosInitData.FrameBuffer.BaseAddress, NosInitData.FrameBuffer.BaseAddress, (NosInitData.FrameBuffer.FbSize >> 21) + 1, PM_LARGE_PAGES | PM_WRITEACCESS);
+    // // Map the APIC
+    // BlMapMemory((void*)0xfee00000, (void*)0xfee00000, 1, PM_WRITEACCESS | PM_LARGE_PAGES);
+    // Map the kernel to system space
+	BlMapToSystemSpace(NosInitData.NosKernelImageBase, Convert2MBPages(NosInitData.NosKernelImageSize));
     __asm__ volatile ("mov %0, %%cr3" :: "r"(NosKernelPageTable));
 }
 
@@ -115,7 +110,7 @@ void BlMapMemory(
         ModelEntry.PWT = 1;
         ModelEntry.PCD = 1;
     }
-    if (Flags & PM_GLOBAL) ModelEntry.Global = TRUE;
+    // if (Flags & PM_GLOBAL) ModelEntry.Global = TRUE;
 
     UINT64 IncVaddr = 1;
     if(Flags & PM_LARGE_PAGES) {
@@ -135,7 +130,7 @@ void BlMapMemory(
             Pml4Entry[Pml4Index].PhysicalAddr = EntryAddr >> 12;
             Pml4Entry[Pml4Index].Present = 1;
             Pml4Entry[Pml4Index].ReadWrite = 1;
-            Pml4Entry[Pml4Index].UserSupervisor = 1;
+            // Pml4Entry[Pml4Index].UserSupervisor = 1;
             
 
             ZeroAlignedMemory((void*)EntryAddr, 0x1000);
@@ -149,7 +144,7 @@ void BlMapMemory(
             PdpEntry[PdpIndex].PhysicalAddr = EntryAddr >> 12;
             PdpEntry[PdpIndex].Present = 1;
             PdpEntry[PdpIndex].ReadWrite = 1;
-            PdpEntry[PdpIndex].UserSupervisor = 1;
+            // PdpEntry[PdpIndex].UserSupervisor = 1;
 
             ZeroAlignedMemory((void*)EntryAddr, 0x1000);
         }else EntryAddr = (UINT64)PdpEntry[PdpIndex].PhysicalAddr << 12;
@@ -164,7 +159,7 @@ void BlMapMemory(
                 PdEntry[PdIndex].PhysicalAddr = EntryAddr >> 12;
                 PdEntry[PdIndex].Present = 1;
                 PdEntry[PdIndex].ReadWrite = 1;
-                PdEntry[PdIndex].UserSupervisor = 1;
+                // PdEntry[PdIndex].UserSupervisor = 1;
 
                 ZeroAlignedMemory((void*)EntryAddr, 0x1000);
 

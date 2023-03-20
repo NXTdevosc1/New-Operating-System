@@ -46,7 +46,7 @@ BOOLEAN BlLoadImage(void* Buffer, PE_IMAGE_HDR** HdrStart, void** VirtualAddress
 	for(int i = 0;i<Header->NumSections;i++) {
 		if(Sections[i].Characteristics & ((PE_SECTION_CODE | PE_SECTION_INITIALIZED_DATA | PE_SECTION_UNINITIALIZED_DATA))) {
 			if(Sections[i].VirtualSize < Sections[i].SizeofRawData) Sections[i].VirtualSize = Sections[i].SizeofRawData;
-			if(Sections[i].VirtualAddress + Sections[i].VirtualSize > VasBufferSize) VasBufferSize = Sections[i].VirtualAddress + Sections[i].VirtualSize;
+			if((Sections[i].VirtualAddress + Sections[i].VirtualSize) > VasBufferSize) VasBufferSize = Sections[i].VirtualAddress + Sections[i].VirtualSize;
 		}
 	}
 	// Allocate virtual address buffer
@@ -62,7 +62,7 @@ BOOLEAN BlLoadImage(void* Buffer, PE_IMAGE_HDR** HdrStart, void** VirtualAddress
 
 	VasBuffer = (void*)ImageBase;
 	// Copy section data to the VAS Buffer
-	for(int i = 0;i<Header->NumSections;i++) {
+	for(UINT16 i = 0;i<Header->NumSections;i++) {
 		PE_SECTION_TABLE* Section = Sections + i;
 		if (Section->Characteristics & (PE_SECTION_CODE | PE_SECTION_INITIALIZED_DATA | PE_SECTION_UNINITIALIZED_DATA)) {
 			CopyAlignedMemory((void*)((char*)VasBuffer + Section->VirtualAddress), (UINT64*)((char*)Buffer + Section->PtrToRawData), Section->SizeofRawData);

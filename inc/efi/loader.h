@@ -47,17 +47,21 @@ typedef enum _PAGE_MAP_FLAGS {
 } PAGE_MAP_FLAGS;
 
 typedef struct _NOS_INITDATA {
+    // Nos Image Data
+    void* NosKernelImageBase;
+    UINT64 NosKernelImageSize;
     // EFI Frame Buffer
     FRAME_BUFFER_DESCRIPTOR FrameBuffer;
     // EFI Memory Map
     UINT64 MemoryCount;
     UINT64 MemoryDescriptorSize;
     EFI_MEMORY_DESCRIPTOR* MemoryMap;
+    // System Startup Drive Info
+    
     // NOS Kernel Memory Map
     NOS_MEMORY_LINKED_LIST* NosMemoryMap;
     UINT64 AllocatedPagesCount;
     UINT64 FreePagesCount;
-
 
 } NOS_INITDATA;
 
@@ -261,6 +265,8 @@ typedef struct _GUID_PARTITION_ENTRY {
 } GUID_PARTITION_ENTRY;
 
 #pragma pack(pop)
+
+typedef void __attribute__((noreturn)) (*NOS_ENTRY_POINT)();
 
 // util.c
 BOOLEAN BlNullGuid(EFI_GUID Guid);
