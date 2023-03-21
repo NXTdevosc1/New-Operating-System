@@ -23,7 +23,7 @@ typedef struct _FRAME_BUFFER_DESCRIPTOR{
 	UINT64 	    FbSize;
 } FRAME_BUFFER_DESCRIPTOR;
 
-
+// Memory Manager Attributes
 #define MM_DESCRIPTOR_ALLOCATED 1
 typedef struct _NOS_MEMORY_DESCRIPTOR {
     UINT32 Attributes;
@@ -49,7 +49,9 @@ typedef enum _PAGE_MAP_FLAGS {
 typedef struct _NOS_INITDATA {
     // Nos Image Data
     void* NosKernelImageBase;
+    void* NosPhysicalBase;
     UINT64 NosKernelImageSize;
+
     // EFI Frame Buffer
     FRAME_BUFFER_DESCRIPTOR FrameBuffer;
     // EFI Memory Map
@@ -57,7 +59,7 @@ typedef struct _NOS_INITDATA {
     UINT64 MemoryDescriptorSize;
     EFI_MEMORY_DESCRIPTOR* MemoryMap;
     // System Startup Drive Info
-    
+
     // NOS Kernel Memory Map
     NOS_MEMORY_LINKED_LIST* NosMemoryMap;
     UINT64 AllocatedPagesCount;
@@ -216,55 +218,6 @@ typedef struct _IMAGE_HINT_NAME_TABLE {
 #define IMAGE_ORDINAL_NUMBER(LookupEntry) (LookupEntry & 0xffff)
 #define IMAGE_HINT_NAME_RVA(LookupEntry) (LookupEntry & (0x7fffffff));
 
-#define MBR_SIGNATURE 0xAA55
-#define GPT_SIGNATURE "EFI PART "
-#define FSID_GPT 0xEE
-
-#pragma pack(push, 1)
-
-typedef struct _MASTER_BOOT_RECORD{
-	char EntryPoint[440];
-	UINT32 OptionnalSignature;
-	UINT16 Null;
-	struct {
-		UINT8 Bootable; // 0x80 = active
-		UINT8 ChsStart[3];
-		UINT8 FileSystemId;
-		UINT8 ChsEnd[3];
-		UINT32 StartLba;
-		UINT32 TotalSectors;
-	} Parititons[4];
-	UINT16 MbrSignature;
-} MASTER_BOOT_RECORD;
-
-typedef struct _GUID_PARTITION_TABLE_HEADER {
-	UINT64 Signature;
-	UINT32 GptRevision;
-	UINT32 HeaderSize;
-	UINT32 Crc32;
-	UINT32 Rsv0;
-	UINT64 CurrentLba;
-	UINT64 SecondaryGptLba;
-	UINT64 FirstUsableEntryBlock;
-	UINT64 LastUsableEntryBlock;
-	EFI_GUID DiskGuid;
-	UINT64 GptEntryStartLba;
-	UINT32 NumPartitionEntries;
-	UINT32 EntrySize;
-	UINT32 Crc32_OfPartitionEntryArray;
-	char Rsv1[420];
-} GUID_PARTITION_TABLE_HEADER;
-
-typedef struct _GUID_PARTITION_ENTRY {
-	EFI_GUID PartitionType;
-	EFI_GUID UniquePartitionGuid;
-	UINT64 StartingLba;
-	UINT64 EndingLba;
-	UINT64 Attributes;
-	UINT16 PartitionName[36];
-} GUID_PARTITION_ENTRY;
-
-#pragma pack(pop)
 
 typedef void __attribute__((noreturn)) (*NOS_ENTRY_POINT)();
 
@@ -273,6 +226,8 @@ BOOLEAN BlNullGuid(EFI_GUID Guid);
 BOOLEAN isMemEqual(void* a, void* b, UINT64 Count);
 void CopyAlignedMemory(void* _dest, void* _src, UINT64 NumBytes);
 void ZeroAlignedMemory(void* _dest, UINT64 NumBytes);
+const char* ToStringUint64(UINT64 value);
+const char* ToHexStringUint64(UINT64 value);
 
 // bootgfx.c
 void BlInitBootGraphics();
@@ -288,7 +243,6 @@ void BlAllocateMemoryDescriptor(EFI_PHYSICAL_ADDRESS Address, UINT64 NumPages, B
 void* BlAllocateOnePage();
 void QemuWriteSerialMessage(const char* Message);
 
-const char* ToStringUint64(UINT64 value);
 
 void BlInitPageTable();
 void BlMapMemory(
@@ -296,4 +250,6 @@ void BlMapMemory(
     void* PhysicalAddress,
     UINT64 Count,
     UINT64 Flags);
+void BlInitSystemHeap(UINTN NumLargePages);
+void* BlAllocateSystemHeap(UINTN NumPages);
 #define Convert2MBPages(NumBytes) ((NumBytes & 0x1FFFFF) ? ((NumBytes >> 21) + 1) : (NumBytes >> 21))

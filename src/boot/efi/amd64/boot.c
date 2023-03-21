@@ -14,10 +14,6 @@ UINTN NumDrives = 0;
 UINTN NumPartitions = 0;
 UINTN NumOsPartitions = 0;
 
-MASTER_BOOT_RECORD Mbr;
-GUID_PARTITION_TABLE_HEADER GptHeader;
-GUID_PARTITION_ENTRY* GptEntries;
-
 
 
 
@@ -124,6 +120,11 @@ EFI_STATUS EFIAPI UefiEntry(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TABLE* Syst
 		return EFI_UNSUPPORTED;
 	}
 	Kernel->Read(Kernel, &BufferSize, KernelBuffer);
+
+	// Initialize System Heap
+	UINTN NumSystemPages = 1; // In 2MB Pages
+	BlInitSystemHeap(NumSystemPages);
+
 	PE_IMAGE_HDR* ImageHeader;
 	void* Vas;
 	UINT64 VasSize;
@@ -155,9 +156,9 @@ EFI_STATUS EFIAPI UefiEntry(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TABLE* Syst
 		return EFI_UNSUPPORTED;
 	}
 
+	NosInitData.MemoryCount = MapSize / DescriptorSize;
 	NosInitData.MemoryMap = MemoryMap;
 	NosInitData.MemoryDescriptorSize = DescriptorSize;
-	NosInitData.MemoryCount = MapSize / DescriptorSize;
 
 
 	// Disable Watchdog Timer
@@ -193,14 +194,9 @@ EFI_STATUS EFIAPI UefiEntry(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TABLE* Syst
 	
 	QemuWriteSerialMessage("NOS_ENTRY_POINT:");
 	NOS_ENTRY_POINT NosEntryPoint = (NOS_ENTRY_POINT)((UINT64)KernelBaseAddress + (UINT64)ImageHeader->OptionnalHeader.EntryPointAddr);
-	QemuWriteSerialMessage(ToStringUint64((UINT64)NosEntryPoint));
-	QemuWriteSerialMessage(ToStringUint64((UINT64)ImageHeader->OptionnalHeader.EntryPointAddr));
-	QemuWriteSerialMessage(ToStringUint64((UINT64)Vas));
-
-	QemuWriteSerialMessage(ToStringUint64(*(UINT64*)(0xffff800000000000)));
-	
-
-
+	QemuWriteSerialMessage(ToHexStringUint64((UINT64)NosEntryPoint));
+	QemuWriteSerialMessage(ToHexStringUint64((UINT64)ImageHeader->OptionnalHeader.EntryPointAddr));
+	QemuWriteSerialMessage(ToHexStringUint64((UINT64)Vas));
 
 	NosEntryPoint();
 	return EFI_UNSUPPORTED;

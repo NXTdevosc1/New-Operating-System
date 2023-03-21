@@ -75,3 +75,30 @@ void* BlAllocateOnePage() {
     QemuWriteSerialMessage("ERROR : Failed to allocate one page. Halting...");
     while(1);
 }
+
+UINTN _UsedSystemPages = 0; // In 4KB Pages
+UINTN _NumSystemPages = 0; // In 4KB Pages
+void BlInitSystemHeap(UINTN NumLargePages) {
+    EFI_PHYSICAL_ADDRESS Memory;
+    if(EFI_ERROR(gBS->AllocatePages(AllocateAnyPages, EfiLoaderData, (NumLargePages << 9) + 0x200 /*Used for alignment*/, &Memory))) {
+		Print(L"InitSystemHeap failed : Failed to allocate memory\n");
+        gBS->Exit(gImageHandle, EFI_BUFFER_TOO_SMALL, 0, NULL);
+    }
+    Memory += 0x200000 - (Memory & 0x1FFFFF);
+    NosInitData.NosPhysicalBase = (void*)Memory;
+    _NumSystemPages = NumLargePages << 9;
+    QemuWriteSerialMessage("System Heap:");
+    QemuWriteSerialMessage(ToHexStringUint64(Memory));
+}
+
+/*
+    Allocates memory inside the system heap
+*/
+void* BlAllocateSystemHeap(UINTN NumPages) {
+    if(_NumSystemPages - _UsedSystemPages < NumPages) {
+		Print(L"Failed to allocate memory for the System\n");
+        // Unexpected error
+        gBS->Exit(gImageHandle, EFI_LOAD_ERROR, 0, NULL);
+    }
+    return (void*)((char*)NosInitData.NosPhysicalBase + (_UsedSystemPages << 12));
+}

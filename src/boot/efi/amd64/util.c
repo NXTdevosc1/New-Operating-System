@@ -72,3 +72,26 @@ const char* ToStringUint64(UINT64 value){
     uintTo_StringOutput[size + 1] = 0;
     return uintTo_StringOutput;
 }
+
+char hexTo_StringOutput[0x100] = { 0 };
+
+const char* ToHexStringUint64(UINT64 value)
+{
+    UINT8 size = 0;
+    unsigned long long ValTmp = value;
+    do {
+        size++;
+    } while((ValTmp >>= 4));
+    for (UINT8 i = 0; i < size; i++)
+    {
+        unsigned char c = value & 0xF;
+        if(c < 0xA){
+            hexTo_StringOutput[size - (i + 1)] = '0' + c;
+        }else{
+            hexTo_StringOutput[size - (i + 1)] = 'A' + (c - 0xA);
+        }
+        value >>= 4;
+    }
+    hexTo_StringOutput[size] = 0;
+    return hexTo_StringOutput;
+}

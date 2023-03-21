@@ -1,0 +1,5 @@
+build : Directory where built files are located
+buid/xxx : Folder containing the compiled object files for each directory in src/
+
+diskimg : Contains the Operating System Disk Image
+edk2 : Edk2 Source Repository

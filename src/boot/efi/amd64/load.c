@@ -52,10 +52,8 @@ BOOLEAN BlLoadImage(void* Buffer, PE_IMAGE_HDR** HdrStart, void** VirtualAddress
 	// Allocate virtual address buffer
 	VasBufferSize += 0x10000;
 
-	if(EFI_ERROR(gBS->AllocatePages(AllocateAnyPages, EfiLoaderData, VasBufferSize >> 12, &ImageBase))) {
-		Print(L"Failed to allocate memory\n");
-		gBS->Exit(gImageHandle, EFI_UNSUPPORTED, 0, NULL);
-	}
+	// Allocate 2MB Aligned pages
+	ImageBase = (EFI_PHYSICAL_ADDRESS)BlAllocateSystemHeap(VasBufferSize >> 12);
 	if(Header->ThirdHeader.DllCharacteristics & 0x40) {
 		// TODO : Relocation to BaseAddress
 	}

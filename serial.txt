@@ -4,11 +4,21 @@ BdsDxe: starting Boot0002 "UEFI QEMU HARDDISK QM00001 " from PciRoot(0x0)/Pci(0x
 Num partition handles : 195
 Data partition found.
 Boot partition and boot drive selected successfully.
+System Heap:
+7E000000
 StartAddr : 0x1000 , Base : 0x18446603336221196288
 Memory Count:
-100
+102
+NOS_IMAGE:
+FFFF800000000000
+7E000000
+10000
+1
+PHYS_ADDR
+7E000000
+3F0
 Booted successfully.
 NOS_ENTRY_POINT:
-18446603336221200384
-4096
-2117476352
+FFFF800000001000
+1000
+7E000000
