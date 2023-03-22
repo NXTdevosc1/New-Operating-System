@@ -180,14 +180,17 @@ EFI_STATUS EFIAPI UefiEntry(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TABLE* Syst
 			BlAllocateMemoryDescriptor(Desc->PhysicalStart, Desc->NumberOfPages, TRUE);
 		}
 	}
+	asm volatile ("cli");
 	BlInitPageTable();
 	
+	// Set virtual address map
 	if(EFI_ERROR(gST->RuntimeServices->SetVirtualAddressMap(MapSize, DescriptorSize, DescriptorVersion, MemoryMap))) {
 		for(UINTN i = 0;i<0x1000;i++) {
 		((UINT32*)NosInitData.FrameBuffer.BaseAddress)[i] = 0xFF00;
 		while(1);
 		}
 	}
+	NosInitData.EfiRuntimeServices = gST->RuntimeServices;
 	
 	
 	QemuWriteSerialMessage("Booted successfully.");
@@ -198,6 +201,13 @@ EFI_STATUS EFIAPI UefiEntry(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TABLE* Syst
 	QemuWriteSerialMessage(ToHexStringUint64((UINT64)ImageHeader->OptionnalHeader.EntryPointAddr));
 	QemuWriteSerialMessage(ToHexStringUint64((UINT64)Vas));
 
-	NosEntryPoint();
+	QemuWriteSerialMessage(ToHexStringUint64(*((UINT64*)NosEntryPoint)));
+	QemuWriteSerialMessage(ToHexStringUint64(*((UINT64*)NosEntryPoint + 8)));
+	QemuWriteSerialMessage(ToHexStringUint64(*((UINT64*)NosEntryPoint + 16)));
+
+
+	NosEntryPoint(&NosInitData); // INIT_DATA Passed through RDI using GCC Calling Convention
+	QemuWriteSerialMessage("ERROR : NOS_RETURNED");
+	while(1) asm ("hlt");
 	return EFI_UNSUPPORTED;
 }

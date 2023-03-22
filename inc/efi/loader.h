@@ -59,7 +59,7 @@ typedef struct _NOS_INITDATA {
     UINT64 MemoryDescriptorSize;
     EFI_MEMORY_DESCRIPTOR* MemoryMap;
     // System Startup Drive Info
-
+    EFI_RUNTIME_SERVICES* EfiRuntimeServices;
     // NOS Kernel Memory Map
     NOS_MEMORY_LINKED_LIST* NosMemoryMap;
     UINT64 AllocatedPagesCount;
@@ -219,7 +219,7 @@ typedef struct _IMAGE_HINT_NAME_TABLE {
 #define IMAGE_HINT_NAME_RVA(LookupEntry) (LookupEntry & (0x7fffffff));
 
 
-typedef void __attribute__((noreturn)) (*NOS_ENTRY_POINT)();
+typedef void __attribute__((noreturn)) (*NOS_ENTRY_POINT)(NOS_INITDATA* NosInitData);
 
 // util.c
 BOOLEAN BlNullGuid(EFI_GUID Guid);

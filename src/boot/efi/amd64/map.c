@@ -60,16 +60,12 @@ void BlInitPageTable() {
     QemuWriteSerialMessage(ToHexStringUint64((UINT64)NosInitData.NosKernelImageSize));
     QemuWriteSerialMessage(ToHexStringUint64(Convert2MBPages(NosInitData.NosKernelImageSize)));
 
-	BlMapToSystemSpace(NosInitData.NosPhysicalBase, _NumSystemPages >> 9);
+	BlMapMemory((void*)SystemSpaceBaseAddress, NosInitData.NosPhysicalBase, _NumSystemPages >> 9, PM_LARGE_PAGES | PM_WRITEACCESS | PM_GLOBAL);
+    BlMapMemory((void*)NosInitData.FrameBuffer.BaseAddress, NosInitData.FrameBuffer.BaseAddress, Convert2MBPages(NosInitData.FrameBuffer.FbSize >> 12), PM_LARGE_PAGES | PM_WRITEACCESS);
     __asm__ volatile ("mov %0, %%cr3" :: "r"(NosKernelPageTable));
 }
 
 
-
-void BlMapToSystemSpace(void* Buffer, UINT64 Num2mbPages) {
-    BlMapMemory((void*)(SystemSpaceBaseAddress + SystemSpaceOffset), Buffer, Num2mbPages, PM_LARGE_PAGES | PM_WRITEACCESS | PM_GLOBAL);
-    SystemSpaceOffset += Num2mbPages * 0x200000;
-}
 
 
 void BlMapMemory(
@@ -93,20 +89,19 @@ void BlMapMemory(
     if (Flags & PM_WRITEACCESS) {
         ModelEntry.ReadWrite = TRUE;
     }
-    // if (Flags & PM_GLOBAL) ModelEntry.Global = TRUE;
+    if (Flags & PM_GLOBAL) ModelEntry.Global = TRUE;
 
     UINT64 IncVaddr = 1;
     if(Flags & PM_LARGE_PAGES) {
         ModelEntry.SizePAT = 1; // 2MB Pages
         IncVaddr = 0x200;
-        TmpPhysicalAddr >>= 9;
         QemuWriteSerialMessage("PHYS_ADDR");
         QemuWriteSerialMessage(ToHexStringUint64((UINT64)PhysicalAddress));
 
         QemuWriteSerialMessage(ToHexStringUint64(TmpPhysicalAddr));
     }
 
-    for(UINT64 i = 0;i<Count;i++, TmpPhysicalAddr++, TmpVirtualAddr+=IncVaddr){
+    for(UINT64 i = 0;i<Count;i++, TmpPhysicalAddr+=IncVaddr, TmpVirtualAddr+=IncVaddr){
 
         PtIndex = TmpVirtualAddr & 0x1FF;
         PdIndex = (TmpVirtualAddr >> 9) & 0x1FF;
@@ -143,6 +138,7 @@ void BlMapMemory(
             *&PdEntry[PdIndex] = ModelEntry;
             PdEntry[PdIndex].PhysicalAddr = TmpPhysicalAddr;
         } else {
+            if(PdEntry[PdIndex].SizePAT) continue; // This is not a page directory
             if(!PdEntry[PdIndex].Present){
                 EntryAddr = (UINT64)BlAllocateOnePage();
                 PdEntry[PdIndex].PhysicalAddr = EntryAddr >> 12;
