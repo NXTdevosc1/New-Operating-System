@@ -62,12 +62,6 @@ BOOLEAN BlLoadImage(void* Buffer, PE_IMAGE_HDR** HdrStart, void** VirtualAddress
 	// Copy section data to the VAS Buffer
 	for(UINT16 i = 0;i<Header->NumSections;i++) {
 		PE_SECTION_TABLE* Section = Sections + i;
-		QemuWriteSerialMessage("SECTION : (Name, Vaddr, RAddr)");
-		QemuWriteSerialMessage(Section->name);
-		QemuWriteSerialMessage(ToHexStringUint64(Section->VirtualAddress));
-		QemuWriteSerialMessage(ToHexStringUint64(Section->VirtualSize));
-		QemuWriteSerialMessage(ToHexStringUint64(Section->PtrToRawData));
-
 		if (Section->Characteristics & (PE_SECTION_CODE | PE_SECTION_INITIALIZED_DATA | PE_SECTION_UNINITIALIZED_DATA)) {
 			CopyAlignedMemory((void*)((char*)VasBuffer + Section->VirtualAddress), (UINT64*)((char*)Buffer + Section->PtrToRawData), Section->SizeofRawData);
 			if (Section->VirtualSize > Section->SizeofRawData) {

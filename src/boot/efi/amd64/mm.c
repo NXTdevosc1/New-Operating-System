@@ -26,7 +26,7 @@ void BlAllocateMemoryDescriptor(EFI_PHYSICAL_ADDRESS Address, UINT64 NumPages, B
 
     if(!NosInitData.NosMemoryMap) NosInitData.NosMemoryMap = &MemoryLinkedList;
     if(MemoryLinkedList.Full == (UINT64)-1) {
-        QemuWriteSerialMessage("ERROR : Memory Linked List is full before kernel takeoff. Halting...");
+        SerialWrite("ERROR : Memory Linked List is full before kernel takeoff. Halting...");
         while(1); // Error
     }
     NOS_MEMORY_DESCRIPTOR* Desc;
@@ -72,7 +72,7 @@ void* BlAllocateOnePage() {
             return Addr;
         }
     }
-    QemuWriteSerialMessage("ERROR : Failed to allocate one page. Halting...");
+    SerialWrite("ERROR : Failed to allocate one page. Halting...");
     while(1);
 }
 
@@ -87,8 +87,8 @@ void BlInitSystemHeap(UINTN NumLargePages) {
     Memory += 0x200000 - (Memory & 0x1FFFFF);
     NosInitData.NosPhysicalBase = (void*)Memory;
     _NumSystemPages = NumLargePages << 9;
-    QemuWriteSerialMessage("System Heap:");
-    QemuWriteSerialMessage(ToHexStringUint64(Memory));
+    SerialWrite("System Heap:");
+    SerialWrite(ToHexStringUint64(Memory));
 }
 
 /*

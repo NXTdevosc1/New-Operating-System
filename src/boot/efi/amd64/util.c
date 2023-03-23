@@ -42,7 +42,7 @@ void OutPortB(unsigned short port, unsigned char val) {
 	asm volatile ("outb %0, %1"::"a"(val),"Nd"(port));
 }
 
-void QemuWriteSerialMessage(const char* Message) {
+void SerialWrite(const char* Message) {
     while(*Message) {
         OutPortB(0x3F8, *Message);
         Message++;

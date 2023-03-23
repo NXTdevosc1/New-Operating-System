@@ -33,12 +33,7 @@ void BlInitPageTable() {
     
     for(UINT64 i = 0;i<NosInitData.MemoryCount;i++) {
         EFI_MEMORY_DESCRIPTOR* Desc = (EFI_MEMORY_DESCRIPTOR*)((char*)NosInitData.MemoryMap + i * NosInitData.MemoryDescriptorSize);
-        // QemuWriteSerialMessage("Memory Descriptor: (PhysStart, VirtStart, NumPg, Attr, Type)");
-        // QemuWriteSerialMessage(ToHexStringUint64((UINT64)Desc->PhysicalStart));
-        // QemuWriteSerialMessage(ToHexStringUint64((UINT64)Desc->VirtualStart));
-        // QemuWriteSerialMessage(ToHexStringUint64((UINT64)Desc->NumberOfPages));
-        // QemuWriteSerialMessage(ToHexStringUint64((UINT64)Desc->Attribute));
-        // QemuWriteSerialMessage(ToHexStringUint64((UINT64)Desc->Type));
+
         // Set virtualstart to physical start
         Desc->VirtualStart = Desc->PhysicalStart;
         if(Desc->Type == EfiLoaderData || Desc->Type == EfiLoaderCode || Desc->Type == EfiConventionalMemory) {
@@ -53,12 +48,6 @@ void BlInitPageTable() {
     // // Map the APIC
     // BlMapMemory((void*)0xfee00000, (void*)0xfee00000, 1, PM_WRITEACCESS | PM_LARGE_PAGES);
     // Map the kernel to system space
-    QemuWriteSerialMessage("NOS_IMAGE:");
-    QemuWriteSerialMessage(ToHexStringUint64((UINT64)NosInitData.NosKernelImageBase));
-    QemuWriteSerialMessage(ToHexStringUint64((UINT64)NosInitData.NosPhysicalBase));
-
-    QemuWriteSerialMessage(ToHexStringUint64((UINT64)NosInitData.NosKernelImageSize));
-    QemuWriteSerialMessage(ToHexStringUint64(Convert2MBPages(NosInitData.NosKernelImageSize)));
 
 	BlMapMemory((void*)SystemSpaceBaseAddress, NosInitData.NosPhysicalBase, _NumSystemPages >> 9, PM_LARGE_PAGES | PM_WRITEACCESS | PM_GLOBAL);
     BlMapMemory((void*)NosInitData.FrameBuffer.BaseAddress, NosInitData.FrameBuffer.BaseAddress, Convert2MBPages(NosInitData.FrameBuffer.FbSize >> 12), PM_LARGE_PAGES | PM_WRITEACCESS);
@@ -95,10 +84,6 @@ void BlMapMemory(
     if(Flags & PM_LARGE_PAGES) {
         ModelEntry.SizePAT = 1; // 2MB Pages
         IncVaddr = 0x200;
-        QemuWriteSerialMessage("PHYS_ADDR");
-        QemuWriteSerialMessage(ToHexStringUint64((UINT64)PhysicalAddress));
-
-        QemuWriteSerialMessage(ToHexStringUint64(TmpPhysicalAddr));
     }
 
     for(UINT64 i = 0;i<Count;i++, TmpPhysicalAddr+=IncVaddr, TmpVirtualAddr+=IncVaddr){

@@ -11,6 +11,7 @@
 #include <Protocol/SimpleFileSystem.h>
 #include <Guid/FileInfo.h>
 
+
 #define PE_SECTION_CODE 0x20
 #define PE_SECTION_INITIALIZED_DATA 0x40
 #define PE_SECTION_UNINITIALIZED_DATA 0x80
@@ -241,7 +242,7 @@ extern NOS_INITDATA NosInitData;
 extern void* BlGetCurrentPageTable();
 void BlAllocateMemoryDescriptor(EFI_PHYSICAL_ADDRESS Address, UINT64 NumPages, BOOLEAN Allocated);
 void* BlAllocateOnePage();
-void QemuWriteSerialMessage(const char* Message);
+void SerialWrite(const char* Message);
 
 
 void BlInitPageTable();
