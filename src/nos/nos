@@ -13,7 +13,9 @@ The New Operating System Kernel is a microkernel which features
 Order of work :
 1 - Create Locks Interface
 2 - Create Memory Management Interface
-3 - Create Processor Managment Interface
-4 - Create Process Management Interface
-5 - RPC & IPC
-6 - Program Loader
+3 - Create the Object Manager
+4 - Create Processor Managment Interface
+5 - Create Process Management Interface
+6 - RPC & IPC
+7 - Program Loader
+8 - Kernel & User Mode services (System Calls...)

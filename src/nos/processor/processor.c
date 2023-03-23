@@ -1,6 +1,6 @@
 #include <processor/processor.h>
 typedef struct _PROCESSOR_LINKED_LIST PROCESSOR_LINKED_LIST;
-typedef struct _PROCESSOR_LINKED_LIST {
+struct _PROCESSOR_LINKED_LIST {
     UINT Index;
     PROCESSOR Processors[64];
     PROCESSOR_LINKED_LIST* Next;
@@ -9,10 +9,14 @@ typedef struct _PROCESSOR_LINKED_LIST {
 struct {
     UINT64 NumProcessors;
     UINT   MultiprocessorsArchitecture; // defines the architecture used to control the multiprocessor system
+    UINT    Architecture;
     PROCESSOR_LINKED_LIST ProcessorListHead;
     PROCESSOR_LINKED_LIST* LastProcessorList;
 } ProcessorTable = {0};
 
+void KiInitCurrentCpu() {
+
+}
 
 BOOLEAN NOSAPI KeRegisterProcessor(IN UINT16* ProcessorName, OUT OPT UINT64* ProcessorId) {
     if(!ProcessorName) return FALSE;

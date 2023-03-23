@@ -7,6 +7,12 @@
 #include <nostypes.h>
 #include <efi.h>
 #include <intrin.h>
+#include <serial.h>
+#ifdef DEBUG
+#define SerialLog(Msg) {SerialWrite(Msg);} 
+#else
+#define SerialLog(Msg)
+#endif
 typedef struct _FRAME_BUFFER_DESCRIPTOR{
 	UINT32 		HorizontalResolution;
 	UINT32 		VerticalResolution;

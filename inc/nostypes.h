@@ -40,3 +40,9 @@ typedef struct {
   UINT16    Data3;
   UINT8     Data4[8];
 } GUID;
+
+typedef void* HANDLE;
+#define INVALID_HANDLE (HANDLE)((UINT64)-1)
+typedef struct _CPUID_DATA {
+  UINT32 eax, ebx, ecx, edx;
+} CPUID_DATA;

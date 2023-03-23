@@ -10,3 +10,5 @@ StartAddr : 0x1000 , Base : 0x18446603336221196288
 Memory Count:
 102
 Booted successfully.
+NOS_KERNEL : Kernel Booting...
+QEMU Virtual CPU
