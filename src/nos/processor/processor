@@ -1,0 +1,4 @@
+- This source directory contains all the kernel routines for each processor architecture, this includes :
+    * Paging
+    * Multi-Processor Initialization
+    * Processor Feature Initialization and Enabling

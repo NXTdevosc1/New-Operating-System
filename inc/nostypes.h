@@ -11,6 +11,8 @@
 #define OPTIONAL
 #define NOSAPI __fastcall
 #define NULL (void*)0
+#define TRUE 1
+#define FALSE 0
 // integer typedefs
 typedef unsigned long long UINT64;
 typedef unsigned long long ULONGLONG;
