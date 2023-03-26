@@ -1,9 +1,7 @@
-#include <lock/lock.h>
-#include <nos.h>
-
+#include <nos/nos.h>
+#include <nos/lock/lock.h>
 void KeInitMutex(MUTEX* Mutex) {
-    Mutex->Owner = INVALID_HANDLE;
-    Mutex->AccessLock = 0;
+    *Mutex = INITIAL_MUTEX;
 }
 
 /*

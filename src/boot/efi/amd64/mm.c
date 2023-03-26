@@ -78,27 +78,58 @@ void* BlAllocateOnePage() {
 
 UINTN _UsedSystemPages = 0; // In 4KB Pages
 UINTN _NumSystemPages = 0; // In 4KB Pages
+UINTN _SysHeapLinkCount = 0; // Last index = count - 1
+UINTN _SysHeapLinkOffset = 0;
+#define MAX_PAGE_LINKS 0xFFF
+struct {
+    EFI_PHYSICAL_ADDRESS Addr;
+    UINTN NumLargePages;
+} SystemHeapLinks[MAX_PAGE_LINKS + 1] = {0}; // (+1) NULL Entry
+
+
+// Expands the System Heap
 void BlInitSystemHeap(UINTN NumLargePages) {
     EFI_PHYSICAL_ADDRESS Memory;
-    if(EFI_ERROR(gBS->AllocatePages(AllocateAnyPages, EfiLoaderData, (NumLargePages << 9) + 0x200 /*Used for alignment*/, &Memory))) {
+    if(EFI_ERROR(gBS->AllocatePages(AllocateAnyPages, EfiLoaderData, (NumLargePages << 9) + 0x101 /*Used to correct alignment*/, &Memory))) {
 		Print(L"InitSystemHeap failed : Failed to allocate memory\n");
         gBS->Exit(gImageHandle, EFI_BUFFER_TOO_SMALL, 0, NULL);
     }
     Memory += 0x200000 - (Memory & 0x1FFFFF);
-    NosInitData.NosPhysicalBase = (void*)Memory;
-    _NumSystemPages = NumLargePages << 9;
+    SystemHeapLinks[_SysHeapLinkCount].Addr = Memory;
+    SystemHeapLinks[_SysHeapLinkCount].NumLargePages = NumLargePages;
+    _SysHeapLinkCount++;
+    // Reset heap offset
+    _SysHeapLinkOffset = 0;
+    _NumSystemPages += (NumLargePages << 9);
     SerialWrite("System Heap:");
     SerialWrite(ToHexStringUint64(Memory));
 }
 
 /*
     Allocates memory inside the system heap
+    returns : Physical Start of the Heap
+
+    if RemaningPages < NumPages an extra heap is allocated and the last heap is discarded,
+    the new extra heap will be used
 */
-void* BlAllocateSystemHeap(UINTN NumPages) {
+char* __SysBase = (char*)0xffff800000000000;
+void* BlAllocateSystemHeap(UINTN NumPages, void** VirtualAddress) {
     if(_NumSystemPages - _UsedSystemPages < NumPages) {
-		Print(L"Failed to allocate memory for the System\n");
-        // Unexpected error
-        gBS->Exit(gImageHandle, EFI_LOAD_ERROR, 0, NULL);
+		BlInitSystemHeap(Convert2MBPages(NumPages));
     }
-    return (void*)((char*)NosInitData.NosPhysicalBase + (_UsedSystemPages << 12));
+    UINTN HeapLinkIndex = _SysHeapLinkCount - 1;
+    
+    *VirtualAddress = (void*)(__SysBase + (_UsedSystemPages << 12));
+    void* PhysicalAddress = (void*)((char*)SystemHeapLinks[HeapLinkIndex].Addr + _SysHeapLinkOffset);
+    _UsedSystemPages+=NumPages;
+    _SysHeapLinkOffset+=(NumPages << 12);
+    return PhysicalAddress;
+}
+
+void BlMapSystemSpace() {
+    char* Offset = __SysBase;
+    for(int i = 0;i<_SysHeapLinkCount;i++) {
+        BlMapMemory(Offset, (void*)SystemHeapLinks[i].Addr, SystemHeapLinks[i].NumLargePages, PM_LARGE_PAGES | PM_GLOBAL | PM_WRITEACCESS);
+        Offset += (SystemHeapLinks[i].NumLargePages << 21);
+    }
 }

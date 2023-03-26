@@ -1,4 +1,4 @@
-#include <processor/processor.h>
+#include <nos/processor/processor.h>
 #include <intrin.h>
 
 void CpuReadBrandName(char* Name) {

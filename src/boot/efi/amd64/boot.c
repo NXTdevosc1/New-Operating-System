@@ -2,18 +2,19 @@
 
 #include <loader.h>
 NOS_INITDATA NosInitData = {0};
-EFI_LOADED_IMAGE* LoadedImage;
-EFI_BLOCK_IO_PROTOCOL* BootDrive;
-EFI_SIMPLE_FILE_SYSTEM_PROTOCOL* BootPartition;
-EFI_HANDLE OsPartitionHandle;
-EFI_FILE_PROTOCOL* OsPartition;
+EFI_LOADED_IMAGE* LoadedImage = NULL;
+EFI_BLOCK_IO_PROTOCOL* BootDrive = NULL;
+EFI_SIMPLE_FILE_SYSTEM_PROTOCOL* BootPartition = NULL;
+EFI_HANDLE OsPartitionHandle = NULL;
+EFI_FILE_PROTOCOL* OsPartition = NULL;
+EFI_FILE_PROTOCOL* OsSystemFolder = NULL;
 #define MAX_OS_PARTITIONS 20
-EFI_HANDLE _OsPartitions[MAX_OS_PARTITIONS];
-EFI_FILE_PROTOCOL* _OsRoots[MAX_OS_PARTITIONS];
+EFI_HANDLE _OsPartitions[MAX_OS_PARTITIONS] = {0};
+EFI_FILE_PROTOCOL* _OsRoots[MAX_OS_PARTITIONS] = {0};
 UINTN NumDrives = 0;
 UINTN NumPartitions = 0;
 UINTN NumOsPartitions = 0;
-
+char __finf[sizeof(EFI_FILE_INFO) + 0x200] = {0}; // Used to request file info
 
 
 
@@ -96,14 +97,19 @@ EFI_STATUS EFIAPI UefiEntry(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TABLE* Syst
 		}
 		Print(L"Boot partition and boot drive selected successfully.\n");
 	}
+	// Open System Folder
+	if(EFI_ERROR(OsPartition->Open(OsPartition, &OsSystemFolder, L"NewOS\\System\\", EFI_FILE_MODE_READ, EFI_FILE_DIRECTORY))) {
+		Print(L"Cannot find System Folder.\n");
+		return EFI_NOT_FOUND;
+	}
 
 	// Load the kernel (TODO : Load Modules and drivers)
 	EFI_FILE* Kernel;
-	if(EFI_ERROR(OsPartition->Open(OsPartition, &Kernel, L"NewOS\\System\\noskx64.exe", EFI_FILE_MODE_READ, 0))) {
+	if(EFI_ERROR(OsSystemFolder->Open(OsSystemFolder, &Kernel, L"noskx64.exe", EFI_FILE_MODE_READ, 0))) {
 		Print(L"noskx64.exe is missing.\n");
 		return EFI_NOT_FOUND;
 	}
-	char __finf[sizeof(EFI_FILE_INFO) + 0x100]; // Path to kernel
+	
 	EFI_FILE_INFO* FileInfo = (EFI_FILE_INFO*)__finf;
 	
 	UINTN BufferSize = sizeof(EFI_FILE_INFO) + 0x100;
@@ -128,17 +134,18 @@ EFI_STATUS EFIAPI UefiEntry(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TABLE* Syst
 	PE_IMAGE_HDR* ImageHeader;
 	void* Vas;
 	UINT64 VasSize;
-	void* KernelBaseAddress = (void*)0xffff800000000000;
-	if(!BlLoadImage(KernelBuffer, &ImageHeader, &Vas, &VasSize, KernelBaseAddress)) {
+	void* KernelBaseAddress = NULL;
+	if(!BlLoadImage(KernelBuffer, &ImageHeader, &Vas, &VasSize, &KernelBaseAddress, NULL, NULL)) {
 		Print(L"Failed to load noskx64.exe, File maybe corrupt.\n");
 		return EFI_UNSUPPORTED;
 	}
-
+	// Free kernel file and close it
+	gBS->FreePool(KernelBuffer);
+	Kernel->Close(Kernel);
+	NosInitData.NosPhysicalBase = Vas;
 	NosInitData.NosKernelImageBase = KernelBaseAddress;
 	NosInitData.NosKernelImageSize = VasSize;
 	
-	Print(L"StartAddr : 0x%0X , Base : 0x%llu\n", ImageHeader->OptionnalHeader.EntryPointAddr, ImageHeader->ThirdHeader.ImageBase);
-
 	// Get the memory map
 	UINTN MapSize = 0, DescriptorSize = 0, MapKey = 0;
 	UINT32 DescriptorVersion = 0;

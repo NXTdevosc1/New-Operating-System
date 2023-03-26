@@ -3,7 +3,7 @@ FOR /R "./" %%S IN (*.asm) DO (
 )
 
 set srcfiles=*.c processor/*.c lock/*.c
-
-cl /O2 %srcfiles% /I../../inc "../../build/nos/assembly/*.obj" /Fo:../../build/nos/ /Fe:noskx64.exe /link /FIXED:no /LARGEADDRESSAWARE /BASE:0xffff800000000000 /ENTRY:NosKernelEntry /SUBSYSTEM:native
+set libsource=../../lib
+cl /O2 %srcfiles% /I../../inc "../../build/nos/assembly/*.obj" "%libsource%/syscruntime.lib" /KERNEL /Fo:../../build/nos/ /Fe:noskx64.exe /link /FIXED /LARGEADDRESSAWARE /BASE:0xffff800000000000 /ENTRY:NosKernelEntry /SUBSYSTEM:native
 
 copy noskx64.exe ..\..\diskimg\NewOS\System\

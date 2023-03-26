@@ -2,31 +2,31 @@
  * init.c
  * This file contains the initialization function of the Operating System Kernel
 */
-#define DEBUG 1
-#include <nos.h>
-#include <processor/processor.h>
-#include <lock/lock.h>
+#include <nos/nos.h>
+#include <stdlib.h>
 /*
  * The initialization entry point of the NOS Kernel
 */
+
+
 void __declspec(noreturn) NosSystemInit() {
     SerialLog("NOS_KERNEL : Kernel Booting...");
-    char bn[100];
-    CpuReadBrandName(bn);
-    SerialLog(bn);
-    for(UINT32 i = 0;i<0x10000;i++) {
-        ((UINT32*)NosInitData->FrameBuffer.BaseAddress)[i] = 0xff;
-    }
-    MUTEX mt;
-    KeInitMutex(&mt);
-    KeMutexEnter(NULL, &mt, 0);
-    KeMutexRelease((void*)NULL, &mt);
-    KeMutexEnter((void*)1, &mt, 0);
 
-    for(UINT32 i = 0;i<0x10000;i++) {
-        ((UINT32*)NosInitData->FrameBuffer.BaseAddress)[i] = 0xff00;
-    }
+    char bf[100];
+    _itoa(102, bf, 10);
+    SerialLog(bf);
+    SerialLog("PHYS_ADDR, VIRT_ADDR, SIZE");
+    _ui64toa((UINT64)NosInitData->NosPhysicalBase, bf, 0x10);
+    SerialLog(bf);
+    _ui64toa((UINT64)NosInitData->NosKernelImageBase, bf, 0x10);
+    SerialLog(bf);
+    _ui64toa((UINT64)NosInitData->NosKernelImageSize, bf, 0x10);
+    SerialLog(bf);
 
+    KiInitBootCpu();
+    KiDumpProcessors();
+
+    memset(NosInitData->FrameBuffer.BaseAddress, 0xFF, 0x10000);
     // NosInitData->EfiRuntimeServices->ResetSystem(EfiResetCold, 0, 0, NULL);
     for(;;);
 }

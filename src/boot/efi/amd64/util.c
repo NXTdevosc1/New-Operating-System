@@ -95,3 +95,12 @@ const char* ToHexStringUint64(UINT64 value)
     hexTo_StringOutput[size] = 0;
     return hexTo_StringOutput;
 }
+
+int strlen(char* str) {
+    int len = 0;
+    while(*str) {
+        str++;
+        len++;
+    }
+    return len;
+}

@@ -109,7 +109,7 @@ typedef struct {
     UINT32 LoaderFlags; // reserved must be 0
     UINT32 NumDataDirectories;
 } PE_WINDOWS_SPECIFIC_FIELDS;
-typedef struct {
+typedef struct __attribute__((packed)) {
     char name[8];
     UINT32 VirtualSize;
     UINT32 VirtualAddress;
@@ -234,10 +234,17 @@ const char* ToHexStringUint64(UINT64 value);
 void BlInitBootGraphics();
 
 // load.c
-BOOLEAN BlLoadImage(void* Buffer, PE_IMAGE_HDR** HdrStart, void** VirtualAddressSpace, UINT64* VasSize, void* BaseAddress);
+BOOLEAN BlLoadImage(
+    void* Buffer, // File Buffer
+    PE_IMAGE_HDR** HdrStart, // Returns Header Start
+    void** VirtualAddressSpace, // Returns Physical Address of the VAS
+    UINT64* VasSize, // Returns VAS Size in Bytes (Page Aligned)
+    void** ImageVirtualBaseAddress, // Returns Virtual Address of the loaded image
+    void* ImportingImageVas, // Importing image virtual address space
+    PIMAGE_IMPORT_DIRECTORY ImportingImageDir // Import directory of importing image
+);
 
 // map.c
-void BlMapToSystemSpace(void* Buffer, UINT64 Num2mbPages);
 extern NOS_INITDATA NosInitData;
 extern void* BlGetCurrentPageTable();
 void BlAllocateMemoryDescriptor(EFI_PHYSICAL_ADDRESS Address, UINT64 NumPages, BOOLEAN Allocated);
@@ -252,5 +259,9 @@ void BlMapMemory(
     UINT64 Count,
     UINT64 Flags);
 void BlInitSystemHeap(UINTN NumLargePages);
-void* BlAllocateSystemHeap(UINTN NumPages);
+void* BlAllocateSystemHeap(UINTN NumPages, void** VirtualAddress);
+void BlMapSystemSpace();
+
+int strlen(char* str);
+
 #define Convert2MBPages(NumBytes) ((NumBytes & 0x1FFFFF) ? ((NumBytes >> 21) + 1) : (NumBytes >> 21))

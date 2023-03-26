@@ -47,9 +47,9 @@ void BlInitPageTable() {
     // BlMapMemory(NosInitData.FrameBuffer.BaseAddress, NosInitData.FrameBuffer.BaseAddress, (NosInitData.FrameBuffer.FbSize >> 21) + 1, PM_LARGE_PAGES | PM_WRITEACCESS);
     // // Map the APIC
     // BlMapMemory((void*)0xfee00000, (void*)0xfee00000, 1, PM_WRITEACCESS | PM_LARGE_PAGES);
-    // Map the kernel to system space
-
-	BlMapMemory((void*)SystemSpaceBaseAddress, NosInitData.NosPhysicalBase, _NumSystemPages >> 9, PM_LARGE_PAGES | PM_WRITEACCESS | PM_GLOBAL);
+    // Map the System Space
+    BlMapSystemSpace();
+	
     BlMapMemory((void*)NosInitData.FrameBuffer.BaseAddress, NosInitData.FrameBuffer.BaseAddress, Convert2MBPages(NosInitData.FrameBuffer.FbSize >> 12), PM_LARGE_PAGES | PM_WRITEACCESS);
     __asm__ volatile ("mov %0, %%cr3" :: "r"(NosKernelPageTable));
 }

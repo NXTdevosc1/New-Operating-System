@@ -1,3 +1,2 @@
-#include <lock/lock.h>
-#include <nos.h>
+#include <nos/nos.h>
 

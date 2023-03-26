@@ -1,0 +1,4 @@
+This folder contains all the NOS libraries (.lib files and corresponding folder).
+Here are some libraries and their purpose :
+cruntime.lib : C Runtime Library, can be used in any operating mode
+noscrt.lib : NOs User Mode Library
