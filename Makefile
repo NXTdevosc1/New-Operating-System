@@ -1,7 +1,8 @@
 
 
 img:
-
+	make efiboot
+	make createfs
 clearimg:
 	dd if=/dev/zero of=build/uefi.img bs=512 count=93750
 

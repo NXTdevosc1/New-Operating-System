@@ -26,7 +26,7 @@ void BlAllocateMemoryDescriptor(EFI_PHYSICAL_ADDRESS Address, UINT64 NumPages, B
 
     if(!NosInitData.NosMemoryMap) NosInitData.NosMemoryMap = &MemoryLinkedList;
     if(MemoryLinkedList.Full == (UINT64)-1) {
-        SerialWrite("ERROR : Memory Linked List is full before kernel takeoff. Halting...");
+        BlSerialWrite("ERROR : Memory Linked List is full before kernel takeoff. Halting...");
         while(1); // Error
     }
     NOS_MEMORY_DESCRIPTOR* Desc;
@@ -72,7 +72,7 @@ void* BlAllocateOnePage() {
             return Addr;
         }
     }
-    SerialWrite("ERROR : Failed to allocate one page. Halting...");
+    BlSerialWrite("ERROR : Failed to allocate one page. Halting...");
     while(1);
 }
 
@@ -90,7 +90,7 @@ struct {
 // Expands the System Heap
 void BlInitSystemHeap(UINTN NumLargePages) {
     EFI_PHYSICAL_ADDRESS Memory;
-    if(EFI_ERROR(gBS->AllocatePages(AllocateAnyPages, EfiLoaderData, (NumLargePages << 9) + 0x101 /*Used to correct alignment*/, &Memory))) {
+    if(EFI_ERROR(gBS->AllocatePages(AllocateAnyPages, EfiLoaderData, (NumLargePages << 9) + 0x200 /*todo : use 0x101, Used to correct alignment*/, &Memory))) {
 		Print(L"InitSystemHeap failed : Failed to allocate memory\n");
         gBS->Exit(gImageHandle, EFI_BUFFER_TOO_SMALL, 0, NULL);
     }
@@ -101,8 +101,8 @@ void BlInitSystemHeap(UINTN NumLargePages) {
     // Reset heap offset
     _SysHeapLinkOffset = 0;
     _NumSystemPages += (NumLargePages << 9);
-    SerialWrite("System Heap:");
-    SerialWrite(ToHexStringUint64(Memory));
+    BlSerialWrite("System Heap:");
+    BlSerialWrite(BlToHexStringUint64(Memory));
 }
 
 /*
@@ -123,13 +123,19 @@ void* BlAllocateSystemHeap(UINTN NumPages, void** VirtualAddress) {
     void* PhysicalAddress = (void*)((char*)SystemHeapLinks[HeapLinkIndex].Addr + _SysHeapLinkOffset);
     _UsedSystemPages+=NumPages;
     _SysHeapLinkOffset+=(NumPages << 12);
+    Print(L"Allocating System Pages : %.16X\n", PhysicalAddress);
     return PhysicalAddress;
 }
 
 void BlMapSystemSpace() {
     char* Offset = __SysBase;
     for(int i = 0;i<_SysHeapLinkCount;i++) {
-        BlMapMemory(Offset, (void*)SystemHeapLinks[i].Addr, SystemHeapLinks[i].NumLargePages, PM_LARGE_PAGES | PM_GLOBAL | PM_WRITEACCESS);
+        BlSerialWrite("Mapping System Pages :");
+        BlSerialWrite(BlToHexStringUint64((UINT64)SystemHeapLinks[i].Addr));
+        BlSerialWrite(BlToHexStringUint64((UINT64)Offset));
+        BlSerialWrite(BlToHexStringUint64((UINT64)SystemHeapLinks[i].NumLargePages));
+
+        BlMapMemory(Offset, (void*)SystemHeapLinks[i].Addr, SystemHeapLinks[i].NumLargePages, PM_LARGE_PAGES | PM_WRITEACCESS);
         Offset += (SystemHeapLinks[i].NumLargePages << 21);
     }
 }

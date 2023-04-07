@@ -53,8 +53,10 @@ BOOLEAN BlLoadImage(
 		}
 		*HdrStart = Header;
 	}
+	
 	// Get virtual address buffer size
 	PE_SECTION_TABLE* Sections = (PE_SECTION_TABLE*)((char*)&Header->OptionnalHeader + Header->SizeofOptionnalHeader);
+	Print(L"OPT_HDR_SIZE : %d FALIGN : %d\n", Header->SizeofOptionnalHeader, Header->ThirdHeader.FileAlignment);
 	for(int i = 0;i<Header->NumSections;i++) {
 		if(Sections[i].Characteristics & ((PE_SECTION_CODE | PE_SECTION_INITIALIZED_DATA | PE_SECTION_UNINITIALIZED_DATA))) {
 			if(Sections[i].VirtualSize < Sections[i].SizeofRawData) Sections[i].VirtualSize = Sections[i].SizeofRawData;
@@ -70,14 +72,14 @@ BOOLEAN BlLoadImage(
 	Print(L"Image Physical Base : %.16x , Image Base : %.16x\n", ImageBase, *ImageVirtualBaseAddress);
 	VasBuffer = (void*)ImageBase;
 	// Copy section data to the VAS Buffer
-	for(UINT16 i = 0;i<Header->NumSections;i++) {
+	for(UINT32 i = 0;i<Header->NumSections;i++) {
 		PE_SECTION_TABLE* Section = Sections + i;
 		if (Section->Characteristics & (PE_SECTION_CODE | PE_SECTION_INITIALIZED_DATA | PE_SECTION_UNINITIALIZED_DATA)) {
-			Print(L"Copying section %s VADDR : %.16x PTR : %.16x, SZ : %.16x\n", (char*)Section->name, Section->VirtualAddress, Section->PtrToRawData, Section->VirtualSize);
-			CopyAlignedMemory((void*)((char*)VasBuffer + Section->VirtualAddress), (UINT64*)((char*)Buffer + Section->PtrToRawData), Section->SizeofRawData);
+			Print(L"Copying section %c%c%c%c VADDR : %.16x PTR : %.16x, SZ : %.16x\n", Section->name[0], Section->name[1], Section->name[2], Section->name[3], Section->VirtualAddress, Section->PtrToRawData, Section->VirtualSize);
+			BlCopyAlignedMemory((void*)((char*)VasBuffer + Section->VirtualAddress), (UINT64*)((char*)Buffer + Section->PtrToRawData), Section->SizeofRawData);
 			if (Section->VirtualSize > Section->SizeofRawData) {
 				UINT64 UninitializedDataSize = Section->VirtualSize - Section->SizeofRawData;
-				ZeroAlignedMemory((void*)((char*)VasBuffer + Section->VirtualAddress + Section->SizeofRawData), UninitializedDataSize);
+				BlZeroAlignedMemory((void*)((char*)VasBuffer + Section->VirtualAddress + Section->SizeofRawData), UninitializedDataSize);
 			}
 		}
 	}
@@ -113,7 +115,7 @@ BOOLEAN BlLoadImage(
 }
 
 int BlGetPeHeaderOffset(void* hdr) {
-	if (!isMemEqual(hdr, "MZ", 2)) return 0;
+	if (!BlisMemEqual(hdr, "MZ", 2)) return 0;
 	return *(int*)((char*)hdr + 0x3c);
 }
 
@@ -122,7 +124,7 @@ BOOLEAN BlCheckImageHeader(PE_IMAGE_HDR* hdr) {
 		hdr->ThirdHeader.Subsystem != 1 ||
 		hdr->MachineType != 0x8664 ||
 		hdr->SizeofOptionnalHeader < sizeof(PE_OPTIONAL_HEADER) ||
-		!isMemEqual(hdr->Signature, "PE\0\0", 4)
+		!BlisMemEqual(hdr->Signature, "PE\0\0", 4)
 		) {
 		return FALSE;
 	}
@@ -172,16 +174,20 @@ BOOLEAN Pe64LinkDllExports(
 		PIMAGE_EXPORT_DIRECTORY ExportDirectory = (PIMAGE_EXPORT_DIRECTORY)(VirtualBuffer + PeImage->OptionnalDataDirectories.ExportTable.VirtualAddress);// (DllBuffer + ExportDataSection->PtrToRawData + (PeImage->OptionnalDataDirectories.ExportTable.VirtualAddress - ExportDataSection->VirtualAddress));
 
 		
-		// SerialWrite("DLL Image Loaded. Linking to the target program...");
+		// BlSerialWrite("DLL Image Loaded. Linking to the target program...");
 
 		Print(L"ETVA : %.16x, ET : %.16x\n", PeImage->OptionnalDataDirectories.ExportTable.VirtualAddress, ExportDirectory);
 		Print(L"NR : %.16x, NPR : %.16x, EATR : %.16x\n", ExportDirectory->NameRva, ExportDirectory->NamePointerRva, ExportDirectory->ExportAddressTableRva);
 
 		UINT32* NamePtr = (UINT32*)(VirtualBuffer + ExportDirectory->NamePointerRva);
 		char* DllName = (char*)(VirtualBuffer + ExportDirectory->NameRva);
-		Print(L"Dll Name : %s\n", DllName);
+		char* tst = "test123";
+		Print(L"Test : %s\n", tst);
+		Print(L"Dll Name : %c%c%c%c\n", DllName[0], DllName[1],DllName[2],DllName[3]);
 		UINT64* ImportLookupTable = (UINT64*)((char*)ProgramVirtualBuffer + ImportDirectory->ImportLookupTable);
 		UINT64* ImportAddressTable = (UINT64*)((char*)ProgramVirtualBuffer + ImportDirectory->ImportAddressTableRva);
+
+		// while(1);
 
 		// PE_SECTION_TABLE* ExportSection = GetRvaSection(ExportDirectory->ExportAddressTableRva, PeImage);
 		// if (!ExportSection) return -1;
@@ -202,7 +208,7 @@ BOOLEAN Pe64LinkDllExports(
 				// Import By name
 				UINT32 HintNameRva = (UINT32)IMAGE_HINT_NAME_RVA(LookupEntry);
 				PIMAGE_HINT_NAME_TABLE entry = (PIMAGE_HINT_NAME_TABLE)((char*)ProgramVirtualBuffer + HintNameRva);
-				UINT64 ImportNameLen = strlen(entry->Name);
+				UINT64 ImportNameLen = BlStrlen(entry->Name);
 				
 				UINT32* n = NamePtr;
 				BOOLEAN SymbolFound = FALSE;
@@ -210,8 +216,8 @@ BOOLEAN Pe64LinkDllExports(
 				for (UINT32 i = 0; i < ExportDirectory->NumNamePointers; i++, n++) {
 					char* name = (char*)(VirtualBuffer + *n);
 
-					if (strlen(name) == ImportNameLen &&
-						isMemEqual(name, entry->Name, ImportNameLen)
+					if (BlStrlen(name) == ImportNameLen &&
+						BlisMemEqual(name, entry->Name, ImportNameLen)
 						) {
 						// Symbol Found
 						UINT16 Ordinal = ExportOrdinalTable[i];
@@ -236,7 +242,7 @@ BOOLEAN Pe64LinkDllExports(
 }
 
 extern EFI_FILE_PROTOCOL* OsSystemFolder;
-extern char __finf[sizeof(EFI_FILE_INFO) + 0x100];
+extern char __finf[];
 BOOLEAN Pe64LoadImports(
 	PE_IMAGE_HDR* PeImage,
 	void* VirtualBuffer,
@@ -247,8 +253,8 @@ BOOLEAN Pe64LoadImports(
 	while(ImportDirectory->NameRva){
 		// Before loading dll image is set with the target virtual address of the dll
 		char* DllName = (char*)VirtualBuffer + ImportDirectory->NameRva;
-		SerialWrite("Loading DLL :");
-		SerialWrite(DllName);
+		BlSerialWrite("Loading DLL :");
+		BlSerialWrite(DllName);
 		if(EFI_ERROR(AsciiStrToUnicodeStrS(DllName, ConvertedDllName, 0xFF))) {
 			
 			return FALSE;

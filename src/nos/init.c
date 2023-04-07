@@ -10,6 +10,7 @@
 
 
 void __declspec(noreturn) NosSystemInit() {
+    memset(NosInitData->FrameBuffer.BaseAddress, 0xFF, 0x1000);
     SerialLog("NOS_KERNEL : Kernel Booting...");
 
     char bf[100];
@@ -26,7 +27,6 @@ void __declspec(noreturn) NosSystemInit() {
     KiInitBootCpu();
     KiDumpProcessors();
 
-    memset(NosInitData->FrameBuffer.BaseAddress, 0xFF, 0x10000);
     // NosInitData->EfiRuntimeServices->ResetSystem(EfiResetCold, 0, 0, NULL);
     for(;;);
 }

@@ -98,9 +98,15 @@ EXPORT char * _itoa( int value, char *buffer, int radix ){
 
     else return 0;
 }
-char * _ltoa( long value, char *buffer, int radix );
-char * _ultoa( unsigned long value, char *buffer, int radix );
-char * _i64toa( long long value, char *buffer, int radix );
+EXPORT char * _ltoa( long value, char *buffer, int radix ) {
+    return NULL;
+}
+EXPORT char * _ultoa( unsigned long value, char *buffer, int radix ) {
+    return NULL;
+}
+EXPORT char * _i64toa( long long value, char *buffer, int radix ) {
+    return NULL;
+}
 EXPORT char * _ui64toa( unsigned long long value, char *buffer, int radix ){
     char* retbuff = buffer;
     if (radix == RADIX_DECIMAL) { // Base 10 : Decimal
@@ -177,8 +183,18 @@ EXPORT char * _ui64toa( unsigned long long value, char *buffer, int radix ){
     else return 0;
 }
 
-wchar_t * _itow( int value, wchar_t *buffer, int radix );
-wchar_t * _ltow( long value, wchar_t *buffer, int radix );
-wchar_t * _ultow( unsigned long value, wchar_t *buffer, int radix );
-wchar_t * _i64tow( long long value, wchar_t *buffer, int radix );
-wchar_t * _ui64tow( unsigned long long value, wchar_t *buffer, int radix );
+EXPORT wchar_t * _itow( int value, wchar_t *buffer, int radix ){
+    return NULL;
+}
+EXPORT wchar_t * _ltow( long value, wchar_t *buffer, int radix ){
+    return NULL;
+}
+EXPORT wchar_t * _ultow( unsigned long value, wchar_t *buffer, int radix ){
+    return NULL;
+}
+EXPORT wchar_t * _i64tow( long long value, wchar_t *buffer, int radix ){
+    return NULL;
+}
+EXPORT wchar_t * _ui64tow( unsigned long long value, wchar_t *buffer, int radix ){
+    return NULL;
+}

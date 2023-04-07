@@ -109,7 +109,7 @@ typedef struct {
     UINT32 LoaderFlags; // reserved must be 0
     UINT32 NumDataDirectories;
 } PE_WINDOWS_SPECIFIC_FIELDS;
-typedef struct __attribute__((packed)) {
+typedef struct {
     char name[8];
     UINT32 VirtualSize;
     UINT32 VirtualAddress;
@@ -224,11 +224,11 @@ typedef void __attribute__((noreturn)) (*NOS_ENTRY_POINT)(NOS_INITDATA* NosInitD
 
 // util.c
 BOOLEAN BlNullGuid(EFI_GUID Guid);
-BOOLEAN isMemEqual(void* a, void* b, UINT64 Count);
-void CopyAlignedMemory(void* _dest, void* _src, UINT64 NumBytes);
-void ZeroAlignedMemory(void* _dest, UINT64 NumBytes);
-const char* ToStringUint64(UINT64 value);
-const char* ToHexStringUint64(UINT64 value);
+BOOLEAN BlisMemEqual(void* a, void* b, UINT64 Count);
+void BlCopyAlignedMemory(void* _dest, void* _src, UINT64 NumBytes);
+void BlZeroAlignedMemory(void* _dest, UINT64 NumBytes);
+const char* BlToStringUint64(UINT64 value);
+const char* BlToHexStringUint64(UINT64 value);
 
 // bootgfx.c
 void BlInitBootGraphics();
@@ -249,7 +249,7 @@ extern NOS_INITDATA NosInitData;
 extern void* BlGetCurrentPageTable();
 void BlAllocateMemoryDescriptor(EFI_PHYSICAL_ADDRESS Address, UINT64 NumPages, BOOLEAN Allocated);
 void* BlAllocateOnePage();
-void SerialWrite(const char* Message);
+void BlSerialWrite(const char* Message);
 
 
 void BlInitPageTable();
@@ -262,6 +262,6 @@ void BlInitSystemHeap(UINTN NumLargePages);
 void* BlAllocateSystemHeap(UINTN NumPages, void** VirtualAddress);
 void BlMapSystemSpace();
 
-int strlen(char* str);
+int BlStrlen(char* str);
 
 #define Convert2MBPages(NumBytes) ((NumBytes & 0x1FFFFF) ? ((NumBytes >> 21) + 1) : (NumBytes >> 21))

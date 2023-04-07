@@ -17,7 +17,7 @@ BOOLEAN BlNullGuid(EFI_GUID Guid) {
  * Checks if the memory at "a" contains the same value as the memory at "b"
 */
 
-BOOLEAN isMemEqual(void* a, void* b, UINT64 Count) {
+BOOLEAN BlisMemEqual(void* a, void* b, UINT64 Count) {
 	for(UINT64 i = 0;i<Count;i++) {
 		if(((char*)a)[i] != ((char*)b)[i]) return FALSE;
 	}
@@ -25,13 +25,13 @@ BOOLEAN isMemEqual(void* a, void* b, UINT64 Count) {
 }
 
 
-void CopyAlignedMemory(void* _dest, void* _src, UINT64 NumBytes) {
+void BlCopyAlignedMemory(void* _dest, void* _src, UINT64 NumBytes) {
 	NumBytes >>= 3;
 	for(UINT64 i = 0;i<NumBytes;i++) {
 		((UINT64*)_dest)[i] = ((UINT64*)_src)[i];
 	}
 }
-void ZeroAlignedMemory(void* _dest, UINT64 NumBytes) {
+void BlZeroAlignedMemory(void* _dest, UINT64 NumBytes) {
 	NumBytes >>= 3;
 	for(UINT64 i = 0;i<NumBytes;i++) {
 		((UINT64*)_dest)[i] = 0;
@@ -42,7 +42,7 @@ void OutPortB(unsigned short port, unsigned char val) {
 	asm volatile ("outb %0, %1"::"a"(val),"Nd"(port));
 }
 
-void SerialWrite(const char* Message) {
+void BlSerialWrite(const char* Message) {
     while(*Message) {
         OutPortB(0x3F8, *Message);
         Message++;
@@ -51,7 +51,7 @@ void SerialWrite(const char* Message) {
 }
 
 char uintTo_StringOutput[128] = { 0 };
-const char* ToStringUint64(UINT64 value){
+const char* BlToStringUint64(UINT64 value){
     UINT8 size = 0;
     UINT64 sizeTest = value;
     while(sizeTest / 10 > 0)
@@ -75,7 +75,7 @@ const char* ToStringUint64(UINT64 value){
 
 char hexTo_StringOutput[0x100] = { 0 };
 
-const char* ToHexStringUint64(UINT64 value)
+const char* BlToHexStringUint64(UINT64 value)
 {
     UINT8 size = 0;
     unsigned long long ValTmp = value;
@@ -96,7 +96,7 @@ const char* ToHexStringUint64(UINT64 value)
     return hexTo_StringOutput;
 }
 
-int strlen(char* str) {
+int BlStrlen(char* str) {
     int len = 0;
     while(*str) {
         str++;

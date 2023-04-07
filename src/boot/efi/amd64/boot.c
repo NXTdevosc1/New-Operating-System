@@ -14,7 +14,7 @@ EFI_FILE_PROTOCOL* _OsRoots[MAX_OS_PARTITIONS] = {0};
 UINTN NumDrives = 0;
 UINTN NumPartitions = 0;
 UINTN NumOsPartitions = 0;
-char __finf[sizeof(EFI_FILE_INFO) + 0x200] = {0}; // Used to request file info
+char __finf[0x1000] = {0}; // Used to request file info
 
 
 
@@ -40,8 +40,10 @@ EFI_STATUS EFIAPI UefiEntry(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TABLE* Syst
 	gST = SystemTable;
 	gBS = SystemTable->BootServices;
 	gImageHandle = ImageHandle;
+	char* tst2 = "test123";
+		Print(L"Test Str : %s\n", tst2);
 	gBS->HandleProtocol(ImageHandle, &gEfiLoadedImageProtocolGuid, (void**)&LoadedImage);
-	// ZeroAlignedMemory(&NosInitData, sizeof(NOS_INITDATA));
+	// BlZeroAlignedMemory(&NosInitData, sizeof(NOS_INITDATA));
 	// Initialize Boot Graphics
 	BlInitBootGraphics();
 	
@@ -77,6 +79,8 @@ EFI_STATUS EFIAPI UefiEntry(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TABLE* Syst
 			if(NumOsPartitions == MAX_OS_PARTITIONS) break;
 		}
 	}
+
+	
 
 	if(!NumOsPartitions) {
 		Print(L"The Operating System doesn't seem to be found.\n");
@@ -120,12 +124,17 @@ EFI_STATUS EFIAPI UefiEntry(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TABLE* Syst
 	}
 	BufferSize = FileInfo->FileSize;
 	void* KernelBuffer;
-	
+
+	Print(L"Kernel File Size : %d\n", BufferSize);
+
 	if(EFI_ERROR(gBS->AllocatePool(EfiLoaderData, BufferSize, &KernelBuffer))) {
 		Print(L"Failed to allocate memory\n");
 		return EFI_UNSUPPORTED;
 	}
 	Kernel->Read(Kernel, &BufferSize, KernelBuffer);
+
+	char* tst = "test123";
+	Print(L"Test2 : %s\n", tst);
 
 	// Initialize System Heap
 	UINTN NumSystemPages = 1; // In 2MB Pages
@@ -176,8 +185,8 @@ EFI_STATUS EFIAPI UefiEntry(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TABLE* Syst
 		Print(L"Failed to exit boot services\n");
 		return EFI_UNSUPPORTED;
 	}
-	SerialWrite("Memory Count:");
-	SerialWrite(ToStringUint64(NosInitData.MemoryCount));
+	BlSerialWrite("Memory Count:");
+	BlSerialWrite(BlToStringUint64(NosInitData.MemoryCount));
 	// Fill NOS Memory Linked List with data
 	for(UINTN i = 0;i<NosInitData.MemoryCount;i++) {
 		EFI_MEMORY_DESCRIPTOR* Desc = (EFI_MEMORY_DESCRIPTOR*)((char*)NosInitData.MemoryMap + NosInitData.MemoryDescriptorSize * i);
@@ -200,13 +209,15 @@ EFI_STATUS EFIAPI UefiEntry(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TABLE* Syst
 	NosInitData.EfiRuntimeServices = gST->RuntimeServices;
 	
 	
-	SerialWrite("Booted successfully.");
-	
+	BlSerialWrite("Booted successfully.");
 	NOS_ENTRY_POINT NosEntryPoint = (NOS_ENTRY_POINT)((UINT64)KernelBaseAddress + (UINT64)ImageHeader->OptionnalHeader.EntryPointAddr);
+	BlSerialWrite(BlToHexStringUint64((UINT64)NosEntryPoint));
+	
+	BlSerialWrite(BlToHexStringUint64(*(UINT64*)NosEntryPoint));
 
 
 	NosEntryPoint(&NosInitData); // INIT_DATA Passed through RDI using GCC Calling Convention
-	SerialWrite("ERROR : NOS_RETURNED");
+	BlSerialWrite("ERROR : NOS_RETURNED");
 	while(1) asm ("hlt");
 	return EFI_UNSUPPORTED;
 }

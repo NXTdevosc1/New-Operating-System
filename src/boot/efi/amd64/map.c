@@ -29,7 +29,7 @@ extern EFI_LOADED_IMAGE* LoadedImage;
 extern UINTN _NumSystemPages;
 void BlInitPageTable() {
     NosKernelPageTable = (RFPTENTRY*)BlAllocateOnePage();
-    ZeroAlignedMemory((void*)NosKernelPageTable, 0x1000);
+    BlZeroAlignedMemory((void*)NosKernelPageTable, 0x1000);
     
     for(UINT64 i = 0;i<NosInitData.MemoryCount;i++) {
         EFI_MEMORY_DESCRIPTOR* Desc = (EFI_MEMORY_DESCRIPTOR*)((char*)NosInitData.MemoryMap + i * NosInitData.MemoryDescriptorSize);
@@ -51,6 +51,11 @@ void BlInitPageTable() {
     BlMapSystemSpace();
 	
     BlMapMemory((void*)NosInitData.FrameBuffer.BaseAddress, NosInitData.FrameBuffer.BaseAddress, Convert2MBPages(NosInitData.FrameBuffer.FbSize >> 12), PM_LARGE_PAGES | PM_WRITEACCESS);
+    // Enable Page Size Extension
+    UINT64 CR4;
+    __asm__ volatile("mov %%cr4, %0" : "=r"(CR4));
+    CR4 |= (1 << 4);
+    __asm__ volatile("mov %0, %%cr4" :: "r"(CR4));
     __asm__ volatile ("mov %0, %%cr3" :: "r"(NosKernelPageTable));
 }
 
@@ -102,7 +107,7 @@ void BlMapMemory(
             // Pml4Entry[Pml4Index].UserSupervisor = 1;
             
 
-            ZeroAlignedMemory((void*)EntryAddr, 0x1000);
+            BlZeroAlignedMemory((void*)EntryAddr, 0x1000);
         }else EntryAddr = (UINT64)Pml4Entry[Pml4Index].PhysicalAddr << 12;
         
         PdpEntry = (RFPTENTRY)EntryAddr;
@@ -115,7 +120,7 @@ void BlMapMemory(
             PdpEntry[PdpIndex].ReadWrite = 1;
             // PdpEntry[PdpIndex].UserSupervisor = 1;
 
-            ZeroAlignedMemory((void*)EntryAddr, 0x1000);
+            BlZeroAlignedMemory((void*)EntryAddr, 0x1000);
         }else EntryAddr = (UINT64)PdpEntry[PdpIndex].PhysicalAddr << 12;
         PdEntry = (RFPTENTRY)EntryAddr;
 
@@ -131,7 +136,7 @@ void BlMapMemory(
                 PdEntry[PdIndex].ReadWrite = 1;
                 // PdEntry[PdIndex].UserSupervisor = 1;
 
-                ZeroAlignedMemory((void*)EntryAddr, 0x1000);
+                BlZeroAlignedMemory((void*)EntryAddr, 0x1000);
 
             }else EntryAddr = (UINT64)PdEntry[PdIndex].PhysicalAddr << 12;
 
