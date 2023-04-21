@@ -1,10 +1,6 @@
+#define __CRT_SRC
 #include <crt.h>
-typedef unsigned short wchar_t;
-#define RADIX_DECIMAL 10
-#define RADIX_HEXADECIMAL 0x10
-#define RADIX_BINARY 1
-#define NULL (void*)0
-#define EXPORT __declspec(dllexport)
+
 
 int DllMain() {
     return 0;

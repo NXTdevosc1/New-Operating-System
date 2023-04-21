@@ -7,14 +7,16 @@
  * The initialization entry point of the NOS Kernel
 */
 
+char bf[100];
 
 void __declspec(noreturn) NosSystemInit() {
     // memset(NosInitData->FrameBuffer.BaseAddress, 0xFF, 0x1000);
     SerialLog("NOS_KERNEL : Kernel Booting...");
 
-    char bf[100];
+    
     _itoa(102, bf, 10);
     SerialLog(bf);
+    
     SerialLog("PHYS_ADDR, VIRT_ADDR, SIZE");
     _ui64toa((UINT64)NosInitData->NosPhysicalBase, bf, 0x10);
     SerialLog(bf);
