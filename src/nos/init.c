@@ -3,7 +3,6 @@
  * This file contains the initialization function of the Operating System Kernel
 */
 #include <nos/nos.h>
-#include <stdlib.h>
 /*
  * The initialization entry point of the NOS Kernel
 */

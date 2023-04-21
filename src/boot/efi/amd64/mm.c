@@ -90,11 +90,11 @@ struct {
 // Expands the System Heap
 void BlInitSystemHeap(UINTN NumLargePages) {
     EFI_PHYSICAL_ADDRESS Memory;
-    if(EFI_ERROR(gBS->AllocatePages(AllocateAnyPages, EfiLoaderData, (NumLargePages << 9) + 0x200 /*todo : use 0x101, Used to correct alignment*/, &Memory))) {
+    if(EFI_ERROR(gBS->AllocatePages(AllocateAnyPages, EfiLoaderData, (NumLargePages << 9), &Memory))) {
 		Print(L"InitSystemHeap failed : Failed to allocate memory\n");
         gBS->Exit(gImageHandle, EFI_BUFFER_TOO_SMALL, 0, NULL);
     }
-    Memory += 0x200000 - (Memory & 0x1FFFFF);
+    // Memory += 0x200000 - (Memory & 0x1FFFFF);
     SystemHeapLinks[_SysHeapLinkCount].Addr = Memory;
     SystemHeapLinks[_SysHeapLinkCount].NumLargePages = NumLargePages;
     _SysHeapLinkCount++;

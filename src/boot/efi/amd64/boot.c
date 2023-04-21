@@ -35,13 +35,13 @@ char __finf[0x1000] = {0}; // Used to request file info
  * - ExitBootServices
  * - Jump to the kernel
 */
+char* tst2 = "test123";
 EFI_STATUS EFIAPI UefiEntry(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TABLE* SystemTable) {
 	// Initialize Global Variables
 	gST = SystemTable;
 	gBS = SystemTable->BootServices;
 	gImageHandle = ImageHandle;
-	char* tst2 = "test123";
-		Print(L"Test Str : %s\n", tst2);
+		Print(L"Test Str : %a\n", tst2);
 	gBS->HandleProtocol(ImageHandle, &gEfiLoadedImageProtocolGuid, (void**)&LoadedImage);
 	// BlZeroAlignedMemory(&NosInitData, sizeof(NOS_INITDATA));
 	// Initialize Boot Graphics
@@ -134,7 +134,7 @@ EFI_STATUS EFIAPI UefiEntry(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TABLE* Syst
 	Kernel->Read(Kernel, &BufferSize, KernelBuffer);
 
 	char* tst = "test123";
-	Print(L"Test2 : %s\n", tst);
+	Print(L"Test2 : %a\n", tst);
 
 	// Initialize System Heap
 	UINTN NumSystemPages = 1; // In 2MB Pages

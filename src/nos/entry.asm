@@ -14,8 +14,6 @@ NosKernelEntry:
     mov rbx, NosInitData
     mov [rbx], rdi
 
-    mov rax, 0xff32
-    jmp $
 
     jmp NosSystemInit
     hlt

@@ -182,7 +182,7 @@ BOOLEAN Pe64LinkDllExports(
 		UINT32* NamePtr = (UINT32*)(VirtualBuffer + ExportDirectory->NamePointerRva);
 		char* DllName = (char*)(VirtualBuffer + ExportDirectory->NameRva);
 		char* tst = "test123";
-		Print(L"Test : %s\n", tst);
+		Print(L"Test : %a\n", tst);
 		Print(L"Dll Name : %c%c%c%c\n", DllName[0], DllName[1],DllName[2],DllName[3]);
 		UINT64* ImportLookupTable = (UINT64*)((char*)ProgramVirtualBuffer + ImportDirectory->ImportLookupTable);
 		UINT64* ImportAddressTable = (UINT64*)((char*)ProgramVirtualBuffer + ImportDirectory->ImportAddressTableRva);
@@ -212,7 +212,7 @@ BOOLEAN Pe64LinkDllExports(
 				
 				UINT32* n = NamePtr;
 				BOOLEAN SymbolFound = FALSE;
-				Print(L"Searching Symbol : %s\n", entry->Name);
+				Print(L"Searching Symbol : %a\n", entry->Name);
 				for (UINT32 i = 0; i < ExportDirectory->NumNamePointers; i++, n++) {
 					char* name = (char*)(VirtualBuffer + *n);
 
@@ -223,6 +223,7 @@ BOOLEAN Pe64LinkDllExports(
 						UINT16 Ordinal = ExportOrdinalTable[i];
 						UINT32 Rva = ExportAddressTable[Ordinal];
 						UINT64 base = (UINT64)((UINT64)DllVirtualBase + Rva);
+						Print(L"Symbol Found, base : %.16x\n", base);
 						*ImportAddressTable = base;
 
 						SymbolFound = TRUE;
@@ -230,7 +231,7 @@ BOOLEAN Pe64LinkDllExports(
 					}
 				}
 				if (!SymbolFound) {
-					Print(L"EXPORT SYMBOL %s NOT FOUND\n", entry->Name);
+					Print(L"EXPORT SYMBOL %a NOT FOUND\n", entry->Name);
 					return FALSE;
 				}
 			}

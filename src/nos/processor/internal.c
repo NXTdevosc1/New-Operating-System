@@ -1,5 +1,4 @@
 #include <nos/processor/processor.h>
-#include <intrin.h>
 
 void CpuReadBrandName(char* Name) {
     CPUID_DATA CpuDump;
