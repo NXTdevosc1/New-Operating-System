@@ -69,7 +69,7 @@ BOOLEAN BlLoadImage(
 
 	// Allocate 2MB Aligned pages
 	ImageBase = (EFI_PHYSICAL_ADDRESS)BlAllocateSystemHeap(VasBufferSize >> 12, ImageVirtualBaseAddress);
-	Print(L"Image Physical Base : %.16x , Image Base : %.16x\n", ImageBase, *ImageVirtualBaseAddress);
+	Print(L"Image Physical Base : %.16x , Image Base : %.16x, Entry point : %.16x\n", ImageBase, *ImageVirtualBaseAddress, Header->OptionnalHeader.EntryPointAddr);
 	VasBuffer = (void*)ImageBase;
 	// Copy section data to the VAS Buffer
 	for(UINT32 i = 0;i<Header->NumSections;i++) {
@@ -223,7 +223,7 @@ BOOLEAN Pe64LinkDllExports(
 						UINT16 Ordinal = ExportOrdinalTable[i];
 						UINT32 Rva = ExportAddressTable[Ordinal];
 						UINT64 base = (UINT64)((UINT64)DllVirtualBase + Rva);
-						Print(L"Symbol Found, base : %.16x\n", base);
+						Print(L"Symbol Found, base : %.16x, IAT_TARGET : %.16x, RVA : %.16x\n", base, ImportAddressTable, (UINT64)Rva);
 						*ImportAddressTable = base;
 
 						SymbolFound = TRUE;

@@ -149,7 +149,7 @@ EFI_STATUS EFIAPI UefiEntry(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TABLE* Syst
 		return EFI_UNSUPPORTED;
 	}
 	// Free kernel file and close it
-	gBS->FreePool(KernelBuffer);
+	// gBS->FreePool(KernelBuffer); // Do not free pool kernel buffer because we still need the header
 	Kernel->Close(Kernel);
 	NosInitData.NosPhysicalBase = Vas;
 	NosInitData.NosKernelImageBase = KernelBaseAddress;

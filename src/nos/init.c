@@ -9,7 +9,7 @@
 
 
 void __declspec(noreturn) NosSystemInit() {
-    memset(NosInitData->FrameBuffer.BaseAddress, 0xFF, 0x1000);
+    // memset(NosInitData->FrameBuffer.BaseAddress, 0xFF, 0x1000);
     SerialLog("NOS_KERNEL : Kernel Booting...");
 
     char bf[100];
