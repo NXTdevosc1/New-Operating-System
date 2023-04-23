@@ -1,5 +1,5 @@
-#include <nos/processor/processor.h>
 #include <nos/nos.h>
+#include <nos/processor/processor.h>
 typedef struct _PROCESSOR_LINKED_LIST PROCESSOR_LINKED_LIST;
 struct _PROCESSOR_LINKED_LIST {
     UINT Index;
@@ -37,7 +37,7 @@ void KiDumpProcessors() {
         l = l->Next;
     } while(l);
 }
-BOOLEAN NOSAPI KeRegisterProcessor(IN char* ProcessorName, OUT OPT UINT64* ProcessorId) {
+BOOLEAN NSYSAPI KeRegisterProcessor(IN char* ProcessorName, OUT OPT UINT64* ProcessorId) {
     if(!ProcessorName) return FALSE;
     PROCESSOR* Processor = &ProcessorTable.LastProcessorList->Processors[ProcessorTable.LastProcessorList->Index];
     Processor->ProcessorId = ProcessorTable.NumProcessors;

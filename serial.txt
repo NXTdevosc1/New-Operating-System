@@ -6,17 +6,17 @@ Test Str : test123
 Num partition handles : 195
 Data partition found.
 Boot partition and boot drive selected successfully.
-Kernel File Size : 6144
+Kernel File Size : 7680
 Test2 : test123
 System Heap:
 7E200000
 OPT_HDR_SIZE : 240 FALIGN : 512
 Allocating System Pages : 000000007E200000
 Image Physical Base : 000000007E200000 , Image Base : 0000000000000000, Entry point : 0000000000001000
-Copying section .tex VADDR : 0000000000001000 PTR : 0000000000000400, SZ : 0000000000000600
-Copying section .rda VADDR : 0000000000002000 PTR : 0000000000000A00, SZ : 0000000000000600
-Copying section .dat VADDR : 0000000000003000 PTR : 0000000000001000, SZ : 0000000000000600
-Copying section .pda VADDR : 0000000000004000 PTR : 0000000000001600, SZ : 0000000000000200
+Copying section .tex VADDR : 0000000000001000 PTR : 0000000000000400, SZ : 0000000000000C00
+Copying section .rda VADDR : 0000000000002000 PTR : 0000000000001000, SZ : 0000000000000600
+Copying section .dat VADDR : 0000000000003000 PTR : 0000000000001600, SZ : 0000000000000600
+Copying section .pda VADDR : 0000000000004000 PTR : 0000000000001C00, SZ : 0000000000000200
 Loading DLL :
 syscruntime.dll
 File Size : 3584 bytes
@@ -33,10 +33,8 @@ Test : test123
 Dll Name : sysc
 Searching Symbol : _itoa
 Symbol Found, base : 0000000000006010, IAT_TARGET : 000000007E202000, RVA : 0000000000001010
-Searching Symbol : memset
-Symbol Found, base : 0000000000006370, IAT_TARGET : 000000007E202008, RVA : 0000000000001370
 Searching Symbol : _ui64toa
-Symbol Found, base : 00000000000061C0, IAT_TARGET : 000000007E202010, RVA : 00000000000011C0
+Symbol Found, base : 00000000000061C0, IAT_TARGET : 000000007E202008, RVA : 00000000000011C0
 Memory Count:
 101
 Mapping System Pages :
@@ -66,11 +64,11 @@ Physical Memory Entry : (Attributes, PhysStart, NumPages)
 502096
 Physical Memory Entry : (Attributes, PhysStart, NumPages)
 7BF56000
-8392
+8388
 Allocated
 Physical Memory Entry : (Attributes, PhysStart, NumPages)
-7E34D000
-34
+7E34B000
+36
 Allocated
 Allocated
 Physical Memory Entry : (Attributes, PhysStart, NumPages)
@@ -81,7 +79,14 @@ Physical Memory Entry : (Attributes, PhysStart, NumPages)
 524288
 Allocated
 Used Memory, Free Memory, Total Memory (In Bytes)
-12316672
-4239097856
+12324864
+4239089664
 4251414528
 _______________________________________
+Testing Memory Allocations
+Allocating New NOS_MEMORY_LINKED_LIST
+Allocating New NOS_MEMORY_LINKED_LIST
+Allocating New NOS_MEMORY_LINKED_LIST
+Allocating New NOS_MEMORY_LINKED_LIST
+Allocating New NOS_MEMORY_LINKED_LIST
+Failed to allocate new NOS_MEMORY_LINKED_LIST

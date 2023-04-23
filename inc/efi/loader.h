@@ -39,6 +39,7 @@ typedef struct _NOS_MEMORY_LINKED_LIST {
         NOS_MEMORY_DESCRIPTOR MemoryDescriptors[64];
     } Groups[0x40];
     NOS_MEMORY_LINKED_LIST* Next;
+    UINT8 AdditionnalBuffer[0x2000]; // For the kernel
 } NOS_MEMORY_LINKED_LIST;
 
 typedef enum _PAGE_MAP_FLAGS {

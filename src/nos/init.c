@@ -29,7 +29,17 @@ void __declspec(noreturn) NosSystemInit() {
     KiInitBootCpu();
     KiDumpProcessors();
     KiDumpPhysicalMemoryEntries();
-    memset(NosInitData->FrameBuffer.BaseAddress, 0xFF, NosInitData->FrameBuffer.Pitch * NosInitData->FrameBuffer.VerticalResolution);
+    void *p = NULL;
+    SerialLog("Testing Memory Allocations");
+    memset(NosInitData->FrameBuffer.BaseAddress, 0x20, NosInitData->FrameBuffer.Pitch * 4 * NosInitData->FrameBuffer.VerticalResolution);
+
+    for(int i = 0;i<50000000;i++) {
+        KeAllocatePhysicalMemory(0, 1, &p);
+        // _ui64toa((UINT64)p, bf, 0x10);
+        // SerialLog(bf);
+    }
+    KiDumpPhysicalMemoryEntries();
+    memset(NosInitData->FrameBuffer.BaseAddress, 0xFF, NosInitData->FrameBuffer.Pitch * 4 * NosInitData->FrameBuffer.VerticalResolution);
     // NosInitData->EfiRuntimeServices->ResetSystem(EfiResetCold, 0, 0, NULL);
-    for(;;);
+    for(;;) __halt();
 }
