@@ -97,17 +97,18 @@ BOOLEAN BlLoadImage(
 		}
 	}
 	if(Header->OptionnalDataDirectories.ExportTable.VirtualAddress) {
-		if(!ImportingImageVas) return FALSE; // executable image containing export table
-		// Export symbols to parent image
-			Print(L"EXPORTS\n");
+		if(ImportingImageVas) {
+			// Export symbols to parent image
+				Print(L"EXPORTS\n");
 
-		if(!Pe64LinkDllExports(
-			Header,
-			VasBuffer,
-			ImportingImageVas,
-			ImportingImageDir,
-			*ImageVirtualBaseAddress
-		)) return FALSE;
+			if(!Pe64LinkDllExports(
+				Header,
+				VasBuffer,
+				ImportingImageVas,
+				ImportingImageDir,
+				*ImageVirtualBaseAddress
+			)) return FALSE;
+		} // otherwise no need to use image exported symbols
 	}
 	*VirtualAddressSpace = VasBuffer;
 	*VasSize = VasBufferSize;

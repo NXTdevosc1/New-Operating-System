@@ -43,19 +43,16 @@ void BlInitPageTable() {
             BlMapMemory((void*)Desc->PhysicalStart, (void*)Desc->PhysicalStart, Desc->NumberOfPages, PM_WRITEACCESS);
         }
     }
-    // // Map frame buffer
-    // BlMapMemory(NosInitData.FrameBuffer.BaseAddress, NosInitData.FrameBuffer.BaseAddress, (NosInitData.FrameBuffer.FbSize >> 21) + 1, PM_LARGE_PAGES | PM_WRITEACCESS);
-    // // Map the APIC
-    // BlMapMemory((void*)0xfee00000, (void*)0xfee00000, 1, PM_WRITEACCESS | PM_LARGE_PAGES);
-    // Map the System Space
+        // Map the System Space
     BlMapSystemSpace();
 	
-    BlMapMemory((void*)NosInitData.FrameBuffer.BaseAddress, NosInitData.FrameBuffer.BaseAddress, Convert2MBPages(NosInitData.FrameBuffer.FbSize >> 12), PM_LARGE_PAGES | PM_WRITEACCESS);
+    BlMapMemory((void*)NosInitData.FrameBuffer.BaseAddress, NosInitData.FrameBuffer.BaseAddress, Convert2MBPages(NosInitData.FrameBuffer.FbSize), PM_LARGE_PAGES | PM_WRITEACCESS);
     // Enable Page Size Extension
     UINT64 CR4;
     __asm__ volatile("mov %%cr4, %0" : "=r"(CR4));
     CR4 |= (1 << 4);
     __asm__ volatile("mov %0, %%cr4" :: "r"(CR4));
+    // Set the new page table
     __asm__ volatile ("mov %0, %%cr3" :: "r"(NosKernelPageTable));
 }
 

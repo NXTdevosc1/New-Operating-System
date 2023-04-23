@@ -9,8 +9,9 @@
 
 char bf[100];
 
+extern void NOSINTERNAL KiDumpPhysicalMemoryEntries();
+
 void __declspec(noreturn) NosSystemInit() {
-    // memset(NosInitData->FrameBuffer.BaseAddress, 0xFF, 0x1000);
     SerialLog("NOS_KERNEL : Kernel Booting...");
 
     
@@ -27,7 +28,8 @@ void __declspec(noreturn) NosSystemInit() {
 
     KiInitBootCpu();
     KiDumpProcessors();
-
+    KiDumpPhysicalMemoryEntries();
+    memset(NosInitData->FrameBuffer.BaseAddress, 0xFF, NosInitData->FrameBuffer.Pitch * NosInitData->FrameBuffer.VerticalResolution);
     // NosInitData->EfiRuntimeServices->ResetSystem(EfiResetCold, 0, 0, NULL);
     for(;;);
 }
