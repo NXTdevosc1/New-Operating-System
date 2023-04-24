@@ -39,4 +39,6 @@ void NOSINTERNAL KiDumpPhysicalMemoryEntries() {
     _ui64toa(AllocatedMemory + FreeMemory, format, 10);
     SerialLog(format);
     SerialLog("_______________________________________");
+    NosInitData->AllocatedPagesCount = AllocatedMemory >> 12;
+    NosInitData->TotalPagesCount = (AllocatedMemory + FreeMemory) >> 12;
 }

@@ -6,17 +6,17 @@ Test Str : test123
 Num partition handles : 195
 Data partition found.
 Boot partition and boot drive selected successfully.
-Kernel File Size : 7680
+Kernel File Size : 8704
 Test2 : test123
 System Heap:
 7E200000
 OPT_HDR_SIZE : 240 FALIGN : 512
 Allocating System Pages : 000000007E200000
 Image Physical Base : 000000007E200000 , Image Base : 0000000000000000, Entry point : 0000000000001000
-Copying section .tex VADDR : 0000000000001000 PTR : 0000000000000400, SZ : 0000000000000C00
-Copying section .rda VADDR : 0000000000002000 PTR : 0000000000001000, SZ : 0000000000000600
-Copying section .dat VADDR : 0000000000003000 PTR : 0000000000001600, SZ : 0000000000000600
-Copying section .pda VADDR : 0000000000004000 PTR : 0000000000001C00, SZ : 0000000000000200
+Copying section .tex VADDR : 0000000000001000 PTR : 0000000000000400, SZ : 0000000000000E00
+Copying section .rda VADDR : 0000000000002000 PTR : 0000000000001200, SZ : 0000000000000800
+Copying section .dat VADDR : 0000000000003000 PTR : 0000000000001A00, SZ : 0000000000000600
+Copying section .pda VADDR : 0000000000004000 PTR : 0000000000002000, SZ : 0000000000000200
 Loading DLL :
 syscruntime.dll
 File Size : 3584 bytes
@@ -68,7 +68,7 @@ Physical Memory Entry : (Attributes, PhysStart, NumPages)
 Allocated
 Physical Memory Entry : (Attributes, PhysStart, NumPages)
 7E34B000
-36
+35
 Allocated
 Allocated
 Physical Memory Entry : (Attributes, PhysStart, NumPages)
@@ -79,14 +79,39 @@ Physical Memory Entry : (Attributes, PhysStart, NumPages)
 524288
 Allocated
 Used Memory, Free Memory, Total Memory (In Bytes)
-12324864
-4239089664
+12328960
+4239085568
 4251414528
 _______________________________________
 Testing Memory Allocations
-Allocating New NOS_MEMORY_LINKED_LIST
-Allocating New NOS_MEMORY_LINKED_LIST
-Allocating New NOS_MEMORY_LINKED_LIST
-Allocating New NOS_MEMORY_LINKED_LIST
-Allocating New NOS_MEMORY_LINKED_LIST
-Failed to allocate new NOS_MEMORY_LINKED_LIST
+finish
+Allocated
+Allocated
+Allocated
+Allocated
+Physical Memory Entry : (Attributes, PhysStart, NumPages)
+75826000
+26384
+Physical Memory Entry : (Attributes, PhysStart, NumPages)
+7BF56000
+8388
+Allocated
+Physical Memory Entry : (Attributes, PhysStart, NumPages)
+7E34B000
+35
+Allocated
+Allocated
+Physical Memory Entry : (Attributes, PhysStart, NumPages)
+7FE00000
+126
+Physical Memory Entry : (Attributes, PhysStart, NumPages)
+180000000
+0
+Allocated
+Allocated
+Allocated
+Used Memory, Free Memory, Total Memory (In Bytes)
+4108328960
+143085568
+4251414528
+_______________________________________

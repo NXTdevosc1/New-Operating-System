@@ -28,6 +28,7 @@ NSTATUS KRNLAPI MmAllocateLowMemory(
         Align = 0x40000000;
         NumPages <<= 18;
     }
+    if(NosInitData->TotalPagesCount - NosInitData->AllocatedPagesCount < NumPages) return STATUS_UNSUFFICIENT_MEMORY;
     UINT64 NumBytes = NumPages << 12;
     while(PhysicalMem) {
         for(int c = 0;c<0x40;c++) {
@@ -46,11 +47,25 @@ NSTATUS KRNLAPI MmAllocateLowMemory(
                         if(BytesToAlign(Mem->PhysicalAddress, Align)) {
                             MmCreateMemoryDescriptor(Mem->PhysicalAddress, Mem->Attributes, BytesToAlign(Mem->PhysicalAddress, Align) >> 12);
                         }
-                        MmCreateMemoryDescriptor((void*)((UINT64)Mem->PhysicalAddress + BytesToAlign(Mem->PhysicalAddress, Align)), MM_DESCRIPTOR_ALLOCATED, NumPages);
+                        if(!(Flags & MM_ALLOCATE_WITHOUT_DESCRIPTOR)) {
+                            MmCreateMemoryDescriptor((void*)((UINT64)Mem->PhysicalAddress + BytesToAlign(Mem->PhysicalAddress, Align)), MM_DESCRIPTOR_ALLOCATED, NumPages);
+                        }
                         *Ptr = (void*)((UINT64)Mem->PhysicalAddress + BytesToAlign(Mem->PhysicalAddress, Align));
                         (UINT64)Mem->PhysicalAddress += BytesToAlign(Mem->PhysicalAddress, Align) + NumBytes;
                         Mem->NumPages -= NumPages + (BytesToAlign(Mem->PhysicalAddress, Align) >> 12);
-                        _bittestandreset(&Mem->Attributes, MM_DESCRIPTOR_BUSY);
+                        
+                        if(!Mem->NumPages) {
+                            // Remove descriptor
+                            Mem->Attributes = 0;
+                            _bittestandreset64(&PhysicalMem->Groups[c].Present, Index);
+                            _bittestandreset64(&PhysicalMem->Full, c);
+                        }
+                        else _bittestandreset(&Mem->Attributes, MM_DESCRIPTOR_BUSY);
+                        
+                        
+                        
+                        _interlockedadd64(&NosInitData->AllocatedPagesCount, NumPages);
+
                         return STATUS_SUCCESS;
                     }
                     _bittestandreset(&Mem->Attributes, MM_DESCRIPTOR_BUSY);
@@ -59,6 +74,7 @@ NSTATUS KRNLAPI MmAllocateLowMemory(
         }
         PhysicalMem = PhysicalMem->Next;
     }
+    SerialLog("Unsufficient mem");
     return STATUS_UNSUFFICIENT_MEMORY;
 }
 
@@ -83,6 +99,8 @@ NSTATUS KRNLAPI MmAllocateHighMemory(
         Align = 0x40000000;
         NumPages <<= 18;
     }
+    if(NosInitData->TotalPagesCount - NosInitData->AllocatedPagesCount < NumPages) return STATUS_UNSUFFICIENT_MEMORY;
+
     UINT64 NumBytes = NumPages << 12;
     while(PhysicalMem) {
         for(int c = 0;c<0x40;c++) {
@@ -100,11 +118,15 @@ NSTATUS KRNLAPI MmAllocateHighMemory(
                         if(BytesToAlign(Mem->PhysicalAddress, Align)) {
                             MmCreateMemoryDescriptor(Mem->PhysicalAddress, Mem->Attributes, BytesToAlign(Mem->PhysicalAddress, Align) >> 12);
                         }
-                        MmCreateMemoryDescriptor((void*)((UINT64)Mem->PhysicalAddress + BytesToAlign(Mem->PhysicalAddress, Align)), MM_DESCRIPTOR_ALLOCATED, NumPages);
+                        if(!(Flags & MM_ALLOCATE_WITHOUT_DESCRIPTOR)) {
+                            MmCreateMemoryDescriptor((void*)((UINT64)Mem->PhysicalAddress + BytesToAlign(Mem->PhysicalAddress, Align)), MM_DESCRIPTOR_ALLOCATED, NumPages);
+                        }
                         *Ptr = (void*)((UINT64)Mem->PhysicalAddress + BytesToAlign(Mem->PhysicalAddress, Align));
                         (UINT64)Mem->PhysicalAddress += BytesToAlign(Mem->PhysicalAddress, Align) + NumBytes;
                         Mem->NumPages -= NumPages + (BytesToAlign(Mem->PhysicalAddress, Align) >> 12);
                         _bittestandreset(&Mem->Attributes, MM_DESCRIPTOR_BUSY);
+                        _interlockedadd64(&NosInitData->AllocatedPagesCount, NumPages);
+
                         return STATUS_SUCCESS;
                     }
                     

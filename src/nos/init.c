@@ -9,6 +9,7 @@
 
 char bf[100];
 
+
 extern void NOSINTERNAL KiDumpPhysicalMemoryEntries();
 
 void __declspec(noreturn) NosSystemInit() {
@@ -32,14 +33,15 @@ void __declspec(noreturn) NosSystemInit() {
     void *p = NULL;
     SerialLog("Testing Memory Allocations");
     memset(NosInitData->FrameBuffer.BaseAddress, 0x20, NosInitData->FrameBuffer.Pitch * 4 * NosInitData->FrameBuffer.VerticalResolution);
-
-    for(int i = 0;i<50000000;i++) {
+        float z = 0;
+    for(int c = 0;c<1000000;c++) {
         KeAllocatePhysicalMemory(0, 1, &p);
         // _ui64toa((UINT64)p, bf, 0x10);
         // SerialLog(bf);
     }
-    KiDumpPhysicalMemoryEntries();
+    SerialLog("finish");
     memset(NosInitData->FrameBuffer.BaseAddress, 0xFF, NosInitData->FrameBuffer.Pitch * 4 * NosInitData->FrameBuffer.VerticalResolution);
+    KiDumpPhysicalMemoryEntries();
     // NosInitData->EfiRuntimeServices->ResetSystem(EfiResetCold, 0, 0, NULL);
     for(;;) __halt();
 }

@@ -2,11 +2,40 @@
 
 void* KeMainThread = (void*)(UINT64)-1; // for tests
 
+// Mm Find Allocated Memory Continuation Entry
+NOS_MEMORY_DESCRIPTOR* MmFindAMContinuationEntry(void* PhysicalStart) {
+    NOS_MEMORY_LINKED_LIST* mem = NosInitData->NosMemoryMap;
+    unsigned long Index;
+    while(mem) {
+        for(int i = 0;i<0x40;i++) {
+            UINT64 m = mem->AllocatedMemoryDescriptorsMask[i];
+            while(_BitScanForward64(&Index, m)) {
+                _bittestandreset64(&m, Index);
+                NOS_MEMORY_DESCRIPTOR* desc = &mem->Groups[i].MemoryDescriptors[Index];
+                if(((UINT64)desc->PhysicalAddress + (desc->NumPages << 12)) == (UINT64)PhysicalStart) {
+                    return desc;
+                }
+            }
+        }
+        mem = mem->Next;
+    }
+    return NULL;
+}
+
 NOS_MEMORY_DESCRIPTOR* MmCreateMemoryDescriptor(
     void* PhysicalAddress,
     UINT32 Attributes,
     UINT64 NumPages
 ) {
+
+    NOS_MEMORY_DESCRIPTOR* desc;
+    if(Attributes & MM_DESCRIPTOR_ALLOCATED) {
+        desc = MmFindAMContinuationEntry(PhysicalAddress);
+        if(desc) {
+            desc->NumPages += NumPages;
+            return desc;
+        }
+    }
     NOS_MEMORY_LINKED_LIST* mem = NosInitData->NosMemoryMap;
     unsigned long Index;
     for(;;) {
@@ -18,10 +47,14 @@ NOS_MEMORY_DESCRIPTOR* MmCreateMemoryDescriptor(
                 if(mem->Groups[Index].Present == (UINT64)-1) {
                     _bittestandset64(&mem->Full, Index);
                 }
-                NOS_MEMORY_DESCRIPTOR* desc = &mem->Groups[Index].MemoryDescriptors[Index2];
+                desc = &mem->Groups[Index].MemoryDescriptors[Index2];
                 desc->PhysicalAddress = PhysicalAddress;
                 desc->Attributes = Attributes;
                 desc->NumPages = NumPages;
+
+                if(Attributes & MM_DESCRIPTOR_ALLOCATED) {
+                    _bittestandset64(&mem->AllocatedMemoryDescriptorsMask[Index], Index2);
+                }
                 KeMutexRelease(KeMainThread, &mem->GroupsMutex[Index]);
                 return desc;
             }
@@ -31,7 +64,7 @@ NOS_MEMORY_DESCRIPTOR* MmCreateMemoryDescriptor(
             SerialLog("Allocating New NOS_MEMORY_LINKED_LIST");
             if(NERROR(
             KeAllocatePhysicalMemory(
-                0,
+                MM_ALLOCATE_WITHOUT_DESCRIPTOR,
                 ConvertToPages(sizeof(NOS_MEMORY_LINKED_LIST)),
                 &mem->Next
             )
@@ -40,10 +73,11 @@ NOS_MEMORY_DESCRIPTOR* MmCreateMemoryDescriptor(
                 // TODO : Crash
                 while(1);
             }
-            SerialLog("Allocation Success");
             *mem->Next = (NOS_MEMORY_LINKED_LIST){0};
-            SerialLog("NEXT_MEM0");
-        } else SerialLog("NEXT_MEM");
+            // Create the descriptor for the heap
+            MmCreateMemoryDescriptor(mem->Next, 0, ConvertToPages(sizeof(NOS_MEMORY_LINKED_LIST)));
+            SerialLog("Allocation Success");
+        };
         mem = mem->Next;
     }
 }
