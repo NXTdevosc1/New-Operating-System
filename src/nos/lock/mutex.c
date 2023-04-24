@@ -1,7 +1,7 @@
 #include <nos/nos.h>
 #include <nos/lock/lock.h>
 void KeInitMutex(MUTEX* Mutex) {
-    *Mutex = INITIAL_MUTEX;
+    *Mutex = (MUTEX)INITIAL_MUTEX;
 }
 
 /*
