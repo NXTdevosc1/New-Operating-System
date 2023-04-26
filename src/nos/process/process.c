@@ -71,24 +71,7 @@ NSTATUS KRNLAPI KeCreateProcess(
 }
 
 
-NSTATUS KRNLAPI KeRegisterSubsystem(
-    IN UINT8 Subsystem,
-    IN BOOLEAN OperatingMode,
-    IN SUBSYSTEM_ENTRY_POINT EntryPoint
-) {
-    if(!EntryPoint || OperatingMode > 1) return STATUS_INVALID_PARAMETER;
-    if(_interlockedbittestandset64(&Subsystems[Subsystem].Flags, 0)) return STATUS_ALREADY_REGISTRED;
-    Subsystems[Subsystem].OperatingMode = OperatingMode;
-    Subsystems[Subsystem].EntryPoint = EntryPoint;
-    return STATUS_SUCCESS;
-}
 
-NSTATUS KRNLAPI KeDeleteSubsystem(
-    IN UINT8 Subsystem
-) {
-    Subsystems[Subsystem].Flags = 0;
-    return STATUS_SUCCESS;
-}
 
 BOOLEAN KeCheckProcess(PROCESS* Process) {
     if(!Process) return FALSE;
@@ -103,3 +86,18 @@ BOOLEAN KeCheckProcess(PROCESS* Process) {
     return TRUE;
 }
 
+// Finds the process and returns raw pointer
+PROCESS* KiGetProcessById(UINT64 ProcessId) {
+    PROCESS_LIST* pl = &ProcessList;
+    UINT64 m;
+    unsigned long Index;
+    while(pl) {
+        m = pl->Present;
+        while(_BitScanForward64(&Index, m)) {
+            _bittestandreset64(&m, Index);
+            if(pl->Processes[Index].ProcessId == ProcessId) return &pl->Processes[Index];
+        }
+        pl = pl->Next;
+    }
+    return NULL;
+}

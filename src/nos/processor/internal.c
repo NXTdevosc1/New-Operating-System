@@ -1,13 +1,18 @@
 #include <nos/processor/processor.h>
+#include <nos/processor/internal.h>
+#include <nos/processor/cpudescriptors.h>
 
-void CpuReadBrandName(char* Name) {
-    CPUID_DATA CpuDump;
-    __cpuid((int*)&CpuDump, 0x80000002);
-    unsigned int* n = (unsigned int*)Name;
-    n[0] = CpuDump.eax;
-    n[1] = CpuDump.ebx;
-    n[2] = CpuDump.ecx;
-    n[3] = CpuDump.edx;
-    n[4] = 0;
 
+
+void KiInitDescriptorTables(PROCESSOR* Processor) {
+    // Creating the interrupt array table
+    INTERRUPT_ARRAY* Interrupts;
+    if(NERROR(KeAllocatePhysicalMemory(0, ConvertToPages(sizeof(INTERRUPT_ARRAY)), &Interrupts))) {
+        SerialLog("Failed to allocate interrupt array.");
+        while(1);
+    }
+    ObjZeroMemory(Interrupts);
+    Processor->Interrupts = Interrupts;
+
+    // Loading the GDT
 }

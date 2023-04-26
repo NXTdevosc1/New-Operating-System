@@ -17,6 +17,7 @@ NSTATUS KRNLAPI KeCreateThread(
             _bittestandset64(&Threads->Present, Index);
             Thread = &Threads->Threads[Index];
             KeMutexRelease(NULL, &Threads->Mutex);
+            break;
         }
         if(!Threads->Next) {
             SerialLog("Threads->next");
@@ -63,4 +64,20 @@ BOOLEAN KeCheckThread(THREAD* Thread) {
     ) return FALSE;
     
     return TRUE;
+}
+
+// Finds the thread and returns raw pointer
+THREAD* KiGetThreadById(UINT64 ThreadId) {
+    THREAD_LIST* pl = &ThreadList;
+    UINT64 m;
+    unsigned long Index;
+    while(pl) {
+        m = pl->Present;
+        while(_BitScanForward64(&Index, m)) {
+            _bittestandreset64(&m, Index);
+            if(pl->Threads[Index].ThreadId == ThreadId) return &pl->Threads[Index];
+        }
+        pl = pl->Next;
+    }
+    return NULL;
 }

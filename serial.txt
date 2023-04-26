@@ -6,35 +6,35 @@ Test Str : test123
 Num partition handles : 195
 Data partition found.
 Boot partition and boot drive selected successfully.
-Kernel File Size : 31744
+Kernel File Size : 33280
 Test2 : test123
 System Heap:
 7E200000
 OPT_HDR_SIZE : 240 FALIGN : 512
 Allocating System Pages : 000000007E200000
 Image Physical Base : 000000007E200000 , Image Base : 0000000000000000, Entry point : 0000000000001000
-Copying section .tex VADDR : 0000000000001000 PTR : 0000000000000400, SZ : 0000000000001000
-Copying section .rda VADDR : 0000000000002000 PTR : 0000000000001400, SZ : 0000000000000600
-Copying section .dat VADDR : 0000000000003000 PTR : 0000000000001A00, SZ : 00000000000077E4
-Copying section .pda VADDR : 000000000000B000 PTR : 0000000000007A00, SZ : 0000000000000200
+Copying section .tex VADDR : 0000000000001000 PTR : 0000000000000400, SZ : 0000000000001400
+Copying section .rda VADDR : 0000000000003000 PTR : 0000000000001800, SZ : 0000000000000800
+Copying section .dat VADDR : 0000000000004000 PTR : 0000000000002000, SZ : 0000000000007FE4
+Copying section .pda VADDR : 000000000000C000 PTR : 0000000000008000, SZ : 0000000000000200
 Loading DLL :
 syscruntime.dll
 File Size : 3584 bytes
 OPT_HDR_SIZE : 240 FALIGN : 512
-Allocating System Pages : 000000007E20C000
-Image Physical Base : 000000007E20C000 , Image Base : 000000000000C000, Entry point : 0000000000000000
+Allocating System Pages : 000000007E20D000
+Image Physical Base : 000000007E20D000 , Image Base : 000000000000D000, Entry point : 0000000000000000
 Copying section .tex VADDR : 0000000000001000 PTR : 0000000000000400, SZ : 0000000000000400
 Copying section .rda VADDR : 0000000000002000 PTR : 0000000000000800, SZ : 0000000000000400
 Copying section .pda VADDR : 0000000000003000 PTR : 0000000000000C00, SZ : 0000000000000200
 EXPORTS
-ETVA : 0000000000002170, ET : 000000007E20E170
+ETVA : 0000000000002170, ET : 000000007E20F170
 NR : 0000000000002206, NPR : 00000000000021C4, EATR : 0000000000002198
 Test : test123
 Dll Name : sysc
 Searching Symbol : _itoa
-Symbol Found, base : 000000000000D010, IAT_TARGET : 000000007E202000, RVA : 0000000000001010
+Symbol Found, base : 000000000000E010, IAT_TARGET : 000000007E203000, RVA : 0000000000001010
 Searching Symbol : _ui64toa
-Symbol Found, base : 000000000000D1C0, IAT_TARGET : 000000007E202008, RVA : 00000000000011C0
+Symbol Found, base : 000000000000E1C0, IAT_TARGET : 000000007E203008, RVA : 00000000000011C0
 Memory Count:
 101
 Mapping System Pages :
@@ -43,4 +43,48 @@ FFFF800000000000
 1
 Booted successfully.
 FFFF800000001000
-8EC0BB489D006A
+9EC0BB489D006A
+NOS_KERNEL : Kernel Booting...
+102
+PHYS_ADDR, VIRT_ADDR, SIZE
+7E200000
+FFFF800000000000
+D200
+KernelInternals : Init Boot CPU
+KernelInternals : Register Processor
+KiDumpProcessors : (NumCpus, Arch, MpArch)
+Processor (Pid, Name, Arch)
+QEMU Virtual CPU
+Allocated
+Allocated
+Allocated
+Allocated
+Physical Memory Entry : (Attributes, PhysStart, NumPages)
+15E6000
+502096
+Physical Memory Entry : (Attributes, PhysStart, NumPages)
+7BF56000
+8388
+Allocated
+Physical Memory Entry : (Attributes, PhysStart, NumPages)
+7E34B000
+29
+Allocated
+Allocated
+Physical Memory Entry : (Attributes, PhysStart, NumPages)
+7FE00000
+126
+Physical Memory Entry : (Attributes, PhysStart, NumPages)
+100000000
+524288
+Allocated
+Used Memory, Free Memory, Total Memory (In Bytes)
+12353536
+4239060992
+4251414528
+_______________________________________
+Testing Memory Allocations
+finish
+0
+0
+FFFF800000006888
