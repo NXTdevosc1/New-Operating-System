@@ -1,12 +1,10 @@
-#include <nos/nos.h>
-#include <nos/processor/processor.h>
-
+#include <nos/processor/internal.h>
 
 
 
 void KiDumpProcessors() {
     SerialLog("KiDumpProcessors : (NumCpus, Arch, MpArch)");
-    PROCESSOR_LINKED_LIST* l = &gProcessorTable.ProcessorListHead;
+    PROCESSOR_LINKED_LIST* l = &ProcessorTable.ProcessorListHead;
     do {
         for(UINT i = 0;i<l->Index;i++) {
             SerialLog("Processor (Pid, Name, Arch)");

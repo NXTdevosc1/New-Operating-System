@@ -1,7 +1,6 @@
-#include <nos/processor/processor.h>
 #include <nos/processor/internal.h>
+#include <nos/processor/processor.h>
 #include <nos/processor/cpudescriptors.h>
-
 
 
 void KiInitDescriptorTables(PROCESSOR* Processor) {
