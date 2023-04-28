@@ -151,10 +151,41 @@ EFI_STATUS EFIAPI UefiEntry(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TABLE* Syst
 	// Free kernel file and close it
 	// gBS->FreePool(KernelBuffer); // Do not free pool kernel buffer because we still need the header
 	Kernel->Close(Kernel);
+	// Load boot.nos
+	EFI_FILE* BootConfig;
+	if(EFI_ERROR(OsPartition->Open(OsPartition, &BootConfig, L"NewOS\\System\\boot.nos", EFI_FILE_MODE_READ | EFI_FILE_MODE_WRITE, 0))) {
+		Print(L"boot.nos is missing\n");
+		return EFI_NOT_FOUND;
+	}
+	BufferSize = sizeof(EFI_FILE_INFO) + 0x100;
+	if(EFI_ERROR(BootConfig->GetInfo(BootConfig, &gEfiFileInfoGuid, &BufferSize, (void*)FileInfo))) {
+		Print(L"boot.nos is missing\n");
+		return EFI_NOT_FOUND;
+	}
+
+	NOS_BOOT_HEADER* BootHeader;
+	if(EFI_ERROR(gBS->AllocatePool(EfiLoaderData, FileInfo->FileSize, (void**)&BootHeader))) {
+		Print(L"Unsufficient memory\n");
+		return EFI_UNSUPPORTED;
+	}
+	BufferSize = FileInfo->FileSize;
+	if(EFI_ERROR(BootConfig->Read(BootConfig, &BufferSize, BootHeader))) {
+		Print(L"Failed to read file\n");
+		return EFI_UNSUPPORTED;
+	}
+
+	BootConfig->Close(BootConfig);
+
+
+	NosInitData.BootHeader = BootHeader;
 	NosInitData.NosPhysicalBase = Vas;
 	NosInitData.NosKernelImageBase = KernelBaseAddress;
 	NosInitData.NosKernelImageSize = VasSize;
-	
+
+	if(BootHeader->Magic != NOS_BOOT_MAGIC) {
+		Print(L"nos.boot is corrupt, please re-install the operating system.\n");
+		return EFI_UNSUPPORTED;
+	}
 	// Get the memory map
 	UINTN MapSize = 0, DescriptorSize = 0, MapKey = 0;
 	UINT32 DescriptorVersion = 0;

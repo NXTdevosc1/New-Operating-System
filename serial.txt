@@ -36,7 +36,7 @@ Symbol Found, base : 000000000000F010, IAT_TARGET : 000000007E203000, RVA : 0000
 Searching Symbol : _ui64toa
 Symbol Found, base : 000000000000F1C0, IAT_TARGET : 000000007E203008, RVA : 00000000000011C0
 Memory Count:
-101
+102
 Mapping System Pages :
 7E200000
 FFFF800000000000
@@ -64,12 +64,15 @@ Physical Memory Entry : (Attributes, PhysStart, NumPages)
 502096
 Physical Memory Entry : (Attributes, PhysStart, NumPages)
 7BF56000
-8388
+8390
 Allocated
 Physical Memory Entry : (Attributes, PhysStart, NumPages)
-7E34B000
-29
+7E34C000
+26
 Allocated
+Physical Memory Entry : (Attributes, PhysStart, NumPages)
+7EC2C000
+1
 Allocated
 Physical Memory Entry : (Attributes, PhysStart, NumPages)
 7FE00000

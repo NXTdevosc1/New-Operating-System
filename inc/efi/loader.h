@@ -3,6 +3,11 @@
 */
 
 #pragma once
+
+#ifdef NSYSAPI
+#include <nosdef.h>
+#include <nosefi.h>
+#else
 #include <Uefi.h>
 #include <Library/UefiLib.h>
 #include <Library/UefiBootServicesTableLib.h>
@@ -10,11 +15,17 @@
 #include <Protocol/BlockIo.h>
 #include <Protocol/SimpleFileSystem.h>
 #include <Guid/FileInfo.h>
-
-
 #define PE_SECTION_CODE 0x20
 #define PE_SECTION_INITIALIZED_DATA 0x40
 #define PE_SECTION_UNINITIALIZED_DATA 0x80
+// Memory Manager Attributes
+#define MM_DESCRIPTOR_ALLOCATED 1
+typedef struct {
+    void* Owner;
+    UINT32 AccessLock;
+} MUTEX;
+#endif
+
 
 typedef struct _FRAME_BUFFER_DESCRIPTOR{
 	UINT32 		HorizontalResolution;
@@ -24,8 +35,6 @@ typedef struct _FRAME_BUFFER_DESCRIPTOR{
 	UINT64 	    FbSize;
 } FRAME_BUFFER_DESCRIPTOR;
 
-// Memory Manager Attributes
-#define MM_DESCRIPTOR_ALLOCATED 1
 typedef struct _NOS_MEMORY_DESCRIPTOR {
     UINT32 Attributes;
     void* PhysicalAddress;
@@ -39,8 +48,33 @@ typedef struct _NOS_MEMORY_LINKED_LIST {
         NOS_MEMORY_DESCRIPTOR MemoryDescriptors[64];
     } Groups[0x40];
     NOS_MEMORY_LINKED_LIST* Next;
-    UINT8 AdditionnalBuffer[0x2000]; // For the kernel
+    // Additional Buffer
+    MUTEX GroupsMutex[40];
+    UINT64 AllocatedMemoryDescriptorsMask[0x40];
 } NOS_MEMORY_LINKED_LIST;
+
+typedef struct _NOS_BOOT_DRIVER NOS_BOOT_DRIVER;
+typedef struct _NOS_BOOT_DRIVER {
+    UINT8 DriverPath[255];
+    UINT8 EndChar0;
+    UINT8 DriverName[63];
+    UINT8 EndChar1;
+    UINT8 DriverDescription[255];
+    UINT8 EndChar2;
+    void* ImageFile; // To be loaded by the kernel
+} NOS_BOOT_DRIVER;
+#define NOS_BOOT_MAGIC 0x3501826759F87346
+typedef struct _NOS_BOOT_HEADER {
+    UINT64 Magic; // 0x3501826759F87346
+    UINT8 StartupMode; // 0 is normal startup (currently unused)
+    UINT8 StartupFlags; // currently unused
+    UINT16 Language; // Refers to a lang id taken from the system settings
+    UINT32 OsMajorVersion;
+    UINT32 OsMinorVersion;
+    UINT8 OsName[256];
+    UINT32 NumDrivers;
+    NOS_BOOT_DRIVER Drivers[];
+} NOS_BOOT_HEADER;
 
 typedef enum _PAGE_MAP_FLAGS {
     PM_WRITEACCESS = 1,
@@ -49,6 +83,8 @@ typedef enum _PAGE_MAP_FLAGS {
 } PAGE_MAP_FLAGS;
 
 typedef struct _NOS_INITDATA {
+    // Nos Boot Header (imported from System/boot.nos)
+    NOS_BOOT_HEADER* BootHeader;
     // Nos Image Data
     void* NosKernelImageBase;
     void* NosPhysicalBase;
@@ -64,11 +100,12 @@ typedef struct _NOS_INITDATA {
     EFI_RUNTIME_SERVICES* EfiRuntimeServices;
     // NOS Kernel Memory Map
     NOS_MEMORY_LINKED_LIST* NosMemoryMap;
-    UINT64 AllocatedPagesCount;
-    UINT64 FreePagesCount;
+    UINT64 TotalPagesCount;
+    volatile UINT64 AllocatedPagesCount;
 
 } NOS_INITDATA;
 
+#ifndef NSYSAPI
 
 typedef struct _IMAGE_IMPORT_ADDRESS_TABLE {
     UINT64 ImportAddress;
@@ -220,8 +257,8 @@ typedef struct _IMAGE_HINT_NAME_TABLE {
 #define IMAGE_ORDINAL_NUMBER(LookupEntry) (LookupEntry & 0xffff)
 #define IMAGE_HINT_NAME_RVA(LookupEntry) (LookupEntry & (0x7fffffff));
 
+typedef void __attribute__((noreturn)) (*NOS_ENTRY_POINT)(NOS_INITDATA*);
 
-typedef void __attribute__((noreturn)) (*NOS_ENTRY_POINT)(NOS_INITDATA* NosInitData);
 
 // util.c
 BOOLEAN BlNullGuid(EFI_GUID Guid);
@@ -266,3 +303,5 @@ void BlMapSystemSpace();
 int BlStrlen(char* str);
 
 #define Convert2MBPages(NumBytes) ((NumBytes & 0x1FFFFF) ? ((NumBytes >> 21) + 1) : (NumBytes >> 21))
+
+#endif
