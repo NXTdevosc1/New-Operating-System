@@ -175,6 +175,10 @@ EFI_STATUS EFIAPI UefiEntry(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TABLE* Syst
 	}
 
 	BootConfig->Close(BootConfig);
+	// Load boot drivers
+	for(UINT i = 0;i<BootHeader->NumDrivers;i++) {
+		
+	}
 
 
 	NosInitData.BootHeader = BootHeader;

@@ -54,7 +54,34 @@ typedef struct _NOS_MEMORY_LINKED_LIST {
 } NOS_MEMORY_LINKED_LIST;
 
 typedef struct _NOS_BOOT_DRIVER NOS_BOOT_DRIVER;
+typedef enum {
+    DeviceDriver,
+    FileSystemDriver
+} DriverType;
+
+// Driver flags
+#define DRIVER_ENABLED 1 // Defines if the driver image should be loaded during the boot phase
+/*
+PREBOOT Launch:
+- DriverEntry is called at the pre-boot phase
+- the driver should not expect any Devices, Volumes or subsystems
+- There is no task schedulling
+- Drivers such as ACPI, PCI...
+*/
+#define DRIVER_PREBOOT_LAUNCH 2 // Boot Driver
+/*
+BOOT Launch:
+- Essential boot drivers are initialized
+- Access to primary file systems, scheduling, timers...
+- Drivers such as eodx3D, sound...
+*/
+#define DRIVER_BOOT_LAUNCH 4 // Automatic Boot Launch
+// Drivers without the flags PREBOOT|BOOT are just loaded until a driver requests access to them
+// For e.g. USB Controller driver, mouse/keyboard drivers
+
 typedef struct _NOS_BOOT_DRIVER {
+    UINT32 DriverType;
+    UINT32 Flags;
     UINT8 DriverPath[255];
     UINT8 EndChar0;
     UINT8 DriverName[63];
