@@ -6,16 +6,7 @@ int DllMain() {
     return 0;
 }
 
-EXPORT void *memset(
-   void *dest,
-   char c,
-   unsigned long long count
-) {
-    if(!(count & 7)) __stosq(dest, c, count >> 3);
-    else if(!(count & 3)) __stosd(dest, c, count >> 2);
-    else __stosb(dest, c, count);
-    return dest;
-}
+
 
 EXPORT char * _itoa( int value, char *buffer, int radix ){
     

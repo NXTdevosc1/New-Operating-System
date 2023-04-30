@@ -11,7 +11,7 @@ EXPORT int sprintf_s(
     while(*format && sizeOfBuffer) {
         if(*format == '%') {
             format++;
-            char* selector = format + 1;
+            const char* selector = format + 1;
             switch(*selector) {
                 case 'c' : {
                     // *buffer = 
