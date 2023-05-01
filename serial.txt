@@ -6,55 +6,50 @@ Test Str : test123
 Num partition handles : 195
 Data partition found.
 Boot partition and boot drive selected successfully.
-Kernel File Size : 33792
+Kernel File Size : 311808
 Test2 : test123
 System Heap:
-7E200000
+7E000000
 OPT_HDR_SIZE : 240 FALIGN : 512
-Allocating System Pages : 000000007E200000
-Image Physical Base : 000000007E200000 , Image Base : 0000000000000000, Entry point : 0000000000001000
-Copying section .tex VADDR : 0000000000001000 PTR : 0000000000000400, SZ : 0000000000001400
-Copying section .rda VADDR : 0000000000003000 PTR : 0000000000001800, SZ : 0000000000000800
-Copying section .dat VADDR : 0000000000004000 PTR : 0000000000002000, SZ : 00000000000081E4
-Copying section .pda VADDR : 000000000000D000 PTR : 0000000000008200, SZ : 0000000000000200
+Allocating System Pages : 000000007E000000
+Image Physical Base : 000000007E000000 , Image Base : 0000000000000000, Entry point : 0000000000001000
+Copying section .tex VADDR : 0000000000001000 PTR : 0000000000000400, SZ : 0000000000002E00
+Copying section .rda VADDR : 0000000000004000 PTR : 0000000000003200, SZ : 0000000000000A00
+Copying section .dat VADDR : 0000000000005000 PTR : 0000000000003C00, SZ : 000000000004A3F0
+Copying section .pda VADDR : 0000000000050000 PTR : 000000000004C000, SZ : 0000000000000200
 Loading DLL :
 syscruntime.dll
-File Size : 3584 bytes
+File Size : 4096 bytes
 OPT_HDR_SIZE : 240 FALIGN : 512
-Allocating System Pages : 000000007E20E000
-Image Physical Base : 000000007E20E000 , Image Base : 000000000000E000, Entry point : 0000000000000000
-Copying section .tex VADDR : 0000000000001000 PTR : 0000000000000400, SZ : 0000000000000400
-Copying section .rda VADDR : 0000000000002000 PTR : 0000000000000800, SZ : 0000000000000400
-Copying section .pda VADDR : 0000000000003000 PTR : 0000000000000C00, SZ : 0000000000000200
+Allocating System Pages : 000000007E051000
+Image Physical Base : 000000007E051000 , Image Base : 0000000000051000, Entry point : 0000000000000000
+Copying section .tex VADDR : 0000000000001000 PTR : 0000000000000400, SZ : 0000000000000600
+Copying section .rda VADDR : 0000000000002000 PTR : 0000000000000A00, SZ : 0000000000000400
+Copying section .pda VADDR : 0000000000003000 PTR : 0000000000000E00, SZ : 0000000000000200
 EXPORTS
-ETVA : 0000000000002170, ET : 000000007E210170
-NR : 0000000000002206, NPR : 00000000000021C4, EATR : 0000000000002198
+ETVA : 0000000000002180, ET : 000000007E053180
+NR : 000000000000222A, NPR : 00000000000021DC, EATR : 00000000000021A8
 Test : test123
 Dll Name : sysc
 Searching Symbol : _itoa
-Symbol Found, base : 000000000000F010, IAT_TARGET : 000000007E203000, RVA : 0000000000001010
+Symbol Found, base : 0000000000052010, IAT_TARGET : 000000007E004000, RVA : 0000000000001010
 Searching Symbol : _ui64toa
-Symbol Found, base : 000000000000F1C0, IAT_TARGET : 000000007E203008, RVA : 00000000000011C0
+Symbol Found, base : 00000000000521C0, IAT_TARGET : 000000007E004008, RVA : 00000000000011C0
 Memory Count:
 102
 Mapping System Pages :
-7E200000
+7E000000
 FFFF800000000000
 1
 Booted successfully.
 FFFF800000001000
-A0C0BB489D006A
+4D2C0BB489D006A
 NOS_KERNEL : Kernel Booting...
 102
 PHYS_ADDR, VIRT_ADDR, SIZE
-7E200000
+7E000000
 FFFF800000000000
-E200
-KernelInternals : Init Boot CPU
-KernelInternals : Register Processor
-KiDumpProcessors : (NumCpus, Arch, MpArch)
-Processor (Pid, Name, Arch)
-QEMU Virtual CPU
+51200
 Allocated
 Allocated
 Allocated
@@ -64,11 +59,11 @@ Physical Memory Entry : (Attributes, PhysStart, NumPages)
 502096
 Physical Memory Entry : (Attributes, PhysStart, NumPages)
 7BF56000
-8390
+8313
 Allocated
 Physical Memory Entry : (Attributes, PhysStart, NumPages)
 7E34C000
-26
+35
 Allocated
 Physical Memory Entry : (Attributes, PhysStart, NumPages)
 7EC2C000
@@ -82,12 +77,18 @@ Physical Memory Entry : (Attributes, PhysStart, NumPages)
 524288
 Allocated
 Used Memory, Free Memory, Total Memory (In Bytes)
-12353536
-4239060992
+12632064
+4238782464
 4251414528
 _______________________________________
+KiDumpProcessors : (NumCpus, Arch, MpArch)
+KernelInternals : Init Boot CPU
+KernelInternals : Register Processor
+GDT and TSS Loaded successfully
 Testing Memory Allocations
 finish
 0
 0
-FFFF800000006A88
+FFFF800000049C88
+Internal Interrupt!
+13

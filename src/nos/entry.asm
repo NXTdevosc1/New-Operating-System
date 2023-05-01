@@ -5,6 +5,9 @@ global NosInitData
 
 global memset
 global memcpy
+global __SystemLoadGDTAndTSS
+
+
 extern NosSystemInit
 
 ; The NOS Kernel Entry Point
@@ -41,6 +44,26 @@ memcpy:
     pop rdi
     pop rsi
     ret
+
+__SystemLoadGDTAndTSS:
+    ; RCX = GDTR Pointer
+    lgdt [rcx]
+    mov ax, 0x10
+    mov fs, ax
+    mov es, ax
+    mov ds, ax
+    mov gs, ax
+    mov ss, ax
+    
+    mov ax, 0x18 ; TSS Offset
+    ltr ax
+    pop rax
+    push 0x08
+    push rax
+    retfq
+
+
+
 section .data
 
 align 0x40

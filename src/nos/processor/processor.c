@@ -21,3 +21,16 @@ BOOLEAN NSYSAPI KeRegisterProcessor(IN char* ProcessorName, OUT OPT UINT64* Proc
     if(ProcessorId) *ProcessorId = Processor->ProcessorId;
     return TRUE;
 }
+
+PVOID KRNLAPI KeQueryProcessorById(UINT64 ProcessorId) {
+    UINT64 Index = ProcessorId & 0x3F;
+    UINT64 ListIndex = ProcessorId >> 6;
+    PROCESSOR_LINKED_LIST* list = &ProcessorTable.ProcessorListHead;
+    while(ListIndex) {
+        if(!list->Next) return NULL;
+        list = list->Next;
+        ListIndex--;
+    }
+    if(list->Index - 1 < Index) return NULL;
+    return &list->Processors[Index];
+}

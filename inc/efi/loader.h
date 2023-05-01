@@ -76,19 +76,21 @@ BOOT Launch:
 - Drivers such as eodx3D, sound...
 */
 #define DRIVER_BOOT_LAUNCH 4 // Automatic Boot Launch
+#define DRIVER_LOADED 8 // This flag is set at boot, otherwise there is some error and the driver could not be loaded
 // Drivers without the flags PREBOOT|BOOT are just loaded until a driver requests access to them
 // For e.g. USB Controller driver, mouse/keyboard drivers
 
 typedef struct _NOS_BOOT_DRIVER {
     UINT32 DriverType;
     UINT32 Flags;
-    UINT8 DriverPath[255];
-    UINT8 EndChar0;
+    UINT16 DriverPath[255];
+    UINT16 EndChar0;
     UINT8 DriverName[63];
     UINT8 EndChar1;
     UINT8 DriverDescription[255];
     UINT8 EndChar2;
-    void* ImageFile; // To be loaded by the kernel
+    void* ImageBuffer; // To be loaded by the kernel
+    UINT64 ImageSize;
 } NOS_BOOT_DRIVER;
 #define NOS_BOOT_MAGIC 0x3501826759F87346
 typedef struct _NOS_BOOT_HEADER {
@@ -103,11 +105,7 @@ typedef struct _NOS_BOOT_HEADER {
     NOS_BOOT_DRIVER Drivers[];
 } NOS_BOOT_HEADER;
 
-typedef enum _PAGE_MAP_FLAGS {
-    PM_WRITEACCESS = 1,
-    PM_GLOBAL = 2,
-    PM_LARGE_PAGES = 4
-} PAGE_MAP_FLAGS;
+
 
 typedef struct _NOS_INITDATA {
     // Nos Boot Header (imported from System/boot.nos)
@@ -133,7 +131,11 @@ typedef struct _NOS_INITDATA {
 } NOS_INITDATA;
 
 #ifndef NSYSAPI
-
+typedef enum _PAGE_MAP_FLAGS {
+    PM_WRITEACCESS = 1,
+    PM_GLOBAL = 2,
+    PM_LARGE_PAGES = 4
+} PAGE_MAP_FLAGS;
 typedef struct _IMAGE_IMPORT_ADDRESS_TABLE {
     UINT64 ImportAddress;
     UINT32 ForwarderRva;

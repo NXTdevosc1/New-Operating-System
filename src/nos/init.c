@@ -27,12 +27,12 @@ void __declspec(noreturn) NosSystemInit() {
     _ui64toa((UINT64)NosInitData->NosKernelImageSize, bf, 0x10);
     SerialLog(bf);
 
-    KiInitBootCpu();
     KiInitStandardSubsystems();
     
-    KiDumpProcessors();
     KiDumpPhysicalMemoryEntries();
 
+    KiDumpProcessors();
+    KiInitBootCpu();
 
     void *p = NULL;
     SerialLog("Testing Memory Allocations");
@@ -57,7 +57,10 @@ void __declspec(noreturn) NosSystemInit() {
     _ui64toa((UINT64)KiGetThreadById(0), bf, 0x10);
     SerialLog(bf);
     
+    *(UINT64*)(0x839453897351583) = 294;
     memset(NosInitData->FrameBuffer.BaseAddress, 0xFF, NosInitData->FrameBuffer.Pitch * 4 * NosInitData->FrameBuffer.VerticalResolution);
+    
+    
     // KiDumpPhysicalMemoryEntries();
 
     // NosInitData->EfiRuntimeServices->ResetSystem(EfiResetCold, 0, 0, NULL);

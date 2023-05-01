@@ -176,8 +176,42 @@ EFI_STATUS EFIAPI UefiEntry(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TABLE* Syst
 
 	BootConfig->Close(BootConfig);
 	// Load boot drivers
-	for(UINT i = 0;i<BootHeader->NumDrivers;i++) {
-		
+	NOS_BOOT_DRIVER* Driver = BootHeader->Drivers;
+	for(UINTN i = 0;i<BootHeader->NumDrivers;i++, Driver++) {
+		Driver->Flags &= ~DRIVER_LOADED;
+		if(Driver->Flags & DRIVER_ENABLED) {
+			EFI_FILE* DriverFile;
+			if(EFI_ERROR(OsPartition->Open(
+				OsPartition, &DriverFile,
+				Driver->DriverPath,
+				EFI_FILE_MODE_READ, 0
+			))) continue;
+			BufferSize = sizeof(EFI_FILE_INFO) + 0x100;
+			if(EFI_ERROR(DriverFile->GetInfo(
+				DriverFile, &gEfiFileInfoGuid, &BufferSize, FileInfo
+			))) {
+				DriverFile->Close(DriverFile);
+				continue;
+			}
+
+			Driver->ImageSize = FileInfo->FileSize;
+			if(EFI_ERROR(gBS->AllocatePool(
+				EfiLoaderData, Driver->ImageSize, &Driver->ImageBuffer
+			))) {
+				Print(L"No enough memory to load %ls\n", Driver->DriverPath);
+				DriverFile->Close(DriverFile);
+				return EFI_UNSUPPORTED;
+			}
+			BufferSize = Driver->ImageSize;
+			if(EFI_ERROR(DriverFile->Read(
+				DriverFile, &BufferSize, Driver->ImageBuffer
+			))) {
+				DriverFile->Close(DriverFile);
+				continue;
+			}
+			DriverFile->Close(DriverFile);
+			Driver->Flags |= DRIVER_LOADED;
+		}
 	}
 
 
