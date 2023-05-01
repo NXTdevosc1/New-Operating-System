@@ -1,0 +1,15 @@
+#include <nos/nos.h>
+#include <nos/lock/lock.h>
+
+UINT64 KRNLAPI KeAcquireSpinLock(SPINLOCK* SpinLock) {
+    UINT64 CpuFlags = __readeflags();
+    // We do this before pending for the spinlock 
+    // in case of any bug the system will freeze
+    _disable();
+    while(_interlockedbittestandset(SpinLock, 0)) _mm_pause();
+    return CpuFlags;
+}
+void KRNLAPI KeReleaseSpinLock(SPINLOCK* SpinLock, UINT64 CpuFlags) {
+    _bittestandreset(SpinLock, 0);
+    __writeeflags(CpuFlags);
+}

@@ -57,12 +57,11 @@ void KiCpuInitDescriptors(PROCESSOR* Processor) {
     SerialLog("GDT and TSS Loaded successfully");
 
     // Initialize Standard Interrupts
-    for(int i = 0;i<255;i++) {
-
+    for(int i = 0;i<32;i++) {
         KiSetInterrupt(
             Processor,
             i,
-            TrapGate,
+            InterruptGate,
             NosInternalInterruptService
         );
     }
@@ -72,20 +71,16 @@ extern void* KiInternalInterrupts[];
 extern void* KiIrqInterrupts[];
 extern void* KiSystemInterrupts[];
 
+// returns pointer to the stack (depends of the presence of the error code)
+extern void* NosInternalInterruptHandler(UINT64 InterruptNumber, void* InterruptStack);
 
-void NosInternalInterruptHandler(UINT64 InterruptNumber) {
-    SerialLog("Internal Interrupt!");
-    char bf[100];
-    _ui64toa(InterruptNumber, bf, 10);
-    SerialLog(bf);
-    while(1);
-}
 
-void NosIrqHandler(UINT64 InterruptNumber) {
+
+void NosIrqHandler(UINT64 InterruptNumber, void* InterruptStack) {
 
 }
 
-void NosSystemInterruptHandler(UINT64 InterruptNumber) {
+void NosSystemInterruptHandler(UINT64 InterruptNumber, void* InterruptStack) {
     
 }
 

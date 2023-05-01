@@ -16,7 +16,7 @@ NSTATUS KRNLAPI KeInstallInterruptHandler(
     INTERRUPT_ARRAY* Ints = Processor->Interrupts;
 
     // TODO : Acquire SpinLock
-
+    UINT64 rflags = KeAcquireSpinLock(&Ints->Interrupts[IrqNumber].SpinLock);
     UINT32 IntIndx;
     if(!Ints->Interrupts[IrqNumber].Present) {
         KiSetInterrupt(
@@ -27,12 +27,14 @@ NSTATUS KRNLAPI KeInstallInterruptHandler(
         );
     }
     if(!_BitScanForward64(&IntIndx, ~Ints->Interrupts[IrqNumber].Present)) {
+        KeReleaseSpinLock(&Ints->Interrupts[IrqNumber].SpinLock, rflags);
         return STATUS_NO_FREE_SLOTS;
     }
     _bittestandset64(&Ints->Interrupts[IrqNumber].Present, IntIndx);
     INTERRUPT_DESCRIPTOR* Descriptor = &Ints->Interrupts[IrqNumber].Descriptors[IntIndx];
     Descriptor->Context = Context;
     Descriptor->Handler = Handler;
+    KeReleaseSpinLock(&Ints->Interrupts[IrqNumber].SpinLock, rflags);
 
     return STATUS_SUCCESS;
 }
@@ -50,6 +52,7 @@ NSTATUS KRNLAPI KeRemoveInterruptHandler(
     INTERRUPT_ARRAY* Ints = Processor->Interrupts;
 
     // TODO : Acquire SpinLock
+    UINT64 rflags = KeAcquireSpinLock(&Ints->Interrupts[IrqNumber].SpinLock);
 
 
     UINT32 IntIndx;
@@ -63,9 +66,12 @@ NSTATUS KRNLAPI KeRemoveInterruptHandler(
 
             if(!Ints->Interrupts[IrqNumber].Present) {
                 KiRemoveInterrupt(Processor, IrqNumber + 0x20);
+                KeReleaseSpinLock(&Ints->Interrupts[IrqNumber].SpinLock, rflags);
+
             }
             return STATUS_SUCCESS;
         }
     }
+    KeReleaseSpinLock(&Ints->Interrupts[IrqNumber].SpinLock, rflags);
     return STATUS_NOT_FOUND;
 }

@@ -56,8 +56,7 @@ void __declspec(noreturn) NosSystemInit() {
     KeCreateThread(KernelProcess, NULL, 0, (void*)0x1923);
     _ui64toa((UINT64)KiGetThreadById(0), bf, 0x10);
     SerialLog(bf);
-    
-    *(UINT64*)(0x839453897351583) = 294;
+
     memset(NosInitData->FrameBuffer.BaseAddress, 0xFF, NosInitData->FrameBuffer.Pitch * 4 * NosInitData->FrameBuffer.VerticalResolution);
     
     
