@@ -25,7 +25,7 @@ EXPORT void *memcpy(
     return dest;
 }
 
-int memcmp(
+EXPORT int memcmp(
    const void *buffer1,
    const void *buffer2,
    unsigned long long count

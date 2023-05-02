@@ -37,7 +37,7 @@ void __declspec(noreturn) NosSystemInit() {
     );
     KeMapVirtualMemory(
         KernelProcess,
-        (void*)0x1000,
+        (void*)0x14000,
         (void*)0xffff800500202000,
         2,
         PAGE_WRITE_ACCESS | PAGE_GLOBAL,
@@ -61,6 +61,15 @@ void __declspec(noreturn) NosSystemInit() {
     SerialLog(bf);
     _ui64toa(np, bf, 0x10);
     SerialLog(bf);
+
+    _ui64toa((UINT64)KeConvertPointer(KernelProcess, (void*)0xffff800500200000), bf, 0x10);
+    SerialLog(bf);
+    _ui64toa((UINT64)KeConvertPointer(KernelProcess, (void*)0xffff800500203000), bf, 0x10);
+    SerialLog(bf);
+    GUID g = EFI_ACPI_20_TABLE_GUID;
+    _ui64toa((UINT64)KeFindSystemFirmwareTable("RSD PTR ", &g), bf, 0x10);
+    SerialLog(bf);
+    
 
     memset(NosInitData->FrameBuffer.BaseAddress, 0, NosInitData->FrameBuffer.Pitch * 4 * NosInitData->FrameBuffer.VerticalResolution);
 

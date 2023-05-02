@@ -220,6 +220,9 @@ EFI_STATUS EFIAPI UefiEntry(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TABLE* Syst
 	NosInitData.NosKernelImageBase = KernelBaseAddress;
 	NosInitData.NosKernelImageSize = VasSize;
 
+	NosInitData.NumConfigurationTableEntries = SystemTable->NumberOfTableEntries;
+	NosInitData.EfiConfigurationTable = SystemTable->ConfigurationTable;
+
 	if(BootHeader->Magic != NOS_BOOT_MAGIC) {
 		Print(L"nos.boot is corrupt, please re-install the operating system.\n");
 		return EFI_UNSUPPORTED;

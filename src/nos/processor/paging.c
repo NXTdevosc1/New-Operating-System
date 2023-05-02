@@ -37,6 +37,10 @@ NSTATUS KRNLAPI KeMapVirtualMemory(
     UINT64 PhysicalAddress = (UINT64)_PhysicalAddress & ~0xFFF;
     UINT64 VirtualAddress = (UINT64)_VirtualAddress & ~0xFFF;
 
+    if((PageFlags & PAGE_2MB)) {
+        if((PhysicalAddress & 0x1FFFFF) || (VirtualAddress & 0x1FFFFF)) return STATUS_WRONG_PAGE_ALIGNMENT; 
+    }
+
     if((VirtualAddress & 0xFFFF800000000000) == 0xFFFF800000000000) {
         VirtualAddress &= ~0xFFFF000000000000;
         VirtualAddress |= ((UINT64)1 << 48);
@@ -173,7 +177,7 @@ _gt0:
             if(Pd->SizePAT) {
                 if(NumPages & 0x1FFFFF) {
                     *_NumPages = NumPages;
-                    return STATUS_WRONG_PAGE_SIZE;
+                    return STATUS_WRONG_PAGE_ALIGNMENT;
                 }
                 goto _gt0;
             }
@@ -252,4 +256,27 @@ BOOLEAN KRNLAPI KeCheckMemoryAccess(
             return TRUE;
         }
     }
+}
+
+PVOID KRNLAPI KeConvertPointer(
+    IN PROCESS* Process,
+    IN void* VirtualAddress
+) {
+    UINT64 Pti = ((UINT64)VirtualAddress >> 12) & 0x1FF;
+    UINT64 Pdi = ((UINT64)VirtualAddress >> 21) & 0x1FF;
+    UINT64 Pdpi = ((UINT64)VirtualAddress >> 30) & 0x1FF;
+    UINT64 Pml4i = ((UINT64)VirtualAddress >> 39) & 0x1FF;
+    RFPTENTRY Pml4 = Process->PageTable, Pdp, Pd, Pt;
+
+    if(!Pml4[Pml4i].Present) return NULL;
+    Pdp = (void*)(Pml4[Pml4i].PhysicalAddr << 12);
+    if(!Pdp[Pdpi].Present) return NULL;
+    Pd = (void*)(Pdp[Pdpi].PhysicalAddr << 12);
+    if(!Pd[Pdi].Present) return NULL;
+    if(Pd[Pdi].SizePAT) {
+        return (void*)((Pd[Pdi].PhysicalAddr << 12) | ((UINT64)VirtualAddress & 0x1FFFFF));
+    }
+    Pt = (void*)(Pd[Pdi].PhysicalAddr << 12);
+    if(!Pt[Pti].Present) return NULL;
+    return (void*)((Pt[Pti].PhysicalAddr << 12) | ((UINT64)VirtualAddress & 0xFFF));
 }

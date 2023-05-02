@@ -121,8 +121,10 @@ typedef struct _NOS_INITDATA {
     UINT64 MemoryCount;
     UINT64 MemoryDescriptorSize;
     EFI_MEMORY_DESCRIPTOR* MemoryMap;
-    // System Startup Drive Info
+    // System Startup Drive Info, Runtime Services and ConfigurationTables
     EFI_RUNTIME_SERVICES* EfiRuntimeServices;
+    UINT64 NumConfigurationTableEntries;
+    EFI_CONFIGURATION_TABLE* EfiConfigurationTable;
     // NOS Kernel Memory Map
     NOS_MEMORY_LINKED_LIST* NosMemoryMap;
     UINT64 TotalPagesCount;
