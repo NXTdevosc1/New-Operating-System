@@ -67,64 +67,8 @@ void KiCpuInitDescriptors(PROCESSOR* Processor) {
     }
 }
 
-extern void* KiInternalInterrupts[];
-extern void* KiIrqInterrupts[];
-extern void* KiSystemInterrupts[];
-
-// returns pointer to the stack (depends of the presence of the error code)
-extern void* NosInternalInterruptHandler(UINT64 InterruptNumber, void* InterruptStack);
 
 
 
-void NosIrqHandler(UINT64 InterruptNumber, void* InterruptStack) {
-
-}
-
-void NosSystemInterruptHandler(UINT64 InterruptNumber, void* InterruptStack) {
-    
-}
-
-void KiSetInterrupt(
-    PROCESSOR* Processor,
-    UINT8 InterruptNumber,
-    UINT8 InterruptType,
-    UINT8 NosServiceType
-) {
-    IDT_ENTRY* Entry = &Processor->Idt[InterruptNumber];
-    
-    /*
-    - Handler is determined by nos service type
-    */
-    Entry->CodeSegment = 0x08;
 
 
-    UINT64 Handler;
-
-    if(NosServiceType == NosInternalInterruptService) {
-        Entry->Ist = 0;
-        Handler = (UINT64)KiInternalInterrupts[InterruptNumber];
-    } else if(NosServiceType == NosIrqService) {
-        Entry->Ist = 1;
-        Handler = (UINT64)KiIrqInterrupts[InterruptNumber - 0x20];
-    } else if(NosServiceType == NosSystemInterruptService) {
-        Entry->Ist = 2;
-        Handler = (UINT64)KiSystemInterrupts[InterruptNumber - 220];
-    } else {
-        // RAISE_HARD_ERROR
-        SerialLog("KiSetInterrupt ERROR0");
-        while(1);
-    }
-
-    Entry->Address0 = Handler;
-    Entry->Address1 = Handler >> 16;
-    Entry->Address2 = Handler >> 32;
-    Entry->Type = InterruptType;
-    Entry->Present = 1;
-}
-
-void KiRemoveInterrupt(
-    PROCESSOR* Processor,
-    UINT8 InterruptNumber
-) {
-    ObjZeroMemory(&Processor->Idt[InterruptNumber]);
-}

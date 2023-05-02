@@ -10,7 +10,6 @@ int DllMain() {
 
 EXPORT char * _itoa( int value, char *buffer, int radix ){
     
-    char* retbuff = buffer;
     if (radix == RADIX_DECIMAL) { // Base 10 : Decimal
         int size = 0;
         unsigned int sizeTest = value < 0 ? -value : value;
@@ -34,7 +33,7 @@ EXPORT char * _itoa( int value, char *buffer, int radix ){
         char remainder = value % 10;
         buffer[size - index] = remainder + '0';
         buffer[size + 1] = 0;
-        return retbuff;
+        return buffer + size + 1;
     }
     else if (radix == RADIX_HEXADECIMAL) // Base 16 : HEX
     {
@@ -54,7 +53,7 @@ EXPORT char * _itoa( int value, char *buffer, int radix ){
             value >>= 4;
         }
         buffer[size] = 0;
-        return retbuff;
+        return buffer + size;
     }
     else if (radix == RADIX_BINARY) { // Base 1 : BINARY
         char* buff = buffer;
@@ -79,7 +78,7 @@ EXPORT char * _itoa( int value, char *buffer, int radix ){
             value <<= 1;
         }
         *buff = 0;
-        return retbuff;
+        return buff;
     }
 
     else return 0;
@@ -94,7 +93,6 @@ EXPORT char * _i64toa( long long value, char *buffer, int radix ) {
     return NULL;
 }
 EXPORT char * _ui64toa( unsigned long long value, char *buffer, int radix ){
-    char* retbuff = buffer;
     if (radix == RADIX_DECIMAL) { // Base 10 : Decimal
         int size = 0;
         unsigned long long sizeTest = value < 0 ? -value : value;
@@ -118,7 +116,7 @@ EXPORT char * _ui64toa( unsigned long long value, char *buffer, int radix ){
         char remainder = value % 10;
         buffer[size - index] = remainder + '0';
         buffer[size + 1] = 0;
-        return retbuff;
+        return buffer + size + 1;
     }
     else if (radix == RADIX_HEXADECIMAL) // Base 16 : HEX
     {
@@ -138,7 +136,7 @@ EXPORT char * _ui64toa( unsigned long long value, char *buffer, int radix ){
             value >>= 4;
         }
         buffer[size] = 0;
-        return retbuff;
+        return buffer + size;
     }
     else if (radix == RADIX_BINARY) { // Base 1 : BINARY
         char* buff = buffer;
@@ -163,7 +161,7 @@ EXPORT char * _ui64toa( unsigned long long value, char *buffer, int radix ){
             value <<= 1;
         }
         *buff = 0;
-        return retbuff;
+        return buff;
     }
 
     else return 0;

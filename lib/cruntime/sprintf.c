@@ -1,5 +1,81 @@
 #define __CRT_SRC
 #include <crt.h>
+#include <stdarg.h>
+
+#define sprintf_ret {*buffer = 0; return 0;}
+#define sprintf_cpbuffer(_buff, _character) {*_buff = _character; _buff++;sizeOfBuffer--;if(!sizeOfBuffer) sprintf_ret;}
+
+EXPORT int vsprintf_s(
+   char *buffer,
+   unsigned long long sizeOfBuffer,
+   const char *format,
+   va_list args
+) {
+    if(!sizeOfBuffer) return -1;
+    unsigned int NumArgs = 0;
+    unsigned long long flen = strlen(format);
+    sizeOfBuffer--; // End character
+    while(*format && sizeOfBuffer) {
+        if(*format == '%') {
+            format++;
+            const char* selector = format;
+            format++;
+            switch(*selector) {
+                case 'c' :{
+                    sprintf_cpbuffer(buffer, va_arg(args, char));
+                    NumArgs++;
+                    break;
+                }
+                case 's' :
+                case 'a' :
+                 {
+                    char* bf = va_arg(args, char*);
+                    NumArgs++;
+                    while(*bf) {
+                        sprintf_cpbuffer(buffer, *bf);
+                    }
+                    break;
+                }
+                case 'd' : {
+                    // write 32 bit signed integer
+                    int num = va_arg(args, int);
+                    NumArgs++;
+                    char* b = buffer;
+                    buffer = _itoa(num, buffer, 10);
+                    if(buffer - b >= sizeOfBuffer) sprintf_ret;
+                    sizeOfBuffer-= buffer - b;
+                    break;
+                }
+                case 'u' : {
+                    unsigned long long num = va_arg(args, unsigned long long);
+                    NumArgs++;
+                    char* b = buffer;
+                    buffer = _ui64toa(num, buffer, 10);
+                    if(buffer - b >= sizeOfBuffer) sprintf_ret;
+                    sizeOfBuffer-= buffer - b;
+                    break;
+                }
+                case 'x' : {
+                    unsigned long long num = va_arg(args, unsigned long long);
+                    NumArgs++;
+                    char* b = buffer;
+                    buffer = _ui64toa(num, buffer, 0x10);
+                    if(buffer - b >= sizeOfBuffer) sprintf_ret;
+                    sizeOfBuffer-= buffer - b;
+                    break;
+                }
+                default: goto copybuff;
+            }
+        } else {
+            copybuff:
+            *buffer = *format;
+            buffer++;
+            sizeOfBuffer--;
+            format++;
+        }
+    }
+    return 0;
+}
 
 EXPORT int sprintf_s(
    char *buffer,
@@ -7,31 +83,9 @@ EXPORT int sprintf_s(
    const char *format,
    ...
 ) {
-    unsigned long long flen = strlen(format);
-    while(*format && sizeOfBuffer) {
-        if(*format == '%') {
-            format++;
-            const char* selector = format + 1;
-            switch(*selector) {
-                case 'c' : {
-                    // *buffer = 
-                }
-                case 's' : {
-
-                }
-                case 'd' : {
-
-                }
-                case 'u' : {
-
-                }
-                default: goto copybuff;
-            }
-        } else {
-            copybuff:
-            *buffer = *format;
-            sizeOfBuffer--;
-        }
-    }
-    return 0;
+    va_list args;
+    va_start(args, 100);
+    int s = vsprintf_s(buffer, sizeOfBuffer, format, args);
+    va_end(args);
+    return s;
 }
