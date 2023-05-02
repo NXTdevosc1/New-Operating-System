@@ -65,7 +65,7 @@ NSTATUS KRNLAPI KeMapVirtualMemory(
         UINT64 Pml4i = (VirtualAddress >> 39) & 0x1FF;
 
         if(!Pml4[Pml4i].Present) {
-            if(NERROR(KeAllocatePhysicalMemory(0, 1, (void**)&Pml4[Pml4i]))) {
+            if(NERROR(MmAllocatePhysicalMemory(0, 1, (void**)&Pml4[Pml4i]))) {
                 SerialLog("KeMapPhysicalMemory : AllocatePage Error.");
                 while(1) __halt();
             }
@@ -76,7 +76,7 @@ NSTATUS KRNLAPI KeMapVirtualMemory(
         }
         OrPageEntry(Pml4[Pml4i], StandardPageEntry);
         if(!Pdp[Pdpi].Present) {
-            if(NERROR(KeAllocatePhysicalMemory(0, 1, (void**)&Pdp[Pdpi]))) {
+            if(NERROR(MmAllocatePhysicalMemory(0, 1, (void**)&Pdp[Pdpi]))) {
                 SerialLog("KeMapPhysicalMemory : AllocatePage Error.");
                 while(1) __halt();
             }
@@ -94,7 +94,7 @@ NSTATUS KRNLAPI KeMapVirtualMemory(
             }
         } else {
             if(!Pd[Pdi].Present) {
-                if(NERROR(KeAllocatePhysicalMemory(0, 1, (void**)&Pd[Pdi]))) {
+                if(NERROR(MmAllocatePhysicalMemory(0, 1, (void**)&Pd[Pdi]))) {
                     SerialLog("KeMapPhysicalMemory : AllocatePage Error.");
                     while(1) __halt();
                 }
@@ -279,4 +279,41 @@ PVOID KRNLAPI KeConvertPointer(
     Pt = (void*)(Pd[Pdi].PhysicalAddr << 12);
     if(!Pt[Pti].Present) return NULL;
     return (void*)((Pt[Pti].PhysicalAddr << 12) | ((UINT64)VirtualAddress & 0xFFF));
+}
+
+PVOID KRNLAPI KeFindAvailableAddressSpace(
+    IN PROCESS* Process,
+    IN void* VirtualStart,
+    IN void* VirtualEnd
+) {
+    if((UINT64)VirtualEnd >= (UINT64)VirtualStart) return NULL;
+    UINT64 VirtualAddress = (UINT64)VirtualStart;
+    if((VirtualAddress & 0xFFFF800000000000) == 0xFFFF800000000000) {
+        VirtualAddress &= ~0xFFFF000000000000;
+        VirtualAddress |= ((UINT64)1 << 48);
+    }
+    UINT64 RemainingPages = ((UINT64)VirtualEnd - (UINT64)VirtualStart) >> 12;
+    if(!RemainingPages) return NULL;
+    UINT64 NumPages = RemainingPages;
+    while(_interlockedbittestandset64(&Process->ControlBitmask, PROCESS_CONTROL_ALLOCATE_ADDRESS_SPACE)) _mm_pause();
+    RFPTENTRY Pml4 = Process->PageTable, Pdp, Pd, Pt;
+
+    void* ret = NULL;
+
+    for(;;) {
+        UINT64 Pti = (VirtualAddress >> 12) & 0x1FF;
+        UINT64 Pdi = (VirtualAddress >> 21) & 0x1FF;
+        UINT64 Pdpi = (VirtualAddress >> 30) & 0x1FF;
+        UINT64 Pml4i = (VirtualAddress >> 39) & 0x1FF;
+
+        if(!Pml4[Pml4i].Present) {
+            RemainingPages-=min(RemainingPages, 0x8000000);
+            if(!ret) ret = VirtualAddress;
+            if(!RemainingPages) {
+                break;
+            }
+        } else Pdp = (void*)(Pml4[Pml4i].PhysicalAddr << 12);
+    }
+    _bittestandreset64(&Process->ControlBitmask, PROCESS_CONTROL_ALLOCATE_ADDRESS_SPACE);
+    return ret;
 }

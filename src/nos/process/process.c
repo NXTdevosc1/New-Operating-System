@@ -9,7 +9,7 @@ PROCESS_LIST ProcessList = {INITIAL_MUTEX, 1, {
         // Kernel Process
         NULL, 0, 0, 0,
         L"System Kernel.", L"NewOS/System/noskx64.exe", L"System kernel process.",
-        NULL, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, &ProcessList, 0
+        NULL, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, {0}, &ProcessList, 0
     }, 0
 }, NULL, PROCESS_LIST_MAGIC};
 

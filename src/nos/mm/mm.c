@@ -63,7 +63,7 @@ NOS_MEMORY_DESCRIPTOR* MmCreateMemoryDescriptor(
         if(!mem->Next) {
             SerialLog("Allocating New NOS_MEMORY_LINKED_LIST");
             if(NERROR(
-            KeAllocatePhysicalMemory(
+            MmAllocatePhysicalMemory(
                 MM_ALLOCATE_WITHOUT_DESCRIPTOR,
                 ConvertToPages(sizeof(NOS_MEMORY_LINKED_LIST)),
                 &mem->Next
@@ -80,4 +80,50 @@ NOS_MEMORY_DESCRIPTOR* MmCreateMemoryDescriptor(
         };
         mem = mem->Next;
     }
+}
+
+NOS_VIRTUAL_MEMORY_DESCRIPTOR* VmCreateDescriptor(
+    PROCESS* Process,
+    void* VirtualStart,
+    UINT64 NumPages,
+    UINT64 PageFlags
+) {
+    NOS_VIRTUAL_MEMORY_LIST* Vm = &Process->VirtualMemory;
+    UINT Index;
+    UINT64 CpuFlags;
+    for(;;) {
+        if(Vm->Present != (UINT64)-1) {
+            CpuFlags = KeAcquireSpinLock(&Vm->SpinLock);
+            if(_BitScanForward64(&Index, ~Vm->Present)) {
+                _bittestandset64(&Vm->Present, Index);
+                NOS_VIRTUAL_MEMORY_DESCRIPTOR* Desc = &Vm->Vm[Index];
+                if(NERROR(MmAllocatePhysicalMemory(0, ConvertToPages(sizeof(NOS_HEAP_TREE)), &Desc->Heaps))) {
+                    SerialLog("MmCreateVMDesc : Allocation error!");
+                    while(1);
+                }
+                ObjZeroMemory(Desc->Heaps);
+                Desc->VirtualStart = VirtualStart;
+                Desc->NumPages = NumPages;
+                Desc->PageFlags = PageFlags;
+                Desc->Parent = Vm;
+                KeReleaseSpinLock(&Vm->SpinLock, CpuFlags);
+                return Desc;
+            }
+            KeReleaseSpinLock(&Vm->SpinLock, CpuFlags);
+        }
+        if(!Vm->Next) {
+            if(NERROR(MmAllocatePhysicalMemory(0, ConvertToPages(sizeof(NOS_VIRTUAL_MEMORY_LIST)), &Vm->Next))) {
+                SerialLog("MmCreateVMDesc : Allocation error!");
+                while(1);
+            }
+            ObjZeroMemory(Vm->Next);
+        }
+        Vm = Vm->Next;
+    }
+}
+
+void VmRemoveDescriptor(
+    NOS_VIRTUAL_MEMORY_DESCRIPTOR* Descriptor
+) {
+    _interlockedbittestandreset64(&Descriptor->Parent->Present, ((UINT64)Descriptor - (UINT64)Descriptor->Parent) / sizeof(NOS_VIRTUAL_MEMORY_DESCRIPTOR));
 }

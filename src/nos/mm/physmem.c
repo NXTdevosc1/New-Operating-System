@@ -1,6 +1,6 @@
 #include <nos/mm/physmem.h>
 
-NSTATUS KRNLAPI KeAllocatePhysicalMemory(UINT64 Flags, UINT64 NumPages, void** Ptr) {
+NSTATUS KRNLAPI MmAllocatePhysicalMemory(UINT64 Flags, UINT64 NumPages, void** Ptr) {
     if(Flags & ALLOCATE_BELOW_4GB) {
         return MmAllocateLowMemory(Flags, NumPages, Ptr);
     } else {
@@ -138,4 +138,12 @@ NSTATUS KRNLAPI MmAllocateHighMemory(
         PhysicalMem = PhysicalMem->Next;
     }
     return STATUS_UNSUFFICIENT_MEMORY;
+}
+
+BOOLEAN KRNLAPI MmFreePhysicalMemory(
+    IN void* PhysicalMemory,
+    IN UINT64 NumPages
+) {
+
+    return FALSE;
 }

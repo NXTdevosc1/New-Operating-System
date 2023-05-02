@@ -70,6 +70,7 @@ void __declspec(noreturn) NosSystemInit() {
     _ui64toa((UINT64)KeFindSystemFirmwareTable("RSD PTR ", &g), bf, 0x10);
     SerialLog(bf);
     
+    
 
     memset(NosInitData->FrameBuffer.BaseAddress, 0, NosInitData->FrameBuffer.Pitch * 4 * NosInitData->FrameBuffer.VerticalResolution);
 

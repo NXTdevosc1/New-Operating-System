@@ -14,7 +14,7 @@ void KiCpuInitDescriptors(PROCESSOR* Processor) {
     _disable();
     // Creating the interrupt array table
     INTERRUPT_ARRAY* Interrupts;
-    if(NERROR(KeAllocatePhysicalMemory(0, ConvertToPages(sizeof(INTERRUPT_ARRAY)), &Interrupts))) {
+    if(NERROR(MmAllocatePhysicalMemory(0, ConvertToPages(sizeof(INTERRUPT_ARRAY)), &Interrupts))) {
         SerialLog("Failed to allocate interrupt array.");
         while(1);
     }
@@ -33,17 +33,17 @@ void KiCpuInitDescriptors(PROCESSOR* Processor) {
     // Setting up the TSS
 
     // Allocate CPU Internal Interrupts stack memory (INT 0-31)
-    if(NERROR(KeAllocatePhysicalMemory(0, 10, (void**)&Processor->Tss.rsp0))) {
+    if(NERROR(MmAllocatePhysicalMemory(0, 10, (void**)&Processor->Tss.rsp0))) {
         SerialLog("Failed to allocate interrupt memory.");
         while(1);
     }
     // Allocate IRQ stack memory (INT 32-220)
-    if(NERROR(KeAllocatePhysicalMemory(0, 10, (void**)&Processor->Tss.ist1))) {
+    if(NERROR(MmAllocatePhysicalMemory(0, 10, (void**)&Processor->Tss.ist1))) {
         SerialLog("Failed to allocate interrupt memory.");
         while(1);
     }
     // Allocate system interrupt stack memory (INT 221-255)
-    if(NERROR(KeAllocatePhysicalMemory(0, 10, (void**)&Processor->Tss.ist2))) {
+    if(NERROR(MmAllocatePhysicalMemory(0, 10, (void**)&Processor->Tss.ist2))) {
         SerialLog("Failed to allocate interrupt memory.");
         while(1);
     }
