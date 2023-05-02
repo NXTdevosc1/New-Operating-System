@@ -27,14 +27,41 @@ void __declspec(noreturn) NosSystemInit() {
     memset(NosInitData->FrameBuffer.BaseAddress, 0xFF, NosInitData->FrameBuffer.Pitch * 4 * NosInitData->FrameBuffer.VerticalResolution);
     
     KDebugPrint("Test print %x", 0x128B, 12, 53);
-    KeMapPhysicalMemory(
+    KeMapVirtualMemory(
         KernelProcess,
         (void*)0x1000,
-        (void*)0x280000000,
-        10000000,
-        PAGE_USER,
+        (void*)0xffff800500200000,
+        2,
+        PAGE_USER | PAGE_WRITE_ACCESS | PAGE_GLOBAL,
         0
     );
+    KeMapVirtualMemory(
+        KernelProcess,
+        (void*)0x1000,
+        (void*)0xffff800500202000,
+        2,
+        PAGE_WRITE_ACCESS | PAGE_GLOBAL,
+        0
+    );
+    UINT64 np = 10;
+    // KeUnmapVirtualMemory(
+    //     KernelProcess,
+    //     (void*)0xffff800500202000,
+    //     &np
+    // );
+
+    KDebugPrint("Check mem access (BOOL, FLAGS)");
+    BOOLEAN b = KeCheckMemoryAccess(
+        KernelProcess,
+        (void*)0xffff800500200000,
+        0x3000,
+        &np
+    );
+    _ui64toa(b, bf, 0x10);
+    SerialLog(bf);
+    _ui64toa(np, bf, 0x10);
+    SerialLog(bf);
+
     memset(NosInitData->FrameBuffer.BaseAddress, 0, NosInitData->FrameBuffer.Pitch * 4 * NosInitData->FrameBuffer.VerticalResolution);
 
     KDebugPrint("Test2 : %c", 'A');
