@@ -82,30 +82,66 @@ NOS_MEMORY_DESCRIPTOR* MmCreateMemoryDescriptor(
     }
 }
 
+NOS_VIRTUAL_MEMORY_DESCRIPTOR* VmFindLinkableEntry(
+    PROCESS* Process,
+    void* VirtualStart,
+    UINT64 PageFlags
+) {
+    NOS_VIRTUAL_MEMORY_LIST* Vm = &Process->VirtualMemory;
+    for(;;Vm = Vm->Next) {
+        UINT index;
+        UINT64 Mask = Vm->Present;
+        while(_BitScanForward64(&index, Mask)) {
+            _bittestandreset64(&Mask, index);
+            if(((UINT64)Vm->Vm[index].VirtualStart + Vm->Vm[index].NumBytes) == (UINT64)VirtualStart) 
+            {
+                if((Vm->Vm[index].PageFlags & PAGE_FLAGS_UNTOLERABLE_BITMASK) !=
+                (PageFlags & PAGE_FLAGS_UNTOLERABLE_BITMASK)
+                ) return NULL; // Can't link the two page chains
+
+                return Vm->Vm + index;
+            }
+        }
+        if(!Vm->Next) break;
+    }
+    return NULL;
+}
+
 NOS_VIRTUAL_MEMORY_DESCRIPTOR* VmCreateDescriptor(
     PROCESS* Process,
     void* VirtualStart,
     UINT64 NumPages,
     UINT64 PageFlags
 ) {
+    NOS_VIRTUAL_MEMORY_DESCRIPTOR* Desc = VmFindLinkableEntry(Process, VirtualStart, PageFlags);
+    if(Desc) {
+        Desc->NumPages+=NumPages;
+        if(PageFlags & PAGE_2MB) Desc->NumBytes += (NumPages << 21);
+        else Desc->NumBytes += (NumPages << 12);
+        return Desc;
+    }
     NOS_VIRTUAL_MEMORY_LIST* Vm = &Process->VirtualMemory;
+    if(Process->VmListSearchStart) Vm = Process->VmListSearchStart;
     UINT Index;
     UINT64 CpuFlags;
-    for(;;) {
+    for(;;Vm = Vm->Next) {
         if(Vm->Present != (UINT64)-1) {
             CpuFlags = KeAcquireSpinLock(&Vm->SpinLock);
             if(_BitScanForward64(&Index, ~Vm->Present)) {
                 _bittestandset64(&Vm->Present, Index);
-                NOS_VIRTUAL_MEMORY_DESCRIPTOR* Desc = &Vm->Vm[Index];
-                if(NERROR(MmAllocatePhysicalMemory(0, ConvertToPages(sizeof(NOS_HEAP_TREE)), &Desc->Heaps))) {
-                    SerialLog("MmCreateVMDesc : Allocation error!");
-                    while(1);
-                }
-                ObjZeroMemory(Desc->Heaps);
+                Desc = &Vm->Vm[Index];
+                // if(NERROR(MmAllocatePhysicalMemory(0, ConvertToPages(sizeof(NOS_HEAP_TREE)), &Desc->Heaps))) {
+                //     SerialLog("MmCreateVMDesc : Allocation error!");
+                //     while(1);
+                // }
+                // ObjZeroMemory(Desc->Heaps);
                 Desc->VirtualStart = VirtualStart;
                 Desc->NumPages = NumPages;
+                if(PageFlags & PAGE_2MB) Desc->NumBytes = NumPages << 21;
+                else Desc->NumBytes = NumPages << 12;
                 Desc->PageFlags = PageFlags;
                 Desc->Parent = Vm;
+                Process->VmListSearchStart = Vm;
                 KeReleaseSpinLock(&Vm->SpinLock, CpuFlags);
                 return Desc;
             }
@@ -116,9 +152,8 @@ NOS_VIRTUAL_MEMORY_DESCRIPTOR* VmCreateDescriptor(
                 SerialLog("MmCreateVMDesc : Allocation error!");
                 while(1);
             }
-            ObjZeroMemory(Vm->Next);
+            Vm->Next->Present = 0;
         }
-        Vm = Vm->Next;
     }
 }
 
