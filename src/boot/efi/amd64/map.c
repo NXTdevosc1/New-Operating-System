@@ -48,10 +48,10 @@ void BlInitPageTable() {
 	
     BlMapMemory((void*)NosInitData.FrameBuffer.BaseAddress, NosInitData.FrameBuffer.BaseAddress, Convert2MBPages(NosInitData.FrameBuffer.FbSize), PM_LARGE_PAGES | PM_WRITEACCESS);
     // Enable Page Size Extension
-    UINT64 CR4;
-    __asm__ volatile("mov %%cr4, %0" : "=r"(CR4));
-    CR4 |= (1 << 4);
-    __asm__ volatile("mov %0, %%cr4" :: "r"(CR4));
+    // UINT64 CR4;
+    // __asm__ volatile("mov %%cr4, %0" : "=r"(CR4));
+    // CR4 |= (1 << 4);
+    // __asm__ volatile("mov %0, %%cr4" :: "r"(CR4));
     // Set the new page table
     __asm__ volatile ("mov %0, %%cr3" :: "r"(NosKernelPageTable));
 }
