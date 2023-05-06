@@ -1,6 +1,5 @@
 #include <nos/nos.h>
 #include <nos/mm/mm.h>
-#include <nos/mm/vm.h>
 
 PVOID KRNLAPI MmAllocateMemory(
     IN PROCESS* Process,
@@ -14,26 +13,13 @@ PVOID KRNLAPI MmAllocateMemory(
     if(NERROR(MmAllocatePhysicalMemory(Flags, NumPages, &Ptr))) {
         return NULL;
     }
-    void* VirtualAddress;
-    if(ProcessOperatingMode(Process) == KERNEL_MODE) {
-    if(!Process->VmSearchStart) Process->VmSearchStart = (void*)0xFFFF800000000000;
-        VirtualAddress = KeFindAvailableAddressSpace(
-            Process,
-            NumPages,
-            Process->VmSearchStart,
-            (void*)(UINT64)-1,
-            PageAttributes
-        );
-    } else {
-        if(!Process->VmSearchStart) Process->VmSearchStart = (void*)0x1000;
-        VirtualAddress = KeFindAvailableAddressSpace(
-            Process,
-            NumPages,
-            Process->VmSearchStart,
-            (void*)0x800000000000,
-            PageAttributes
-        );
-    }
+    void* VirtualAddress = KeFindAvailableAddressSpace(
+        Process,
+        NumPages,
+        Process->VmSearchStart,
+        Process->VmSearchEnd,
+        PageAttributes
+    );
     if(!VirtualAddress) {
         // FREE MEMORY
         while(1);
@@ -50,11 +36,5 @@ PVOID KRNLAPI MmAllocateMemory(
         0
     );
     ProcessReleaseControlLock(Process, PROCESS_CONTROL_ALLOCATE_ADDRESS_SPACE);
-    VmCreateDescriptor(
-        Process,
-        VirtualAddress,
-        NumPages,
-        PageAttributes
-    );
     return VirtualAddress;
 }

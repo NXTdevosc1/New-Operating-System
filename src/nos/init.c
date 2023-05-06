@@ -9,6 +9,12 @@
 
 char bf[100];
 
+/*
+- User accessible table at the top of the system space which specifies the mapping of the pages
+
+*/
+
+PROCESS* KernelProcess = NULL;
 
 extern void NOSINTERNAL KiDumpPhysicalMemoryEntries();
 
@@ -18,9 +24,12 @@ void __declspec(noreturn) NosSystemInit() {
     KiInitStandardSubsystems();
     KiDumpPhysicalMemoryEntries(); // To determine memory length
 
+    KernelProcess = KiGetProcessById(0);
+    KernelProcess->VmSearchStart = NosInitData->NosKernelImageBase;
+    KernelProcess->VmSearchEnd = (void*)-1;
+    
     KiInitBootCpu();
 
-    PROCESS* KernelProcess = KiGetProcessById(0);
     KernelProcess->PageTable = (void*)(__readcr3() & ~0xFFF);
 
 
@@ -87,7 +96,24 @@ _ui64toa((UINT64)MmAllocateMemory(KernelProcess, 100, PAGE_2MB), bf, 0x10);
     SerialLog(bf);
     memset(NosInitData->FrameBuffer.BaseAddress, 0, NosInitData->FrameBuffer.Pitch * 4 * NosInitData->FrameBuffer.VerticalResolution);
 
-    KDebugPrint("Test2 : %c", 'A');
+    SerialLog("Testing malloc");
+    _ui64toa((UINT64)MmAllocateMemory(KernelProcess, 1, PAGE_WRITE_ACCESS), bf, 0x10);
+    SerialLog(bf);
+    _ui64toa((UINT64)MmAllocateMemory(KernelProcess, 1, PAGE_WRITE_ACCESS), bf, 0x10);
+    SerialLog(bf);
+    _ui64toa((UINT64)MmAllocatePool(10, 0), bf, 0x10);
+    SerialLog(bf);
+    _ui64toa((UINT64)MmAllocatePool(10, 0), bf, 0x10);
+    SerialLog(bf);
+    _ui64toa((UINT64)MmAllocatePool(0x1000, 0), bf, 0x10);
+    SerialLog(bf);
+
+    for(UINT i = 0;i<1000000;i++) {
+        MmAllocatePool(0x10, 0);
+    }
+
+    memset(NosInitData->FrameBuffer.BaseAddress, 0xA0, NosInitData->FrameBuffer.Pitch * 4 * NosInitData->FrameBuffer.VerticalResolution);
+
     // KiDumpPhysicalMemoryEntries();
 
     // NosInitData->EfiRuntimeServices->ResetSystem(EfiResetCold, 0, 0, NULL);
