@@ -1,6 +1,6 @@
 #include <nos/process/internal.h>
 
-NSTATUS KRNLAPI KeRegisterSubsystem(
+NSTATUS NSYSAPI NosCreateSubsystem(
     IN UINT8 Subsystem,
     IN BOOLEAN OperatingMode,
     IN SUBSYSTEM_ENTRY_POINT EntryPoint,
@@ -15,13 +15,6 @@ NSTATUS KRNLAPI KeRegisterSubsystem(
     return STATUS_SUCCESS;
 }
 
-NSTATUS KRNLAPI KeDeleteSubsystem(
-    IN UINT8 Subsystem
-) {
-    Subsystems[Subsystem].Flags = 0;
-    return STATUS_SUCCESS;
-}
-
 
 NSTATUS NSYSAPI NativeSubsystemEntryPoint(void* EntryPoint) {
     while(1);
@@ -32,13 +25,13 @@ NSTATUS NSYSAPI ConsoleSubsystemEntryPoint(void* EntryPoint) {
 }
 
 void KiInitStandardSubsystems() {
-    KeRegisterSubsystem(
+    NosCreateSubsystem(
         SUBSYSTEM_NATIVE,
         KERNEL_MODE,
         NativeSubsystemEntryPoint,
         0
     );
-    KeRegisterSubsystem(
+    NosCreateSubsystem(
         SUBSYSTEM_USERMODE_CONSOLE,
         USER_MODE,
         ConsoleSubsystemEntryPoint,

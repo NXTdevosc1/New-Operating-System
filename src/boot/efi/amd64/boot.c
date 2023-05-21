@@ -14,7 +14,7 @@ EFI_FILE_PROTOCOL* _OsRoots[MAX_OS_PARTITIONS] = {0};
 UINTN NumDrives = 0;
 UINTN NumPartitions = 0;
 UINTN NumOsPartitions = 0;
-char __finf[0x1000] = {0}; // Used to request file info
+char __finf[0x2000] = {0}; // Used to request file info
 
 
 
@@ -177,20 +177,26 @@ EFI_STATUS EFIAPI UefiEntry(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TABLE* Syst
 	BootConfig->Close(BootConfig);
 	// Load boot drivers
 	NOS_BOOT_DRIVER* Driver = BootHeader->Drivers;
+	UINT16 conv[256];
 	for(UINTN i = 0;i<BootHeader->NumDrivers;i++, Driver++) {
 		Driver->Flags &= ~DRIVER_LOADED;
 		if(Driver->Flags & DRIVER_ENABLED) {
 			EFI_FILE* DriverFile;
+			AsciiStrToUnicodeStrS((const CHAR8*)Driver->DriverPath, conv, 256);
 			if(EFI_ERROR(OsPartition->Open(
 				OsPartition, &DriverFile,
-				Driver->DriverPath,
+				conv,
 				EFI_FILE_MODE_READ, 0
-			))) continue;
-			BufferSize = sizeof(EFI_FILE_INFO) + 0x100;
+			))) {
+				Print(L"Cannot find : %s\n", conv);
+				continue;
+			}
+			BufferSize = sizeof(EFI_FILE_INFO) + 0x1000;
 			if(EFI_ERROR(DriverFile->GetInfo(
 				DriverFile, &gEfiFileInfoGuid, &BufferSize, FileInfo
 			))) {
 				DriverFile->Close(DriverFile);
+				Print(L"Failed to load: %s\n", conv);
 				continue;
 			}
 
@@ -198,7 +204,7 @@ EFI_STATUS EFIAPI UefiEntry(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TABLE* Syst
 			if(EFI_ERROR(gBS->AllocatePool(
 				EfiLoaderData, Driver->ImageSize, &Driver->ImageBuffer
 			))) {
-				Print(L"No enough memory to load %ls\n", Driver->DriverPath);
+				Print(L"No enough memory to load %ls\n", conv);
 				DriverFile->Close(DriverFile);
 				return EFI_UNSUPPORTED;
 			}
@@ -211,6 +217,7 @@ EFI_STATUS EFIAPI UefiEntry(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TABLE* Syst
 			}
 			DriverFile->Close(DriverFile);
 			Driver->Flags |= DRIVER_LOADED;
+			Print(L"%s loaded\n");
 		}
 	}
 

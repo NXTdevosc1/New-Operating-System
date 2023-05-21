@@ -1,13 +1,11 @@
 #include <nos/processor/internal.h>
 
 // Processor Interrupt Utilities
-NSTATUS KRNLAPI KeInstallInterruptHandler(
+NSTATUS KRNLAPI ExInstallInterruptHandler(
     IN UINT32 IrqNumber,
     IN INTERRUPT_SERVICE_HANDLER Handler,
     IN OPT void* Context
 ) {
-    // TODO : Check if handler exists (PAGE_EXECUTABLE Check)
-
     /*
     TODO : Choose the processor based on the IRQ Number
     */
@@ -16,10 +14,10 @@ NSTATUS KRNLAPI KeInstallInterruptHandler(
     INTERRUPT_ARRAY* Ints = Processor->Interrupts;
 
     // TODO : Acquire SpinLock
-    UINT64 rflags = KeAcquireSpinLock(&Ints->Interrupts[IrqNumber].SpinLock);
+    UINT64 rflags = ExAcquireSpinLock(&Ints->Interrupts[IrqNumber].SpinLock);
     UINT32 IntIndx;
     if(!Ints->Interrupts[IrqNumber].Present) {
-        KiSetInterrupt(
+        CpuSetInterrupt(
             Processor,
             IrqNumber + 0x20,
             InterruptGate,
@@ -27,19 +25,19 @@ NSTATUS KRNLAPI KeInstallInterruptHandler(
         );
     }
     if(!_BitScanForward64(&IntIndx, ~Ints->Interrupts[IrqNumber].Present)) {
-        KeReleaseSpinLock(&Ints->Interrupts[IrqNumber].SpinLock, rflags);
+        ExReleaseSpinLock(&Ints->Interrupts[IrqNumber].SpinLock, rflags);
         return STATUS_NO_FREE_SLOTS;
     }
     _bittestandset64(&Ints->Interrupts[IrqNumber].Present, IntIndx);
     INTERRUPT_DESCRIPTOR* Descriptor = &Ints->Interrupts[IrqNumber].Descriptors[IntIndx];
     Descriptor->Context = Context;
     Descriptor->Handler = Handler;
-    KeReleaseSpinLock(&Ints->Interrupts[IrqNumber].SpinLock, rflags);
+    ExReleaseSpinLock(&Ints->Interrupts[IrqNumber].SpinLock, rflags);
 
     return STATUS_SUCCESS;
 }
 
-NSTATUS KRNLAPI KeRemoveInterruptHandler(
+NSTATUS KRNLAPI ExRemoveInterruptHandler(
     IN UINT32 IrqNumber,
     IN INTERRUPT_SERVICE_HANDLER Handler
 ) {
@@ -52,7 +50,7 @@ NSTATUS KRNLAPI KeRemoveInterruptHandler(
     INTERRUPT_ARRAY* Ints = Processor->Interrupts;
 
     // TODO : Acquire SpinLock
-    UINT64 rflags = KeAcquireSpinLock(&Ints->Interrupts[IrqNumber].SpinLock);
+    UINT64 rflags = ExAcquireSpinLock(&Ints->Interrupts[IrqNumber].SpinLock);
 
 
     UINT32 IntIndx;
@@ -65,14 +63,14 @@ NSTATUS KRNLAPI KeRemoveInterruptHandler(
             ObjZeroMemory(Descriptor);
 
             if(!Ints->Interrupts[IrqNumber].Present) {
-                KiRemoveInterrupt(Processor, IrqNumber + 0x20);
-                KeReleaseSpinLock(&Ints->Interrupts[IrqNumber].SpinLock, rflags);
+                CpuRemoveInterrupt(Processor, IrqNumber + 0x20);
+                ExReleaseSpinLock(&Ints->Interrupts[IrqNumber].SpinLock, rflags);
 
             }
             return STATUS_SUCCESS;
         }
     }
-    KeReleaseSpinLock(&Ints->Interrupts[IrqNumber].SpinLock, rflags);
+    ExReleaseSpinLock(&Ints->Interrupts[IrqNumber].SpinLock, rflags);
     return STATUS_NOT_FOUND;
 }
 
@@ -86,7 +84,7 @@ extern void* NosInternalInterruptHandler(UINT64 InterruptNumber, void* Interrupt
 extern void NosIrqHandler(UINT64 InterruptNumber, void* InterruptStack);
 extern void NosSystemInterruptHandler(UINT64 InterruptNumber, void* InterruptStack);
 
-void KiSetInterrupt(
+void CpuSetInterrupt(
     PROCESSOR* Processor,
     UINT8 InterruptNumber,
     UINT8 InterruptType,
@@ -124,7 +122,7 @@ void KiSetInterrupt(
     Entry->Present = 1;
 }
 
-void KiRemoveInterrupt(
+void CpuRemoveInterrupt(
     PROCESSOR* Processor,
     UINT8 InterruptNumber
 ) {

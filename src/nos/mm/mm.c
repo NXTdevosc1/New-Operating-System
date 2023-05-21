@@ -22,6 +22,26 @@ NOS_MEMORY_DESCRIPTOR* MmFindAMContinuationEntry(void* PhysicalStart) {
     return NULL;
 }
 
+NOS_MEMORY_DESCRIPTOR* MmFindFMContinuationEntry(void* PhysicalStart) {
+    NOS_MEMORY_LINKED_LIST* mem = NosInitData->NosMemoryMap;
+    unsigned long Index;
+    while(mem) {
+        for(int i = 0;i<0x40;i++) {
+            UINT64 m = mem->Groups[i].Present;
+            while(_BitScanForward64(&Index, m)) {
+                _bittestandreset64(&m, Index);
+                NOS_MEMORY_DESCRIPTOR* desc = &mem->Groups[i].MemoryDescriptors[Index];
+                if((desc->Attributes & MM_DESCRIPTOR_ALLOCATED)) continue;
+                if(((UINT64)desc->PhysicalAddress + (desc->NumPages << 12)) == (UINT64)PhysicalStart) {
+                    return desc;
+                }
+            }
+        }
+        mem = mem->Next;
+    }
+    return NULL;
+}
+
 NOS_MEMORY_DESCRIPTOR* MmCreateMemoryDescriptor(
     void* PhysicalAddress,
     UINT32 Attributes,
@@ -35,12 +55,20 @@ NOS_MEMORY_DESCRIPTOR* MmCreateMemoryDescriptor(
             desc->NumPages += NumPages;
             return desc;
         }
+    } else {
+        desc = MmFindFMContinuationEntry(PhysicalAddress);
+        if(desc) {
+            desc->NumPages += NumPages;
+            SerialLog("fm found");
+            return desc;
+        }
+        SerialLog("MmCMD: ERR1");
     }
     NOS_MEMORY_LINKED_LIST* mem = NosInitData->NosMemoryMap;
     unsigned long Index;
     for(;;) {
         if(_BitScanForward64(&Index, ~mem->Full)) {
-            KeMutexWait(KeMainThread, &mem->GroupsMutex[Index], 0);
+            ExMutexWait(KeMainThread, &mem->GroupsMutex[Index], 0);
             unsigned long Index2;
             if(_BitScanForward64(&Index2, ~mem->Groups[Index].Present)) {
                 _bittestandset64(&mem->Groups[Index].Present, Index2);
@@ -55,10 +83,10 @@ NOS_MEMORY_DESCRIPTOR* MmCreateMemoryDescriptor(
                 if(Attributes & MM_DESCRIPTOR_ALLOCATED) {
                     _bittestandset64(&mem->AllocatedMemoryDescriptorsMask[Index], Index2);
                 }
-                KeMutexRelease(KeMainThread, &mem->GroupsMutex[Index]);
+                ExMutexRelease(KeMainThread, &mem->GroupsMutex[Index]);
                 return desc;
             }
-            KeMutexRelease(KeMainThread, &mem->GroupsMutex[Index]);
+            ExMutexRelease(KeMainThread, &mem->GroupsMutex[Index]);
         }
         if(!mem->Next) {
             SerialLog("Allocating New NOS_MEMORY_LINKED_LIST");

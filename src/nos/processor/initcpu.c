@@ -3,10 +3,11 @@
 
 char BootProcessorName[MAX_PROCESSOR_NAME_LENGTH];
 
-void KiCpuInitDescriptors(void* Processor);
+void CpuInitDescriptors(void* Processor);
 
 PROCESSOR* BootProcessor;
 
+void CpuInitApicTimer();
 
 void KiInitBootCpu() {
     SerialLog("KernelInternals : Init Boot CPU");
@@ -15,7 +16,7 @@ void KiInitBootCpu() {
     UINT64 ProcessorId;
     KeRegisterProcessor(BootProcessorName, &ProcessorId);
     void* Processor = KeQueryProcessorById(ProcessorId);
-    KiCpuInitDescriptors(Processor);
+    CpuInitDescriptors(Processor);
     BootProcessor = Processor;
     
     

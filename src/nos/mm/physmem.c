@@ -11,7 +11,6 @@ NSTATUS KRNLAPI MmAllocatePhysicalMemory(UINT64 Flags, UINT64 NumPages, void** P
     }
 }
 
-#define BytesToAlign(Value, Align) (((UINT64)Value & (Align - 1)) ? (Align - ((UINT64)Value & (Align - 1))) : (0))
 
 // Allocates memory below 4gb
 NSTATUS KRNLAPI MmAllocateLowMemory(
@@ -41,18 +40,19 @@ NSTATUS KRNLAPI MmAllocateLowMemory(
                     if(_interlockedbittestandset(&Mem->Attributes, MM_DESCRIPTOR_BUSY)) continue;
 
                     if(((UINT64)Mem->PhysicalAddress + 
-                    BytesToAlign(Mem->PhysicalAddress, Align) + NumBytes)
-                     < 0xFFFFFFFF && Mem->NumPages >= ((BytesToAlign(Mem->PhysicalAddress, Align) + NumBytes) >> 12)) {
+                    ExcessBytes(Mem->PhysicalAddress, Align) + NumBytes)
+                     < 0xFFFFFFFF && Mem->NumPages >= ((ExcessBytes(Mem->PhysicalAddress, Align) + NumBytes) >> 12)) {
                         // Found Available Memory
-                        if(BytesToAlign(Mem->PhysicalAddress, Align)) {
-                            MmCreateMemoryDescriptor(Mem->PhysicalAddress, Mem->Attributes, BytesToAlign(Mem->PhysicalAddress, Align) >> 12);
+                        *Ptr = (void*)((UINT64)Mem->PhysicalAddress + ExcessBytes(Mem->PhysicalAddress, Align));
+                        void* addr = *Ptr;
+                        if(ExcessBytes(Mem->PhysicalAddress, Align)) {
+                            MmCreateMemoryDescriptor(Mem->PhysicalAddress, Mem->Attributes, ExcessBytes(Mem->PhysicalAddress, Align) >> 12);
                         }
                         if(!(Flags & MM_ALLOCATE_WITHOUT_DESCRIPTOR)) {
-                            MmCreateMemoryDescriptor((void*)((UINT64)Mem->PhysicalAddress + BytesToAlign(Mem->PhysicalAddress, Align)), MM_DESCRIPTOR_ALLOCATED, NumPages);
+                            MmCreateMemoryDescriptor(addr, MM_DESCRIPTOR_ALLOCATED, NumPages);
                         }
-                        *Ptr = (void*)((UINT64)Mem->PhysicalAddress + BytesToAlign(Mem->PhysicalAddress, Align));
-                        (UINT64)Mem->PhysicalAddress += BytesToAlign(Mem->PhysicalAddress, Align) + NumBytes;
-                        Mem->NumPages -= NumPages + (BytesToAlign(Mem->PhysicalAddress, Align) >> 12);
+                        (UINT64)Mem->PhysicalAddress = (UINT64)addr + NumBytes;
+                        Mem->NumPages -= NumPages + (ExcessBytes(Mem->PhysicalAddress, Align) >> 12);
                         
                         if(!Mem->NumPages) {
                             // Remove descriptor
@@ -112,18 +112,18 @@ NSTATUS KRNLAPI MmAllocateHighMemory(
                     if(Mem->Attributes & MM_DESCRIPTOR_ALLOCATED ||
                      (UINT64)Mem->PhysicalAddress < 0x100000000) continue;
                     if(_interlockedbittestandset(&Mem->Attributes, MM_DESCRIPTOR_BUSY)) continue;
-                    
-                    if(Mem->NumPages >= ((BytesToAlign(Mem->PhysicalAddress, Align) + NumBytes) >> 12)) {
+                    if(Mem->NumPages >= ((ExcessBytes(Mem->PhysicalAddress, Align) + NumBytes) >> 12)) {
+                        *Ptr = (void*)((UINT64)Mem->PhysicalAddress + ExcessBytes(Mem->PhysicalAddress, Align));
+                        void* addr = *Ptr;
                         // Found Available Memory
-                        if(BytesToAlign(Mem->PhysicalAddress, Align)) {
-                            MmCreateMemoryDescriptor(Mem->PhysicalAddress, Mem->Attributes, BytesToAlign(Mem->PhysicalAddress, Align) >> 12);
+                        if(ExcessBytes(Mem->PhysicalAddress, Align)) {
+                            MmCreateMemoryDescriptor(Mem->PhysicalAddress, Mem->Attributes, ExcessBytes(Mem->PhysicalAddress, Align) >> 12);
                         }
                         if(!(Flags & MM_ALLOCATE_WITHOUT_DESCRIPTOR)) {
-                            MmCreateMemoryDescriptor((void*)((UINT64)Mem->PhysicalAddress + BytesToAlign(Mem->PhysicalAddress, Align)), MM_DESCRIPTOR_ALLOCATED, NumPages);
+                            MmCreateMemoryDescriptor((void*)((UINT64)addr), MM_DESCRIPTOR_ALLOCATED, NumPages);
                         }
-                        *Ptr = (void*)((UINT64)Mem->PhysicalAddress + BytesToAlign(Mem->PhysicalAddress, Align));
-                        (UINT64)Mem->PhysicalAddress += BytesToAlign(Mem->PhysicalAddress, Align) + NumBytes;
-                        Mem->NumPages -= NumPages + (BytesToAlign(Mem->PhysicalAddress, Align) >> 12);
+                        (UINT64)Mem->PhysicalAddress = (UINT64)addr + NumBytes;
+                        Mem->NumPages -= (NumPages + (ExcessBytes(Mem->PhysicalAddress, Align) >> 12));
                         _bittestandreset(&Mem->Attributes, MM_DESCRIPTOR_BUSY);
                         _interlockedadd64(&NosInitData->AllocatedPagesCount, NumPages);
 
@@ -140,10 +140,55 @@ NSTATUS KRNLAPI MmAllocateHighMemory(
     return STATUS_UNSUFFICIENT_MEMORY;
 }
 
+// TODO : Free does not link properly
+
 BOOLEAN KRNLAPI MmFreePhysicalMemory(
     IN void* PhysicalMemory,
     IN UINT64 NumPages
 ) {
-
+    // UNIMPLEMENTED
+    return TRUE;
+    NOS_MEMORY_LINKED_LIST* mem = NosInitData->NosMemoryMap;
+    unsigned long Index;
+    UINT64 _paddr = (UINT64)PhysicalMemory;
+    while(mem) {
+        for(int i = 0;i<0x40;i++) {
+            UINT64 m = mem->AllocatedMemoryDescriptorsMask[i];
+            while(_BitScanForward64(&Index, m)) {
+                _bittestandreset64(&m, Index);
+                NOS_MEMORY_DESCRIPTOR* desc = &mem->Groups[i].MemoryDescriptors[Index];
+                if(desc->NumPages < NumPages) continue;
+                UINT64 addr = (UINT64)desc->PhysicalAddress;
+                UINT64 endaddr = addr + (desc->NumPages << 12);
+                if(addr <= _paddr && endaddr > _paddr) {
+                    SerialLog("free found");
+                    // Entry found
+                    if(addr == _paddr) {
+                        (char*)desc->PhysicalAddress += (NumPages << 12);
+                        desc->NumPages -= NumPages;
+                        if(!desc->NumPages) {
+                            _interlockedbittestandreset64(&mem->Groups[i].Present, Index);
+                        }
+                    } else if(endaddr == (_paddr + (NumPages << 12))){
+                        desc->NumPages -= NumPages;
+                        if(!desc->NumPages) {
+                            SerialLog("MMFPS: BUG0");
+                            while(1);
+                        }
+                    } else {
+                        // eg. 0x1000-0x4000 < 0x2000 && (0x1000 + 0x3000) > 0x2000
+                        // Split entries
+                        UINT64 PageIndex = (_paddr - addr) >> 12;
+                        MmCreateMemoryDescriptor((char*)(addr + ((PageIndex + NumPages) << 12)), desc->Attributes, desc->NumPages - NumPages - PageIndex);
+                        desc->NumPages = PageIndex;
+                    }
+                    MmCreateMemoryDescriptor(PhysicalMemory, 0, NumPages);
+                    NosInitData->AllocatedPagesCount -= NumPages;
+                    return TRUE;
+                }
+            }
+        }
+        mem = mem->Next;
+    }
     return FALSE;
 }

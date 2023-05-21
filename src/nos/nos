@@ -1,11 +1,11 @@
 The New Operating System Kernel is a microkernel which features
-- Processor Management
-- Process Management
-- Memory Management
-- Locks/Mutexes/Semaphores
-- Inter-Process Communication
-- Remote Procedure Call
-- Program Loader for user programs and drivers
+- Processor Management : Ex(Executive)/Core(Processor Core Management)
+- Process Management : Ex(Executive)/Nos
+- Memory Management : Mm(Memory Management)/Mmi(Mm Internals)/Nos
+- Locks/Mutexes/Semaphores : Ex(Executive)/Nos
+- Inter-Process Communication : 
+- Remote Procedure Call :
+- Program Loader for user programs and drivers : 
 
 
 - All linked lists are page aligned reguardless of their size

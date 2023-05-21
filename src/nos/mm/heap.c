@@ -5,6 +5,9 @@ NOS_HEAP_TREE KernelHeapTree = {0};
 SPINLOCK HeapSpinlock = 0;
 NOS_HEAP* InitialHeap = NULL;
 NOS_HEAP* LastHeap = NULL;
+
+#define HEAP_2MB (1)
+
 #define HEAP_NOTABLE_FLAGS 0
 
 static inline NOS_HEAP* MmAllocateDescriptor(void* Address, UINT64 Size, UINT Flags) {
@@ -87,13 +90,14 @@ static inline NOS_HEAP* MmFindLinkeableHeap(
     UINT Flags
 ) {
     if(!InitialHeap) return NULL;
+    Flags &= HEAP_NOTABLE_FLAGS;
     NOS_HEAP* Heap = InitialHeap;
     for(;Heap;Heap = Heap->Next) {
         UINT64 addr = (UINT64)Heap->Address + Heap->Size;
         if(addr > (UINT64)Address) break;
         if(addr == (UINT64)Address) {
             // pages are not of the same type
-            if(Heap->Flags != Flags) return NULL;
+            if((Heap->Flags & HEAP_NOTABLE_FLAGS) != Flags) return NULL;
             // heap is linkeable
             return Heap;
         }
@@ -126,16 +130,23 @@ NOS_HEAP* MmCreateHeap(
     return Heap;
 }
 
+#define BLOCK_HEADER_MAGIC 0xCFDA9049
+
 typedef struct _BLOCK_HEADER {
+    UINT32 Magic;
+    UINT32 Flags;
     UINT64 Size;
+    struct _BLOCK_HEADER* Prev;
     struct _BLOCK_HEADER* Next;
 } BLOCK_HEADER;
 
 BLOCK_HEADER* BlockStart = NULL;
 BLOCK_HEADER* BlockEnd = NULL;
 
-static inline void MmAddBlock(BLOCK_HEADER* Bh, UINT64 Size) {
+static inline void MmAddBlock(BLOCK_HEADER* Bh, UINT64 Size, UINT32 Flags) {
+    Bh->Magic = BLOCK_HEADER_MAGIC;
     Bh->Size = Size - sizeof(BLOCK_HEADER);
+    Bh->Flags = Flags;
     Bh->Next = NULL;
     if(!BlockEnd) {
         BlockStart = Bh;
@@ -157,13 +168,13 @@ PVOID KRNLAPI MmAllocatePool(
     NOS_HEAP* PrevHeap = NULL;
     UINT64 CpuFlags;
     void* Address;
-    CpuFlags = KeAcquireSpinLock(&HeapSpinlock);
+    CpuFlags = ExAcquireSpinLock(&HeapSpinlock);
     Flags &= HEAP_NOTABLE_FLAGS;
     for(;Heap;Heap = Heap->Next, PrevHeap = Heap) {
-        if(Heap->Flags == Flags && Heap->Size >= Size) {
+        if((Heap->Flags & HEAP_NOTABLE_FLAGS) == Flags && Heap->Size >= Size) {
             Heap->Size -= Size;
             Address = Heap->Address;
-            MmAddBlock(Address, Size);
+            MmAddBlock(Address, Size, Flags);
             (UINT64)Heap->Address += Size;
             if(!Heap->Size) {
                 // Remove heap
@@ -174,7 +185,7 @@ PVOID KRNLAPI MmAllocatePool(
                 }
                 MmRemoveHeap(Heap);
             }
-            KeReleaseSpinLock(&HeapSpinlock, CpuFlags);
+            ExReleaseSpinLock(&HeapSpinlock, CpuFlags);
             return (void*)((UINT64)Address + sizeof(BLOCK_HEADER));
         }
     }
@@ -227,7 +238,9 @@ CPU TLB Optimization protocol: Allocate Large pages if possible then small pages
             KernelProcess, PhysicalAddress2, Address, Num4KBPages, PageAttributes, 0
         );
     }
-    ProcessReleaseControlLock(KernelProcess, PROCESS_CONTROL_ALLOCATE_ADDRESS_SPACE);
+    ProcessReleaseControlLock(KernelProcess, PROCESS_CONTROL_MANAGE_ADDRESS_SPACE);
+
+    if(PhysicalAddress) Flags |= HEAP_2MB;
 
     if(Size != ((Num4KBPages << 12) + (NumLargePages << 21))) {
         // Now create a heap descriptor
@@ -240,9 +253,35 @@ CPU TLB Optimization protocol: Allocate Large pages if possible then small pages
         (UINT64)Heap->Size -= Size;
     }
 
-    MmAddBlock(Address, Size);
+    MmAddBlock(Address, Size, Flags);
 
-    KeReleaseSpinLock(&HeapSpinlock, CpuFlags);
+    ExReleaseSpinLock(&HeapSpinlock, CpuFlags);
 
     return (void*)((UINT64)Address + sizeof(BLOCK_HEADER));
+}
+
+static inline MmiDetachBlock(BLOCK_HEADER* bh) {
+    
+}
+
+// *********UNIMPLEMENTED*********
+BOOLEAN MmFreePool(IN void* Address) {
+    // later
+    return TRUE;
+    BLOCK_HEADER* bh = (BLOCK_HEADER*)Address - 1;
+    if(bh->Magic != BLOCK_HEADER_MAGIC) return FALSE;
+    UINT32 PageAlign = 0x1000;
+    if(bh->Flags & PAGE_2MB) PageAlign = 0x200000;
+    if(!ExcessBytes(bh, PageAlign)) {
+        // Free the page
+
+    
+    } else {
+        NOS_HEAP* Heap = MmCreateHeap(Address, bh->Size, bh->Flags);
+        if(!Heap) {
+            SerialLog("BUG0 : MmFreePool");
+            while(1);
+        }
+    }
+    return TRUE;
 }

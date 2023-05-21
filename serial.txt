@@ -6,17 +6,17 @@ Test Str : test123
 Num partition handles : 195
 Data partition found.
 Boot partition and boot drive selected successfully.
-Kernel File Size : 322048
+Kernel File Size : 321536
 Test2 : test123
 System Heap:
 7E000000
 OPT_HDR_SIZE : 240 FALIGN : 512
 Allocating System Pages : 000000007E000000
 Image Physical Base : 000000007E000000 , Image Base : 0000000000000000, Entry point : 0000000000001000
-Copying section .tex VADDR : 0000000000001000 PTR : 0000000000000400, SZ : 0000000000004C00
-Copying section .rda VADDR : 0000000000006000 PTR : 0000000000005000, SZ : 0000000000000E00
-Copying section .dat VADDR : 0000000000007000 PTR : 0000000000005E00, SZ : 000000000004BA68
-Copying section .pda VADDR : 0000000000053000 PTR : 000000000004E600, SZ : 0000000000000400
+Copying section .tex VADDR : 0000000000001000 PTR : 0000000000000400, SZ : 0000000000004A00
+Copying section .rda VADDR : 0000000000006000 PTR : 0000000000004E00, SZ : 0000000000000E00
+Copying section .dat VADDR : 0000000000007000 PTR : 0000000000005C00, SZ : 000000000004BA68
+Copying section .pda VADDR : 0000000000053000 PTR : 000000000004E400, SZ : 0000000000000400
 Loading DLL :
 syscruntime.dll
 File Size : 4608 bytes
@@ -37,6 +37,7 @@ Searching Symbol : memcmp
 Symbol Found, base : 00000000000553A0, IAT_TARGET : 000000007E006008, RVA : 00000000000013A0
 Searching Symbol : vsprintf_s
 Symbol Found, base : 0000000000055480, IAT_TARGET : 000000007E006010, RVA : 0000000000001480
+ loaded
 Memory Count:
 102
 Mapping System Pages :
@@ -56,11 +57,11 @@ Physical Memory Entry : (Attributes, PhysStart, NumPages)
 502096
 Physical Memory Entry : (Attributes, PhysStart, NumPages)
 7BF56000
-8311
+8193
 Allocated
 Physical Memory Entry : (Attributes, PhysStart, NumPages)
-7E34C000
-35
+7E34B000
+36
 Allocated
 Physical Memory Entry : (Attributes, PhysStart, NumPages)
 7EC2C000
@@ -74,27 +75,17 @@ Physical Memory Entry : (Attributes, PhysStart, NumPages)
 524288
 Allocated
 Used Memory, Free Memory, Total Memory (In Bytes)
-12640256
-4238774272
+13119488
+4238295040
 4251414528
 _______________________________________
 KernelInternals : Init Boot CPU
 KernelInternals : Register Processor
 GDT and TSS Loaded successfully
-Test print FFFF800000006040
-Check mem access (BOOL, FLAGS)
+New Operating System
+drivers
 1
-102
-1000
-15000
-7FB7E014
-FFFF800000200000
-80000000
-FFFF80007A400000
-FFFF800086C00000
-Testing malloc
-FFFF800086C01000
-FFFF800086C02000
-FFFF800086C03010
-FFFF800086C03030
-FFFF800086C04010
+drv:
+NewOS\System\acpi.sys
+loaded
+drvend

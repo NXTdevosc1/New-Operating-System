@@ -2,7 +2,7 @@
 #include <nos/mm/mm.h>
 
 PVOID KRNLAPI MmAllocateMemory(
-    IN PROCESS* Process,
+    IN PEPROCESS Process,
     IN UINT64 NumPages,
     IN UINT64 PageAttributes    
 ) {
@@ -35,6 +35,16 @@ PVOID KRNLAPI MmAllocateMemory(
         PageAttributes,
         0
     );
-    ProcessReleaseControlLock(Process, PROCESS_CONTROL_ALLOCATE_ADDRESS_SPACE);
+    ProcessReleaseControlLock(Process, PROCESS_CONTROL_MANAGE_ADDRESS_SPACE);
     return VirtualAddress;
+}
+
+BOOLEAN KRNLAPI MmFreeMemory(
+    IN PEPROCESS Process,
+    IN void *Mem,
+    IN UINT64 NumPages
+) {
+    void* PhysMem = KeConvertPointer(Process, Mem);
+    if(!PhysMem) return FALSE;
+    return MmFreePhysicalMemory(PhysMem, NumPages);
 }

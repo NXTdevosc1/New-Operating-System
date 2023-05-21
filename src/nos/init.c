@@ -14,108 +14,57 @@ char bf[100];
 
 */
 
-PROCESS* KernelProcess = NULL;
+PEPROCESS KernelProcess = NULL;
 
 extern void NOSINTERNAL KiDumpPhysicalMemoryEntries();
+
+char* InitErrors[] = {
+    "Process management initialization failed."
+};
+
+#define RaiseInitError(ErrNum) {SerialLog(InitErrors[ErrNum]); while(1) __halt();}
+
+void testh() {
+    SerialLog("IRQ0 Fired.");
+    while(1);
+}
 
 void __declspec(noreturn) NosSystemInit() {
     SerialLog("NOS_KERNEL : Kernel Booting...");
 
     KiInitStandardSubsystems();
+    
     KiDumpPhysicalMemoryEntries(); // To determine memory length
 
-    KernelProcess = KiGetProcessById(0);
+    if(NERROR(ExCreateProcess(NULL,
+    &KernelProcess,
+    0,
+    SUBSYSTEM_NATIVE,
+    L"NOS System.",
+    L"//NewOS/System/noskx64.exe",
+    NosSystemInit
+    ))) RaiseInitError(0);
+
     KernelProcess->VmSearchStart = NosInitData->NosKernelImageBase;
     KernelProcess->VmSearchEnd = (void*)-1;
+    KernelProcess->PageTable = (void*)(__readcr3() & ~0xFFF);
     
     KiInitBootCpu();
-
-    KernelProcess->PageTable = (void*)(__readcr3() & ~0xFFF);
-
+    SerialLog(NosInitData->BootHeader->OsName);
+    SerialLog("drivers");
+    _ui64toa(NosInitData->BootHeader->NumDrivers, bf, 10);
+    SerialLog(bf);
+    for(int i=0;i<NosInitData->BootHeader->NumDrivers;i++) {
+        SerialLog("drv:");
+        SerialLog(NosInitData->BootHeader->Drivers[i].DriverPath);
+        if(NosInitData->BootHeader->Drivers[i].Flags & DRIVER_LOADED) {
+            SerialLog("loaded");
+        } else SerialLog("not loaded");
+    }
+    SerialLog("drvend");
 
     memset(NosInitData->FrameBuffer.BaseAddress, 0xFF, NosInitData->FrameBuffer.Pitch * 4 * NosInitData->FrameBuffer.VerticalResolution);
-    
-    KDebugPrint("Test print %x", 0x128B, 12, 53);
-    KeMapVirtualMemory(
-        KernelProcess,
-        (void*)0x1000,
-        (void*)0xffff800500200000,
-        2,
-        PAGE_USER | PAGE_WRITE_ACCESS | PAGE_GLOBAL,
-        0
-    );
-    KeMapVirtualMemory(
-        KernelProcess,
-        (void*)0x14000,
-        (void*)0xffff800500202000,
-        2,
-        PAGE_WRITE_ACCESS | PAGE_GLOBAL,
-        0
-    );
-    UINT64 np = 10;
-    // KeUnmapVirtualMemory(
-    //     KernelProcess,
-    //     (void*)0xffff800500202000,
-    //     &np
-    // );
-
-    KDebugPrint("Check mem access (BOOL, FLAGS)");
-    BOOLEAN b = KeCheckMemoryAccess(
-        KernelProcess,
-        (void*)0xffff800500200000,
-        0x3000,
-        &np
-    );
-    _ui64toa(b, bf, 0x10);
-    SerialLog(bf);
-    _ui64toa(np, bf, 0x10);
-    SerialLog(bf);
-
-    _ui64toa((UINT64)KeConvertPointer(KernelProcess, (void*)0xffff800500200000), bf, 0x10);
-    SerialLog(bf);
-    _ui64toa((UINT64)KeConvertPointer(KernelProcess, (void*)0xffff800500203000), bf, 0x10);
-    SerialLog(bf);
-    GUID g = EFI_ACPI_20_TABLE_GUID;
-    _ui64toa((UINT64)KeFindSystemFirmwareTable("RSD PTR ", &g), bf, 0x10);
-    SerialLog(bf);
-    
-    _ui64toa((UINT64)KeFindAvailableAddressSpace(KernelProcess, 0x10, (void*)0xffff800000000000, (void*)0xffff800500200000, 0), bf, 0x10);
-    ProcessReleaseControlLock(KernelProcess, PROCESS_CONTROL_ALLOCATE_ADDRESS_SPACE);
-    SerialLog(bf);
-    _ui64toa((UINT64)KeFindAvailableAddressSpace(KernelProcess, 0x10, (void*)0x1000, (void*)0xffff800500200000, PAGE_2MB), bf, 0x10);
-    SerialLog(bf);
-    ProcessReleaseControlLock(KernelProcess, PROCESS_CONTROL_ALLOCATE_ADDRESS_SPACE);
-
-    for(UINT i = 0;i<500000;i++) {
-        MmAllocateMemory(KernelProcess, 1, PAGE_WRITE_ACCESS);
-    }
-
-_ui64toa((UINT64)MmAllocateMemory(KernelProcess, 100, PAGE_2MB), bf, 0x10);
-    SerialLog(bf);
-    _ui64toa((UINT64)MmAllocateMemory(KernelProcess, 1, PAGE_WRITE_ACCESS), bf, 0x10);
-    SerialLog(bf);
-    memset(NosInitData->FrameBuffer.BaseAddress, 0, NosInitData->FrameBuffer.Pitch * 4 * NosInitData->FrameBuffer.VerticalResolution);
-
-    SerialLog("Testing malloc");
-    _ui64toa((UINT64)MmAllocateMemory(KernelProcess, 1, PAGE_WRITE_ACCESS), bf, 0x10);
-    SerialLog(bf);
-    _ui64toa((UINT64)MmAllocateMemory(KernelProcess, 1, PAGE_WRITE_ACCESS), bf, 0x10);
-    SerialLog(bf);
-    _ui64toa((UINT64)MmAllocatePool(10, 0), bf, 0x10);
-    SerialLog(bf);
-    _ui64toa((UINT64)MmAllocatePool(10, 0), bf, 0x10);
-    SerialLog(bf);
-    _ui64toa((UINT64)MmAllocatePool(0x1000, 0), bf, 0x10);
-    SerialLog(bf);
-
-    for(UINT i = 0;i<1000000;i++) {
-        MmAllocatePool(0x10, 0);
-    }
-
-    memset(NosInitData->FrameBuffer.BaseAddress, 0xA0, NosInitData->FrameBuffer.Pitch * 4 * NosInitData->FrameBuffer.VerticalResolution);
-
-    // KiDumpPhysicalMemoryEntries();
-
-    // NosInitData->EfiRuntimeServices->ResetSystem(EfiResetCold, 0, 0, NULL);
+    ExInstallInterruptHandler(0, (INTERRUPT_SERVICE_HANDLER)testh, NULL);
+    _enable();
     for(;;) __halt();
 }

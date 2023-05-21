@@ -1,4 +1,7 @@
 @echo off
+if not defined LIB ( 
+call vcvars64.bat
+)
 echo Building the kernel...
 cd src/nos
 call ./compile.bat

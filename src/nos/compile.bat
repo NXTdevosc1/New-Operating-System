@@ -1,6 +1,9 @@
+
+
 FOR /R "./" %%S IN (*.asm) DO (
 	nasm "%%S" -Ox -f win64 -o "../../build/nos/assembly/%%~nS.s.obj"
 )
+
 
 set srcfiles=*.c processor/*.c lock/*.c mm/*.c process/*.c sys/*.c
 set libsource=../../lib

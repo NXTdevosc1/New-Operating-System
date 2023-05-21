@@ -7,16 +7,16 @@ typedef struct _SEMAPHORE {
 #include <nos/nos.h>
 
 
-void KRNLAPI KeInitSemaphore(SEMAPHORE* Semaphore, UINT MaxSlots) {
+void KRNLAPI ExInitSemaphore(SEMAPHORE* Semaphore, UINT MaxSlots) {
     Semaphore->MaxSlots = MaxSlots;
     Semaphore->FullSlots = 0;
 }
-BOOLEAN KRNLAPI KeSemaphoreWait(SEMAPHORE* Semaphore, UINT64 TimeoutInMs) {
+BOOLEAN KRNLAPI ExSemaphoreWait(SEMAPHORE* Semaphore, UINT64 TimeoutInMs) {
     // TODO : Implement Timeout
-    while(!KeSemaphoreSignal(Semaphore)) _mm_pause();
+    while(!ExSemaphoreSignal(Semaphore)) _mm_pause();
     return TRUE;
 }
-BOOLEAN KRNLAPI KeSemaphoreSignal(SEMAPHORE* Semaphore) {
+BOOLEAN KRNLAPI ExSemaphoreSignal(SEMAPHORE* Semaphore) {
     if(Semaphore->FullSlots >= Semaphore->MaxSlots) return FALSE;
     UINT s = _InterlockedIncrement(&Semaphore->FullSlots);
     if(s > Semaphore->MaxSlots) {

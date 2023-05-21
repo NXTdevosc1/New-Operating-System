@@ -10,7 +10,7 @@
 //     {}
 // }
 extern void __SystemLoadGDTAndTSS(SYSTEM_DESCRIPTOR* Gdtr);
-void KiCpuInitDescriptors(PROCESSOR* Processor) {
+void CpuInitDescriptors(PROCESSOR* Processor) {
     _disable();
     // Creating the interrupt array table
     INTERRUPT_ARRAY* Interrupts;
@@ -58,7 +58,7 @@ void KiCpuInitDescriptors(PROCESSOR* Processor) {
 
     // Initialize Standard Interrupts
     for(int i = 0;i<32;i++) {
-        KiSetInterrupt(
+        CpuSetInterrupt(
             Processor,
             i,
             InterruptGate,
@@ -67,6 +67,9 @@ void KiCpuInitDescriptors(PROCESSOR* Processor) {
     }
 }
 
+void CpuInitApicTimer() {
+    
+}
 
 
 

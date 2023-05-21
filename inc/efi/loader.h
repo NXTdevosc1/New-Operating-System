@@ -56,7 +56,8 @@ typedef struct _NOS_MEMORY_LINKED_LIST {
 typedef struct _NOS_BOOT_DRIVER NOS_BOOT_DRIVER;
 typedef enum {
     DeviceDriver,
-    FileSystemDriver
+    FileSystemDriver,
+    SubsystemDriver
 } DriverType;
 
 // Driver flags
@@ -83,12 +84,8 @@ BOOT Launch:
 typedef struct _NOS_BOOT_DRIVER {
     UINT32 DriverType;
     UINT32 Flags;
-    UINT16 DriverPath[255];
+    UINT8 DriverPath[255];
     UINT16 EndChar0;
-    UINT8 DriverName[63];
-    UINT8 EndChar1;
-    UINT8 DriverDescription[255];
-    UINT8 EndChar2;
     void* ImageBuffer; // To be loaded by the kernel
     UINT64 ImageSize;
 } NOS_BOOT_DRIVER;

@@ -28,7 +28,7 @@ typedef struct _PAGE_TABLE_ENTRY {
 UINT64 StandardPageEntry = ((UINT64)0b111);
 
 NSTATUS KRNLAPI KeMapVirtualMemory(
-    PROCESS* Process,
+    PEPROCESS Process,
     IN void* _PhysicalAddress,
     IN void* _VirtualAddress,
     IN UINT64 NumPages,
@@ -120,7 +120,7 @@ NSTATUS KRNLAPI KeMapVirtualMemory(
 
 
 NSTATUS KRNLAPI KeUnmapVirtualMemory(
-    IN PROCESS* Process,
+    IN PEPROCESS Process,
     IN void* _VirtualAddress,
     IN OUT UINT64* _NumPages // Returns num pages left
 ) {
@@ -210,7 +210,7 @@ _gt0:
 }
 
 BOOLEAN KRNLAPI KeCheckMemoryAccess(
-    IN PROCESS* Process,
+    IN PEPROCESS Process,
     IN void* _VirtualAddress,
     IN UINT64 NumBytes,
     IN OPT UINT64* _Flags
@@ -264,7 +264,7 @@ BOOLEAN KRNLAPI KeCheckMemoryAccess(
 }
 
 PVOID KRNLAPI KeConvertPointer(
-    IN PROCESS* Process,
+    IN PEPROCESS Process,
     IN void* VirtualAddress
 ) {
     UINT64 Pti = ((UINT64)VirtualAddress >> 12) & 0x1FF;
@@ -292,9 +292,9 @@ PVOID KRNLAPI KeConvertPointer(
 // if SUCCEEDED Return Value Must be > 0 (Start of free address space)
 // the current thread holds the Control Flag to edit the address space
 // the caller must release the control flag when finished
-// PROCESS_CONTROL_ALLOCATE_ADDRESS_SPACE
+// PROCESS_CONTROL_MANAGE_ADDRESS_SPACE
 PVOID KRNLAPI KeFindAvailableAddressSpace(
-    IN PROCESS* Process,
+    IN PEPROCESS Process,
     IN UINT64 NumPages,
     IN void* VirtualStart,
     IN void* VirtualEnd,
@@ -315,7 +315,7 @@ PVOID KRNLAPI KeFindAvailableAddressSpace(
     UINT64 RemainingPages = NumPages;
 
     // To be released by the caller
-    ProcessAcquireControlLock(Process, PROCESS_CONTROL_ALLOCATE_ADDRESS_SPACE);
+    ProcessAcquireControlLock(Process, PROCESS_CONTROL_MANAGE_ADDRESS_SPACE);
     
     RFPTENTRY Pml4 = Process->PageTable, Pdp, Pd, Pt;
 

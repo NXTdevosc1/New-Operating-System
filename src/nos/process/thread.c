@@ -1,29 +1,29 @@
 #include <nos/process/internal.h>
 
-NSTATUS KRNLAPI KeCreateThread(
-    IN PROCESS* Process,
-    OUT OPT UINT64* ThreadId,
+NSTATUS KRNLAPI ExCreateThread(
+    IN PEPROCESS Process,
+    OUT PETHREAD* OutThread,
     IN UINT64 Flags,
     IN void* EntryPoint
 ) {
-    if(!KeCheckProcess(Process)) return STATUS_INVALID_PARAMETER;
+    if(!ExProcessExists(Process)) return STATUS_INVALID_PARAMETER;
     // Allocate the thread
     THREAD_LIST* Threads = &ThreadList;
     unsigned long Index;
-    THREAD* Thread;
+    PETHREAD Thread;
     while(Threads) {
-        KeMutexWait(NULL, &Threads->Mutex, 0);
+        ExMutexWait(NULL, &Threads->Mutex, 0);
         if(_BitScanForward64(&Index, ~Threads->Present)) {
             _bittestandset64(&Threads->Present, Index);
             Thread = &Threads->Threads[Index];
-            KeMutexRelease(NULL, &Threads->Mutex);
+            ExMutexRelease(NULL, &Threads->Mutex);
             break;
         }
         if(!Threads->Next) {
             SerialLog("Threads->next");
             while(1);
         }
-        KeMutexRelease(NULL, &Threads->Mutex);
+        ExMutexRelease(NULL, &Threads->Mutex);
         Threads = Threads->Next;
     }
     // Setting up the thread
@@ -33,7 +33,7 @@ NSTATUS KRNLAPI KeCreateThread(
     Thread->ParentList = Threads;
     Thread->ParentListIndex = Index;
 
-    if(ThreadId) *ThreadId = Thread->ThreadId;
+    if(OutThread) *OutThread = Thread;
     
     // Link the thread to the process
     while(_interlockedbittestandset64(&Process->ControlBitmask, PROCESS_CONTROL_LINK_THREAD)) _mm_pause();
@@ -55,7 +55,7 @@ NSTATUS KRNLAPI KeCreateThread(
     return STATUS_SUCCESS;
 }
 
-BOOLEAN KeCheckThread(THREAD* Thread) {
+BOOLEAN ExThreadExists(PETHREAD Thread) {
     if(!Thread) return FALSE;
     THREAD_LIST* l = Thread->ParentList;
     if(l->Magic != THREAD_LIST_MAGIC ||
@@ -67,7 +67,7 @@ BOOLEAN KeCheckThread(THREAD* Thread) {
 }
 
 // Finds the thread and returns raw pointer
-THREAD* KiGetThreadById(UINT64 ThreadId) {
+PETHREAD ExGetThreadById(UINT64 ThreadId) {
     THREAD_LIST* pl = &ThreadList;
     UINT64 m;
     unsigned long Index;
