@@ -3,6 +3,7 @@
  * This file contains the initialization function of the Operating System Kernel
 */
 #include <nos/nos.h>
+#include <nos/loader/loader.h>
 /*
  * The initialization entry point of the NOS Kernel
 */
@@ -56,10 +57,34 @@ void __declspec(noreturn) NosSystemInit() {
     SerialLog(bf);
     for(int i=0;i<NosInitData->BootHeader->NumDrivers;i++) {
         SerialLog("drv:");
-        SerialLog(NosInitData->BootHeader->Drivers[i].DriverPath);
-        if(NosInitData->BootHeader->Drivers[i].Flags & DRIVER_LOADED) {
-            SerialLog("loaded");
-        } else SerialLog("not loaded");
+        NOS_BOOT_DRIVER* Driver = NosInitData->BootHeader->Drivers + i;
+        SerialLog(Driver->DriverPath);
+        // Enabled flag discarded as it is already checked by bootloader
+        if(!(Driver->Flags & DRIVER_LOADED)) {
+            SerialLog("not loaded");
+            continue;
+        } else SerialLog("loaded");
+
+        // Load the driver into memory
+        Driver->Flags &= ~DRIVER_LOADED;
+
+
+        NSTATUS Status = KeLoadImage(
+            Driver->ImageBuffer,
+            Driver->ImageSize,
+            NULL // Drivers reside on system process
+        );
+
+        _ui64toa(Status, bf, 0x10);
+        SerialLog(bf);
+
+        Driver->Flags |= DRIVER_LOADED;
+
+        // Check if the driver can start in the preboot phase
+        if(Driver->Flags & DRIVER_PREBOOT_LAUNCH) {
+            
+        }
+
     }
     SerialLog("drvend");
 

@@ -6,17 +6,17 @@ Test Str : test123
 Num partition handles : 195
 Data partition found.
 Boot partition and boot drive selected successfully.
-Kernel File Size : 321536
+Kernel File Size : 322048
 Test2 : test123
 System Heap:
 7E000000
 OPT_HDR_SIZE : 240 FALIGN : 512
 Allocating System Pages : 000000007E000000
 Image Physical Base : 000000007E000000 , Image Base : 0000000000000000, Entry point : 0000000000001000
-Copying section .tex VADDR : 0000000000001000 PTR : 0000000000000400, SZ : 0000000000004A00
-Copying section .rda VADDR : 0000000000006000 PTR : 0000000000004E00, SZ : 0000000000000E00
-Copying section .dat VADDR : 0000000000007000 PTR : 0000000000005C00, SZ : 000000000004BA68
-Copying section .pda VADDR : 0000000000053000 PTR : 000000000004E400, SZ : 0000000000000400
+Copying section .tex VADDR : 0000000000001000 PTR : 0000000000000400, SZ : 0000000000004C00
+Copying section .rda VADDR : 0000000000006000 PTR : 0000000000005000, SZ : 0000000000000E00
+Copying section .dat VADDR : 0000000000007000 PTR : 0000000000005E00, SZ : 000000000004BAE8
+Copying section .pda VADDR : 0000000000053000 PTR : 000000000004E600, SZ : 0000000000000400
 Loading DLL :
 syscruntime.dll
 File Size : 4608 bytes
@@ -88,4 +88,12 @@ drivers
 drv:
 NewOS\System\acpi.sys
 loaded
+4550
+4550
+PE
+8664
+8664
+20B
+20B
+0
 drvend
