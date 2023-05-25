@@ -35,7 +35,7 @@ NSTATUS KRNLAPI KeMapVirtualMemory(
     IN UINT64 PageFlags,
     IN UINT CachePolicy
 ) {
-
+    if(!Process) Process = KernelProcess;
     // TODO : Check if pages are already mapped
 
     RFPTENTRY Pml4 = Process->PageTable, Pdp, Pd, Pt;
@@ -124,6 +124,8 @@ NSTATUS KRNLAPI KeUnmapVirtualMemory(
     IN void* _VirtualAddress,
     IN OUT UINT64* _NumPages // Returns num pages left
 ) {
+    if(!Process) Process = KernelProcess;
+
     // TODO : Check if pages are already mapped
     UINT64 NumPages = *_NumPages;
     RFPTENTRY Pml4 = Process->PageTable, Pdp, Pd, Pt;
@@ -216,6 +218,8 @@ BOOLEAN KRNLAPI KeCheckMemoryAccess(
     IN OPT UINT64* _Flags
 ) {
 
+    if(!Process) Process = KernelProcess;
+
     RFPTENTRY Pml4 = Process->PageTable, Pdp, Pd, Pt;
     UINT64 VirtualAddress = (UINT64)_VirtualAddress & ~0xFFF;
     UINT64 NumPages = NumBytes >> 12;
@@ -267,6 +271,10 @@ PVOID KRNLAPI KeConvertPointer(
     IN PEPROCESS Process,
     IN void* VirtualAddress
 ) {
+
+    if(!Process) Process = KernelProcess;
+
+
     UINT64 Pti = ((UINT64)VirtualAddress >> 12) & 0x1FF;
     UINT64 Pdi = ((UINT64)VirtualAddress >> 21) & 0x1FF;
     UINT64 Pdpi = ((UINT64)VirtualAddress >> 30) & 0x1FF;
@@ -300,6 +308,14 @@ PVOID KRNLAPI KeFindAvailableAddressSpace(
     IN void* VirtualEnd,
     IN UINT64 PageAttributes
 ) {
+
+    if(!Process) Process = KernelProcess;
+
+    if(!VirtualStart && !VirtualEnd) {
+        VirtualStart = Process->VmSearchStart;
+        VirtualEnd = Process->VmSearchEnd;
+    }
+
     if(!((UINT64)VirtualStart) || (UINT64)VirtualEnd <= (UINT64)VirtualStart) return NULL;
     if(!NumPages) return NULL;
     if(((UINT64)VirtualStart & 0xFFFF800000000000) == 0xFFFF800000000000) {

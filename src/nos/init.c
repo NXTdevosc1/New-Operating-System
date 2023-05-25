@@ -15,6 +15,7 @@ char bf[100];
 
 */
 
+
 PEPROCESS KernelProcess = NULL;
 extern void NOSINTERNAL KiDumpPhysicalMemoryEntries();
 
@@ -35,7 +36,6 @@ void __declspec(noreturn) NosSystemInit() {
     KiInitStandardSubsystems();
     
     KiDumpPhysicalMemoryEntries(); // To determine memory length
-
     if(NERROR(ExCreateProcess(NULL,
     &KernelProcess,
     0,

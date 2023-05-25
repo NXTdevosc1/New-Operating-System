@@ -33,6 +33,7 @@ EXPORT int vsprintf_s(
                     NumArgs++;
                     while(*bf) {
                         sprintf_cpbuffer(buffer, *bf);
+                        bf++;
                     }
                     break;
                 }
@@ -64,7 +65,10 @@ EXPORT int vsprintf_s(
                     sizeOfBuffer-= buffer - b;
                     break;
                 }
-                default: goto copybuff;
+                default: {
+                    format -= 2;
+                    goto copybuff;
+                }
             }
         } else {
             copybuff:
@@ -74,6 +78,7 @@ EXPORT int vsprintf_s(
             format++;
         }
     }
+    *buffer = 0;
     return 0;
 }
 
@@ -84,7 +89,7 @@ EXPORT int sprintf_s(
    ...
 ) {
     va_list args;
-    va_start(args, 100);
+    va_start(args, format);
     int s = vsprintf_s(buffer, sizeOfBuffer, format, args);
     va_end(args);
     return s;

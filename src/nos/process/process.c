@@ -95,13 +95,13 @@ PEPROCESS ExGetProcessById(UINT64 ProcessId) {
 
 NSTATUS KRNLAPI KeAcquireControlFlag(IN PEPROCESS Process, IN UINT64 ControlBit) {
     if(ControlBit > 63) return STATUS_INVALID_PARAMETER;
-
+    if(!Process) Process = KernelProcess;
     while(_interlockedbittestandset64(&Process->ControlBitmask, ControlBit)) _mm_pause();
     return STATUS_SUCCESS;
 }
 NSTATUS KRNLAPI KeReleaseControlFlag(IN PEPROCESS Process, IN UINT64 ControlBit) {
     if(ControlBit > 63) return STATUS_INVALID_PARAMETER;
-    
+    if(!Process) Process = KernelProcess;
     _bittestandreset64(&Process->ControlBitmask, ControlBit);
     return STATUS_SUCCESS;
 }
