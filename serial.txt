@@ -6,37 +6,35 @@ Test Str : test123
 Num partition handles : 195
 Data partition found.
 Boot partition and boot drive selected successfully.
-Kernel File Size : 322048
+Kernel File Size : 467968
 Test2 : test123
 System Heap:
 7E000000
 OPT_HDR_SIZE : 240 FALIGN : 512
 Allocating System Pages : 000000007E000000
 Image Physical Base : 000000007E000000 , Image Base : 0000000000000000, Entry point : 0000000000001000
-Copying section .tex VADDR : 0000000000001000 PTR : 0000000000000400, SZ : 0000000000004C00
-Copying section .rda VADDR : 0000000000006000 PTR : 0000000000005000, SZ : 0000000000000E00
-Copying section .dat VADDR : 0000000000007000 PTR : 0000000000005E00, SZ : 000000000004BAE8
-Copying section .pda VADDR : 0000000000053000 PTR : 000000000004E600, SZ : 0000000000000400
+Copying section .tex VADDR : 0000000000001000 PTR : 0000000000000400, SZ : 0000000000008600
+Copying section .rda VADDR : 000000000000A000 PTR : 0000000000008A00, SZ : 0000000000000800
+Copying section .dat VADDR : 000000000000B000 PTR : 0000000000009200, SZ : 000000000006B1F0
+Copying section .pda VADDR : 0000000000077000 PTR : 0000000000072000, SZ : 0000000000000400
 Loading DLL :
 syscruntime.dll
 File Size : 4608 bytes
 OPT_HDR_SIZE : 240 FALIGN : 512
-Allocating System Pages : 000000007E054000
-Image Physical Base : 000000007E054000 , Image Base : 0000000000054000, Entry point : 0000000000000000
+Allocating System Pages : 000000007E078000
+Image Physical Base : 000000007E078000 , Image Base : 0000000000078000, Entry point : 0000000000000000
 Copying section .tex VADDR : 0000000000001000 PTR : 0000000000000400, SZ : 0000000000000800
 Copying section .rda VADDR : 0000000000002000 PTR : 0000000000000C00, SZ : 0000000000000400
 Copying section .pda VADDR : 0000000000003000 PTR : 0000000000001000, SZ : 0000000000000200
 EXPORTS
-ETVA : 00000000000021B0, ET : 000000007E0561B0
+ETVA : 00000000000021B0, ET : 000000007E07A1B0
 NR : 000000000000226E, NPR : 0000000000002214, EATR : 00000000000021D8
 Test : test123
 Dll Name : sysc
-Searching Symbol : _ui64toa
-Symbol Found, base : 00000000000551F0, IAT_TARGET : 000000007E006000, RVA : 00000000000011F0
 Searching Symbol : memcmp
-Symbol Found, base : 00000000000553A0, IAT_TARGET : 000000007E006008, RVA : 00000000000013A0
-Searching Symbol : vsprintf_s
-Symbol Found, base : 0000000000055480, IAT_TARGET : 000000007E006010, RVA : 0000000000001480
+Symbol Found, base : 00000000000793A0, IAT_TARGET : 000000007E00A000, RVA : 00000000000013A0
+Searching Symbol : _ui64toa
+Symbol Found, base : 00000000000791F0, IAT_TARGET : 000000007E00A008, RVA : 00000000000011F0
  loaded
 Memory Count:
 102
@@ -46,7 +44,7 @@ FFFF800000000000
 1
 Booted successfully.
 FFFF800000001000
-4F6C0BB489D006A
+53D90BD489D006A
 NOS_KERNEL : Kernel Booting...
 Allocated
 Allocated
@@ -57,7 +55,7 @@ Physical Memory Entry : (Attributes, PhysStart, NumPages)
 502096
 Physical Memory Entry : (Attributes, PhysStart, NumPages)
 7BF56000
-8193
+8155
 Allocated
 Physical Memory Entry : (Attributes, PhysStart, NumPages)
 7E34B000
@@ -75,8 +73,8 @@ Physical Memory Entry : (Attributes, PhysStart, NumPages)
 524288
 Allocated
 Used Memory, Free Memory, Total Memory (In Bytes)
-13119488
-4238295040
+13275136
+4238139392
 4251414528
 _______________________________________
 KernelInternals : Init Boot CPU
@@ -88,12 +86,203 @@ drivers
 drv:
 NewOS\System\acpi.sys
 loaded
-4550
-4550
-PE
-8664
-8664
-20B
-20B
+Section:
+.text
+1000
+400
+4BB06
+Section:
+.rdata
+4D000
+4C000
+21AEC
+Section:
+.data
+6F000
+6DC00
+3E80
+Section:
+.pdata
+73000
+6F400
+4A34
+Section:
+.reloc
+78000
+74000
+F30
+ADDR_SPACE_SIZE :
+79000
+Sections copied.
+Relocating...
+IMPORTING...
+noskx64.exe
+LINKING EXECUTABLE TO DLL
+6E9E8
+KDebugPrint
+Symbol found
+KDebugPrint
+FFFF800000002DC0
+6E9F6
+KeCheckMemoryAccess
+Symbol found
+KeCheckMemoryAccess
+FFFF800000004570
+6EA0C
+MmAllocatePool
+Symbol found
+MmAllocatePool
+FFFF800000005960
+6EA1E
+MmFreePool
+Symbol found
+MmFreePool
+FFFF800000005EC0
+6EA2C
+ExInstallInterruptHandler
+Symbol found
+ExInstallInterruptHandler
+FFFF800000003590
+6EA48
+ExRemoveInterruptHandler
+Symbol found
+ExRemoveInterruptHandler
+FFFF800000003710
+6EA64
+ExInitSemaphore
+Symbol found
+ExInitSemaphore
+FFFF800000005610
+6EA76
+ExSemaphoreWait
+Symbol found
+ExSemaphoreWait
+FFFF800000005640
+6EA88
+ExSemaphoreSignal
+Symbol found
+ExSemaphoreSignal
+FFFF8000000056C0
+6EA9C
+ExAcquireSpinLock
+Symbol found
+ExAcquireSpinLock
+FFFF800000005440
+6EAB0
+ExReleaseSpinLock
+Symbol found
+ExReleaseSpinLock
+FFFF800000005490
+6EAC4
+KeFindSystemFirmwareTable
+Symbol found
+KeFindSystemFirmwareTable
+FFFF8000000085F0
+0
+Preboot Launch
+Driver Startup.
+AcpiOsInit
+AcpiOsAlloc
+AcpiOsAlloc
+AcpiOsAlloc
+AcpiOsAlloc
+AcpiOsAlloc
+AcpiOsCreateSemaphore
+AcpiOsCreateSemaphore
+AcpiOsCreateSemaphore
+AcpiOsCreateSemaphore
+AcpiOsCreateSemaphore
+AcpiOsCreateSemaphore
+AcpiOsCreateLock
+AcpiOsCreateLock
+AcpiOsCreateLock
+AcpiOsCreateSemaphore
+AcpiOsCreateSemaphore
+AcpiOsCreateSemaphore
+AcpiOsGetThreadId
+AcpiOsWaitSemaphore
+AcpiOsGetThreadId
+AcpiOsWaitSemaphore
+AcpiOsSignalSem
+AcpiOsAlloc
+AcpiOsGetThreadId
+AcpiOsWaitSemaphore
+AcpiOsSignalSem
+AcpiOsAlloc
+AcpiOsGetThreadId
+AcpiOsWaitSemaphore
+AcpiOsSignalSem
+AcpiOsAlloc
+AcpiOsGetThreadId
+AcpiOsWaitSemaphore
+AcpiOsSignalSem
+AcpiOsAlloc
+AcpiOsGetThreadId
+AcpiOsWaitSemaphore
+AcpiOsSignalSem
+AcpiOsAlloc
+AcpiOsGetThreadId
+AcpiOsWaitSemaphore
+AcpiOsSignalSem
+AcpiOsAlloc
+AcpiOsPredefinedOverride
+AcpiOsGetThreadId
+AcpiOsWaitSemaphore
+AcpiOsSignalSem
+AcpiOsAlloc
+AcpiOsAcquireLock
+AcpiOsReleaseLock
+AcpiOsAcquireLock
+AcpiOsReleaseLock
+AcpiOsGetThreadId
+AcpiOsWaitSemaphore
+AcpiOsSignalSem
+AcpiOsAlloc
+AcpiOsPredefinedOverride
+AcpiOsGetThreadId
+AcpiOsWaitSemaphore
+AcpiOsSignalSem
+AcpiOsAlloc
+AcpiOsAcquireLock
+AcpiOsReleaseLock
+AcpiOsAcquireLock
+AcpiOsReleaseLock
+AcpiOsGetThreadId
+AcpiOsWaitSemaphore
+AcpiOsSignalSem
+AcpiOsAlloc
+AcpiOsPredefinedOverride
+AcpiOsGetThreadId
+AcpiOsWaitSemaphore
+AcpiOsSignalSem
+AcpiOsAlloc
+AcpiOsCreateSemaphore
+AcpiOsCreateSemaphore
+AcpiOsAcquireLock
+AcpiOsReleaseLock
+AcpiOsAcquireLock
+AcpiOsReleaseLock
+AcpiOsGetThreadId
+AcpiOsWaitSemaphore
+AcpiOsSignalSem
+AcpiOsAlloc
+AcpiOsPredefinedOverride
+AcpiOsGetThreadId
+AcpiOsWaitSemaphore
+AcpiOsSignalSem
+AcpiOsAlloc
+AcpiOsAcquireLock
+AcpiOsReleaseLock
+AcpiOsAcquireLock
+AcpiOsReleaseLock
+AcpiOsSignalSem
+AcpiOsGetThreadId
+AcpiOsWaitSemaphore
+AcpiOsAlloc
+AcpiOsFree
+AcpiOsSignalSem
+AcpiOsWaitSemaphore
+AcpiOsSignalSem
+RETURN_STATUS :
 0
 drvend

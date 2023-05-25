@@ -6,5 +6,5 @@ call ./compile.bat
 cd ../..
 
 bedit bootinit
-bedit drvadd 2 1 "NewOS\System\acpi.sys"
+bedit drvadd 2 3 "NewOS\System\acpi.sys"
 copy boot.nos diskimg\NewOS\System

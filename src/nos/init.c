@@ -16,7 +16,6 @@ char bf[100];
 */
 
 PEPROCESS KernelProcess = NULL;
-
 extern void NOSINTERNAL KiDumpPhysicalMemoryEntries();
 
 char* InitErrors[] = {
@@ -68,21 +67,32 @@ void __declspec(noreturn) NosSystemInit() {
         // Load the driver into memory
         Driver->Flags &= ~DRIVER_LOADED;
 
+        NSTATUS (__cdecl* EntryPoint)(void* Driver);
 
         NSTATUS Status = KeLoadImage(
             Driver->ImageBuffer,
             Driver->ImageSize,
-            NULL // Drivers reside on system process
+            KERNEL_MODE,
+            (void**)&EntryPoint // Drivers reside on system process
         );
+
+
 
         _ui64toa(Status, bf, 0x10);
         SerialLog(bf);
 
+        if(NERROR(Status)) continue;
+        
         Driver->Flags |= DRIVER_LOADED;
 
         // Check if the driver can start in the preboot phase
         if(Driver->Flags & DRIVER_PREBOOT_LAUNCH) {
+            SerialLog("Preboot Launch");
             
+            Status = EntryPoint(NULL);
+            SerialLog("RETURN_STATUS :");
+            _ui64toa(Status, bf, 0x10);
+            SerialLog(bf);
         }
 
     }

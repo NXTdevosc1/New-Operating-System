@@ -1,27 +1,30 @@
 #define __SEMDEFINED
 
 typedef struct _SEMAPHORE {
-    unsigned int MaxSlots; // the number of threads to access the semaphore
-    unsigned int FullSlots;
+    volatile long Mutex;
+    volatile unsigned long Count;
 } SEMAPHORE;
 #include <nos/nos.h>
 
 
-void KRNLAPI ExInitSemaphore(SEMAPHORE* Semaphore, UINT MaxSlots) {
-    Semaphore->MaxSlots = MaxSlots;
-    Semaphore->FullSlots = 0;
+void KRNLAPI ExInitSemaphore(SEMAPHORE* Semaphore, UINT InitialCount) {
+    Semaphore->Mutex = 0;
+    Semaphore->Count = InitialCount;
 }
 BOOLEAN KRNLAPI ExSemaphoreWait(SEMAPHORE* Semaphore, UINT64 TimeoutInMs) {
     // TODO : Implement Timeout
-    while(!ExSemaphoreSignal(Semaphore)) _mm_pause();
+Retry:
+    while(!Semaphore->Count) _mm_pause();
+    while(_bittestandset(&Semaphore->Mutex, 0)) _mm_pause();
+    if(!Semaphore->Count) {
+        Semaphore->Mutex = 0;
+        goto Retry;
+    }
+    Semaphore->Count--;
+    Semaphore->Mutex = 0;
     return TRUE;
 }
 BOOLEAN KRNLAPI ExSemaphoreSignal(SEMAPHORE* Semaphore) {
-    if(Semaphore->FullSlots >= Semaphore->MaxSlots) return FALSE;
-    UINT s = _InterlockedIncrement(&Semaphore->FullSlots);
-    if(s > Semaphore->MaxSlots) {
-        _InterlockedDecrement(&Semaphore->FullSlots);
-        return FALSE;
-    }
+    _InterlockedIncrement(&Semaphore->Count);
     return TRUE;
 }

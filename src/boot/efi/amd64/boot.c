@@ -223,7 +223,7 @@ EFI_STATUS EFIAPI UefiEntry(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TABLE* Syst
 
 
 	NosInitData.BootHeader = BootHeader;
-	NosInitData.NosPhysicalBase = Vas;
+	NosInitData.NosFile = (void*)ImageHeader;
 	NosInitData.NosKernelImageBase = KernelBaseAddress;
 	NosInitData.NosKernelImageSize = VasSize;
 

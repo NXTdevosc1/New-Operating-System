@@ -16,11 +16,12 @@ NosKernelEntry:
     push 0
     popf
 
+    mov rbp, _KernelStackBase
+    mov rsp, _KernelStack - 0x2000
+
     ; Save NosInitData Pointer in RDI
     mov rbx, NosInitData
     mov [rbx], rdi
-
-
     jmp NosSystemInit
     hlt
 
@@ -68,3 +69,7 @@ section .data
 
 align 0x40
 NosInitData dq 1
+
+align 0x10
+_KernelStackBase resb 0x20000
+_KernelStack:

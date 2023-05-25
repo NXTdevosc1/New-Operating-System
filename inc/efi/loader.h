@@ -109,7 +109,7 @@ typedef struct _NOS_INITDATA {
     NOS_BOOT_HEADER* BootHeader;
     // Nos Image Data
     void* NosKernelImageBase;
-    void* NosPhysicalBase;
+    void* NosFile;
     UINT64 NosKernelImageSize;
 
     // EFI Frame Buffer
