@@ -128,3 +128,34 @@ void CpuRemoveInterrupt(
 ) {
     ObjZeroMemory(&Processor->Idt[InterruptNumber]);
 }
+
+typedef NSTATUS(__cdecl *IR_SET_INTERRUPT)(
+    UINT Irq,
+    UINT ProcessorInterruptNumber,
+    UINT64 ProcessorId
+);
+
+typedef NSTATUS(__cdecl *IR_REMOVE_INTERRUPT)(UINT Irq);
+
+// Never called
+typedef NSTATUS(__cdecl *IR_TERMINATE_ROUTER)();
+
+struct {
+    UINT InterruptRouter; // 0 = PIC , 1 = IOAPIC
+    IR_SET_INTERRUPT SetInterrupt;
+    IR_REMOVE_INTERRUPT RemoveInterrupt;
+    IR_TERMINATE_ROUTER TerminateRouter;
+} gInterruptRoutingTable = {0};
+
+NSTATUS KRNLAPI KiSetInterruptRouter(
+    UINT Router, // 00 = PIC 01 = IOAPIC
+    IR_SET_INTERRUPT SetInterrupt,
+    IR_REMOVE_INTERRUPT RemoveInterrupt,
+    IR_TERMINATE_ROUTER TerminateRouter
+) {
+    gInterruptRoutingTable.InterruptRouter = Router;
+    gInterruptRoutingTable.SetInterrupt = SetInterrupt;
+    gInterruptRoutingTable.RemoveInterrupt = RemoveInterrupt;
+    gInterruptRoutingTable.TerminateRouter = TerminateRouter;
+    return STATUS_SUCCESS;
+}
