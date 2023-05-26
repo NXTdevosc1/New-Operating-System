@@ -1,8 +1,18 @@
 #include <nos/processor/internal.h>
+#include <intmgr.h>
+
+struct {
+    UINT InterruptRouter; // 0 = PIC , 1 = IOAPIC
+    IR_SET_INTERRUPT SetInterrupt;
+    IR_REMOVE_INTERRUPT RemoveInterrupt;
+    IR_TERMINATE_ROUTER TerminateRouter;
+    IR_GET_INTERRUPT_INFORMATION GetInterruptInformation;
+} gInterruptRoutingTable = {0};
 
 // Processor Interrupt Utilities
 NSTATUS KRNLAPI ExInstallInterruptHandler(
     IN UINT32 IrqNumber,
+    IN UINT Flags,
     IN INTERRUPT_SERVICE_HANDLER Handler,
     IN OPT void* Context
 ) {
@@ -12,6 +22,13 @@ NSTATUS KRNLAPI ExInstallInterruptHandler(
     PROCESSOR* Processor = BootProcessor;
 
     INTERRUPT_ARRAY* Ints = Processor->Interrupts;
+
+    // Get Interrupt Information
+    IM_INTERRUPT_INFORMATION InterruptInformation;
+    if(!gInterruptRoutingTable.GetInterruptInformation(IrqNumber, &InterruptInformation)) {
+        return STATUS_NOT_FOUND; // Cannot find information about the IRQ
+    }
+    IrqNumber = InterruptInformation.Fields.GlobalSystemInterrupt;
 
     // TODO : Acquire SpinLock
     UINT64 rflags = ExAcquireSpinLock(&Ints->Interrupts[IrqNumber].SpinLock);
@@ -23,6 +40,15 @@ NSTATUS KRNLAPI ExInstallInterruptHandler(
             InterruptGate,
             NosIrqService
         );
+        if(NERROR(gInterruptRoutingTable.SetInterrupt(
+            IrqNumber, 0, IrqNumber + 0x20, Processor->ProcessorId,
+            InterruptInformation.Fields.DeliveryMode,
+            InterruptInformation.Fields.Polarity,
+            InterruptInformation.Fields.TriggerMode
+        ))) {
+            SerialLog("ROUTER FAILED TO SET INTERRUPT.");
+            while(1) __halt();
+        }
     }
     if(!_BitScanForward64(&IntIndx, ~Ints->Interrupts[IrqNumber].Present)) {
         ExReleaseSpinLock(&Ints->Interrupts[IrqNumber].SpinLock, rflags);
@@ -129,33 +155,22 @@ void CpuRemoveInterrupt(
     ObjZeroMemory(&Processor->Idt[InterruptNumber]);
 }
 
-typedef NSTATUS(__cdecl *IR_SET_INTERRUPT)(
-    UINT Irq,
-    UINT ProcessorInterruptNumber,
-    UINT64 ProcessorId
-);
 
-typedef NSTATUS(__cdecl *IR_REMOVE_INTERRUPT)(UINT Irq);
-
-// Never called
-typedef NSTATUS(__cdecl *IR_TERMINATE_ROUTER)();
-
-struct {
-    UINT InterruptRouter; // 0 = PIC , 1 = IOAPIC
-    IR_SET_INTERRUPT SetInterrupt;
-    IR_REMOVE_INTERRUPT RemoveInterrupt;
-    IR_TERMINATE_ROUTER TerminateRouter;
-} gInterruptRoutingTable = {0};
 
 NSTATUS KRNLAPI KiSetInterruptRouter(
     UINT Router, // 00 = PIC 01 = IOAPIC
     IR_SET_INTERRUPT SetInterrupt,
     IR_REMOVE_INTERRUPT RemoveInterrupt,
-    IR_TERMINATE_ROUTER TerminateRouter
+    IR_TERMINATE_ROUTER TerminateRouter,
+    IR_GET_INTERRUPT_INFORMATION GetInterruptInformation
 ) {
+    if(gInterruptRoutingTable.InterruptRouter) {
+        gInterruptRoutingTable.TerminateRouter();
+    }
     gInterruptRoutingTable.InterruptRouter = Router;
     gInterruptRoutingTable.SetInterrupt = SetInterrupt;
     gInterruptRoutingTable.RemoveInterrupt = RemoveInterrupt;
     gInterruptRoutingTable.TerminateRouter = TerminateRouter;
+    gInterruptRoutingTable.GetInterruptInformation = GetInterruptInformation;
     return STATUS_SUCCESS;
 }

@@ -25,6 +25,8 @@ dq __NosInternalInterruptHandler%1
 
 %macro DeclareIRQH 1
 __NosIrqHandler%1:
+    mov rax, 0xcafebabe
+    jmp $
     push rcx
     push rdx
     mov rcx, %1 ; IrqNumber

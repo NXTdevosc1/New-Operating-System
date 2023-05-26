@@ -32,6 +32,7 @@ void testh() {
 
 void __declspec(noreturn) NosSystemInit() {
     SerialLog("NOS_KERNEL : Kernel Booting...");
+    
 
     KiInitStandardSubsystems();
     
@@ -99,7 +100,6 @@ void __declspec(noreturn) NosSystemInit() {
     SerialLog("drvend");
 
     memset(NosInitData->FrameBuffer.BaseAddress, 0xFF, NosInitData->FrameBuffer.Pitch * 4 * NosInitData->FrameBuffer.VerticalResolution);
-    ExInstallInterruptHandler(0, (INTERRUPT_SERVICE_HANDLER)testh, NULL);
     _enable();
     for(;;) __halt();
 }
