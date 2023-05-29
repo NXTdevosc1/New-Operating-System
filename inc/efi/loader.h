@@ -99,6 +99,7 @@ typedef struct _NOS_BOOT_HEADER {
     UINT32 OsMinorVersion;
     UINT8 OsName[256];
     UINT32 NumDrivers;
+    UINT64 MaxHandles; // Manually set value (System will crash if NumHandles == MaxHandles)
     NOS_BOOT_DRIVER Drivers[];
 } NOS_BOOT_HEADER;
 

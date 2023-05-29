@@ -1,0 +1,10 @@
+These are the things that makes this OS Standout from other Operating Systems.
+
+- Hardware Sharing (Two devices can share various hardware to increase performance and reliability such as GPUs, CPUs...) {
+	This can be done by a Network Device or USB.
+}
+- Faster System (Everything is highly optimized)
+- Lower Memory Usage (The OS is very compact and does not usage so much memory)
+- Faster Loading (Only required drivers are initilized and the OS is getting rid of old devices such as PIT, MP Tables...)
+- Security (Subsystems use a secure object manager which makes them immune against all types of attacks).
+- Advanced MultiTasking (Use all of your cpu power with a controllable task scheduling system, and configureable cpu power consumption and usage)

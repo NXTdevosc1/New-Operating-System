@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <Windows.h>
 
-
 #define CMD_INIT "bootinit"
 #define CMD_WRITE "set"
 #define CMD_READ "get"
@@ -25,8 +24,11 @@ typedef struct _NOS_BOOT_HEADER {
     UINT32 OsMinorVersion;
     UINT8 OsName[256];
     UINT32 NumDrivers;
+    UINT64 MaxHandles;
     NOS_BOOT_DRIVER Drivers[];
 } NOS_BOOT_HEADER;
+
+#define DEFAULT_MAX_HANDLES 0xFFFF
 
 NOS_BOOT_HEADER BootHeader = {
     0x3501826759F87346,
@@ -37,6 +39,7 @@ NOS_BOOT_HEADER BootHeader = {
     0,
     "New Operating System",
     0,
+    DEFAULT_MAX_HANDLES,
     {0}
 };
 

@@ -32,21 +32,26 @@ void CpuInitDescriptors(PROCESSOR* Processor) {
     };
     // Setting up the TSS
 
-    // Allocate CPU Internal Interrupts stack memory (INT 0-31)
-    if(NERROR(MmAllocatePhysicalMemory(0, 10, (void**)&Processor->Tss.rsp0))) {
+    // RSP0 : Allocate CPU Internal Interrupts stack memory (INT 0-31)
+    if(!(Processor->Tss.rsp0 = (UINT64)MmAllocateMemory(KernelProcess, 0x10, PAGE_WRITE_ACCESS | PAGE_GLOBAL))) {
         SerialLog("Failed to allocate interrupt memory.");
         while(1);
     }
-    // Allocate IRQ stack memory (INT 32-220)
-    if(NERROR(MmAllocatePhysicalMemory(0, 10, (void**)&Processor->Tss.ist1))) {
+    // IST1 : Allocate IRQ stack memory (INT 32-220)
+    if(!(Processor->Tss.ist1 = (UINT64)MmAllocateMemory(KernelProcess, 0x10, PAGE_WRITE_ACCESS | PAGE_GLOBAL))) {
         SerialLog("Failed to allocate interrupt memory.");
         while(1);
     }
-    // Allocate system interrupt stack memory (INT 221-255)
-    if(NERROR(MmAllocatePhysicalMemory(0, 10, (void**)&Processor->Tss.ist2))) {
+    // IST2 : Allocate system interrupt stack memory (INT 221-255)
+    if(!(Processor->Tss.ist2 = (UINT64)MmAllocateMemory(KernelProcess, 0x10, PAGE_WRITE_ACCESS | PAGE_GLOBAL))) {
         SerialLog("Failed to allocate interrupt memory.");
         while(1);
     }
+
+    Processor->Tss.rsp0 += 0xF000;
+    Processor->Tss.ist1 += 0xF000;
+    Processor->Tss.ist2 += 0xF000;
+
 
     Processor->Tss.IOPB_offset = sizeof(TASK_STATE_SEGMENT);
 

@@ -7,6 +7,7 @@ struct {
     IR_REMOVE_INTERRUPT RemoveInterrupt;
     IR_TERMINATE_ROUTER TerminateRouter;
     IR_GET_INTERRUPT_INFORMATION GetInterruptInformation;
+    IR_END_OF_INTERRUPT Eoi;
 } gInterruptRoutingTable = {0};
 
 // Processor Interrupt Utilities
@@ -122,8 +123,6 @@ void CpuSetInterrupt(
     - Handler is determined by nos service type
     */
     Entry->CodeSegment = 0x08;
-
-
     UINT64 Handler;
 
     if(NosServiceType == NosInternalInterruptService) {
@@ -162,7 +161,8 @@ NSTATUS KRNLAPI KiSetInterruptRouter(
     IR_SET_INTERRUPT SetInterrupt,
     IR_REMOVE_INTERRUPT RemoveInterrupt,
     IR_TERMINATE_ROUTER TerminateRouter,
-    IR_GET_INTERRUPT_INFORMATION GetInterruptInformation
+    IR_GET_INTERRUPT_INFORMATION GetInterruptInformation,
+    IR_END_OF_INTERRUPT Eoi
 ) {
     if(gInterruptRoutingTable.InterruptRouter) {
         gInterruptRoutingTable.TerminateRouter();
@@ -172,5 +172,12 @@ NSTATUS KRNLAPI KiSetInterruptRouter(
     gInterruptRoutingTable.RemoveInterrupt = RemoveInterrupt;
     gInterruptRoutingTable.TerminateRouter = TerminateRouter;
     gInterruptRoutingTable.GetInterruptInformation = GetInterruptInformation;
+    gInterruptRoutingTable.Eoi = Eoi;
     return STATUS_SUCCESS;
+}
+
+void NosIrqHandler(UINT64 InterruptNumber, void* InterruptStack) {
+    KDebugPrint("IRQ %d", InterruptNumber);
+    
+    gInterruptRoutingTable.Eoi();
 }
