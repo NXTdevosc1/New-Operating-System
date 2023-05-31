@@ -42,7 +42,10 @@ BOOLEAN KRNLAPI ObDestroyObject(
 ) {
     UINT64 rflags = ExAcquireSpinLock(&Object->SpinLock);
     // Object is in use
-    if(!Force && Object->NumReferences) return FALSE;
+    if(!Force && Object->NumReferences) {
+        ExReleaseSpinLock(&Object->SpinLock, rflags);
+        return FALSE;
+    }
     
     if(Force && Object->NumReferences) {
         // Remove the references
