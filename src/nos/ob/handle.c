@@ -1,5 +1,17 @@
 #include <nos/ob/obutil.h>
 
+HANDLE KRNLAPI ObOpenHandle(
+    IN POBJECT Object,
+    IN PEPROCESS Process,
+    IN UINT64 Access
+) {
+    // Object Found
+    HANDLE Handle;
+    NSTATUS Status = ObiCreateHandle(Object, Process, Access, &Handle);
+    if(NERROR(Status)) return INVALID_HANDLE;
+    
+    return Handle;
+}
 
 HANDLE ObOpenObjectByName(
     PEPROCESS Process,
@@ -24,12 +36,7 @@ HANDLE ObOpenObjectByName(
         return INVALID_HANDLE;
     }
 
-    // Object Found
-    HANDLE Handle;
-    NSTATUS Status = ObiCreateHandle(Obj, Process, Access, &Handle);
-    if(NERROR(Status)) return INVALID_HANDLE;
-    
-    return Handle;
+    return ObOpenHandle(Obj, Process, Access);    
 }
 
 void ObCloseHandle(HANDLE Handle) {
