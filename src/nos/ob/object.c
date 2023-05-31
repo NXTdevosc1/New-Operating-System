@@ -5,13 +5,11 @@ NSTATUS KRNLAPI ObCreateObject(
     OUT POBJECT* _OutObject,
     IN UINT64 Characteristics,
     IN OBTYPE ObjectType,
-    IN char* ObjectName,
+    IN OPT char* ObjectName,
     IN void* Address,
-    IN OBJECT_ONOPEN OnOpen,
-    IN OBJECT_ONCLOSE OnClose,
-    IN OBJECT_ONDESTROY OnDestroy // not required if characteristics & OB_PERMANENT
+    IN OBJECT_EVT_HANDLER EventHandler // Typically handles OnOpen/OnClose Events
 ) {
-    if(!_ObObjectTypes[ObjectType].TypeName) return STATUS_INVALID_PARAMETER;
+    if(!_ObObjectTypes[ObjectType].TypeName || !EventHandler) return STATUS_INVALID_PARAMETER;
     POBJECT Object = ObiAllocateObject();
     if(!Object) return STATUS_NO_FREE_SLOTS;
 
@@ -23,9 +21,7 @@ NSTATUS KRNLAPI ObCreateObject(
         Object->ObjectNameLength = strlen(ObjectName);
     }
     Object->Address = Address;
-    Object->OnOpen = OnOpen;
-    Object->OnClose = OnClose;
-    Object->OnDestroy = OnDestroy;
+    Object->EventHandler = EventHandler;
     Object->ObjectId = _InterlockedIncrement64(&_ObObjectTypes[ObjectType].TotalCreatedObjects) - 1;
 
     // Link Object Type
@@ -58,13 +54,13 @@ BOOLEAN KRNLAPI ObDestroyObject(
         POBJECT_REFERENCE Ref = Object->References;
         while(Ref) {
             POBJECT_REFERENCE NextRef = Ref->Next;
-            ObCloseHandle(ObiHandleByReference(Ref));
+            ObCloseHandle(Ref->Process, ObiHandleByReference(Ref));
             Ref = NextRef; // because CloseHandle deletes the reference
         }
     }
 
     if(!(Object->Characteristics & OBJECT_PERMANENT)) {
-        Object->OnDestroy(Object);
+        Object->EventHandler(NULL, OBJECT_EVENT_DESTROY, (HANDLE)Object, 0);
     }
     ObiFreeObject(Object);
     __writeeflags(rflags);

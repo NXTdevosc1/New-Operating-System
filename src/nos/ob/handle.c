@@ -51,7 +51,27 @@ NSTATUS KRNLAPI ObOpenHandleById(
     return ObOpenHandle(Obj, Process, Access, Handle);
 }
 
-void ObCloseHandle(HANDLE Handle) {
+NSTATUS KRNLAPI ObOpenHandleByAddress(
+    PEPROCESS Process,
+    void* Address,
+    IN OBTYPE ObjectType,
+    IN UINT64 Access,
+    IN HANDLE* Handle
+) {
+    POBJECT Obj = _ObObjectTypeStarts[ObjectType];
+    while(Obj) {
+        if(Obj->Address == Address) break;
+        Obj = Obj->TypeContinuation;
+    }
+    if(!Obj) return STATUS_NOT_FOUND;
+
+    return ObOpenHandle(Obj, Process, Access, Handle);
+}
+
+BOOLEAN ObCloseHandle(PEPROCESS Process, HANDLE Handle) {
+    if(!ObCheckHandle(Handle) || ObiReferenceByHandle(Handle)->Process != Process) {
+        return FALSE;
+    }
     POBJECT_REFERENCE Ref = _ObHandleArray + (UINT64)Handle;
     ObLockHandle(Handle);
     // Unlink the reference
@@ -65,10 +85,10 @@ void ObCloseHandle(HANDLE Handle) {
     
     POBJECT Obj = Ref->Object;
     Obj->NumReferences--;
-    Ref->Object->OnClose(Handle, Ref->Process, Ref->Access);
+    Ref->Object->EventHandler(Ref->Process, OBJECT_EVENT_CLOSE, Handle, Ref->Access);
 
     if(!Obj->NumReferences && !(Obj->Characteristics & OBJECT_PERMANENT)) {
-        Obj->OnDestroy(Obj);
+        Ref->Object->EventHandler(NULL, OBJECT_EVENT_DESTROY, (HANDLE)Ref->Object, Ref->Access);
         ObiFreeObject(Obj);
         __writeeflags(rflags);
     } else {
@@ -78,7 +98,7 @@ void ObCloseHandle(HANDLE Handle) {
     // De-Allocate the reference
     ObjZeroMemory(Ref);
     _interlockedbittestandreset64(_ObHandleAllocationTable + ((UINT64)Handle >> 6), (UINT64)Handle & 0x3F);
-
+    return TRUE;
 }
 
 BOOLEAN ObCheckHandle(HANDLE _Handle) {
@@ -88,9 +108,9 @@ BOOLEAN ObCheckHandle(HANDLE _Handle) {
     return TRUE;
 }
 
-POBJECT ObGetObjectByHandle(HANDLE _Handle) {
-    UINT64 Handle = (UINT64)_Handle;
-    return _ObHandleArray[Handle].Object;
+void* ObGetObjectByHandle(HANDLE _Handle) {
+    if(!ObCheckHandle(_Handle)) return NULL;
+    return _ObHandleArray[(UINT64)_Handle].Object->Address;
 }
 
 BOOLEAN ObLockHandle(HANDLE _Handle) {

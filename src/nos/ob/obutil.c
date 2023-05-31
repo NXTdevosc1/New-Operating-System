@@ -48,6 +48,13 @@ void ObInitialize() {
 
     KDebugPrint("Object Manager : Allocate Table : %u Bytes, Object Array : %u Bytes , Handle Array : %u Bytes", _ObAllocationTableSize, _ObObjectArraySize, _ObHandleArraySize);
 
+    // Initialize Standard Object Types
+    ObRegisterObjectType(OBJECT_PROCESS, "Processes", NOS_MAJOR_VERSION, NOS_MINOR_VERSION);
+    ObRegisterObjectType(OBJECT_THREAD, "Threads", NOS_MAJOR_VERSION, NOS_MINOR_VERSION);
+    ObRegisterObjectType(OBJECT_FILE, "Files", NOS_MAJOR_VERSION, NOS_MINOR_VERSION);
+    ObRegisterObjectType(OBJECT_DEVICE, "Devices", NOS_MAJOR_VERSION, NOS_MINOR_VERSION);
+    ObRegisterObjectType(OBJECT_TIMER, "Timers", NOS_MAJOR_VERSION, NOS_MINOR_VERSION);
+
 
 }
 
@@ -93,7 +100,7 @@ NSTATUS ObiCreateHandle(POBJECT Object, PEPROCESS Process, UINT64 Access, HANDLE
     HANDLE Handle = ObiHandleByReference(Reference);
     
     NSTATUS s;
-    if(NERROR((s = Object->OnOpen(Handle, Process, Access)))) {
+    if(NERROR((s = Object->EventHandler(Process, OBJECT_EVENT_OPEN, Handle, Access)))) {
         // De-Allocate the reference
         ObjZeroMemory(Reference);
         _interlockedbittestandreset64(_ObHandleAllocationTable + ((UINT64)Handle >> 6), (UINT64)Handle & 0x3F);

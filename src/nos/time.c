@@ -1,7 +1,6 @@
-// #include <nos/nos.h>
-// #include <ddk.h>
-// #include <ktime.h>
-// #include <intmgr.h>
+#include <nos/nos.h>
+#include <ktime.h>
+#include <intmgr.h>
 
 // typedef struct _KTIMER {
 //     PDEVICE Device;
@@ -13,9 +12,12 @@
 //     PKTIMER Next;
 // } KTIMER, *PKTIMER;
 
+
+
 // PKTIMER FirstTimer = NULL, LastTimer = NULL;
 
 // SPINLOCK __ktimer_spinlock;
+
 
 // NSTATUS KRNLAPI KeInstallTimer(
 //     PDEVICE Device,
