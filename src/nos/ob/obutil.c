@@ -2,10 +2,6 @@
 UINT64 _ObMaxHandles = 0;
 UINT64 _ObNumHandles = 0;
 
-// Physical Start of the pointer table
-/*
-The Top of the address space is exclusively reserved for the Pointer Table
-*/
 
 volatile UINT64* _ObAllocationTable = NULL;
 volatile UINT64* _ObHandleAllocationTable = NULL;
