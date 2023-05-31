@@ -51,7 +51,22 @@ void ObInitialize() {
 
 }
 
+HANDLE ObiGetOpenHandle(POBJECT Object, PEPROCESS Process) {
+    POBJECT_REFERENCE s = Object->References;
+    while(s) {
+        if(s->Process == Process) return ObiHandleByReference(s);
+        s = s->Next;
+    }
+    return INVALID_HANDLE;
+}
+
 NSTATUS ObiCreateHandle(POBJECT Object, PEPROCESS Process, UINT64 Access, HANDLE* _OutHandle) {
+    // Check if handle already exists
+    HANDLE _h = ObiGetOpenHandle(Object, Process);
+    if(_h != INVALID_HANDLE) {
+        *_OutHandle = _h;
+        return STATUS_HANDLE_ALREADY_OPEN;
+    }
     // Allocate Handle
     POBJECT_REFERENCE Reference = NULL;
     {
@@ -66,18 +81,23 @@ NSTATUS ObiCreateHandle(POBJECT Object, PEPROCESS Process, UINT64 Access, HANDLE
                 break;
             }
         }
-        if(!Reference) return STATUS_NO_FREE_SLOTS;
+        if(!Reference) {
+            *_OutHandle = INVALID_HANDLE;
+            return STATUS_NO_FREE_SLOTS;
+        }
     }
     // Set reference data
     Reference->Object = Object;
     Reference->Process = Process;
     Reference->Access = Access;
-    HANDLE Handle = (HANDLE)(((UINT64)Reference - (UINT64)_ObHandleArray) / sizeof(OBJECT_REFERENCE_DESCRIPTOR));
+    HANDLE Handle = ObiHandleByReference(Reference);
+    
     NSTATUS s;
     if(NERROR((s = Object->OnOpen(Handle, Process, Access)))) {
         // De-Allocate the reference
         ObjZeroMemory(Reference);
         _interlockedbittestandreset64(_ObHandleAllocationTable + ((UINT64)Handle >> 6), (UINT64)Handle & 0x3F);
+        *_OutHandle = INVALID_HANDLE;
         return s;
     }
     // Link the handle to the object
@@ -93,6 +113,7 @@ NSTATUS ObiCreateHandle(POBJECT Object, PEPROCESS Process, UINT64 Access, HANDLE
     Object->NumReferences++;
     ExReleaseSpinLock(&Object->SpinLock, rflags);
     *_OutHandle = Handle;
+
     return STATUS_SUCCESS;
 }
 

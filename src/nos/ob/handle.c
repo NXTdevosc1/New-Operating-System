@@ -1,28 +1,25 @@
 #include <nos/ob/obutil.h>
 
-HANDLE KRNLAPI ObOpenHandle(
+NSTATUS KRNLAPI ObOpenHandle(
     IN POBJECT Object,
     IN PEPROCESS Process,
-    IN UINT64 Access
+    IN UINT64 Access,
+    IN HANDLE* Handle
 ) {
-    // Object Found
-    HANDLE Handle;
-    NSTATUS Status = ObiCreateHandle(Object, Process, Access, &Handle);
-    if(NERROR(Status)) return INVALID_HANDLE;
-    
-    return Handle;
+    return ObiCreateHandle(Object, Process, Access, Handle);
 }
 
-HANDLE ObOpenObjectByName(
-    PEPROCESS Process,
-    OBTYPE ObjectType,
-    char* ObjectName,
-    UINT64 Access
+NSTATUS KRNLAPI ObOpenHandleByName(
+    IN PEPROCESS Process,
+    IN OBTYPE ObjectType,
+    IN char* ObjectName, // Object name inside the object type namespace
+    IN UINT64 Access,
+    IN HANDLE* Handle
 ) {
     
     // NOTE : All libc functions will be replaced with high performance equivalents
     UINT16 len = strlen(ObjectName);
-
+    if(!len) return STATUS_INVALID_PARAMETER;
     POBJECT Obj = _ObObjectTypeStarts[ObjectType];
     
 
@@ -32,27 +29,26 @@ HANDLE ObOpenObjectByName(
         }
         Obj = Obj->TypeContinuation;
     }
-    if(!Obj) {
-        return INVALID_HANDLE;
-    }
+    if(!Obj) return STATUS_NOT_FOUND;
 
-    return ObOpenHandle(Obj, Process, Access);    
+    return ObOpenHandle(Obj, Process, Access, Handle);    
 }
 
-HANDLE KRNLAPI ObOpenHandleById(
+NSTATUS KRNLAPI ObOpenHandleById(
     IN PEPROCESS Process,
     IN OBTYPE ObjectType,
     IN UINT64 ObjectId, // Object Id Inside the object type namespace
-    IN UINT64 Access
+    IN UINT64 Access,
+    IN HANDLE* Handle
 ) {
     POBJECT Obj = _ObObjectTypeStarts[ObjectType];
     while(Obj) {
         if(Obj->ObjectId == ObjectId) break;
         Obj = Obj->TypeContinuation;
     }
-    if(!Obj) return INVALID_HANDLE;
+    if(!Obj) return STATUS_NOT_FOUND;
 
-    return ObOpenHandle(Obj, Process, Access);
+    return ObOpenHandle(Obj, Process, Access, Handle);
 }
 
 void ObCloseHandle(HANDLE Handle) {

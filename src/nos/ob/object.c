@@ -18,8 +18,10 @@ NSTATUS KRNLAPI ObCreateObject(
     // Set Object Data
     Object->Characteristics = Characteristics;
     Object->ObjectType = ObjectType;
-    Object->ObjectName = ObjectName;
-    Object->ObjectNameLength = strlen(ObjectName);
+    if(Object->ObjectName) {
+        Object->ObjectName = ObjectName;
+        Object->ObjectNameLength = strlen(ObjectName);
+    }
     Object->Address = Address;
     Object->OnOpen = OnOpen;
     Object->OnClose = OnClose;
