@@ -22,6 +22,9 @@ NosKernelEntry:
     ; Save NosInitData Pointer in RDI
     mov rbx, NosInitData
     mov [rbx], rdi
+
+    push 0 ; Align data
+
     jmp NosSystemInit
     hlt
 
@@ -69,6 +72,8 @@ section .data
 
 align 0x40
 NosInitData dq 1
+
+section .bss
 
 align 0x10
 _KernelStackBase resb 0x20000

@@ -27,7 +27,7 @@ NSTATUS KRNLAPI MmAllocateLowMemory(
         Align = 0x40000000;
         NumPages <<= 18;
     }
-    if(NosInitData->TotalPagesCount - NosInitData->AllocatedPagesCount < NumPages) return STATUS_UNSUFFICIENT_MEMORY;
+    if(NosInitData->TotalPagesCount - NosInitData->AllocatedPagesCount < NumPages) return STATUS_OUT_OF_MEMORY;
     UINT64 NumBytes = NumPages << 12;
     while(PhysicalMem) {
         for(int c = 0;c<0x40;c++) {
@@ -74,8 +74,8 @@ NSTATUS KRNLAPI MmAllocateLowMemory(
         }
         PhysicalMem = PhysicalMem->Next;
     }
-    SerialLog("Unsufficient mem");
-    return STATUS_UNSUFFICIENT_MEMORY;
+    SerialLog("OUT_OF mem");
+    return STATUS_OUT_OF_MEMORY;
 }
 
 
@@ -99,7 +99,7 @@ NSTATUS KRNLAPI MmAllocateHighMemory(
         Align = 0x40000000;
         NumPages <<= 18;
     }
-    if(NosInitData->TotalPagesCount - NosInitData->AllocatedPagesCount < NumPages) return STATUS_UNSUFFICIENT_MEMORY;
+    if(NosInitData->TotalPagesCount - NosInitData->AllocatedPagesCount < NumPages) return STATUS_OUT_OF_MEMORY;
 
     UINT64 NumBytes = NumPages << 12;
     while(PhysicalMem) {
@@ -137,7 +137,7 @@ NSTATUS KRNLAPI MmAllocateHighMemory(
         }
         PhysicalMem = PhysicalMem->Next;
     }
-    return STATUS_UNSUFFICIENT_MEMORY;
+    return STATUS_OUT_OF_MEMORY;
 }
 
 // TODO : Free does not link properly

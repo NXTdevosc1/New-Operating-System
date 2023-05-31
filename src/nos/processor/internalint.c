@@ -1,12 +1,13 @@
 #include <nos/processor/internal.h>
 #include <nos/processor/ints.h>
-
+#include <intmgr.h>
 void* NosInternalInterruptHandler(UINT64 InterruptNumber, void* InterruptStack) {
-    char* returnstack = InterruptStack;
-    SerialLog("Internal Interrupt!");
-    char bf[100];
-    _ui64toa(InterruptNumber, bf, 10);
-    SerialLog(bf);
+    INTERRUPT_ERRCODE_STACK_FRAME* ErrStack = InterruptStack;
+    INTERRUPT_STACK_FRAME* StackFrame = InterruptStack;
+    KDebugPrint("Internal interrupt #%u , RIP : %x, CS : %x, RFLAGS : %x, RSP : %x, SS : %x",
+    InterruptNumber, StackFrame->InstructionPointer, StackFrame->CodeSegment,
+    StackFrame->Rflags, StackFrame->StackPointer, StackFrame->StackSegment
+    );
     
     switch(InterruptNumber) {
         case CPU_INTERRUPT_DIVIDED_BY_0:
@@ -29,13 +30,12 @@ void* NosInternalInterruptHandler(UINT64 InterruptNumber, void* InterruptStack) 
         }
         case CPU_INTERRUPT_PAGE_FAULT:
         {
-            SerialLog("#PF");
+            KDebugPrint("#PF ErrCode : %d", ErrStack->ErrorCode);
             break;
         }
         case CPU_INTERRUPT_GENERAL_PROTECTION_FAULT:
         {
-            SerialLog("#GPF");
-
+            KDebugPrint("#GPF ErrCode : %d", ErrStack->ErrorCode);
             break;
         }
         case CPU_INTERRUPT_DOUBLE_FAULT:

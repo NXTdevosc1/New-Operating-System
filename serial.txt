@@ -6,37 +6,37 @@ Test Str : test123
 Num partition handles : 195
 Data partition found.
 Boot partition and boot drive selected successfully.
-Kernel File Size : 455168
+Kernel File Size : 327680
 Test2 : test123
 System Heap:
 7E000000
 OPT_HDR_SIZE : 240 FALIGN : 512
 Allocating System Pages : 000000007E000000
 Image Physical Base : 000000007E000000 , Image Base : 0000000000000000, Entry point : 0000000000001000
-Copying section .tex VADDR : 0000000000001000 PTR : 0000000000000400, SZ : 0000000000005400
-Copying section .rda VADDR : 0000000000007000 PTR : 0000000000005800, SZ : 0000000000001000
-Copying section .dat VADDR : 0000000000008000 PTR : 0000000000006800, SZ : 000000000006B988
-Copying section .pda VADDR : 0000000000074000 PTR : 000000000006EE00, SZ : 0000000000000400
+Copying section .tex VADDR : 0000000000001000 PTR : 0000000000000400, SZ : 0000000000005E00
+Copying section .rda VADDR : 0000000000007000 PTR : 0000000000006200, SZ : 0000000000001400
+Copying section .dat VADDR : 0000000000009000 PTR : 0000000000007600, SZ : 000000000006E1C8
+Copying section .pda VADDR : 0000000000078000 PTR : 000000000004FC00, SZ : 0000000000000400
 Loading DLL :
 syscruntime.dll
 File Size : 4608 bytes
 OPT_HDR_SIZE : 240 FALIGN : 512
-Allocating System Pages : 000000007E075000
-Image Physical Base : 000000007E075000 , Image Base : 0000000000075000, Entry point : 0000000000000000
+Allocating System Pages : 000000007E079000
+Image Physical Base : 000000007E079000 , Image Base : 0000000000079000, Entry point : 0000000000000000
 Copying section .tex VADDR : 0000000000001000 PTR : 0000000000000400, SZ : 0000000000000800
 Copying section .rda VADDR : 0000000000002000 PTR : 0000000000000C00, SZ : 0000000000000400
 Copying section .pda VADDR : 0000000000003000 PTR : 0000000000001000, SZ : 0000000000000200
 EXPORTS
-ETVA : 00000000000021B0, ET : 000000007E0771B0
+ETVA : 00000000000021B0, ET : 000000007E07B1B0
 NR : 000000000000226E, NPR : 0000000000002214, EATR : 00000000000021D8
 Test : test123
 Dll Name : sysc
 Searching Symbol : _ui64toa
-Symbol Found, base : 00000000000761F0, IAT_TARGET : 000000007E007000, RVA : 00000000000011F0
+Symbol Found, base : 000000000007A1F0, IAT_TARGET : 000000007E007000, RVA : 00000000000011F0
 Searching Symbol : memcmp
-Symbol Found, base : 00000000000763A0, IAT_TARGET : 000000007E007008, RVA : 00000000000013A0
+Symbol Found, base : 000000000007A3A0, IAT_TARGET : 000000007E007008, RVA : 00000000000013A0
 Searching Symbol : vsprintf_s
-Symbol Found, base : 0000000000076480, IAT_TARGET : 000000007E007010, RVA : 0000000000001480
+Symbol Found, base : 000000000007A480, IAT_TARGET : 000000007E007010, RVA : 0000000000001480
  loaded
 Memory Count:
 102
@@ -46,7 +46,7 @@ FFFF800000000000
 1
 Booted successfully.
 FFFF800000001000
-504D0BD489D006A
+560B0BD489D006A
 NOS_KERNEL : Kernel Booting...
 Allocated
 Allocated
@@ -57,7 +57,7 @@ Physical Memory Entry : (Attributes, PhysStart, NumPages)
 502096
 Physical Memory Entry : (Attributes, PhysStart, NumPages)
 7BF56000
-8157
+8188
 Allocated
 Physical Memory Entry : (Attributes, PhysStart, NumPages)
 7E34B000
@@ -75,10 +75,12 @@ Physical Memory Entry : (Attributes, PhysStart, NumPages)
 524288
 Allocated
 Used Memory, Free Memory, Total Memory (In Bytes)
-13266944
-4238147584
+13139968
+4238274560
 4251414528
 _______________________________________
+Object Manager : Init
+Object Manager : Allocate Table : 8192 Bytes, Object Array : 5767168 Bytes , Handle Array : 3145728 Bytes
 KernelInternals : Init Boot CPU
 KernelInternals : Register Processor
 GDT and TSS Loaded successfully
@@ -92,7 +94,7 @@ Section:
 .text
 1000
 400
-4C4F6
+4C4B6
 Section:
 .rdata
 4E000
@@ -112,7 +114,7 @@ Section:
 .reloc
 7B000
 75000
-F2C
+F30
 ADDR_SPACE_SIZE :
 7C000
 Sections copied.
@@ -129,82 +131,82 @@ FFFF800000002DC0
 KeMapVirtualMemory
 Symbol found
 KeMapVirtualMemory
-FFFF800000003D40
+FFFF800000003F00
 6FF8C
 KiSetInterruptRouter
 Symbol found
 KiSetInterruptRouter
-FFFF800000003730
+FFFF8000000038F0
 6FFA4
 KeUnmapVirtualMemory
 Symbol found
 KeUnmapVirtualMemory
-FFFF8000000040B0
+FFFF8000000042A0
 6FFBC
 KeCheckMemoryAccess
 Symbol found
 KeCheckMemoryAccess
-FFFF8000000037D0
+FFFF800000003990
 6FFD2
 KeFindAvailableAddressSpace
 Symbol found
 KeFindAvailableAddressSpace
-FFFF800000003A50
+FFFF800000003C10
 6FFF0
 KeReleaseControlFlag
 Symbol found
 KeReleaseControlFlag
-FFFF800000005850
+FFFF800000006380
 70008
 MmAllocatePool
 Symbol found
 MmAllocatePool
-FFFF8000000048E0
+FFFF800000005410
 7001A
 MmFreePool
 Symbol found
 MmFreePool
-FFFF800000004CC0
+FFFF8000000057F0
 70028
 ExInitSemaphore
 Symbol found
 ExInitSemaphore
-FFFF800000004490
+FFFF800000004FC0
 7003A
 ExSemaphoreWait
 Symbol found
 ExSemaphoreWait
-FFFF8000000044B0
+FFFF800000004FE0
 7004C
 ExSemaphoreSignal
 Symbol found
 ExSemaphoreSignal
-FFFF8000000044A0
+FFFF800000004FD0
 70060
 ExAcquireSpinLock
 Symbol found
 ExAcquireSpinLock
-FFFF8000000043F0
+FFFF800000004F20
 70074
 ExReleaseSpinLock
 Symbol found
 ExReleaseSpinLock
-FFFF800000004410
+FFFF800000004F40
 70088
 KeFindSystemFirmwareTable
 Symbol found
 KeFindSystemFirmwareTable
-FFFF800000005A50
+FFFF800000006580
 700A4
 ExInstallInterruptHandler
 Symbol found
 ExInstallInterruptHandler
-FFFF800000003480
+FFFF800000003640
 700C0
 ExRemoveInterruptHandler
 Symbol found
 ExRemoveInterruptHandler
-FFFF800000003640
+FFFF800000003800
 0
 Preboot Launch
 Driver Startup.
@@ -314,7 +316,7 @@ AcpiOsSignalSem
 AcpiOsGetThreadId
 AcpiOsWaitSemaphore
 AcpiOsAlloc 8
-AcpiOsFree FFFF8000002AC5F0
+AcpiOsFree FFFF800000B305F0
 AcpiOsSignalSem
 AcpiOsWaitSemaphore
 AcpiOsSignalSem
@@ -326,16 +328,16 @@ ACPI:
 RSDP 0x%8.8X%8.8X %06X (v%.2d %-6.6s)
 
 
-AcpiOsUnmap addr : FFFF8000002AD000 sz : 24
+AcpiOsUnmap addr : FFFF800000B31000 sz : 24
 AcpiOsMap addr : 7FB7D000 len : 24
 ACPI: 
 %-4.4s 0x%8.8X%8.8X %06X (v%.2d %-6.6s %-8.8s %08X %-4.4s %08X)
 
 
-AcpiOsUnmap addr : FFFF8000002AE000 sz : 24
+AcpiOsUnmap addr : FFFF800000B32000 sz : 24
 AcpiOsMap addr : 7FB7D000 len : 3C
 AcpiOsMap addr : 7FB79000 len : 24
-AcpiOsUnmap addr : FFFF8000002B0000 sz : 24
+AcpiOsUnmap addr : FFFF800000B34000 sz : 24
 AcpiOsGetThreadId
 AcpiOsWaitSemaphore
 AcpiOsMap addr : 7FB79000 len : F4
@@ -349,16 +351,16 @@ AcpiOsSignalSem
 AcpiOsGetThreadId
 AcpiOsWaitSemaphore
 AcpiOsSignalSem
-AcpiOsUnmap addr : FFFF8000002B1000 sz : F4
+AcpiOsUnmap addr : FFFF800000B35000 sz : F4
 AcpiOsMap addr : 7FB79000 len : F4
-AcpiOsUnmap addr : FFFF8000002B2000 sz : F4
+AcpiOsUnmap addr : FFFF800000B36000 sz : F4
 AcpiOsMap addr : 7FB7A000 len : 24
-AcpiOsUnmap addr : FFFF8000002B3000 sz : 24
+AcpiOsUnmap addr : FFFF800000B37000 sz : 24
 AcpiOsGetThreadId
 AcpiOsWaitSemaphore
 AcpiOsMap addr : 7FB7A000 len : 20CB
 AcpiOsMap addr : 7FB79000 len : F4
-AcpiOsUnmap addr : FFFF8000002B7000 sz : F4
+AcpiOsUnmap addr : FFFF800000B3B000 sz : F4
 AcpiOsTableOverride DSDTË 
 AcpiOsPTableOverride DSDTË 
 ACPI: 
@@ -369,16 +371,16 @@ AcpiOsSignalSem
 AcpiOsGetThreadId
 AcpiOsWaitSemaphore
 AcpiOsSignalSem
-AcpiOsUnmap addr : FFFF8000002B4000 sz : 20CB
+AcpiOsUnmap addr : FFFF800000B38000 sz : 20CB
 AcpiOsMap addr : 7FBDD000 len : 24
-AcpiOsUnmap addr : FFFF8000002B8000 sz : 24
+AcpiOsUnmap addr : FFFF800000B3C000 sz : 24
 AcpiOsGetThreadId
 AcpiOsWaitSemaphore
 AcpiOsMap addr : 7FBDD000 len : 40
 AcpiOsMap addr : 7FB79000 len : F4
-AcpiOsUnmap addr : FFFF8000002BA000 sz : F4
+AcpiOsUnmap addr : FFFF800000B3E000 sz : F4
 AcpiOsMap addr : 7FB7A000 len : 20CB
-AcpiOsUnmap addr : FFFF8000002BB000 sz : 20CB
+AcpiOsUnmap addr : FFFF800000B3F000 sz : 20CB
 AcpiOsTableOverride FACS@
 AcpiOsPTableOverride FACS@
 ACPI: 
@@ -389,18 +391,18 @@ AcpiOsSignalSem
 AcpiOsGetThreadId
 AcpiOsWaitSemaphore
 AcpiOsSignalSem
-AcpiOsUnmap addr : FFFF8000002B9000 sz : 40
+AcpiOsUnmap addr : FFFF800000B3D000 sz : 40
 AcpiOsMap addr : 7FB78000 len : 24
-AcpiOsUnmap addr : FFFF8000002BE000 sz : 24
+AcpiOsUnmap addr : FFFF800000B42000 sz : 24
 AcpiOsGetThreadId
 AcpiOsWaitSemaphore
 AcpiOsMap addr : 7FB78000 len : 78
 AcpiOsMap addr : 7FB79000 len : F4
-AcpiOsUnmap addr : FFFF8000002C0000 sz : F4
+AcpiOsUnmap addr : FFFF800000B44000 sz : F4
 AcpiOsMap addr : 7FB7A000 len : 20CB
-AcpiOsUnmap addr : FFFF8000002C1000 sz : 20CB
+AcpiOsUnmap addr : FFFF800000B45000 sz : 20CB
 AcpiOsMap addr : 7FBDD000 len : 40
-AcpiOsUnmap addr : FFFF8000002C4000 sz : 40
+AcpiOsUnmap addr : FFFF800000B48000 sz : 40
 AcpiOsTableOverride APICx
 AcpiOsPTableOverride APICx
 ACPI: 
@@ -411,22 +413,22 @@ AcpiOsSignalSem
 AcpiOsGetThreadId
 AcpiOsWaitSemaphore
 AcpiOsSignalSem
-AcpiOsUnmap addr : FFFF8000002BF000 sz : 78
+AcpiOsUnmap addr : FFFF800000B43000 sz : 78
 AcpiOsMap addr : 7FB77000 len : 24
-AcpiOsUnmap addr : FFFF8000002C5000 sz : 24
+AcpiOsUnmap addr : FFFF800000B49000 sz : 24
 AcpiOsGetThreadId
 AcpiOsWaitSemaphore
 AcpiOsMap addr : 7FB77000 len : 38
 AcpiOsMap addr : 7FB79000 len : F4
-AcpiOsUnmap addr : FFFF8000002C7000 sz : F4
+AcpiOsUnmap addr : FFFF800000B4B000 sz : F4
 AcpiOsMap addr : 7FB7A000 len : 20CB
-AcpiOsUnmap addr : FFFF8000002C8000 sz : 20CB
+AcpiOsUnmap addr : FFFF800000B4C000 sz : 20CB
 AcpiOsMap addr : 7FBDD000 len : 40
-AcpiOsUnmap addr : FFFF8000002CB000 sz : 40
+AcpiOsUnmap addr : FFFF800000B4F000 sz : 40
 AcpiOsMap addr : 7FB78000 len : 78
-AcpiOsUnmap addr : FFFF8000002CC000 sz : 78
+AcpiOsUnmap addr : FFFF800000B50000 sz : 78
 AcpiOsAlloc 100
-AcpiOsFree FFFF8000002AC620
+AcpiOsFree FFFF800000B30620
 AcpiOsTableOverride HPET8
 AcpiOsPTableOverride HPET8
 ACPI: 
@@ -437,22 +439,22 @@ AcpiOsSignalSem
 AcpiOsGetThreadId
 AcpiOsWaitSemaphore
 AcpiOsSignalSem
-AcpiOsUnmap addr : FFFF8000002C6000 sz : 38
+AcpiOsUnmap addr : FFFF800000B4A000 sz : 38
 AcpiOsMap addr : 7FB76000 len : 24
-AcpiOsUnmap addr : FFFF8000002CD000 sz : 24
+AcpiOsUnmap addr : FFFF800000B51000 sz : 24
 AcpiOsGetThreadId
 AcpiOsWaitSemaphore
 AcpiOsMap addr : 7FB76000 len : 3C
 AcpiOsMap addr : 7FB79000 len : F4
-AcpiOsUnmap addr : FFFF8000002CF000 sz : F4
+AcpiOsUnmap addr : FFFF800000B53000 sz : F4
 AcpiOsMap addr : 7FB7A000 len : 20CB
-AcpiOsUnmap addr : FFFF8000002D0000 sz : 20CB
+AcpiOsUnmap addr : FFFF800000B54000 sz : 20CB
 AcpiOsMap addr : 7FBDD000 len : 40
-AcpiOsUnmap addr : FFFF8000002D3000 sz : 40
+AcpiOsUnmap addr : FFFF800000B57000 sz : 40
 AcpiOsMap addr : 7FB78000 len : 78
-AcpiOsUnmap addr : FFFF8000002D4000 sz : 78
+AcpiOsUnmap addr : FFFF800000B58000 sz : 78
 AcpiOsMap addr : 7FB77000 len : 38
-AcpiOsUnmap addr : FFFF8000002D5000 sz : 38
+AcpiOsUnmap addr : FFFF800000B59000 sz : 38
 AcpiOsTableOverride MCFG<
 AcpiOsPTableOverride MCFG<
 ACPI: 
@@ -463,24 +465,24 @@ AcpiOsSignalSem
 AcpiOsGetThreadId
 AcpiOsWaitSemaphore
 AcpiOsSignalSem
-AcpiOsUnmap addr : FFFF8000002CE000 sz : 3C
+AcpiOsUnmap addr : FFFF800000B52000 sz : 3C
 AcpiOsMap addr : 7FB75000 len : 24
-AcpiOsUnmap addr : FFFF8000002D6000 sz : 24
+AcpiOsUnmap addr : FFFF800000B5A000 sz : 24
 AcpiOsGetThreadId
 AcpiOsWaitSemaphore
 AcpiOsMap addr : 7FB75000 len : 28
 AcpiOsMap addr : 7FB79000 len : F4
-AcpiOsUnmap addr : FFFF8000002D8000 sz : F4
+AcpiOsUnmap addr : FFFF800000B5C000 sz : F4
 AcpiOsMap addr : 7FB7A000 len : 20CB
-AcpiOsUnmap addr : FFFF8000002D9000 sz : 20CB
+AcpiOsUnmap addr : FFFF800000B5D000 sz : 20CB
 AcpiOsMap addr : 7FBDD000 len : 40
-AcpiOsUnmap addr : FFFF8000002DC000 sz : 40
+AcpiOsUnmap addr : FFFF800000B60000 sz : 40
 AcpiOsMap addr : 7FB78000 len : 78
-AcpiOsUnmap addr : FFFF8000002DD000 sz : 78
+AcpiOsUnmap addr : FFFF800000B61000 sz : 78
 AcpiOsMap addr : 7FB77000 len : 38
-AcpiOsUnmap addr : FFFF8000002DE000 sz : 38
+AcpiOsUnmap addr : FFFF800000B62000 sz : 38
 AcpiOsMap addr : 7FB76000 len : 3C
-AcpiOsUnmap addr : FFFF8000002DF000 sz : 3C
+AcpiOsUnmap addr : FFFF800000B63000 sz : 3C
 AcpiOsTableOverride WAET(
 AcpiOsPTableOverride WAET(
 ACPI: 
@@ -491,26 +493,26 @@ AcpiOsSignalSem
 AcpiOsGetThreadId
 AcpiOsWaitSemaphore
 AcpiOsSignalSem
-AcpiOsUnmap addr : FFFF8000002D7000 sz : 28
+AcpiOsUnmap addr : FFFF800000B5B000 sz : 28
 AcpiOsMap addr : 7FB74000 len : 24
-AcpiOsUnmap addr : FFFF8000002E0000 sz : 24
+AcpiOsUnmap addr : FFFF800000B64000 sz : 24
 AcpiOsGetThreadId
 AcpiOsWaitSemaphore
 AcpiOsMap addr : 7FB74000 len : 38
 AcpiOsMap addr : 7FB79000 len : F4
-AcpiOsUnmap addr : FFFF8000002E2000 sz : F4
+AcpiOsUnmap addr : FFFF800000B66000 sz : F4
 AcpiOsMap addr : 7FB7A000 len : 20CB
-AcpiOsUnmap addr : FFFF8000002E3000 sz : 20CB
+AcpiOsUnmap addr : FFFF800000B67000 sz : 20CB
 AcpiOsMap addr : 7FBDD000 len : 40
-AcpiOsUnmap addr : FFFF8000002E6000 sz : 40
+AcpiOsUnmap addr : FFFF800000B6A000 sz : 40
 AcpiOsMap addr : 7FB78000 len : 78
-AcpiOsUnmap addr : FFFF8000002E7000 sz : 78
+AcpiOsUnmap addr : FFFF800000B6B000 sz : 78
 AcpiOsMap addr : 7FB77000 len : 38
-AcpiOsUnmap addr : FFFF8000002E8000 sz : 38
+AcpiOsUnmap addr : FFFF800000B6C000 sz : 38
 AcpiOsMap addr : 7FB76000 len : 3C
-AcpiOsUnmap addr : FFFF8000002E9000 sz : 3C
+AcpiOsUnmap addr : FFFF800000B6D000 sz : 3C
 AcpiOsMap addr : 7FB75000 len : 28
-AcpiOsUnmap addr : FFFF8000002EA000 sz : 28
+AcpiOsUnmap addr : FFFF800000B6E000 sz : 28
 AcpiOsTableOverride BGRT8
 AcpiOsPTableOverride BGRT8
 ACPI: 
@@ -521,8 +523,8 @@ AcpiOsSignalSem
 AcpiOsGetThreadId
 AcpiOsWaitSemaphore
 AcpiOsSignalSem
-AcpiOsUnmap addr : FFFF8000002E1000 sz : 38
-AcpiOsUnmap addr : FFFF8000002AF000 sz : 3C
+AcpiOsUnmap addr : FFFF800000B65000 sz : 38
+AcpiOsUnmap addr : FFFF800000B33000 sz : 3C
 Tables:
 AcpiOsGetThreadId
 AcpiOsWaitSemaphore

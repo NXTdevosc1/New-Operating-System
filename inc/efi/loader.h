@@ -134,7 +134,8 @@ typedef struct _NOS_INITDATA {
 typedef enum _PAGE_MAP_FLAGS {
     PM_WRITEACCESS = 1,
     PM_GLOBAL = 2,
-    PM_LARGE_PAGES = 4
+    PM_LARGE_PAGES = 4,
+    PM_WRITE_COMBINE = 8 // Used in the frame buffer to set PAT Value before boot
 } PAGE_MAP_FLAGS;
 typedef struct _IMAGE_IMPORT_ADDRESS_TABLE {
     UINT64 ImportAddress;

@@ -50,6 +50,8 @@ void __declspec(noreturn) NosSystemInit() {
     KernelProcess->VmSearchEnd = (void*)-1;
     KernelProcess->PageTable = (void*)(__readcr3() & ~0xFFF);
     
+    ObInitialize();
+
     KiInitBootCpu();
     SerialLog(NosInitData->BootHeader->OsName);
     SerialLog("drivers");
@@ -98,8 +100,18 @@ void __declspec(noreturn) NosSystemInit() {
 
     }
     SerialLog("drvend");
-
-    memset(NosInitData->FrameBuffer.BaseAddress, 0xFF, NosInitData->FrameBuffer.Pitch * 4 * NosInitData->FrameBuffer.VerticalResolution);
+    for(;;) {
+        for(UINT32 i = 0;i<0xff;i++) {
+            
+            _Memset128A_32(NosInitData->FrameBuffer.BaseAddress, i, (NosInitData->FrameBuffer.Pitch * 4 * NosInitData->FrameBuffer.VerticalResolution) / 0x10);
+        }
+        for(UINT32 i = 0;i<0xff;i++) {
+            _Memset128A_32(NosInitData->FrameBuffer.BaseAddress, i << 8, (NosInitData->FrameBuffer.Pitch * 4 * NosInitData->FrameBuffer.VerticalResolution) / 0x10);
+        }
+        for(UINT32 i = 0;i<0xff;i++) {
+            _Memset128A_32(NosInitData->FrameBuffer.BaseAddress, i << 16, (NosInitData->FrameBuffer.Pitch * 4 * NosInitData->FrameBuffer.VerticalResolution) / 0x10);
+        }
+    }
     _enable();
     for(;;) __halt();
 }

@@ -4,7 +4,8 @@
 PVOID KRNLAPI MmAllocateMemory(
     IN PEPROCESS Process,
     IN UINT64 NumPages,
-    IN UINT64 PageAttributes    
+    IN UINT64 PageAttributes,
+    IN UINT64 CachePolicy    
 ) {
     // TODO : Allocate Fragmented memory instead of contiguous memory
     UINT64 Flags = 0;
@@ -33,7 +34,7 @@ PVOID KRNLAPI MmAllocateMemory(
         VirtualAddress,
         NumPages,
         PageAttributes,
-        0
+        CachePolicy
     );
     ProcessReleaseControlLock(Process, PROCESS_CONTROL_MANAGE_ADDRESS_SPACE);
     return VirtualAddress;

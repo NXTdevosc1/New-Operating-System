@@ -59,6 +59,15 @@ NSTATUS KRNLAPI KeMapVirtualMemory(
         if(PageFlags & PAGE_EXECUTE_DISABLE) __m->ExecuteDisable = 1;
         if(PageFlags & PAGE_GLOBAL) __m->Global = 1;
         if(PageFlags & PAGE_USER) __m->UserSupervisor = 1;
+
+        __m->PWT = CachePolicy;
+        __m->PCD = CachePolicy >> 1;
+        if((PageFlags & PAGE_2MB)) {
+            // Bit 0 of PageDir->Addr is PAT bit
+            __m->PhysicalAddr = (CachePolicy >> 2) & 1;
+        } else {
+            __m->SizePAT = CachePolicy >> 2;
+        }
     }
     UINT64 OrEntry = ModelEntry & ~(((UINT64)1 << 63) | ((UINT64)1<<8) /*Remove orying with XD|GB Bits*/);
 

@@ -8,8 +8,8 @@ typedef struct _PAGE_TABLE_ENTRY {
     UINT64 Present : 1;
     UINT64 ReadWrite : 1;
     UINT64 UserSupervisor : 1;
-    UINT64 Ignore0 : 1; // PWT
-    UINT64 Ignore1 : 1; // PCD
+    UINT64 PWT : 1; // PWT
+    UINT64 PCD : 1; // PCD
     UINT64 Accessed : 1;
     UINT64 Dirty : 1;
     UINT64 SizePAT : 1; // PAT for 4KB Pages
@@ -46,7 +46,7 @@ void BlInitPageTable() {
         // Map the System Space
     BlMapSystemSpace();
 	
-    BlMapMemory((void*)NosInitData.FrameBuffer.BaseAddress, NosInitData.FrameBuffer.BaseAddress, Convert2MBPages(NosInitData.FrameBuffer.FbSize), PM_LARGE_PAGES | PM_WRITEACCESS);
+    BlMapMemory((void*)NosInitData.FrameBuffer.BaseAddress, NosInitData.FrameBuffer.BaseAddress, Convert2MBPages(NosInitData.FrameBuffer.FbSize), PM_LARGE_PAGES | PM_WRITEACCESS | PM_WRITE_COMBINE);
     // Enable Page Size Extension
     // UINT64 CR4;
     // __asm__ volatile("mov %%cr4, %0" : "=r"(CR4));
@@ -86,6 +86,10 @@ void BlMapMemory(
     if(Flags & PM_LARGE_PAGES) {
         ModelEntry.SizePAT = 1; // 2MB Pages
         IncVaddr = 0x200;
+    }
+
+    if(Flags & PM_WRITE_COMBINE) {
+        ModelEntry.PWT = 1;
     }
 
     for(UINT64 i = 0;i<Count;i++, TmpPhysicalAddr+=IncVaddr, TmpVirtualAddr+=IncVaddr){

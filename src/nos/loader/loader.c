@@ -55,8 +55,8 @@ NSTATUS KRNLAPI KeLoadImage(
     if(OperatingMode == USER_MODE) AllocateFlags |= PAGE_USER;
 
     // TODO : if user mode, use the created process
-    void* VaBuffer = MmAllocateMemory(KernelProcess, AddressSpaceSize >> 12, AllocateFlags);
-    if(!VaBuffer) return STATUS_UNSUFFICIENT_MEMORY;
+    void* VaBuffer = MmAllocateMemory(KernelProcess, AddressSpaceSize >> 12, AllocateFlags, 0);
+    if(!VaBuffer) return STATUS_OUT_OF_MEMORY;
     // Copy sections content
 
     for(int i = 0;i<Header->FileHeader.NumberOfSections;i++) {
