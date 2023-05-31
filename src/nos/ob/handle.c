@@ -21,8 +21,7 @@ HANDLE ObOpenObjectByName(
         Obj = Obj->TypeContinuation;
     }
     if(!Obj) {
-        KDebugPrint("ObAcquireObjectByName : Object Not Found, Creating Object...");
-        while(1);
+        return INVALID_HANDLE;
     }
 
     // Object Found
