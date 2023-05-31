@@ -39,6 +39,22 @@ HANDLE ObOpenObjectByName(
     return ObOpenHandle(Obj, Process, Access);    
 }
 
+HANDLE KRNLAPI ObOpenHandleById(
+    IN PEPROCESS Process,
+    IN OBTYPE ObjectType,
+    IN UINT64 ObjectId, // Object Id Inside the object type namespace
+    IN UINT64 Access
+) {
+    POBJECT Obj = _ObObjectTypeStarts[ObjectType];
+    while(Obj) {
+        if(Obj->ObjectId == ObjectId) break;
+        Obj = Obj->TypeContinuation;
+    }
+    if(!Obj) return INVALID_HANDLE;
+
+    return ObOpenHandle(Obj, Process, Access);
+}
+
 void ObCloseHandle(HANDLE Handle) {
     POBJECT_REFERENCE Ref = _ObHandleArray + (UINT64)Handle;
     ObLockHandle(Handle);

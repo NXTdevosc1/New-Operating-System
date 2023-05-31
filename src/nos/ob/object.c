@@ -2,6 +2,7 @@
 
 NSTATUS KRNLAPI ObCreateObject(
 // All fields are required
+    OUT POBJECT* _OutObject,
     IN UINT64 Characteristics,
     IN OBTYPE ObjectType,
     IN char* ObjectName,
@@ -23,6 +24,7 @@ NSTATUS KRNLAPI ObCreateObject(
     Object->OnOpen = OnOpen;
     Object->OnClose = OnClose;
     Object->OnDestroy = OnDestroy;
+    Object->ObjectId = _InterlockedIncrement64(&_ObObjectTypes[ObjectType].TotalCreatedObjects) - 1;
 
     // Link Object Type
     if(!_ObObjectTypeStarts[ObjectType]) {
@@ -33,6 +35,8 @@ NSTATUS KRNLAPI ObCreateObject(
         _ObObjectTypeEnds[ObjectType] = Object;
     }
     _interlockedincrement64(&_ObObjectTypes[ObjectType].NumObjects);
+
+    *_OutObject = Object;
     return STATUS_SUCCESS;
 }
 
