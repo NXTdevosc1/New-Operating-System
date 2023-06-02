@@ -113,6 +113,7 @@ void* ObGetObjectByHandle(HANDLE _Handle) {
     return _ObHandleArray[(UINT64)_Handle].Object->Address;
 }
 
+
 BOOLEAN ObLockHandle(HANDLE _Handle) {
     if(!ObCheckHandle(_Handle)) return FALSE;
     POBJECT_REFERENCE Ref = ObiReferenceByHandle(_Handle);

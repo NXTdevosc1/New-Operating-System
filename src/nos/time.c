@@ -1,90 +1,62 @@
 #include <nos/nos.h>
 #include <ktime.h>
 #include <intmgr.h>
+#include <nos/pnp/pnp.h>
+#include <nosio.h>
+typedef struct _KTIMER {
+    PDEVICE Device;
+    POBJECT TimerObject;
+    UINT Usage;
+    UINT64 Frequency; // in HZ
+    UINT64 TickCounter;
+    HANDLE KernelHandle;
+} KTIMER, *PKTIMER;
 
-// typedef struct _KTIMER {
-//     PDEVICE Device;
-//     UINT Usage;
-//     UINT64 Frequency; // in HZ
-//     UINT64 Ticks;
-//     KTIMER_INTERFACE Interface;
-//     PKTIMER Previous;
-//     PKTIMER Next;
-// } KTIMER, *PKTIMER;
+NSTATUS TimerEvt(PEPROCESS Process, UINT Event, HANDLE Handle, UINT64 Access) {
+    return STATUS_SUCCESS;
+}
 
+NSTATUS KRNLAPI KeCreateTimer(
+    IN PDEVICE Device,
+    IN UINT Usage, // Bit field
+    IN UINT64 Frequency,
+    OUT PKTIMER* _OutTimer
+) {
+    POBJECT Object;
 
+    NSTATUS s = ObCreateObject(
+        Device->ObjectDescriptor,
+        &Object,
+        0,
+        OBJECT_TIMER,
+        NULL,
+        sizeof(KTIMER),
+        TimerEvt
+    );
+    if(NERROR(s)) return s;
+    PKTIMER Timer = Object->Address;
+    Timer->Device = Device;
+    Timer->Frequency = Frequency;
+    Timer->Usage = Usage;
+    Timer->TimerObject = Object;
 
-// PKTIMER FirstTimer = NULL, LastTimer = NULL;
+    if(NERROR(ObOpenHandle(Timer->Device->ObjectDescriptor, KernelProcess, -1, &Timer->KernelHandle))) {
+        KDebugPrint("TIMER : OPEN_HANDLE Failed.");
+        while(1) __halt();
+    }
+    *_OutTimer = Timer;
+    return STATUS_SUCCESS;
+}
 
-// SPINLOCK __ktimer_spinlock;
+UINT64 KRNLAPI KeReadCounter(
+    IN PKTIMER Timer
+) {
+    if(!(Timer->Usage & TIMER_USAGE_COUNTER)) return (UINT64)-1;
+    return IoProtocol(Timer->KernelHandle, TIMER_IO_READ_COUNTER);
+}
 
-
-// NSTATUS KRNLAPI KeInstallTimer(
-//     PDEVICE Device,
-//     UINT Usage,
-//     UINT64 Frequency, // in HZ
-//     PKTIMER_INTERFACE Interface,
-//     void* Context
-// ) {
-//     // TODO : Check device object
-
-//     INTERRUPT_SERVICE_HANDLER Handler;
-//     if(Usage == TIMER_USAGE_TIMEDATE)
-
-//     UINT64 pflags = ExAcquireSpinLock(&__ktimer_spinlock);
-
-//     // Now Select which handler you want to use
-    
-
-//     // if(NERROR(ExInstallInterruptHandler(
-//     //     InterruptInformation->Fields.GlobalSystemInterrupt,
-//     //     0,
-
-//     // ))) {
-
-//     // ExReleaseSpinLock(&__ktimer_spinlock, pflags);
-//     // }
-
-//     PKTIMER Timer = MmAllocatePool(sizeof(KTIMER), 0);
-//     if(!Timer) return STATUS_UNSUFFICIENT_MEMORY;
-
-//     Timer->Device = Device;
-//     Timer->Usage = Usage;
-//     Timer->Frequency = Frequency;
-//     Timer->Previous = FirstTimer;
-//     Timer->Next = NULL;
-//     memcpy(&Timer->Interface, Interface, sizeof(KTIMER_INTERFACE));
-//     if(FirstTimer) {
-//         LastTimer->Next = Timer;
-//         LastTimer = Timer;
-//     } else {
-//         FirstTimer = Timer;
-//         LastTimer = Timer;
-//     }
-
-//     ExReleaseSpinLock(&__ktimer_spinlock, pflags);
-
-//     return STATUS_SUCCESS;
-// }
-
-// BOOLEAN KRNLAPI KeRemoveTimer(
-//     PKTIMER Timer
-// ) {
-//     if(Timer == FirstTimer) {
-//         FirstTimer = NULL;
-//         LastTimer = NULL;
-//         MmFreePool(Timer);
-//         return TRUE;
-//     }
-//     Timer->Previous->Next = Timer->Next;
-//     MmFreePool(Timer);
-//     return TRUE;
-// }
-
-// void KRNLAPI KeTimerTick(PKTIMER Timer) {
-//     Timer->Ticks++;
-// }
-
-// void KRNLAPI KeGetTimeAndDate() {
-
-// }
+void KRNLAPI KeTimerTick(
+    PKTIMER Timer
+) {
+    Timer->TickCounter++;
+}

@@ -2,16 +2,23 @@
 
 NSTATUS KRNLAPI ObCreateObject(
 // All fields are required
+    IN OPT POBJECT ParentObject,
     OUT POBJECT* _OutObject,
     IN UINT64 Characteristics,
     IN OBTYPE ObjectType,
     IN OPT char* ObjectName,
-    IN void* Address,
+    IN UINT64 Size,
     IN OBJECT_EVT_HANDLER EventHandler // Typically handles OnOpen/OnClose Events
 ) {
     if(!_ObObjectTypes[ObjectType].TypeName || !EventHandler) return STATUS_INVALID_PARAMETER;
     POBJECT Object = ObiAllocateObject();
     if(!Object) return STATUS_NO_FREE_SLOTS;
+    Object->Address = MmAllocatePool(Size, 0);
+    if(!Object->Address) {
+        ObiFreeObject(Object);
+        return STATUS_OUT_OF_MEMORY;
+    }
+    ZeroMemory(Object->Address, Size);
 
     // Set Object Data
     Object->Characteristics = Characteristics;
@@ -20,9 +27,11 @@ NSTATUS KRNLAPI ObCreateObject(
         Object->ObjectName = ObjectName;
         Object->ObjectNameLength = strlen(ObjectName);
     }
-    Object->Address = Address;
     Object->EventHandler = EventHandler;
     Object->ObjectId = _InterlockedIncrement64(&_ObObjectTypes[ObjectType].TotalCreatedObjects) - 1;
+
+    Object->Parent = ParentObject;
+
 
     // Link Object Type
     if(!_ObObjectTypeStarts[ObjectType]) {
@@ -34,6 +43,9 @@ NSTATUS KRNLAPI ObCreateObject(
     }
     _interlockedincrement64(&_ObObjectTypes[ObjectType].NumObjects);
 
+    if(ParentObject) {
+        ObiLinkChildObject(ParentObject, Object);
+    }
     *_OutObject = Object;
     return STATUS_SUCCESS;
 }
@@ -62,10 +74,53 @@ BOOLEAN KRNLAPI ObDestroyObject(
     if(!(Object->Characteristics & OBJECT_PERMANENT)) {
         Object->EventHandler(NULL, OBJECT_EVENT_DESTROY, (HANDLE)Object, 0);
     }
+
+    // Destroy all sub objects
+    POBJECT Child = Object->FirstChild;
+    while(Child) {
+        ObDestroyObject(Child, TRUE);
+        Child = Child->NextChild;
+    }
+    MmFreePool(Object->Address);
     ObiFreeObject(Object);
     __writeeflags(rflags);
 
     return TRUE;
+}
+
+UINT64 KRNLAPI ObEnumerateObjects(
+    IN POBJECT Object,
+    IN OPT OBTYPE ObjectType, // Set to UNDEFINED_OBJECT_TYPE to enumerate all objects
+    OUT POBJECT* _OutObject,
+    OUT OPT POBJECT* _FirstChild, // Allowing Sub-Enumeration through objects
+    UINT64 _EnumVal
+) {
+
+    if(_EnumVal == (UINT64)-1) return 0;
+    if(Object) {
+        if(_EnumVal) {
+            *_OutObject = (POBJECT)_EnumVal;
+            _EnumVal = (UINT64)((*_OutObject)->NextChild);
+        } else {
+            *_OutObject = (POBJECT)Object->FirstChild;
+            _EnumVal = (UINT64)Object->FirstChild->NextChild;
+        }
+    } else {
+        if(ObjectType == UNDEFINED_OBJECT_TYPE) {
+            // This uses an array
+            while(!((*_OutObject) = ObGetRawObject(_EnumVal)) && _EnumVal < _ObMaxHandles) {
+                _EnumVal++;
+            }
+            if(_EnumVal == _ObMaxHandles) _EnumVal = 0;
+        } else {
+            // This uses a continuous chain
+            *_OutObject = ObGetRawObjectByType(ObjectType, (UINT64)_EnumVal);
+            ((UINT64)_EnumVal)++;
+            if(!(*_OutObject)) _EnumVal = (UINT64)-1;
+        }
+    }
+    if(!_EnumVal) _EnumVal = (UINT64)-1; // This is the last object
+    return _EnumVal;
 }
 
 POBJECT KRNLAPI ObGetRawObject(IN UINT64 Index) {

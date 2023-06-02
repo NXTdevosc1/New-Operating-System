@@ -2,6 +2,12 @@
 #include <nos/pnp/pnp.h>
 
 NSTATUS DeviceEvtHandler(PEPROCESS Process, UINT Event, HANDLE Handle, UINT64 Access) {
+    if(Event == OBJECT_EVENT_DESTROY) {
+        POBJECT Ob = Handle;
+        PDEVICE Device = Ob->Address;
+        MmFreePool(Device->DevicePath);
+        MmFreePool(Device->DisplayName);
+    }
     return STATUS_SUCCESS;
 }
 PDEVICE KRNLAPI PnpCreateDevice(
@@ -10,8 +16,19 @@ PDEVICE KRNLAPI PnpCreateDevice(
     UINT16* DevicePath, 
     UINT16* DisplayName
 ) {
-    PDEVICE Device = MmAllocatePool(sizeof(DEVICE), 0);
 
+
+    POBJECT Object;
+
+    NSTATUS S = ObCreateObject(NULL, &Object,
+    OBJECT_PERMANENT,
+    OBJECT_DEVICE,
+    NULL,
+    sizeof(DEVICE),
+    DeviceEvtHandler
+    );
+
+    PDEVICE Device = Object->Address;
     Device->DeviceType = DeviceType;
     Device->DeviceCharacteristics = DeviceCharacteristics;
 
@@ -20,22 +37,7 @@ PDEVICE KRNLAPI PnpCreateDevice(
 
     Device->DevicePath = KiMakeSystemNameW(DevicePath, Device->DevicePathLength);
     Device->DisplayName = KiMakeSystemNameW(DisplayName, Device->DisplayNameLength);
-
-
-    NSTATUS S = ObCreateObject(&Device->ObjectDescriptor,
-    OBJECT_PERMANENT,
-    OBJECT_DEVICE,
-    "DEV0",
-    Device,
-    DeviceEvtHandler
-    );
-    if(NERROR(S)) {
-        MmFreePool(Device->DevicePath);
-        MmFreePool(Device->DisplayName);
-        MmFreePool(Device);
-
-        return NULL;
-    }
+    Device->ObjectDescriptor = Object;
 
     return Device;
 }

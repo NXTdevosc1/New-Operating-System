@@ -147,4 +147,38 @@ void ObiFreeObject(POBJECT Object) {
     _interlockedbittestandreset64(_ObAllocationTable + ((UINT64)Index >> 6), (UINT64)Index & 0x3F);
 }
 
+void ObiLinkChildObject(POBJECT Parent, POBJECT Child) {
+    UINT64 rflags = ExAcquireSpinLock(&Parent->SpinLock);
 
+    if(!Parent->FirstChild) {
+        Parent->FirstChild = Child;
+        Parent->LastChild = Child;
+    } else {
+        Child->PreviousChild = Parent->LastChild;
+        Parent->LastChild->NextChild = Child;
+        Parent->LastChild = Child;
+    }
+
+    ExReleaseSpinLock(&Parent->SpinLock, rflags);
+}
+
+void ObiUnlinkChildObject(POBJECT Parent, POBJECT Child) {
+    UINT64 rflags = ExAcquireSpinLock(&Parent->SpinLock);
+
+    if(Parent->FirstChild != Child && Parent->LastChild != Child) {
+        Child->PreviousChild->NextChild = Child->NextChild;
+    } else {
+
+        if(Parent->LastChild == Child) {
+            Parent->LastChild = Child->PreviousChild;
+            Child->PreviousChild->NextChild = NULL;
+        }
+        if(Parent->FirstChild == Child) {
+            Parent->FirstChild = Child->NextChild;
+            Child->NextChild->PreviousChild = NULL;
+        }
+    }
+
+
+    ExReleaseSpinLock(&Parent->SpinLock, rflags);
+}

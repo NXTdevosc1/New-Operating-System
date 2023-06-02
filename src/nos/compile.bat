@@ -5,7 +5,7 @@ FOR /R "./" %%S IN (*.asm) DO (
 )
 
 
-set srcfiles=*.c processor/*.c pnp/*.c ob/*.c lock/*.c mm/*.c process/*.c sys/*.c loader/*.c
+set srcfiles=*.c processor/*.c pnp/*.c ob/*.c lock/*.c mm/*.c task/*.c sys/*.c loader/*.c
 set libsource=../../lib
 cl /O2 %srcfiles% /GS- /I../../inc "../../build/nos/assembly/*.obj" "%libsource%/syscruntime.lib" /KERNEL /Fo:../../build/nos/ /Fe:noskx64.exe /link /FIXED /LARGEADDRESSAWARE /BASE:0xffff800000000000 /ENTRY:NosKernelEntry /SUBSYSTEM:native
 

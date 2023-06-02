@@ -25,13 +25,16 @@ dq __NosInternalInterruptHandler%1
 
 %macro DeclareIRQH 1
 __NosIrqHandler%1:
+    push rax
     push rcx
     push rdx
     mov rcx, %1 ; IrqNumber
     lea rdx, [rsp + 0x10]
+
     call NosIrqHandler
     pop rdx
     pop rcx
+    pop rax
     iretq
 %endmacro
 

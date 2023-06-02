@@ -1,4 +1,4 @@
-#include <nos/process/internal.h>
+#include <nos/task/internal.h>
 volatile UINT64 LastThreadId = 0, LastProcessId = 1; // Kernel Process is PID 0
 
 

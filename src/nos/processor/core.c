@@ -48,9 +48,9 @@ void CpuInitDescriptors(PROCESSOR* Processor) {
         while(1);
     }
 
-    Processor->Tss.rsp0 += 0xF000;
-    Processor->Tss.ist1 += 0xF000;
-    Processor->Tss.ist2 += 0xF000;
+    Processor->Tss.rsp0 += 0x8000;
+    Processor->Tss.ist1 += 0x8000;
+    Processor->Tss.ist2 += 0x8000;
 
 
     Processor->Tss.IOPB_offset = sizeof(TASK_STATE_SEGMENT);

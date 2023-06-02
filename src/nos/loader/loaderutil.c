@@ -62,7 +62,7 @@ NSTATUS LoaderImportLibrary(
 	
 	UINT64* ImportLookupTable = (UINT64*)((char*)VaBuffer + ImportDir->ImportLookupTable);
 	UINT64* ImportAddressTable = (UINT64*)((char*)VaBuffer + ImportDir->ImportAddressTableRva);
-	SerialLog("LINKING EXECUTABLE TO DLL");
+	// SerialLog("LINKING EXECUTABLE TO DLL");
 
 	UINT32* ExportAddressTable = (UINT32*)((char*)VasDll + ExportDir->ExportAddressTableRva);
 	UINT16* ExportOrdinalTable = (UINT16*)((char*)VasDll + ExportDir->OrdinalTableRva);
@@ -77,10 +77,10 @@ NSTATUS LoaderImportLibrary(
 		} else {
 			// Import By name
 				UINT32 HintNameRva = (UINT32)IMAGE_HINT_NAME_RVA(LookupEntry);
-				HexPrint64(HintNameRva);
+				// HexPrint64(HintNameRva);
 				PIMAGE_HINT_NAME_TABLE entry = (PIMAGE_HINT_NAME_TABLE)((char*)VaBuffer + HintNameRva);
 				UINT64 ImportNameLen = strlen(entry->Name);
-				SerialLog(entry->Name);
+				// SerialLog(entry->Name);
 				UINT32* n = NamePtr;
 				BOOLEAN SymbolFound = FALSE;
 				for (UINT32 i = 0; i < ExportDir->NumNamePointers; i++, n++) {
@@ -93,9 +93,9 @@ NSTATUS LoaderImportLibrary(
 						UINT16 Ordinal = ExportOrdinalTable[i];
 						UINT32 Rva = ExportAddressTable[Ordinal];
 						UINT64 base = (UINT64)((UINT64)VasDll + Rva);
-						SerialLog("Symbol found");
-						SerialLog(entry->Name);
-						HexPrint64(base);
+						// SerialLog("Symbol found");
+						// SerialLog(entry->Name);
+						// HexPrint64(base);
 						*ImportAddressTable = base;
 
 						SymbolFound = TRUE;

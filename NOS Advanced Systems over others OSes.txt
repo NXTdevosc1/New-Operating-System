@@ -6,5 +6,8 @@ These are the things that makes this OS Standout from other Operating Systems.
 - Faster System (Everything is highly optimized)
 - Lower Memory Usage (The OS is very compact and does not usage so much memory)
 - Faster Loading (Only required drivers are initilized and the OS is getting rid of old devices such as PIT, MP Tables...)
-- Security (Subsystems use a secure object manager which makes them immune against all types of attacks).
+- Security (Subsystems use a secure object manager which makes them immune against all types of attacks) {
+	- Password mode, a user application can declare that a user is writing a password into an input. This will prevent other applications from reading keyboard input while in background.
+	- SafeRegistry : A database where programs can safely put passwords, emails, tokens and other data without other programs having access to it.
+}
 - Advanced MultiTasking (Use all of your cpu power with a controllable task scheduling system, and configureable cpu power consumption and usage)

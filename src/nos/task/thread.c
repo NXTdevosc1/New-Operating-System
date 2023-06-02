@@ -1,4 +1,4 @@
-#include <nos/process/internal.h>
+#include <nos/task/internal.h>
 
 NSTATUS KRNLAPI ExCreateThread(
     IN PEPROCESS Process,

@@ -100,38 +100,10 @@ void __declspec(noreturn) NosSystemInit() {
 
     }
 
-    KDebugPrint("testing ob");
-    POBJECT ob0 = NULL, ob1 = NULL;
-    NSTATUS s;
-    ObRegisterObjectType(0, "Test Type", 1, 0);
-
-    s = ObCreateObject(&ob0, 0, 0, NULL, NULL, (OBJECT_EVT_HANDLER)testh);
-
-    KDebugPrint("OB0 s = %x obj = %x id : %x", s, ob0, ob0->ObjectId);
-s = ObCreateObject(&ob0, 0, 0, NULL, NULL, (OBJECT_EVT_HANDLER)testh);
-    KDebugPrint("OB0 s = %x obj = %x id : %x", s, ob0, ob0->ObjectId);
-s = ObCreateObject(&ob0, 0, 0, NULL, NULL, (OBJECT_EVT_HANDLER)testh);
-    KDebugPrint("OB0 s = %x obj = %x id : %x", s, ob0, ob0->ObjectId);
-s = ObCreateObject(&ob0, 0, 0, NULL, NULL, (OBJECT_EVT_HANDLER)testh);
-    KDebugPrint("OB0 s = %x obj = %x id : %x", s, ob0, ob0->ObjectId);
-    PEPROCESS P0;
-    ExCreateProcess(NULL, &P0, 0, SUBSYSTEM_NATIVE, NULL, NULL, NULL);
-    HANDLE h = NULL;
-    s = ObOpenHandleById(P0, 0, 2, 0, &h);
-    KDebugPrint("open handle : %x %x %x", s, h, P0);
-
-    s = ObOpenHandleById(KernelProcess, 0, 2, 0, &h);
-    KDebugPrint("open handle : %x %x %x", s, h, KernelProcess);
-
-    s = ObOpenHandleById(KernelProcess, 0, 2, 0, &h);
-    KDebugPrint("open handle : %x %x", s, h);
-    ObCloseHandle(KernelProcess, h);
-    s = ObOpenHandleById(KernelProcess, 0, 2, 0, &h);
-    
-    KDebugPrint("open handle : %x %x", s, h);
-
 
     SerialLog("drvend");
+    _enable();
+    for(;;) __halt();
     for(;;) {
         for(UINT32 i = 0;i<0xff;i++) {
             
@@ -144,6 +116,5 @@ s = ObCreateObject(&ob0, 0, 0, NULL, NULL, (OBJECT_EVT_HANDLER)testh);
             _Memset128A_32(NosInitData->FrameBuffer.BaseAddress, i << 16, (NosInitData->FrameBuffer.Pitch * 4 * NosInitData->FrameBuffer.VerticalResolution) / 0x10);
         }
     }
-    _enable();
     for(;;) __halt();
 }
