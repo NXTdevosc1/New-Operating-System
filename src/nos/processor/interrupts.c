@@ -178,7 +178,7 @@ NSTATUS KRNLAPI KiSetInterruptRouter(
 
 UINT64 NumIrqs = 0;
 
-void NosIrqHandler(UINT64 InterruptNumber, void* InterruptStack) {
+void __fastcall NosIrqHandler(UINT64 InterruptNumber, void* InterruptStack) {
     KDebugPrint("IRQ %d", InterruptNumber);
 
     INTERRUPT_HANDLER_DATA HandlerData = {0};
@@ -191,9 +191,10 @@ void NosIrqHandler(UINT64 InterruptNumber, void* InterruptStack) {
         NSTATUS Status = Desc->Handler(&HandlerData);
     }
 
-    _Memset128A_32(NosInitData->FrameBuffer.BaseAddress, (NumIrqs & 1) ? 0xFF : 0xFFFFFF, 0x5000);
+    // memset(NosInitData->FrameBuffer.BaseAddress, (NumIrqs & 1) ? 0xFF : 0, 0x5000 * 4);
     NumIrqs++;
     gInterruptRoutingTable.Eoi();
+    KDebugPrint("EOI");
 }
 
 BOOLEAN KRNLAPI KeQueryInterruptInformation(UINT Irq, PIM_INTERRUPT_INFORMATION InterruptInformation) {

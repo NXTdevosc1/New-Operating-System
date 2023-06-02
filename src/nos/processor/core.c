@@ -76,11 +76,12 @@ void CpuInitDescriptors(PROCESSOR* Processor) {
     }
 }
 
-void CpuInitApicTimer() {
+extern void SchedulerEntry();
+
+void CpuEnableApicTimer(void* LocalApicAddress) {
     
 }
 
+void CpuDisableApicTimer(void* LocalApicAddress) {
 
-
-
-
+}

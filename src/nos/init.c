@@ -4,6 +4,7 @@
 */
 #include <nos/nos.h>
 #include <nos/loader/loader.h>
+
 /*
  * The initialization entry point of the NOS Kernel
 */
@@ -101,20 +102,32 @@ void __declspec(noreturn) NosSystemInit() {
     }
 
 
+
     SerialLog("drvend");
-    _enable();
-    for(;;) __halt();
+    
+    // INTERRUPTS ARE ENABLE BY THE ACPI SUBSYSTEM
+
+
+    // Stall function requires the timer to receive interrupts
+
+    // KeEnableScheduler();
+    // for(;;) __halt();
     for(;;) {
-        for(UINT32 i = 0;i<0xff;i++) {
-            
-            _Memset128A_32(NosInitData->FrameBuffer.BaseAddress, i, (NosInitData->FrameBuffer.Pitch * 4 * NosInitData->FrameBuffer.VerticalResolution) / 0x10);
-        }
-        for(UINT32 i = 0;i<0xff;i++) {
-            _Memset128A_32(NosInitData->FrameBuffer.BaseAddress, i << 8, (NosInitData->FrameBuffer.Pitch * 4 * NosInitData->FrameBuffer.VerticalResolution) / 0x10);
-        }
-        for(UINT32 i = 0;i<0xff;i++) {
-            _Memset128A_32(NosInitData->FrameBuffer.BaseAddress, i << 16, (NosInitData->FrameBuffer.Pitch * 4 * NosInitData->FrameBuffer.VerticalResolution) / 0x10);
-        }
+        // for(UINT32 i = 0;i<0xff;i++) {
+            UINT32 i = 0xFF;
+            _Memset128A_32((UINT32*)NosInitData->FrameBuffer.BaseAddress + 0x3000, i, (NosInitData->FrameBuffer.Pitch * 4 * NosInitData->FrameBuffer.VerticalResolution) / 0x20);
+        // }
+        Stall(100000);
+        // for(UINT32 i = 0;i<0xff;i++) {
+            _Memset128A_32((UINT32*)NosInitData->FrameBuffer.BaseAddress + 0x3000, i << 8, (NosInitData->FrameBuffer.Pitch * 4 * NosInitData->FrameBuffer.VerticalResolution) / 0x20);
+        // }
+        Stall(100000);
+
+        // for(UINT32 i = 0;i<0xff;i++) {
+            _Memset128A_32((UINT32*)NosInitData->FrameBuffer.BaseAddress + 0x3000, i << 16, (NosInitData->FrameBuffer.Pitch * 4 * NosInitData->FrameBuffer.VerticalResolution) / 0x20);
+        // }
+        Stall(100000);
+
     }
     for(;;) __halt();
 }
