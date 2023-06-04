@@ -3,3 +3,4 @@ inc
 .vscode
 build
 diskimg
+src/drivers/acpi/
