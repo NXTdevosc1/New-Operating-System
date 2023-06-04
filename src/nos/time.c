@@ -105,3 +105,12 @@ void KRNLAPI Stall(UINT64 MicroSeconds) {
 void KRNLAPI Sleep(UINT64 Milliseconds) {
 
 }
+
+// returns time since boot in micro seconds
+UINT64 KRNLAPI KeGetTimeSinceBoot() {
+    if(!BestCounter) {
+        KDebugPrint("KeGetTimeSinceBoot BUG0 HALT");
+        while(1) __halt();
+    }
+    return (BestCounter->TickCounter * MICROSCALE) + (((double)KeReadCounter(BestCounter) / (double)BestCounter->Frequency) * MICROSCALE);
+}

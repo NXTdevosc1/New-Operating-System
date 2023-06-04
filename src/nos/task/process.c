@@ -4,7 +4,7 @@ volatile UINT64 LastThreadId = 0, LastProcessId = 1; // Kernel Process is PID 0
 
 
 THREAD_LIST ThreadList = {INITIAL_MUTEX, 0, {0}, NULL, THREAD_LIST_MAGIC};
-PROCESS_LIST ProcessList = {INITIAL_MUTEX, 1, {0}, NULL, PROCESS_LIST_MAGIC};
+PROCESS_LIST ProcessList = {INITIAL_MUTEX, 0, {0}, NULL, PROCESS_LIST_MAGIC};
 
 SUBSYSTEM_DESCRIPTOR Subsystems[0x100] = {0};
 

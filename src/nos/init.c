@@ -36,7 +36,6 @@ void __declspec(noreturn) NosSystemInit() {
     
 
     KiInitStandardSubsystems();
-    
     KiDumpPhysicalMemoryEntries(); // To determine memory length
     if(NERROR(ExCreateProcess(NULL,
     &KernelProcess,
@@ -80,6 +79,8 @@ void __declspec(noreturn) NosSystemInit() {
             (void**)&EntryPoint // Drivers reside on system process
         );
 
+    memset(NosInitData->FrameBuffer.BaseAddress, 0x20, 0x28000);
+    // while(1) __halt();
 
 
         _ui64toa(Status, bf, 0x10);
@@ -105,7 +106,7 @@ void __declspec(noreturn) NosSystemInit() {
 
     SerialLog("drvend");
     
-    // INTERRUPTS ARE ENABLE BY THE ACPI SUBSYSTEM
+    // INTERRUPTS ARE ENABLED BY THE ACPI SUBSYSTEM IN THE FIRST CALL TO CREATE TIMER
 
 
     // Stall function requires the timer to receive interrupts

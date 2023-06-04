@@ -62,7 +62,7 @@ NOS_MEMORY_DESCRIPTOR* MmCreateMemoryDescriptor(
             SerialLog("fm found");
             return desc;
         }
-        SerialLog("MmCMD: ERR1");
+        // SerialLog("MmCMD: ERR1");
     }
     NOS_MEMORY_LINKED_LIST* mem = NosInitData->NosMemoryMap;
     unsigned long Index;

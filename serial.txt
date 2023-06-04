@@ -6,37 +6,37 @@ Test Str : test123
 Num partition handles : 195
 Data partition found.
 Boot partition and boot drive selected successfully.
-Kernel File Size : 355840
+Kernel File Size : 366080
 Test2 : test123
 System Heap:
 7E000000
 OPT_HDR_SIZE : 240 FALIGN : 512
 Allocating System Pages : 000000007E000000
 Image Physical Base : 000000007E000000 , Image Base : 0000000000000000, Entry point : 0000000000001000
-Copying section .tex VADDR : 0000000000001000 PTR : 0000000000000400, SZ : 000000000000CA00
-Copying section .rda VADDR : 000000000000E000 PTR : 000000000000CE00, SZ : 0000000000000C00
-Copying section .dat VADDR : 000000000000F000 PTR : 000000000000DA00, SZ : 000000000017D108
-Copying section .pda VADDR : 000000000018D000 PTR : 0000000000056800, SZ : 0000000000000600
+Copying section .tex VADDR : 0000000000001000 PTR : 0000000000000400, SZ : 000000000000F200
+Copying section .rda VADDR : 0000000000011000 PTR : 000000000000F600, SZ : 0000000000000C00
+Copying section .dat VADDR : 0000000000012000 PTR : 0000000000010200, SZ : 000000000017D108
+Copying section .pda VADDR : 0000000000190000 PTR : 0000000000059000, SZ : 0000000000000600
 Loading DLL :
 syscruntime.dll
 File Size : 4608 bytes
 OPT_HDR_SIZE : 240 FALIGN : 512
-Allocating System Pages : 000000007E18E000
-Image Physical Base : 000000007E18E000 , Image Base : 000000000018E000, Entry point : 0000000000000000
+Allocating System Pages : 000000007E191000
+Image Physical Base : 000000007E191000 , Image Base : 0000000000191000, Entry point : 0000000000000000
 Copying section .tex VADDR : 0000000000001000 PTR : 0000000000000400, SZ : 0000000000000800
 Copying section .rda VADDR : 0000000000002000 PTR : 0000000000000C00, SZ : 0000000000000400
 Copying section .pda VADDR : 0000000000003000 PTR : 0000000000001000, SZ : 0000000000000200
 EXPORTS
-ETVA : 00000000000021B0, ET : 000000007E1901B0
+ETVA : 00000000000021B0, ET : 000000007E1931B0
 NR : 000000000000226E, NPR : 0000000000002214, EATR : 00000000000021D8
 Test : test123
 Dll Name : sysc
 Searching Symbol : _ui64toa
-Symbol Found, base : 000000000018F1F0, IAT_TARGET : 000000007E00E000, RVA : 00000000000011F0
+Symbol Found, base : 00000000001921F0, IAT_TARGET : 000000007E011000, RVA : 00000000000011F0
 Searching Symbol : memcmp
-Symbol Found, base : 000000000018F3A0, IAT_TARGET : 000000007E00E008, RVA : 00000000000013A0
+Symbol Found, base : 00000000001923A0, IAT_TARGET : 000000007E011008, RVA : 00000000000013A0
 Searching Symbol : vsprintf_s
-Symbol Found, base : 000000000018F480, IAT_TARGET : 000000007E00E010, RVA : 0000000000001480
+Symbol Found, base : 0000000000192480, IAT_TARGET : 000000007E011010, RVA : 0000000000001480
  loaded
 Memory Count:
 102
@@ -46,7 +46,7 @@ FFFF800000000000
 1
 Booted successfully.
 FFFF800000001000
-18B000BD489D006A
+18E000BD489D006A
 NOS_KERNEL : Kernel Booting...
 Allocated
 Allocated
@@ -57,7 +57,7 @@ Physical Memory Entry : (Attributes, PhysStart, NumPages)
 502096
 Physical Memory Entry : (Attributes, PhysStart, NumPages)
 7BF56000
-8180
+8176
 Allocated
 Physical Memory Entry : (Attributes, PhysStart, NumPages)
 7E34B000
@@ -75,14 +75,13 @@ Physical Memory Entry : (Attributes, PhysStart, NumPages)
 524288
 Allocated
 Used Memory, Free Memory, Total Memory (In Bytes)
-13172736
-4238241792
+13189120
+4238225408
 4251414528
 _______________________________________
 Object Manager : Init
 Object Manager : Allocate Table : 8192 Bytes, Object Array : 7864320 Bytes , Handle Array : 3145728 Bytes
 KernelInternals : Init Boot CPU
-KernelInternals : Register Processor
 GDT and TSS Loaded successfully
 New Operating System
 drivers
@@ -94,29 +93,29 @@ Section:
 .text
 1000
 400
-4DD36
+4EED6
 Section:
 .rdata
-4F000
-4E200
-22B46
+50000
+4F400
+22E04
 Section:
 .data
-72000
-70E00
-4EA0
+73000
+72400
+5700
 Section:
 .pdata
-77000
-72600
-4C50
+79000
+73C00
+4CBC
 Section:
 .reloc
-7C000
-77400
-F50
+7E000
+78A00
+F48
 ADDR_SPACE_SIZE :
-7D000
+7F000
 Sections copied.
 Relocating...
 IMPORTING...
@@ -124,368 +123,47 @@ noskx64.exe
 0
 Preboot Launch
 Driver Startup.
-AcpiOsInit
-AcpiOsAlloc 18
-AcpiOsAlloc 18
-AcpiOsAlloc 18
-AcpiOsAlloc 18
-AcpiOsAlloc 18
-AcpiOsCreateSemaphore
-AcpiOsCreateSemaphore
-AcpiOsCreateSemaphore
-AcpiOsCreateSemaphore
-AcpiOsCreateSemaphore
-AcpiOsCreateSemaphore
-AcpiOsCreateLock
-AcpiOsCreateLock
-AcpiOsCreateLock
-AcpiOsCreateSemaphore
-AcpiOsCreateSemaphore
-AcpiOsCreateSemaphore
-AcpiOsGetThreadId
-AcpiOsWaitSemaphore
-AcpiOsGetThreadId
-AcpiOsWaitSemaphore
-AcpiOsSignalSem
-AcpiOsAlloc 30
-AcpiOsGetThreadId
-AcpiOsWaitSemaphore
-AcpiOsSignalSem
-AcpiOsAlloc 30
-AcpiOsGetThreadId
-AcpiOsWaitSemaphore
-AcpiOsSignalSem
-AcpiOsAlloc 30
-AcpiOsGetThreadId
-AcpiOsWaitSemaphore
-AcpiOsSignalSem
-AcpiOsAlloc 30
-AcpiOsGetThreadId
-AcpiOsWaitSemaphore
-AcpiOsSignalSem
-AcpiOsAlloc 30
-AcpiOsGetThreadId
-AcpiOsWaitSemaphore
-AcpiOsSignalSem
-AcpiOsAlloc 30
-AcpiOsPredefinedOverride Name : _REV Type : 1 Val : 
-_REV
-
-AcpiOsGetThreadId
-AcpiOsWaitSemaphore
-AcpiOsSignalSem
-AcpiOsAlloc 48
-AcpiOsAcquireLock
-AcpiOsReleaseLock
-AcpiOsAcquireLock
-AcpiOsReleaseLock
-AcpiOsGetThreadId
-AcpiOsWaitSemaphore
-AcpiOsSignalSem
-AcpiOsAlloc 30
-AcpiOsPredefinedOverride Name : _OS_ Type : 2 Val : Microsoft Windows NT
-_OS_
-Microsoft Windows NT
-AcpiOsGetThreadId
-AcpiOsWaitSemaphore
-AcpiOsSignalSem
-AcpiOsAlloc 48
-AcpiOsAcquireLock
-AcpiOsReleaseLock
-AcpiOsAcquireLock
-AcpiOsReleaseLock
-AcpiOsGetThreadId
-AcpiOsWaitSemaphore
-AcpiOsSignalSem
-AcpiOsAlloc 30
-AcpiOsPredefinedOverride Name : _GL_ Type : 9 Val : 
-_GL_
-
-AcpiOsGetThreadId
-AcpiOsWaitSemaphore
-AcpiOsSignalSem
-AcpiOsAlloc 48
-AcpiOsCreateSemaphore
-AcpiOsCreateSemaphore
-AcpiOsAcquireLock
-AcpiOsReleaseLock
-AcpiOsAcquireLock
-AcpiOsReleaseLock
-AcpiOsGetThreadId
-AcpiOsWaitSemaphore
-AcpiOsSignalSem
-AcpiOsAlloc 30
-AcpiOsPredefinedOverride Name : _OSI Type : 8 Val : 
-_OSI
-
-AcpiOsGetThreadId
-AcpiOsWaitSemaphore
-AcpiOsSignalSem
-AcpiOsAlloc 48
-AcpiOsAcquireLock
-AcpiOsReleaseLock
-AcpiOsAcquireLock
-AcpiOsReleaseLock
-AcpiOsSignalSem
-AcpiOsGetThreadId
-AcpiOsWaitSemaphore
-AcpiOsAlloc 8
-AcpiOsFree FFFF800000D315F0
-AcpiOsSignalSem
-AcpiOsWaitSemaphore
-AcpiOsSignalSem
 __AcpiInitTables__
-AcpiOsAlloc 80
-AcpiOsGetRootPtr
-AcpiOsMap addr : 7FB7E014 len : 24
 ACPI: 
 RSDP 0x%8.8X%8.8X %06X (v%.2d %-6.6s)
 
 
-AcpiOsUnmap addr : FFFF800000D32000 sz : 24
-AcpiOsMap addr : 7FB7D000 len : 24
 ACPI: 
 %-4.4s 0x%8.8X%8.8X %06X (v%.2d %-6.6s %-8.8s %08X %-4.4s %08X)
 
 
-AcpiOsUnmap addr : FFFF800000D33000 sz : 24
-AcpiOsMap addr : 7FB7D000 len : 3C
-AcpiOsMap addr : 7FB79000 len : 24
-AcpiOsUnmap addr : FFFF800000D35000 sz : 24
-AcpiOsGetThreadId
-AcpiOsWaitSemaphore
-AcpiOsMap addr : 7FB79000 len : F4
-AcpiOsTableOverride FACPô
-AcpiOsPTableOverride FACPô
 ACPI: 
 %-4.4s 0x%8.8X%8.8X %06X (v%.2d %-6.6s %-8.8s %08X %-4.4s %08X)
 
 
-AcpiOsSignalSem
-AcpiOsGetThreadId
-AcpiOsWaitSemaphore
-AcpiOsSignalSem
-AcpiOsUnmap addr : FFFF800000D36000 sz : F4
-AcpiOsMap addr : 7FB79000 len : F4
-AcpiOsUnmap addr : FFFF800000D37000 sz : F4
-AcpiOsMap addr : 7FB7A000 len : 24
-AcpiOsUnmap addr : FFFF800000D38000 sz : 24
-AcpiOsGetThreadId
-AcpiOsWaitSemaphore
-AcpiOsMap addr : 7FB7A000 len : 20CB
-AcpiOsMap addr : 7FB79000 len : F4
-AcpiOsUnmap addr : FFFF800000D3C000 sz : F4
-AcpiOsTableOverride DSDTË 
-AcpiOsPTableOverride DSDTË 
 ACPI: 
 %-4.4s 0x%8.8X%8.8X %06X (v%.2d %-6.6s %-8.8s %08X %-4.4s %08X)
 
 
-AcpiOsSignalSem
-AcpiOsGetThreadId
-AcpiOsWaitSemaphore
-AcpiOsSignalSem
-AcpiOsUnmap addr : FFFF800000D39000 sz : 20CB
-AcpiOsMap addr : 7FBDD000 len : 24
-AcpiOsUnmap addr : FFFF800000D3D000 sz : 24
-AcpiOsGetThreadId
-AcpiOsWaitSemaphore
-AcpiOsMap addr : 7FBDD000 len : 40
-AcpiOsMap addr : 7FB79000 len : F4
-AcpiOsUnmap addr : FFFF800000D3F000 sz : F4
-AcpiOsMap addr : 7FB7A000 len : 20CB
-AcpiOsUnmap addr : FFFF800000D40000 sz : 20CB
-AcpiOsTableOverride FACS@
-AcpiOsPTableOverride FACS@
 ACPI: 
 %-4.4s 0x%8.8X%8.8X %06X
 
 
-AcpiOsSignalSem
-AcpiOsGetThreadId
-AcpiOsWaitSemaphore
-AcpiOsSignalSem
-AcpiOsUnmap addr : FFFF800000D3E000 sz : 40
-AcpiOsMap addr : 7FB78000 len : 24
-AcpiOsUnmap addr : FFFF800000D43000 sz : 24
-AcpiOsGetThreadId
-AcpiOsWaitSemaphore
-AcpiOsMap addr : 7FB78000 len : 78
-AcpiOsMap addr : 7FB79000 len : F4
-AcpiOsUnmap addr : FFFF800000D45000 sz : F4
-AcpiOsMap addr : 7FB7A000 len : 20CB
-AcpiOsUnmap addr : FFFF800000D46000 sz : 20CB
-AcpiOsMap addr : 7FBDD000 len : 40
-AcpiOsUnmap addr : FFFF800000D49000 sz : 40
-AcpiOsTableOverride APICx
-AcpiOsPTableOverride APICx
 ACPI: 
 %-4.4s 0x%8.8X%8.8X %06X (v%.2d %-6.6s %-8.8s %08X %-4.4s %08X)
 
 
-AcpiOsSignalSem
-AcpiOsGetThreadId
-AcpiOsWaitSemaphore
-AcpiOsSignalSem
-AcpiOsUnmap addr : FFFF800000D44000 sz : 78
-AcpiOsMap addr : 7FB77000 len : 24
-AcpiOsUnmap addr : FFFF800000D4A000 sz : 24
-AcpiOsGetThreadId
-AcpiOsWaitSemaphore
-AcpiOsMap addr : 7FB77000 len : 38
-AcpiOsMap addr : 7FB79000 len : F4
-AcpiOsUnmap addr : FFFF800000D4C000 sz : F4
-AcpiOsMap addr : 7FB7A000 len : 20CB
-AcpiOsUnmap addr : FFFF800000D4D000 sz : 20CB
-AcpiOsMap addr : 7FBDD000 len : 40
-AcpiOsUnmap addr : FFFF800000D50000 sz : 40
-AcpiOsMap addr : 7FB78000 len : 78
-AcpiOsUnmap addr : FFFF800000D51000 sz : 78
-AcpiOsAlloc 100
-AcpiOsFree FFFF800000D31620
-AcpiOsTableOverride HPET8
-AcpiOsPTableOverride HPET8
 ACPI: 
 %-4.4s 0x%8.8X%8.8X %06X (v%.2d %-6.6s %-8.8s %08X %-4.4s %08X)
 
 
-AcpiOsSignalSem
-AcpiOsGetThreadId
-AcpiOsWaitSemaphore
-AcpiOsSignalSem
-AcpiOsUnmap addr : FFFF800000D4B000 sz : 38
-AcpiOsMap addr : 7FB76000 len : 24
-AcpiOsUnmap addr : FFFF800000D52000 sz : 24
-AcpiOsGetThreadId
-AcpiOsWaitSemaphore
-AcpiOsMap addr : 7FB76000 len : 3C
-AcpiOsMap addr : 7FB79000 len : F4
-AcpiOsUnmap addr : FFFF800000D54000 sz : F4
-AcpiOsMap addr : 7FB7A000 len : 20CB
-AcpiOsUnmap addr : FFFF800000D55000 sz : 20CB
-AcpiOsMap addr : 7FBDD000 len : 40
-AcpiOsUnmap addr : FFFF800000D58000 sz : 40
-AcpiOsMap addr : 7FB78000 len : 78
-AcpiOsUnmap addr : FFFF800000D59000 sz : 78
-AcpiOsMap addr : 7FB77000 len : 38
-AcpiOsUnmap addr : FFFF800000D5A000 sz : 38
-AcpiOsTableOverride MCFG<
-AcpiOsPTableOverride MCFG<
 ACPI: 
 %-4.4s 0x%8.8X%8.8X %06X (v%.2d %-6.6s %-8.8s %08X %-4.4s %08X)
 
 
-AcpiOsSignalSem
-AcpiOsGetThreadId
-AcpiOsWaitSemaphore
-AcpiOsSignalSem
-AcpiOsUnmap addr : FFFF800000D53000 sz : 3C
-AcpiOsMap addr : 7FB75000 len : 24
-AcpiOsUnmap addr : FFFF800000D5B000 sz : 24
-AcpiOsGetThreadId
-AcpiOsWaitSemaphore
-AcpiOsMap addr : 7FB75000 len : 28
-AcpiOsMap addr : 7FB79000 len : F4
-AcpiOsUnmap addr : FFFF800000D5D000 sz : F4
-AcpiOsMap addr : 7FB7A000 len : 20CB
-AcpiOsUnmap addr : FFFF800000D5E000 sz : 20CB
-AcpiOsMap addr : 7FBDD000 len : 40
-AcpiOsUnmap addr : FFFF800000D61000 sz : 40
-AcpiOsMap addr : 7FB78000 len : 78
-AcpiOsUnmap addr : FFFF800000D62000 sz : 78
-AcpiOsMap addr : 7FB77000 len : 38
-AcpiOsUnmap addr : FFFF800000D63000 sz : 38
-AcpiOsMap addr : 7FB76000 len : 3C
-AcpiOsUnmap addr : FFFF800000D64000 sz : 3C
-AcpiOsTableOverride WAET(
-AcpiOsPTableOverride WAET(
 ACPI: 
 %-4.4s 0x%8.8X%8.8X %06X (v%.2d %-6.6s %-8.8s %08X %-4.4s %08X)
 
 
-AcpiOsSignalSem
-AcpiOsGetThreadId
-AcpiOsWaitSemaphore
-AcpiOsSignalSem
-AcpiOsUnmap addr : FFFF800000D5C000 sz : 28
-AcpiOsMap addr : 7FB74000 len : 24
-AcpiOsUnmap addr : FFFF800000D65000 sz : 24
-AcpiOsGetThreadId
-AcpiOsWaitSemaphore
-AcpiOsMap addr : 7FB74000 len : 38
-AcpiOsMap addr : 7FB79000 len : F4
-AcpiOsUnmap addr : FFFF800000D67000 sz : F4
-AcpiOsMap addr : 7FB7A000 len : 20CB
-AcpiOsUnmap addr : FFFF800000D68000 sz : 20CB
-AcpiOsMap addr : 7FBDD000 len : 40
-AcpiOsUnmap addr : FFFF800000D6B000 sz : 40
-AcpiOsMap addr : 7FB78000 len : 78
-AcpiOsUnmap addr : FFFF800000D6C000 sz : 78
-AcpiOsMap addr : 7FB77000 len : 38
-AcpiOsUnmap addr : FFFF800000D6D000 sz : 38
-AcpiOsMap addr : 7FB76000 len : 3C
-AcpiOsUnmap addr : FFFF800000D6E000 sz : 3C
-AcpiOsMap addr : 7FB75000 len : 28
-AcpiOsUnmap addr : FFFF800000D6F000 sz : 28
-AcpiOsTableOverride BGRT8
-AcpiOsPTableOverride BGRT8
 ACPI: 
 %-4.4s 0x%8.8X%8.8X %06X (v%.2d %-6.6s %-8.8s %08X %-4.4s %08X)
 
 
-AcpiOsSignalSem
-AcpiOsGetThreadId
-AcpiOsWaitSemaphore
-AcpiOsSignalSem
-AcpiOsUnmap addr : FFFF800000D66000 sz : 38
-AcpiOsUnmap addr : FFFF800000D34000 sz : 3C
-Tables:
-AcpiOsGetThreadId
-AcpiOsWaitSemaphore
-AcpiOsMap addr : 7FB79000 len : F4
-AcpiOsSignalSem
-SN : FACP Length : 244
-AcpiOsGetThreadId
-AcpiOsWaitSemaphore
-AcpiOsMap addr : 7FB7A000 len : 20CB
-AcpiOsSignalSem
-SN : DSDT Length : 8395
-AcpiOsGetThreadId
-AcpiOsWaitSemaphore
-AcpiOsMap addr : 7FBDD000 len : 40
-AcpiOsSignalSem
-SN : FACS Length : 64
-AcpiOsGetThreadId
-AcpiOsWaitSemaphore
-AcpiOsMap addr : 7FB78000 len : 78
-AcpiOsSignalSem
-SN : APIC Length : 120
-AcpiOsGetThreadId
-AcpiOsWaitSemaphore
-AcpiOsMap addr : 7FB77000 len : 38
-AcpiOsSignalSem
-SN : HPET Length : 56
-AcpiOsGetThreadId
-AcpiOsWaitSemaphore
-AcpiOsMap addr : 7FB76000 len : 3C
-AcpiOsSignalSem
-SN : MCFG Length : 60
-AcpiOsGetThreadId
-AcpiOsWaitSemaphore
-AcpiOsMap addr : 7FB75000 len : 28
-AcpiOsSignalSem
-SN : WAET Length : 40
-AcpiOsGetThreadId
-AcpiOsWaitSemaphore
-AcpiOsMap addr : 7FB74000 len : 38
-AcpiOsSignalSem
-SN : BGRT Length : 56
-AcpiOsGetThreadId
-AcpiOsWaitSemaphore
-AcpiOsSignalSem
-AcpiOsGetThreadId
-AcpiOsWaitSemaphore
-AcpiOsSignalSem
 APIC Found
 lapic id 0 flags 1 pid 0
 IO apic id 0 addr FEC00000 irq base 0
@@ -497,342 +175,80 @@ ACPI_MADT_TYPE_INTERRUPT_OVERRIDE Bus : 0 GSI : A SOURCE : A
 ACPI_MADT_TYPE_INTERRUPT_OVERRIDE Bus : 0 GSI : B SOURCE : B
 ACPI_MADT_TYPE_LOCAL_APIC_NMI pid FF lint 1 intiflags 0
 Set Scheduler Data : LAPIC : FEE00000
-AcpiOsGetThreadId
-AcpiOsWaitSemaphore
-AcpiOsSignalSem
-AcpiOsMap addr : FED00000 len : 1000
-HPET Found Address : FED00000, HPET Mapped Address : FFFF800000D7A000
+HPET Found Address : FED00000, HPET Mapped Address : FFFF800001040000
 Hpet Frequency : 100000000 HZ
 IOApic SetInt (Router : 0)
-AcpiOsGetThreadId
-AcpiOsWaitSemaphore
-AcpiOsSignalSem
 MCFG Found
-__AcpiInstallInitializationHandler__
+Num Segments : 1
+PCI seg#0 SB : 0 EB : 255 ADDR : B0000000
+Test get seg: S0 : 1 S1 : 0
+__AcpiLoadTables__
+%-26s:  (Definition Block level)
+
+%-26s:  (Definition Block level)
+
+
+ACPI table initialization:
+
+Table [%4.4s: %-8.8s] (id %.2X) - %4u Objects with %3u Devices, %3u Regions, %4u Methods (18446603336222817728/18446603336235078048/18446603336235078040 Serial/Non/Cvt)
+
+ACPI: 
+18446603336222817960 ACPI AML tables successfully acquired and loaded
+
+
+Final data object initialization: 
+Namespace contains 18446603336222817952 (0x%X) objects
+
+Tables:
+SN : FACP Length : 244
+SN : DSDT Length : 8395
+SN : FACS Length : 64
+SN : APIC Length : 120
+SN : HPET Length : 56
+SN : MCFG Length : 60
+SN : WAET Length : 40
+SN : BGRT Length : 56
+__AcpiInstallNotifyHandler__
 ___ENABLING_ACPI_SUBSYSTEM___
-AcpiOsReadPort
-AcpiOsReadPort
-AcpiOsGetThreadId
 %9s-%04d 
 %-22.22s: 
 System is already in ACPI mode
 
-AcpiOsGetThreadId
-AcpiOsWaitSemaphore
-AcpiOsSignalSem
-AcpiOsAcquireLock
-AcpiOsReadPort
-AcpiOsWritePort
-AcpiOsReleaseLock
-AcpiOsAcquireLock
-AcpiOsReadPort
-AcpiOsWritePort
-AcpiOsReleaseLock
-AcpiOsAcquireLock
-AcpiOsReadPort
-AcpiOsWritePort
-AcpiOsReleaseLock
-AcpiOsAcquireLock
-AcpiOsReadPort
-AcpiOsWritePort
-AcpiOsReleaseLock
-AcpiOsAcquireLock
-AcpiOsReadPort
-AcpiOsWritePort
-AcpiOsReleaseLock
 Initializing General Purpose Events (GPEs):
 
-AcpiOsGetThreadId
-AcpiOsWaitSemaphore
-AcpiOsAlloc 48
-AcpiOsAlloc F0
-AcpiOsAlloc 600
-AcpiOsWritePort
-AcpiOsWritePort
-AcpiOsWritePort
-AcpiOsWritePort
-AcpiOsWritePort
-AcpiOsWritePort
-AcpiOsWritePort
-AcpiOsWritePort
-AcpiOsWritePort
-AcpiOsWritePort
-AcpiOsWritePort
-AcpiOsWritePort
-AcpiOsWritePort
-AcpiOsWritePort
-AcpiOsWritePort
-AcpiOsWritePort
-AcpiOsGetThreadId
-AcpiOsWaitSemaphore
-AcpiOsAlloc 20
-AcpiOsAcquireLock
-AcpiOsReleaseLock
-AcpiOsAcquireLock
-AcpiOsReleaseLock
-AcpiOsSignalSem
-    Initialized GPE %02X to %02X [%4.4s] 18446603336222805520 regs on interrupt 0x%XEvCreateGpeBlock
+    Initialized GPE %02X to %02X [%4.4s] 18446603336222817808 regs on interrupt 0x%XEvCreateGpeBlock
 
-AcpiOsSignalSem
 AcpiOsInstallInt
 IOApic SetInt (Override SRC : 9 GSI : 9)
 IOApic SetInt (Router : 0)
-AcpiOsGetThreadId
-AcpiOsWaitSemaphore
-AcpiOsAcquireLock
-AcpiOsReadPort
-AcpiOsWritePort
-AcpiOsReleaseLock
-AcpiOsReadPort
-AcpiOsSignalSem
-AcpiOsCreateLock
+__ACPI_INIT_OBJECTS__
+Initializing Device/Processor/Thermal objects and executing _INI/_STA methods:
+
+%-26s:  |Ó (NsEvaluate)
+
+%-26s:  8}Ó
+
+    Executed 18446603336222817936 _INI methods requiring 18446603336235059880 _STA executions (examined 18446603336235059848 objects)
+
+Completing secondary ACPI Tables initialization
+%-26s:  |Ó (NsEvaluate)
+
+%-26s:  8}Ó
+
+Evaluate _PIC Status = 0
 __ACPI_GET_DEVICES__
-AcpiOsGetThreadId
-AcpiOsWaitSemaphore
-AcpiOsSignalSem
-AcpiOsGetThreadId
-AcpiOsWaitSemaphore
-AcpiOsSignalSem
-AcpiOsAlloc 58
-AcpiOsGetThreadId
-AcpiOsWaitSemaphore
-AcpiOsAlloc 8
-AcpiOsFree FFFF800000D31B80
-AcpiOsSignalSem
-AcpiOsFree FFFF800000D31B00
-AcpiOsAlloc 60
-AcpiOsGetThreadId
-AcpiOsWaitSemaphore
-AcpiOsSignalSem
-AcpiOsAlloc 58
-AcpiOsGetThreadId
-AcpiOsWaitSemaphore
-AcpiOsAlloc 8
-AcpiOsFree FFFF800000D31CB0
-AcpiOsSignalSem
-AcpiOsFree FFFF800000D31C30
-AcpiOsAlloc 58
-AcpiOsGetThreadId
-AcpiOsWaitSemaphore
-AcpiOsAlloc 8
-AcpiOsFree FFFF800000D31D60
-AcpiOsSignalSem
-AcpiOsFree FFFF800000D31CE0
-AcpiOsAlloc 58
-AcpiOsGetThreadId
-AcpiOsWaitSemaphore
-AcpiOsAlloc 8
-AcpiOsFree FFFF800000D31E10
-AcpiOsSignalSem
-AcpiOsFree FFFF800000D31D90
-AcpiOsAlloc 58
-AcpiOsGetThreadId
-AcpiOsWaitSemaphore
-AcpiOsAlloc 8
-AcpiOsFree FFFF800000D31EC0
-AcpiOsSignalSem
-AcpiOsFree FFFF800000D31E40
-AcpiOsAlloc 60
-AcpiOsAlloc 58
-AcpiOsGetThreadId
-AcpiOsWaitSemaphore
-AcpiOsAlloc 8
-AcpiOsFree FFFF800000D31FF0
-AcpiOsSignalSem
-AcpiOsFree FFFF800000D31F70
-AcpiOsAlloc 58
-AcpiOsGetThreadId
-AcpiOsWaitSemaphore
-AcpiOsAlloc 8
-AcpiOsFree FFFF800000D7D020
-AcpiOsSignalSem
-AcpiOsFree FFFF800000D7C020
-AcpiOsAlloc 58
-AcpiOsGetThreadId
-AcpiOsWaitSemaphore
-AcpiOsAlloc 8
-AcpiOsFree FFFF800000D7F020
-AcpiOsSignalSem
-AcpiOsFree FFFF800000D7E020
-AcpiOsAlloc 58
-AcpiOsGetThreadId
-AcpiOsWaitSemaphore
-AcpiOsAlloc 8
-AcpiOsFree FFFF800000D81020
-AcpiOsSignalSem
-AcpiOsFree FFFF800000D80020
-AcpiOsAlloc 58
-AcpiOsGetThreadId
-AcpiOsWaitSemaphore
-AcpiOsAlloc 8
-AcpiOsFree FFFF800000D83020
-AcpiOsSignalSem
-AcpiOsFree FFFF800000D82020
-AcpiOsAlloc 58
-AcpiOsGetThreadId
-AcpiOsWaitSemaphore
-AcpiOsAlloc 8
-AcpiOsFree FFFF800000D85020
-AcpiOsSignalSem
-AcpiOsFree FFFF800000D84020
-AcpiOsAlloc 58
-AcpiOsGetThreadId
-AcpiOsWaitSemaphore
-AcpiOsAlloc 8
-AcpiOsFree FFFF800000D87020
-AcpiOsSignalSem
-AcpiOsFree FFFF800000D86020
-AcpiOsAlloc 58
-AcpiOsGetThreadId
-AcpiOsWaitSemaphore
-AcpiOsAlloc 8
-AcpiOsFree FFFF800000D89020
-AcpiOsSignalSem
-AcpiOsFree FFFF800000D88020
-AcpiOsAlloc 58
-AcpiOsGetThreadId
-AcpiOsWaitSemaphore
-AcpiOsAlloc 8
-AcpiOsFree FFFF800000D8B020
-AcpiOsSignalSem
-AcpiOsFree FFFF800000D8A020
-AcpiOsAlloc 58
-AcpiOsGetThreadId
-AcpiOsWaitSemaphore
-AcpiOsAlloc 8
-AcpiOsFree FFFF800000D8D020
-AcpiOsSignalSem
-AcpiOsFree FFFF800000D8C020
-ACPI WALK CALLBACK HID :  Name : _SB_
-AcpiOsGetThreadId
-AcpiOsWaitSemaphore
-AcpiOsSignalSem
-AcpiOsGetThreadId
-AcpiOsWaitSemaphore
-AcpiOsSignalSem
-AcpiOsGetThreadId
-AcpiOsWaitSemaphore
-AcpiOsSignalSem
-AcpiOsAlloc 58
-AcpiOsGetThreadId
-AcpiOsWaitSemaphore
-AcpiOsAlloc 8
-AcpiOsFree FFFF800000D8F020
-AcpiOsSignalSem
-AcpiOsFree FFFF800000D8E020
-AcpiOsAlloc 60
-AcpiOsGetThreadId
-AcpiOsWaitSemaphore
-AcpiOsSignalSem
-AcpiOsAlloc 58
-AcpiOsGetThreadId
-AcpiOsWaitSemaphore
-AcpiOsAlloc 8
-AcpiOsFree FFFF800000D92020
-AcpiOsSignalSem
-AcpiOsFree FFFF800000D91020
-AcpiOsAlloc 58
-AcpiOsGetThreadId
-AcpiOsWaitSemaphore
-AcpiOsAlloc 8
-AcpiOsFree FFFF800000D94020
-AcpiOsSignalSem
-AcpiOsFree FFFF800000D93020
-AcpiOsAlloc 58
-AcpiOsGetThreadId
-AcpiOsWaitSemaphore
-AcpiOsAlloc 8
-AcpiOsFree FFFF800000D96020
-AcpiOsSignalSem
-AcpiOsFree FFFF800000D95020
-AcpiOsAlloc 58
-AcpiOsGetThreadId
-AcpiOsWaitSemaphore
-AcpiOsAlloc 8
-AcpiOsFree FFFF800000D98020
-AcpiOsSignalSem
-AcpiOsFree FFFF800000D97020
-AcpiOsAlloc 60
-AcpiOsAlloc 58
-AcpiOsGetThreadId
-AcpiOsWaitSemaphore
-AcpiOsAlloc 8
-AcpiOsFree FFFF800000D9B020
-AcpiOsSignalSem
-AcpiOsFree FFFF800000D9A020
-AcpiOsAlloc 58
-AcpiOsGetThreadId
-AcpiOsWaitSemaphore
-AcpiOsAlloc 8
-AcpiOsFree FFFF800000D9D020
-AcpiOsSignalSem
-AcpiOsFree FFFF800000D9C020
-AcpiOsAlloc 58
-AcpiOsGetThreadId
-AcpiOsWaitSemaphore
-AcpiOsAlloc 8
-AcpiOsFree FFFF800000D9F020
-AcpiOsSignalSem
-AcpiOsFree FFFF800000D9E020
-AcpiOsAlloc 58
-AcpiOsGetThreadId
-AcpiOsWaitSemaphore
-AcpiOsAlloc 8
-AcpiOsFree FFFF800000DA1020
-AcpiOsSignalSem
-AcpiOsFree FFFF800000DA0020
-AcpiOsAlloc 58
-AcpiOsGetThreadId
-AcpiOsWaitSemaphore
-AcpiOsAlloc 8
-AcpiOsFree FFFF800000DA3020
-AcpiOsSignalSem
-AcpiOsFree FFFF800000DA2020
-AcpiOsAlloc 58
-AcpiOsGetThreadId
-AcpiOsWaitSemaphore
-AcpiOsAlloc 8
-AcpiOsFree FFFF800000DA5020
-AcpiOsSignalSem
-AcpiOsFree FFFF800000DA4020
-AcpiOsAlloc 58
-AcpiOsGetThreadId
-AcpiOsWaitSemaphore
-AcpiOsAlloc 8
-AcpiOsFree FFFF800000DA7020
-AcpiOsSignalSem
-AcpiOsFree FFFF800000DA6020
-AcpiOsAlloc 58
-AcpiOsGetThreadId
-AcpiOsWaitSemaphore
-AcpiOsAlloc 8
-AcpiOsFree FFFF800000DA9020
-AcpiOsSignalSem
-AcpiOsFree FFFF800000DA8020
-AcpiOsAlloc 58
-AcpiOsGetThreadId
-AcpiOsWaitSemaphore
-AcpiOsAlloc 8
-AcpiOsFree FFFF800000DAB020
-AcpiOsSignalSem
-AcpiOsFree FFFF800000DAA020
-AcpiOsAlloc 58
-AcpiOsGetThreadId
-AcpiOsWaitSemaphore
-AcpiOsAlloc 8
-AcpiOsFree FFFF800000DAD020
-AcpiOsSignalSem
-AcpiOsFree FFFF800000DAC020
-ACPI WALK CALLBACK HID :  Name : _TZ_
-AcpiOsGetThreadId
-AcpiOsWaitSemaphore
-AcpiOsSignalSem
-AcpiOsGetThreadId
-AcpiOsWaitSemaphore
-AcpiOsSignalSem
 RETURN_STATUS :
 0
 drvend
+IRQ 2
+Hpet Interrupt
+EOI
+IRQ 2
+Hpet Interrupt
+EOI
+IRQ 2
+Hpet Interrupt
+EOI
 IRQ 2
 Hpet Interrupt
 EOI

@@ -14,7 +14,9 @@ void CpuInitDescriptors(PROCESSOR* Processor) {
     _disable();
     // Creating the interrupt array table
     INTERRUPT_ARRAY* Interrupts;
-    if(NERROR(MmAllocatePhysicalMemory(0, ConvertToPages(sizeof(INTERRUPT_ARRAY)), &Interrupts))) {
+    Interrupts = MmAllocateMemory(KernelProcess, ConvertToPages(sizeof(INTERRUPT_ARRAY)), PAGE_WRITE_ACCESS | PAGE_GLOBAL, PAGE_CACHE_WRITE_THROUGH);
+
+    if(!Interrupts) {
         SerialLog("Failed to allocate interrupt array.");
         while(1);
     }

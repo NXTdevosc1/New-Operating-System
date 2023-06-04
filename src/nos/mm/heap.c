@@ -191,67 +191,29 @@ PVOID KRNLAPI MmAllocatePool(
     }
     // Allocate new heap
     /*
-CPU TLB Optimization protocol: Allocate Large pages if possible then small pages
+CPU TLB Optimization protocol: Allocate Large pages for kernel
     */
-    UINT64 PageAttributes = PAGE_WRITE_ACCESS;
-
-    UINT64 Num4KBPages = ConvertToPages(Size);
-    UINT64 NumLargePages = Num4KBPages >> 9;
+   UINT64 InitialSize = Size;
+    UINT64 PageAttributes = PAGE_WRITE_ACCESS | PAGE_2MB;
+    Size = AlignForward(Size, 0x200000);
+    UINT64 NumLargePages = Size >> 21;
     
-//    SerialLog("AllocatePool : Requesting Pages...");
-    Address = KeFindAvailableAddressSpace(
-        KernelProcess, Num4KBPages, KernelProcess->VmSearchStart, KernelProcess->VmSearchEnd, 0
+    Address = MmAllocateMemory(
+        KernelProcess,
+        NumLargePages,
+        PageAttributes,
+        0
     );
-    if(!Address) {
-        SerialLog("AllocatePool : ERR1")
-        // FREE MEMORY
-        while(1);
-    }
-    KernelProcess->VmSearchStart = (void*)((UINT64)Address + (Num4KBPages << 12));
-    
-    void* PhysicalAddress = NULL; // 2MB PAGES
-    void* PhysicalAddress2 = NULL; // 4KB PAGES
-    if(NumLargePages) {
-        if(NSUCCESS(MmAllocatePhysicalMemory(ALLOCATE_2MB_ALIGNED_MEMORY, NumLargePages, &PhysicalAddress))) {
-            Num4KBPages -= (NumLargePages << 9);
-        }
-    }
 
-    if(Num4KBPages) {
-        if(NERROR(MmAllocatePhysicalMemory(0, Num4KBPages, &PhysicalAddress2))) {
-            SerialLog("malloc ERR0");
-            while(1);
-        }
-    }
 
-    if(PhysicalAddress) {
-        KeMapVirtualMemory(
-            KernelProcess, PhysicalAddress, Address, NumLargePages, PageAttributes | PAGE_2MB, 0
-        );
-        if(PhysicalAddress2) {
-            KeMapVirtualMemory(
-            KernelProcess, PhysicalAddress2, (void*)((UINT64)Address + (NumLargePages << 21)), Num4KBPages, PageAttributes, 0
-            );
-        }
-    } else {
-        KeMapVirtualMemory(
-            KernelProcess, PhysicalAddress2, Address, Num4KBPages, PageAttributes, 0
-        );
-    }
-    ProcessReleaseControlLock(KernelProcess, PROCESS_CONTROL_MANAGE_ADDRESS_SPACE);
-
-    if(PhysicalAddress) Flags |= HEAP_2MB;
-
-    if(Size != ((Num4KBPages << 12) + (NumLargePages << 21))) {
-        // Now create a heap descriptor
-        Heap = MmCreateHeap(
-            (void*)(Address),
-            (Num4KBPages << 12) + (NumLargePages << 21),
-            Flags
-        );
-        (UINT64)Heap->Address += Size;
-        (UINT64)Heap->Size -= Size;
-    }
+    // Now create a heap descriptor
+    Heap = MmCreateHeap(
+        (void*)(Address),
+        (NumLargePages << 21),
+        Flags
+    );
+    (UINT64)Heap->Address += InitialSize;
+    (UINT64)Heap->Size -= InitialSize;
 
     MmAddBlock(Address, Size, Flags);
 

@@ -23,10 +23,14 @@ __NosInternalInterruptHandler%1:
 dq __NosInternalInterruptHandler%1
 %endmacro
 
+_KFX times 0x1000 db 0
+
 %macro DeclareIRQH 1
 __NosIrqHandler%1:
     push rax
     push rbx
+    mov rbx, _KFX
+    fxsave [rbx]
     push rcx
     push rdx
     push rsi
@@ -43,8 +47,11 @@ __NosIrqHandler%1:
 
     mov rcx, %1 ; IrqNumber
     lea rdx, [rsp + 15 * 8]
-
+    sub rsp, 0x20
     call NosIrqHandler
+    add rsp, 0x20
+    mov rbx, _KFX
+    fxrstor [rbx]
     pop rbp
     pop r15
     pop r14

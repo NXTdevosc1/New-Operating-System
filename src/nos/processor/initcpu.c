@@ -1,5 +1,6 @@
 #include <nos/nos.h>
 #include <nos/processor/processor.h>
+#include <nos/sys/sys.h>
 
 char BootProcessorName[MAX_PROCESSOR_NAME_LENGTH];
 
@@ -13,14 +14,25 @@ void CpuEnableFeatures();
 
 void KiInitBootCpu() {
     CpuEnableFeatures();
+    // Enable NMI
+    __outbyte(0x70, __inbyte(0x70) & 0x7F);
+    __inbyte(0x71);
+
+    // Enable Parity/Channel Check
+	__outbyte(SYSTEM_CONTROL_PORT_B, __inbyte(SYSTEM_CONTROL_PORT_B) | (3 << 2));
+
+    // Disable PIC (Legacy Interrupt Router) to prevent intervention with newer routers
+    __outbyte(0xA1, 0xFF);
+	__outbyte(0x21, 0xFF);
+
     SerialLog("KernelInternals : Init Boot CPU");
-    CpuReadBrandName(BootProcessorName);
-    SerialLog("KernelInternals : Register Processor");
+    // CpuReadBrandName(BootProcessorName);
+    // SerialLog("KernelInternals : Register Processor");
     UINT64 ProcessorId;
     KeRegisterProcessor(BootProcessorName, &ProcessorId);
     void* Processor = KeQueryProcessorById(ProcessorId);
-    CpuInitDescriptors(Processor);
     BootProcessor = Processor;
+    CpuInitDescriptors(Processor);
     
     
 
@@ -63,7 +75,7 @@ CPUID_DATA Cpuid;
     __cpuid(&Cpuid, 0x80000001);
     if(!(Cpuid.edx & (1 << 20))) {
         KDebugPrint("Execute-Disable Feature is required to run the OS.");
-        while(1);
+        while(1) __halt();
     }
     __writemsr(0xC0000080, __readmsr(0xC0000080) | (1 << 11));
     // Page Attribute Table (Required)

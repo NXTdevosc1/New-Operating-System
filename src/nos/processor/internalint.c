@@ -8,6 +8,8 @@ void* NosInternalInterruptHandler(UINT64 InterruptNumber, void* InterruptStack) 
     InterruptNumber, StackFrame->InstructionPointer, StackFrame->CodeSegment,
     StackFrame->Rflags, StackFrame->StackPointer, StackFrame->StackSegment
     );
+
+    _disable();
     
     switch(InterruptNumber) {
         case CPU_INTERRUPT_DIVIDED_BY_0:
