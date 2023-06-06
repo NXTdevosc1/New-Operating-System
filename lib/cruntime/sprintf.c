@@ -19,8 +19,18 @@ EXPORT int vsprintf_s(
         if(*format == '%') {
             format++;
             const char* selector = format;
-            format++;
-            switch(*selector) {
+            int SelSize = 0;
+            for(;selector[SelSize] && 
+            (
+            !(selector[SelSize] >= 'a' && selector[SelSize] <= 'z') &&
+            !(selector[SelSize] >= 'A' && selector[SelSize] <= 'Z')
+            )
+             ;SelSize++);
+
+            char Operation = selector[SelSize];
+
+            format+=SelSize+1;
+            switch(Operation) {
                 case 'c' :{
                     sprintf_cpbuffer(buffer, va_arg(args, char));
                     NumArgs++;
@@ -56,7 +66,9 @@ EXPORT int vsprintf_s(
                     sizeOfBuffer-= buffer - b;
                     break;
                 }
-                case 'x' : {
+                case 'x' :
+                case 'X' :
+                 {
                     unsigned long long num = va_arg(args, unsigned long long);
                     NumArgs++;
                     char* b = buffer;
@@ -66,7 +78,7 @@ EXPORT int vsprintf_s(
                     break;
                 }
                 default: {
-                    format -= 2;
+                    format -= SelSize + 2;
                     goto copybuff;
                 }
             }

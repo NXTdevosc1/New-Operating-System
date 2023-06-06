@@ -34,9 +34,9 @@ int  testh() {
 void __declspec(noreturn) NosSystemInit() {
     SerialLog("NOS_KERNEL : Kernel Booting...");
     
-
+    KiPhysicalMemoryManagerInit();
+    ObInitialize();
     KiInitStandardSubsystems();
-    KiDumpPhysicalMemoryEntries(); // To determine memory length
     if(NERROR(ExCreateProcess(NULL,
     &KernelProcess,
     0,
@@ -50,7 +50,6 @@ void __declspec(noreturn) NosSystemInit() {
     KernelProcess->VmSearchEnd = (void*)-1;
     KernelProcess->PageTable = (void*)(__readcr3() & ~0xFFF);
     
-    ObInitialize();
 
     KiInitBootCpu();
     SerialLog(NosInitData->BootHeader->OsName);

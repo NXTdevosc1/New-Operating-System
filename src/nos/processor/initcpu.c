@@ -29,10 +29,10 @@ void KiInitBootCpu() {
     // CpuReadBrandName(BootProcessorName);
     // SerialLog("KernelInternals : Register Processor");
     UINT64 ProcessorId;
-    KeRegisterProcessor(BootProcessorName, &ProcessorId);
-    void* Processor = KeQueryProcessorById(ProcessorId);
-    BootProcessor = Processor;
-    CpuInitDescriptors(Processor);
+    PROCESSOR_IDENTIFICATION_DATA Ident = {0};
+    BootProcessor = KeRegisterProcessor(&Ident);
+
+    CpuInitDescriptors(BootProcessor);
     
     
 

@@ -51,7 +51,6 @@ NSTATUS KRNLAPI KeCreateTimer(
     if(Usage & TIMER_USAGE_COUNTER) {
         if(!BestCounter) {
             BestCounter = Timer;
-            _enable(); // Enable interrupts (We got a countet, most of the time HPET)
         }
         else if(BestCounter->Frequency < Frequency) BestCounter = Timer;
     }

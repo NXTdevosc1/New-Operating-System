@@ -1,4 +1,5 @@
-#include <nos/processor/internal.h>
+#include <nos/nos.h>
+#include <nos/processor/processor.h>
 #include <nos/processor/ints.h>
 #include <intmgr.h>
 void* NosInternalInterruptHandler(UINT64 InterruptNumber, void* InterruptStack) {

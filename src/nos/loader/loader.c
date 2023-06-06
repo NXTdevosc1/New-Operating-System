@@ -64,6 +64,10 @@ NSTATUS KRNLAPI KeLoadImage(
             UINT64 sz = Sections[i].SizeOfRawData;
             if(Sections[i].VirtualSize < sz) sz = Sections[i].VirtualSize;
             memcpy((char*)VaBuffer + Sections[i].VirtualAddress, (char*)ImageBuffer + Sections[i].PointerToRawData, Sections[i].SizeOfRawData);
+            void* sectionstart = (char*)VaBuffer + Sections[i].VirtualAddress;
+            if(Sections[i].Characteristics & IMAGE_SCN_CNT_CODE) {
+                KeMapVirtualMemory(KernelProcess, KeConvertPointer(KernelProcess, sectionstart), sectionstart, ConvertToPages(Sections[i].VirtualSize), AllocateFlags | PAGE_EXECUTE, 0);
+            }
         }
         if(Sections[i].Characteristics & (IMAGE_SCN_CNT_UNINITIALIZED_DATA)) {
             memset((char*)VaBuffer + Sections[i].VirtualAddress + Sections[i].SizeOfRawData, 0, Sections[i].VirtualSize - Sections[i].SizeOfRawData);

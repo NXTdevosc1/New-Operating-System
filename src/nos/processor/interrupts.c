@@ -1,4 +1,5 @@
-#include <nos/processor/internal.h>
+#include <nos/nos.h>
+#include <nos/processor/processor.h>
 #include <intmgr.h>
 
 struct {
@@ -42,7 +43,7 @@ NSTATUS KRNLAPI ExInstallInterruptHandler(
             NosIrqService
         );
         if(NERROR(gInterruptRoutingTable.SetInterrupt(
-            IrqNumber, 0, IrqNumber + 0x20, Processor->ProcessorId,
+            IrqNumber, 0, IrqNumber + 0x20, Processor->Id.ProcessorId,
             InterruptInformation.Fields.DeliveryMode,
             InterruptInformation.Fields.Polarity,
             InterruptInformation.Fields.TriggerMode
@@ -110,6 +111,52 @@ extern void* KiSystemInterrupts[];
 extern void* NosInternalInterruptHandler(UINT64 InterruptNumber, void* InterruptStack);
 extern void NosIrqHandler(UINT64 InterruptNumber, void* InterruptStack);
 extern void NosSystemInterruptHandler(UINT64 InterruptNumber, void* InterruptStack);
+
+
+BOOLEAN KRNLAPI KeRegisterSystemInterrupt(
+    UINT64 ProcessorId,
+    UINT8* Vector, // Only vectors from 220-255 are accepted
+    BOOLEAN UseWrapper,
+    BOOLEAN DisableInterrupts, // if yes then use intgate otherwise use trapgate
+    INTERRUPT_SERVICE_HANDLER Handler
+) {
+    PROCESSOR* Processor = KeGetProcessorById(ProcessorId);
+    if(!Processor) {
+        KDebugPrint("KRSI : 1");
+        return FALSE;
+    }
+    ProcessorAcquireLock(Processor, PROCESSOR_IDT_LOCK);
+
+    // Search for a free system interrupt entry (INTS 220-255)
+    UINT Vec;
+    for(Vec = 220;Vec<0x100;Vec++) {
+        if(!Processor->Idt[Vec].Present) break;
+    }
+    if(Vec == 0x100) {
+        ProcessorReleaseLock(Processor, PROCESSOR_IDT_LOCK);
+        KDebugPrint("KRSI : 2");
+        return FALSE; // All system interrupt slots are full
+    }
+
+    if(UseWrapper) {
+        Processor->SystemInterruptHandlers[Vec - 220] = Handler;
+        CpuSetInterrupt(Processor, Vec, DisableInterrupts ? InterruptGate : TrapGate, NosSystemInterruptService);
+    } else {
+        // Manually set the interrupt
+        IDT_ENTRY* Entry = &Processor->Idt[Vec];
+        Entry->CodeSegment = 0x08;
+        Entry->Ist = 2;
+        Entry->Address0 = (UINT64)Handler;
+        Entry->Address1 = (UINT64)Handler >> 16;
+        Entry->Address2 = (UINT64)Handler >> 32;
+        Entry->Type = DisableInterrupts ? InterruptGate : TrapGate;
+        Entry->Present = 1;
+    }
+
+    ProcessorReleaseLock(Processor, PROCESSOR_IDT_LOCK);
+    *Vector = Vec;
+    return TRUE;
+}
 
 void CpuSetInterrupt(
     PROCESSOR* Processor,

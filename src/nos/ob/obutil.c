@@ -31,11 +31,11 @@ void ObInitialize() {
     
     _ObHandleArraySize = AlignForward(_ObMaxHandles * sizeof(OBJECT_REFERENCE_DESCRIPTOR), 0x1000);
 
-    _ObAllocationTable = MmAllocateMemory(KernelProcess, _ObAllocationTableSize >> 12, PAGE_WRITE_ACCESS, PAGE_CACHE_DISABLE);
-    _ObHandleAllocationTable = MmAllocateMemory(KernelProcess, _ObAllocationTableSize >> 12, PAGE_WRITE_ACCESS, PAGE_CACHE_DISABLE);
+    MmAllocatePhysicalMemory(0, _ObAllocationTableSize >> 12, &_ObAllocationTable);
+    MmAllocatePhysicalMemory(0, _ObAllocationTableSize >> 12, &_ObHandleAllocationTable);
+    MmAllocatePhysicalMemory(0, _ObObjectArraySize >> 12, &_ObObjectArray);
+    MmAllocatePhysicalMemory(0, _ObHandleArraySize >> 12, &_ObHandleArray);
 
-    _ObObjectArray = MmAllocateMemory(KernelProcess, _ObObjectArraySize >> 12, PAGE_WRITE_ACCESS, PAGE_CACHE_DISABLE);
-    _ObHandleArray = MmAllocateMemory(KernelProcess, _ObHandleArraySize >> 12, PAGE_WRITE_ACCESS, PAGE_CACHE_DISABLE);
 
     if(!_ObAllocationTable || !_ObObjectArray || !_ObHandleAllocationTable || !_ObHandleArray) {
         KDebugPrint("Object Manager : Failed to allocate resources.");
@@ -49,6 +49,8 @@ void ObInitialize() {
     KDebugPrint("Object Manager : Allocate Table : %u Bytes, Object Array : %u Bytes , Handle Array : %u Bytes", _ObAllocationTableSize, _ObObjectArraySize, _ObHandleArraySize);
 
     // Initialize Standard Object Types
+    ObRegisterObjectType(OBJECT_PROCESSOR, "Processors", NOS_MAJOR_VERSION, NOS_MINOR_VERSION);
+
     ObRegisterObjectType(OBJECT_PROCESS, "Processes", NOS_MAJOR_VERSION, NOS_MINOR_VERSION);
     ObRegisterObjectType(OBJECT_THREAD, "Threads", NOS_MAJOR_VERSION, NOS_MINOR_VERSION);
     ObRegisterObjectType(OBJECT_FILE, "Files", NOS_MAJOR_VERSION, NOS_MINOR_VERSION);

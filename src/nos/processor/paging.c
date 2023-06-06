@@ -1,4 +1,5 @@
-#include <nos/processor/internal.h>
+#include <nos/nos.h>
+#include <nos/processor/processor.h>
 
 typedef struct _PAGE_TABLE_ENTRY {
     UINT64 Present : 1;
@@ -36,9 +37,21 @@ NSTATUS KRNLAPI KeMapVirtualMemory(
     IN UINT CachePolicy
 ) {
     if(!Process) Process = KernelProcess;
+
+    return HwMapVirtualMemory(Process->PageTable, _PhysicalAddress, _VirtualAddress, NumPages, PageFlags, CachePolicy);
+}
+
+NSTATUS KRNLAPI HwMapVirtualMemory(
+    IN void* PageTable,
+    IN void* _PhysicalAddress,
+    IN void* _VirtualAddress,
+    IN UINT64 NumPages,
+    IN UINT64 PageFlags,
+    IN UINT CachePolicy
+) {
     // TODO : Check if pages are already mapped
 
-    RFPTENTRY Pml4 = Process->PageTable, Pdp, Pd, Pt;
+    RFPTENTRY Pml4 = PageTable, Pdp, Pd, Pt;
     UINT64 PhysicalAddress = (UINT64)_PhysicalAddress & ~0xFFF;
     UINT64 VirtualAddress = (UINT64)_VirtualAddress & ~0xFFF;
 
@@ -56,7 +69,7 @@ NSTATUS KRNLAPI KeMapVirtualMemory(
     {
         RFPTENTRY __m = (RFPTENTRY)&ModelEntry;
         if(PageFlags & PAGE_WRITE_ACCESS) __m->ReadWrite = 1;
-        if(PageFlags & PAGE_EXECUTE_DISABLE) __m->ExecuteDisable = 1;
+        if(!(PageFlags & PAGE_EXECUTE)) __m->ExecuteDisable = 1;
         if(PageFlags & PAGE_GLOBAL) __m->Global = 1;
         if(PageFlags & PAGE_USER) __m->UserSupervisor = 1;
 
@@ -69,7 +82,6 @@ NSTATUS KRNLAPI KeMapVirtualMemory(
             __m->SizePAT = CachePolicy >> 2;
         }
     }
-    UINT64 OrEntry = ModelEntry & ~(((UINT64)1 << 63) | ((UINT64)1<<8) /*Remove orying with XD|GB Bits*/);
 
 
     for(;;) {
@@ -250,8 +262,8 @@ BOOLEAN KRNLAPI KeCheckMemoryAccess(
         Pd = (void*)(Pdp[Pdpi].PhysicalAddr << 12);
         if(!Pd[Pdi].Present) return FALSE;
         if(Pd[Pdi].SizePAT) {
-            Flags &= ((*(UINT64*)&Pd[Pdi]) | (PAGE_EXECUTE_DISABLE));
-            Flags |= ((*(UINT64*)&Pd[Pdi]) & PAGE_EXECUTE_DISABLE);
+            Flags &= ~((*(UINT64*)&Pd[Pdi]) | (PAGE_EXECUTE));
+            Flags |= ~((*(UINT64*)&Pd[Pdi]) & PAGE_EXECUTE);
             if(NumPages <= 0x200) {
                 if(_Flags) *_Flags = Flags;
                 return TRUE;
@@ -266,8 +278,8 @@ BOOLEAN KRNLAPI KeCheckMemoryAccess(
 
         for(UINT i = Pti;i<max;i++, VirtualAddress+=0x1000, NumPages--) {
             if(!Pt[i].Present) return FALSE;
-            Flags &= ((*(UINT64*)&Pt[i]) | (PAGE_EXECUTE_DISABLE));
-            Flags |= ((*(UINT64*)&Pt[i]) & PAGE_EXECUTE_DISABLE);
+            Flags &= ~((*(UINT64*)&Pt[i]) | (PAGE_EXECUTE));
+            Flags |= ~((*(UINT64*)&Pt[i]) & PAGE_EXECUTE);
         }
         if(!NumPages) {
             if(_Flags) *_Flags = Flags;

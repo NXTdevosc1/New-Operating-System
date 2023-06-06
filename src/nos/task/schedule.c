@@ -4,7 +4,7 @@
 /*
 The kernel is required to work in APIC Mode
 */
-static void* LocalApicAddress = (void*)-1;
+void* LocalApicAddress = (void*)-1;
 
 void KRNLAPI KiSetSchedulerData(
     void* _Lapic
@@ -13,8 +13,21 @@ void KRNLAPI KiSetSchedulerData(
     LocalApicAddress = _Lapic;
 }
 
-void KiInitScheduler(){
+extern void SchedulerEntry();
 
+void KRNLAPI KeSchedulingSystemInit() {
+    KDebugPrint("KERNEL Final Initialization Step called, Initializing the scheduling system...");
+    _enable();
+
+    PROCESSOR* Processor = KeGetCurrentProcessor();
+
+    // Register the schudling timer Interrupt Vector
+    if(!KeRegisterSystemInterrupt(Processor->Id.ProcessorId, &Processor->InternalData->SchedulingTimerIv, FALSE, TRUE, (INTERRUPT_SERVICE_HANDLER)SchedulerEntry)) {
+        KDebugPrint("KeSchedulingSystemInit Failed : ERR0");
+        while(1) __halt();
+    }
+
+    CpuEnableApicTimer();
 }
 
 void KRNLAPI KeEnableScheduler() {

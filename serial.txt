@@ -6,37 +6,37 @@ Test Str : test123
 Num partition handles : 195
 Data partition found.
 Boot partition and boot drive selected successfully.
-Kernel File Size : 366080
+Kernel File Size : 389120
 Test2 : test123
 System Heap:
 7E000000
 OPT_HDR_SIZE : 240 FALIGN : 512
 Allocating System Pages : 000000007E000000
 Image Physical Base : 000000007E000000 , Image Base : 0000000000000000, Entry point : 0000000000001000
-Copying section .tex VADDR : 0000000000001000 PTR : 0000000000000400, SZ : 000000000000F200
-Copying section .rda VADDR : 0000000000011000 PTR : 000000000000F600, SZ : 0000000000000C00
-Copying section .dat VADDR : 0000000000012000 PTR : 0000000000010200, SZ : 000000000017D108
-Copying section .pda VADDR : 0000000000190000 PTR : 0000000000059000, SZ : 0000000000000600
+Copying section .tex VADDR : 0000000000001000 PTR : 0000000000000400, SZ : 000000000000F800
+Copying section .rda VADDR : 0000000000011000 PTR : 000000000000FC00, SZ : 0000000000000E00
+Copying section .dat VADDR : 0000000000012000 PTR : 0000000000010A00, SZ : 0000000000182088
+Copying section .pda VADDR : 0000000000195000 PTR : 000000000005EA00, SZ : 0000000000000600
 Loading DLL :
 syscruntime.dll
 File Size : 4608 bytes
 OPT_HDR_SIZE : 240 FALIGN : 512
-Allocating System Pages : 000000007E191000
-Image Physical Base : 000000007E191000 , Image Base : 0000000000191000, Entry point : 0000000000000000
+Allocating System Pages : 000000007E196000
+Image Physical Base : 000000007E196000 , Image Base : 0000000000196000, Entry point : 0000000000000000
 Copying section .tex VADDR : 0000000000001000 PTR : 0000000000000400, SZ : 0000000000000800
 Copying section .rda VADDR : 0000000000002000 PTR : 0000000000000C00, SZ : 0000000000000400
 Copying section .pda VADDR : 0000000000003000 PTR : 0000000000001000, SZ : 0000000000000200
 EXPORTS
-ETVA : 00000000000021B0, ET : 000000007E1931B0
+ETVA : 00000000000021B0, ET : 000000007E1981B0
 NR : 000000000000226E, NPR : 0000000000002214, EATR : 00000000000021D8
 Test : test123
 Dll Name : sysc
 Searching Symbol : _ui64toa
-Symbol Found, base : 00000000001921F0, IAT_TARGET : 000000007E011000, RVA : 00000000000011F0
+Symbol Found, base : 00000000001971F0, IAT_TARGET : 000000007E011000, RVA : 00000000000011F0
 Searching Symbol : memcmp
-Symbol Found, base : 00000000001923A0, IAT_TARGET : 000000007E011008, RVA : 00000000000013A0
+Symbol Found, base : 00000000001973A0, IAT_TARGET : 000000007E011008, RVA : 00000000000013A0
 Searching Symbol : vsprintf_s
-Symbol Found, base : 0000000000192480, IAT_TARGET : 000000007E011010, RVA : 0000000000001480
+Symbol Found, base : 0000000000197480, IAT_TARGET : 000000007E011010, RVA : 0000000000001480
  loaded
 Memory Count:
 102
@@ -46,39 +46,9 @@ FFFF800000000000
 1
 Booted successfully.
 FFFF800000001000
-18E000BD489D006A
+193000BD489D006A
 NOS_KERNEL : Kernel Booting...
-Allocated
-Allocated
-Allocated
-Allocated
-Physical Memory Entry : (Attributes, PhysStart, NumPages)
-15E6000
-502096
-Physical Memory Entry : (Attributes, PhysStart, NumPages)
-7BF56000
-8176
-Allocated
-Physical Memory Entry : (Attributes, PhysStart, NumPages)
-7E34B000
-36
-Allocated
-Physical Memory Entry : (Attributes, PhysStart, NumPages)
-7EC2C000
-1
-Allocated
-Physical Memory Entry : (Attributes, PhysStart, NumPages)
-7FE00000
-126
-Physical Memory Entry : (Attributes, PhysStart, NumPages)
-100000000
-524288
-Allocated
-Used Memory, Free Memory, Total Memory (In Bytes)
-13189120
-4238225408
-4251414528
-_______________________________________
+Kernel boot memory : Used 13213696 bytes , free : -
 Object Manager : Init
 Object Manager : Allocate Table : 8192 Bytes, Object Array : 7864320 Bytes , Handle Array : 3145728 Bytes
 KernelInternals : Init Boot CPU
@@ -93,29 +63,29 @@ Section:
 .text
 1000
 400
-4EED6
+4F036
 Section:
 .rdata
-50000
-4F400
-22E04
+51000
+4F600
+22F62
 Section:
 .data
-73000
-72400
+74000
+72600
 5700
 Section:
 .pdata
-79000
-73C00
-4CBC
+7A000
+73E00
+4CEC
 Section:
 .reloc
-7E000
-78A00
-F48
-ADDR_SPACE_SIZE :
 7F000
+78C00
+F50
+ADDR_SPACE_SIZE :
+80000
 Sections copied.
 Relocating...
 IMPORTING...
@@ -125,43 +95,43 @@ Preboot Launch
 Driver Startup.
 __AcpiInitTables__
 ACPI: 
-RSDP 0x%8.8X%8.8X %06X (v%.2d %-6.6s)
+RSDP 0xFFFF800000190E08FFFF8000004B20C8 FFFF8000004B20CD (v2142756884 H‹œ$ )
 
 
 ACPI: 
-%-4.4s 0x%8.8X%8.8X %06X (v%.2d %-6.6s %-8.8s %08X %-4.4s %08X)
+` 0xFFFF8000004B20C8FFFF8000004B20CD 7FB7D000 (v4688806 %-4.4s 0x%8.8X%8.8X %06X (v%.2d %-6.6s %-8.8s %08X %-4.4s %08X) RSDT< 0 RSDT< 3C)
 
 
 ACPI: 
-%-4.4s 0x%8.8X%8.8X %06X (v%.2d %-6.6s %-8.8s %08X %-4.4s %08X)
+À 0xFFFF8000004B20C8FFFF8000004B20CD 7FB79000 (v4688806 %-4.4s 0x%8.8X%8.8X %06X (v%.2d %-6.6s %-8.8s %08X %-4.4s %08X) FACPô 0 FACPô F4)
 
 
 ACPI: 
-%-4.4s 0x%8.8X%8.8X %06X (v%.2d %-6.6s %-8.8s %08X %-4.4s %08X)
+€ 0xFFFF8000004B20C8FFFF8000004B20CD 7FB7A000 (v4688806 %-4.4s 0x%8.8X%8.8X %06X (v%.2d %-6.6s %-8.8s %08X %-4.4s %08X) DSDTË  0 DSDTË  FFFF8000000020CB)
 
 
 ACPI: 
-%-4.4s 0x%8.8X%8.8X %06X
+ 0xFFFF8000004B20C8FFFF8000004B20CD FFFF800000190D30
 
 
 ACPI: 
-%-4.4s 0x%8.8X%8.8X %06X (v%.2d %-6.6s %-8.8s %08X %-4.4s %08X)
+À 0xFFFF8000004B20C8FFFF8000004B20CD 7FB78000 (v4688806 %-4.4s 0x%8.8X%8.8X %06X (v%.2d %-6.6s %-8.8s %08X %-4.4s %08X) APICx 0 APICx FFFF800000000078)
 
 
 ACPI: 
-%-4.4s 0x%8.8X%8.8X %06X (v%.2d %-6.6s %-8.8s %08X %-4.4s %08X)
+À 0xFFFF8000004B20C8FFFF8000004B20CD 7FB77000 (v4688806 %-4.4s 0x%8.8X%8.8X %06X (v%.2d %-6.6s %-8.8s %08X %-4.4s %08X) HPET8 0 HPET8 38)
 
 
 ACPI: 
-%-4.4s 0x%8.8X%8.8X %06X (v%.2d %-6.6s %-8.8s %08X %-4.4s %08X)
+À 0xFFFF8000004B20C8FFFF8000004B20CD 7FB76000 (v4688806 %-4.4s 0x%8.8X%8.8X %06X (v%.2d %-6.6s %-8.8s %08X %-4.4s %08X) MCFG< 0 MCFG< FFFF80000000003C)
 
 
 ACPI: 
-%-4.4s 0x%8.8X%8.8X %06X (v%.2d %-6.6s %-8.8s %08X %-4.4s %08X)
+À 0xFFFF8000004B20C8FFFF8000004B20CD 7FB75000 (v4688806 %-4.4s 0x%8.8X%8.8X %06X (v%.2d %-6.6s %-8.8s %08X %-4.4s %08X) WAET( 0 WAET( FFFF800000000028)
 
 
 ACPI: 
-%-4.4s 0x%8.8X%8.8X %06X (v%.2d %-6.6s %-8.8s %08X %-4.4s %08X)
+À 0xFFFF8000004B20C8FFFF8000004B20CD 7FB74000 (v4688806 %-4.4s 0x%8.8X%8.8X %06X (v%.2d %-6.6s %-8.8s %08X %-4.4s %08X) BGRT8 0 BGRT8 FFFF800000000038)
 
 
 APIC Found
@@ -174,31 +144,40 @@ ACPI_MADT_TYPE_INTERRUPT_OVERRIDE Bus : 0 GSI : 9 SOURCE : 9
 ACPI_MADT_TYPE_INTERRUPT_OVERRIDE Bus : 0 GSI : A SOURCE : A
 ACPI_MADT_TYPE_INTERRUPT_OVERRIDE Bus : 0 GSI : B SOURCE : B
 ACPI_MADT_TYPE_LOCAL_APIC_NMI pid FF lint 1 intiflags 0
-Set Scheduler Data : LAPIC : FEE00000
-HPET Found Address : FED00000, HPET Mapped Address : FFFF800001040000
-Hpet Frequency : 100000000 HZ
-IOApic SetInt (Router : 0)
+Set Scheduler Data : LAPIC : FFFF80000051F000
 MCFG Found
 Num Segments : 1
 PCI seg#0 SB : 0 EB : 255 ADDR : B0000000
 Test get seg: S0 : 1 S1 : 0
+HPET Found Address : FED00000, HPET Mapped Address : FFFF800000522000
+Hpet Frequency : 100000000 HZ
+IOApic SetInt (Router : 0)
 __AcpiLoadTables__
-%-26s:  (Definition Block level)
+Ð¡K:  (Definition Block level)
 
-%-26s:  (Definition Block level)
+¢K:  (Definition Block level)
 
 
 ACPI table initialization:
 
-Table [%4.4s: %-8.8s] (id %.2X) - %4u Objects with %3u Devices, %3u Regions, %4u Methods (18446603336222817728/18446603336235078048/18446603336235078040 Serial/Non/Cvt)
+Table [: DsInitializeObjects] (id FFFF8000004BA268) - 1 Objects with 18446603336225922845 Devices, 0 Regions, 18446603336221196288 Methods (18446603340516163583/18446603336221196288/18446603336221196352 Serial/Non/Cvt)
 
 ACPI: 
-18446603336222817960 ACPI AML tables successfully acquired and loaded
+18446603336222838440 ACPI AML tables successfully acquired and loaded
 
 
 Final data object initialization: 
-Namespace contains 18446603336222817952 (0x%X) objects
+Namespace contains 18446603336222838432 (0xFFFF8000004B5B60) objects
 
+Completing secondary ACPI Tables initialization
+àLK:  NsEvaluate (nseval)
+
+NK:  NsEvaluate
+
+Evaluate _PIC Status = 0
+KERNEL Final Initialization Step called, Initializing the scheduling system...
+Enabling the apic timer, interrupt number : 221
+APIC Timer frequency : 1044640000 HZ
 Tables:
 SN : FACP Length : 244
 SN : DSDT Length : 8395
@@ -210,13 +189,13 @@ SN : WAET Length : 40
 SN : BGRT Length : 56
 __AcpiInstallNotifyHandler__
 ___ENABLING_ACPI_SUBSYSTEM___
-%9s-%04d 
-%-22.22s: 
+evxfevnt-204 
+Enable: 
 System is already in ACPI mode
 
 Initializing General Purpose Events (GPEs):
 
-    Initialized GPE %02X to %02X [%4.4s] 18446603336222817808 regs on interrupt 0x%XEvCreateGpeBlock
+    Initialized GPE FFFF800000190E10 to FFFF8000004B7A38 [evgpeblk] 9 regs on interrupt 0xFFFF80000047A373` 
 
 AcpiOsInstallInt
 IOApic SetInt (Override SRC : 9 GSI : 9)
@@ -224,118 +203,140 @@ IOApic SetInt (Router : 0)
 __ACPI_INIT_OBJECTS__
 Initializing Device/Processor/Thermal objects and executing _INI/_STA methods:
 
-%-26s:  |Ó (NsEvaluate)
+àLK:  NsEvaluate (nseval)
 
-%-26s:  8}Ó
+NK:  NsEvaluate
 
-    Executed 18446603336222817936 _INI methods requiring 18446603336235059880 _STA executions (examined 18446603336235059848 objects)
+    Executed 18446603336222838416 _INI methods requiring 18446603336226134904 _STA executions (examined 18446603336226134872 objects)
 
-Completing secondary ACPI Tables initialization
-%-26s:  |Ó (NsEvaluate)
-
-%-26s:  8}Ó
-
-Evaluate _PIC Status = 0
 __ACPI_GET_DEVICES__
+àLK:  NsEvaluate (nseval)
+
+NK:  NsEvaluate
+
+àLK:  NsEvaluate (nseval)
+
+NK:  NsEvaluate
+
+àLK:  NsEvaluate (nseval)
+
+NK:  NsEvaluate
+
+àLK:  NsEvaluate (nseval)
+
+NK:  NsEvaluate
+
+àLK:  NsEvaluate (nseval)
+
+NK:  NsEvaluate
+
+àLK:  NsEvaluate (nseval)
+
+NK:  NsEvaluate
+
+àLK:  NsEvaluate (nseval)
+
+NK:  NsEvaluate
+
+àLK:  NsEvaluate (nseval)
+
+NK:  NsEvaluate
+
+àLK:  NsEvaluate (nseval)
+
+NK:  NsEvaluate
+
+àLK:  NsEvaluate (nseval)
+
+NK:  NsEvaluate
+
+àLK:  NsEvaluate (nseval)
+
+NK:  NsEvaluate
+
+àLK:  NsEvaluate (nseval)
+
+NK:  NsEvaluate
+
+àLK:  NsEvaluate (nseval)
+
+NK:  NsEvaluate
+
+àLK:  NsEvaluate (nseval)
+
+NK:  NsEvaluate
+
+àLK:  NsEvaluate (nseval)
+
+NK:  NsEvaluate
+
+àLK:  NsEvaluate (nseval)
+
+NK:  NsEvaluate
+
+àLK:  NsEvaluate (nseval)
+
+NK:  NsEvaluate
+
+àLK:  NsEvaluate (nseval)
+
+NK:  NsEvaluate
+
+àLK:  NsEvaluate (nseval)
+
+NK:  NsEvaluate
+
+àLK:  NsEvaluate (nseval)
+
+NK:  NsEvaluate
+
+àLK:  NsEvaluate (nseval)
+
+NK:  NsEvaluate
+
+àLK:  NsEvaluate (nseval)
+
+NK:  NsEvaluate
+
+àLK:  NsEvaluate (nseval)
+
+NK:  NsEvaluate
+
+àLK:  NsEvaluate (nseval)
+
+NK:  NsEvaluate
+
+àLK:  NsEvaluate (nseval)
+
+NK:  NsEvaluate
+
+àLK:  NsEvaluate (nseval)
+
+NK:  NsEvaluate
+
+àLK:  NsEvaluate (nseval)
+
+NK:  NsEvaluate
+
+àLK:  NsEvaluate (nseval)
+
+NK:  NsEvaluate
+
+àLK:  NsEvaluate (nseval)
+
+NK:  NsEvaluate
+
+àLK:  NsEvaluate (nseval)
+
+NK:  NsEvaluate
+
+àLK:  NsEvaluate (nseval)
+
+NK:  NsEvaluate
+
 RETURN_STATUS :
 0
 drvend
-IRQ 2
-Hpet Interrupt
-EOI
-IRQ 2
-Hpet Interrupt
-EOI
-IRQ 2
-Hpet Interrupt
-EOI
-IRQ 2
-Hpet Interrupt
-EOI
-IRQ 2
-Hpet Interrupt
-EOI
-IRQ 2
-Hpet Interrupt
-EOI
-IRQ 2
-Hpet Interrupt
-EOI
-IRQ 2
-Hpet Interrupt
-EOI
-IRQ 2
-Hpet Interrupt
-EOI
-IRQ 2
-Hpet Interrupt
-EOI
-IRQ 2
-Hpet Interrupt
-EOI
-IRQ 2
-Hpet Interrupt
-EOI
-IRQ 2
-Hpet Interrupt
-EOI
-IRQ 2
-Hpet Interrupt
-EOI
-IRQ 2
-Hpet Interrupt
-EOI
-IRQ 2
-Hpet Interrupt
-EOI
-IRQ 2
-Hpet Interrupt
-EOI
-IRQ 2
-Hpet Interrupt
-EOI
-IRQ 2
-Hpet Interrupt
-EOI
-IRQ 2
-Hpet Interrupt
-EOI
-IRQ 2
-Hpet Interrupt
-EOI
-IRQ 2
-Hpet Interrupt
-EOI
-IRQ 2
-Hpet Interrupt
-EOI
-IRQ 2
-Hpet Interrupt
-EOI
-IRQ 2
-Hpet Interrupt
-EOI
-IRQ 2
-Hpet Interrupt
-EOI
-IRQ 2
-Hpet Interrupt
-EOI
-IRQ 2
-Hpet Interrupt
-EOI
-IRQ 2
-Hpet Interrupt
-EOI
-IRQ 2
-Hpet Interrupt
-EOI
-IRQ 2
-Hpet Interrupt
-EOI
-IRQ 2
-Hpet Interrupt
-EOI
 IRQ 2
 Hpet Interrupt
 EOI

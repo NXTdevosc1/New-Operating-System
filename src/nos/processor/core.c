@@ -1,8 +1,8 @@
-#include <nos/processor/internal.h>
+#include <nos/nos.h>
 #include <nos/processor/processor.h>
 #include <nos/processor/cpudescriptors.h>
 #include <nos/processor/ints.h>
-
+#include <nos/processor/amd64def.h>
 // NOS_GDT NosGdt = {
 //     {0},
 //     {0, 0, 0b10011010, 0, 0b1010, 0},
@@ -80,10 +80,31 @@ void CpuInitDescriptors(PROCESSOR* Processor) {
 
 extern void SchedulerEntry();
 
-void CpuEnableApicTimer(void* LocalApicAddress) {
-    
+void CpuEnableApicTimer() {
+    // Request a system interrupt
+    PROCESSOR* Processor = KeGetCurrentProcessor(); // todo : get current processor
+
+
+    KDebugPrint("Enabling the apic timer, interrupt number : %d", Processor->InternalData->SchedulingTimerIv);
+
+    // TODO : Use TSC Deadline Timer if possible
+
+    // Setup LAPIC Timer in one shot mode ()
+
+    ApicWrite(APIC_TIMER_DIV, 3); // Divide by 16
+    ApicWrite(APIC_TIMER_LVT, APIC_LVT_INTMASK);
+    // Mesure Timer frequency
+    ApicWrite(APIC_TIMER_INITIAL_COUNT, -1);
+    Stall(5000); // Stop for 5ms
+    UINT Frequency = (((UINT32)-1) - ApicRead(APIC_TIMER_CURRENT_COUNT)) * 200;
+    KDebugPrint("APIC Timer frequency : %d HZ", Frequency * 0x10);
+
+    // Set LVT and One Shot Mode
+    ApicWrite(APIC_TIMER_DIV, 3); // Divide by 16
+    ApicWrite(APIC_TIMER_LVT, Processor->InternalData->SchedulingTimerIv);
+    ApicWrite(APIC_TIMER_INITIAL_COUNT, Frequency);
 }
 
-void CpuDisableApicTimer(void* LocalApicAddress) {
+void CpuDisableApicTimer() {
 
 }
