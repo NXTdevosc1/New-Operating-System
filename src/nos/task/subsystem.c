@@ -1,6 +1,7 @@
-#include <nos/task/internal.h>
+#include <nos/nos.h>
+#include <nos/task/process.h>
 
-NSTATUS NSYSAPI NosCreateSubsystem(
+NSTATUS NSYSAPI KeCreateSubsystem(
     IN UINT8 Subsystem,
     IN BOOLEAN OperatingMode,
     IN SUBSYSTEM_ENTRY_POINT EntryPoint,
@@ -25,16 +26,18 @@ NSTATUS NSYSAPI ConsoleSubsystemEntryPoint(void* EntryPoint) {
 }
 
 void KiInitStandardSubsystems() {
-    NosCreateSubsystem(
+    KeCreateSubsystem(
         SUBSYSTEM_NATIVE,
         KERNEL_MODE,
         NativeSubsystemEntryPoint,
         0
     );
-    NosCreateSubsystem(
+    KeCreateSubsystem(
         SUBSYSTEM_USERMODE_CONSOLE,
         USER_MODE,
         ConsoleSubsystemEntryPoint,
         1
     );
+
+    KiInitMultitaskingSubsystem();
 }

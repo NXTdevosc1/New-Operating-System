@@ -15,7 +15,6 @@ void CpuInitDescriptors(PROCESSOR* Processor) {
     // Creating the interrupt array table
     INTERRUPT_ARRAY* Interrupts;
     Interrupts = MmAllocateMemory(KernelProcess, ConvertToPages(sizeof(INTERRUPT_ARRAY)), PAGE_WRITE_ACCESS | PAGE_GLOBAL, PAGE_CACHE_WRITE_THROUGH);
-
     if(!Interrupts) {
         SerialLog("Failed to allocate interrupt array.");
         while(1);
@@ -96,9 +95,9 @@ void CpuEnableApicTimer() {
     // Mesure Timer frequency
     ApicWrite(APIC_TIMER_INITIAL_COUNT, -1);
     Stall(5000); // Stop for 5ms
-    UINT Frequency = (((UINT32)-1) - ApicRead(APIC_TIMER_CURRENT_COUNT)) * 200;
+    UINT64 Frequency = (((UINT32)-1) - ApicRead(APIC_TIMER_CURRENT_COUNT)) * 200;
     KDebugPrint("APIC Timer frequency : %d HZ", Frequency * 0x10);
-
+    Processor->InternalData->SchedulingTimerFrequency = Frequency;
     // Set LVT and One Shot Mode
     ApicWrite(APIC_TIMER_DIV, 3); // Divide by 16
     ApicWrite(APIC_TIMER_LVT, Processor->InternalData->SchedulingTimerIv);

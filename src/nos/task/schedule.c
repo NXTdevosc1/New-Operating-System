@@ -1,6 +1,6 @@
 #include <nos/nos.h>
-#include <nos/task/internal.h>
-
+#include <nos/task/process.h>
+#include <nos/task/schedule.h>
 /*
 The kernel is required to work in APIC Mode
 */

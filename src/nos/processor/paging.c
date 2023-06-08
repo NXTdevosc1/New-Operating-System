@@ -322,6 +322,7 @@ PVOID KRNLAPI KeConvertPointer(
 // the current thread holds the Control Flag to edit the address space
 // the caller must release the control flag when finished
 // PROCESS_CONTROL_MANAGE_ADDRESS_SPACE
+
 PVOID KRNLAPI KeFindAvailableAddressSpace(
     IN PEPROCESS Process,
     IN UINT64 NumPages,
@@ -332,10 +333,33 @@ PVOID KRNLAPI KeFindAvailableAddressSpace(
 
     if(!Process) Process = KernelProcess;
 
+    if(!KernelProcess) {
+        KDebugPrint("KeFindAvailableAddressSpace : BUG0");
+        while(1) __halt();
+    }
+
     if(!VirtualStart && !VirtualEnd) {
         VirtualStart = Process->VmSearchStart;
         VirtualEnd = Process->VmSearchEnd;
     }
+
+
+    // To be released by the caller
+    ProcessAcquireControlLock(Process, PROCESS_CONTROL_MANAGE_ADDRESS_SPACE);
+    
+    return HwFindAvailableAddressSpace(Process->PageTable, NumPages, VirtualStart, VirtualEnd, PageAttributes);
+}
+
+PVOID KRNLAPI HwFindAvailableAddressSpace(
+    IN void* AddressSpace,
+    IN UINT64 NumPages,
+    IN void* VirtualStart,
+    IN void* VirtualEnd,
+    IN UINT64 PageAttributes
+) {
+
+
+    
 
     if(!((UINT64)VirtualStart) || (UINT64)VirtualEnd <= (UINT64)VirtualStart) return NULL;
     if(!NumPages) return NULL;
@@ -351,10 +375,8 @@ PVOID KRNLAPI KeFindAvailableAddressSpace(
     if(PageAttributes & PAGE_2MB) NumPages <<= 9;
     UINT64 RemainingPages = NumPages;
 
-    // To be released by the caller
-    ProcessAcquireControlLock(Process, PROCESS_CONTROL_MANAGE_ADDRESS_SPACE);
     
-    RFPTENTRY Pml4 = Process->PageTable, Pdp, Pd, Pt;
+    RFPTENTRY Pml4 = AddressSpace, Pdp, Pd, Pt;
 
     void* ret = NULL;
 

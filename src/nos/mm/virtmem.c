@@ -1,12 +1,52 @@
 #include <nos/nos.h>
 #include <nos/mm/mm.h>
 
+PVOID KRNLAPI MmiPreosAllocateMemory(
+    IN UINT64 NumPages,
+    IN UINT64 PageAttributes,
+    IN UINT64 CachePolicy
+ ) {
+    UINT64 Flags = 0;
+    if(PageAttributes & PAGE_2MB) Flags |= ALLOCATE_2MB_ALIGNED_MEMORY;
+    void* Ptr;
+    if(NERROR(MmAllocatePhysicalMemory(Flags, NumPages, &Ptr))) {
+        return NULL;
+    }
+    void* VirtualAddress = HwFindAvailableAddressSpace(
+        GetCurrentPageTable(),
+        NumPages,
+        NosInitData->NosKernelImageBase,
+        (void*)-1,
+        PageAttributes
+    );
+    if(!VirtualAddress) {
+        // FREE MEMORY
+        KDebugPrint("MM_PREOS_ALLOC_MEM FAILED");
+        while(1);
+    }
+    UINT64 LogicalPages = (PageAttributes & PAGE_2MB) ? (NumPages << 9) : (NumPages);
+    // Map the pages then release the process lock
+    HwMapVirtualMemory(
+        GetCurrentPageTable(),
+        Ptr,
+        VirtualAddress,
+        NumPages,
+        PageAttributes,
+        CachePolicy
+    );
+    return VirtualAddress;
+}
+
 PVOID KRNLAPI MmAllocateMemory(
     IN PEPROCESS Process,
     IN UINT64 NumPages,
     IN UINT64 PageAttributes,
     IN UINT64 CachePolicy    
 ) {
+    if(!KernelProcess) return MmiPreosAllocateMemory(NumPages, PageAttributes, CachePolicy);
+    
+    if(!Process) Process = KernelProcess;
+    
     // TODO : Allocate Fragmented memory instead of contiguous memory
     UINT64 Flags = 0;
     if(PageAttributes & PAGE_2MB) Flags |= ALLOCATE_2MB_ALIGNED_MEMORY;

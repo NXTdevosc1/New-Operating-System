@@ -20,11 +20,6 @@ char bf[100];
 PEPROCESS KernelProcess = NULL;
 extern void NOSINTERNAL KiDumpPhysicalMemoryEntries();
 
-char* InitErrors[] = {
-    "Process management initialization failed."
-};
-
-#define RaiseInitError(ErrNum) {SerialLog(InitErrors[ErrNum]); while(1) __halt();}
 
 int  testh() {
     return 0;
@@ -37,18 +32,8 @@ void __declspec(noreturn) NosSystemInit() {
     KiPhysicalMemoryManagerInit();
     ObInitialize();
     KiInitStandardSubsystems();
-    if(NERROR(ExCreateProcess(NULL,
-    &KernelProcess,
-    0,
-    SUBSYSTEM_NATIVE,
-    L"NOS System.",
-    L"//NewOS/System/noskx64.exe",
-    NosSystemInit
-    ))) RaiseInitError(0);
+    
 
-    KernelProcess->VmSearchStart = NosInitData->NosKernelImageBase;
-    KernelProcess->VmSearchEnd = (void*)-1;
-    KernelProcess->PageTable = (void*)(__readcr3() & ~0xFFF);
     
 
     KiInitBootCpu();

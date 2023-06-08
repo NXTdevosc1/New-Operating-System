@@ -13,6 +13,7 @@ NSTATUS KRNLAPI ObCreateObject(
     if(!_ObObjectTypes[ObjectType].TypeName || !EventHandler) return STATUS_INVALID_PARAMETER;
     POBJECT Object = ObiAllocateObject();
     if(!Object) return STATUS_NO_FREE_SLOTS;
+
     Object->Address = MmAllocatePool(Size, 0);
     if(!Object->Address) {
         ObiFreeObject(Object);
@@ -21,7 +22,7 @@ NSTATUS KRNLAPI ObCreateObject(
     ZeroMemory(Object->Address, Size);
 
     // Set Object Data
-    Object->Characteristics = Characteristics;
+    Object->Characteristics = Characteristics | OBJECT_PRESENT;
     Object->ObjectType = ObjectType;
     if(Object->ObjectName) {
         Object->ObjectName = ObjectName;
@@ -166,4 +167,14 @@ BOOLEAN KRNLAPI ObReadObjectTypeInformation(
     *MinorVersion = obt->MinorVersion;
 
     return TRUE;
+}
+
+BOOLEAN KRNLAPI ObCheckObject(POBJECT Object) {
+    if((UINT64)Object < (UINT64)_ObObjectArray ||
+    (UINT64)Object > ((UINT64)_ObObjectArray + _ObObjectArraySize - sizeof(OBJECT_DESCRIPTOR))
+    ) return FALSE;
+
+    if(Object->Characteristics & OBJECT_PRESENT) return TRUE;
+
+    return FALSE;
 }

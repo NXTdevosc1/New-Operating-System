@@ -2,10 +2,13 @@
 #include <nos/processor/processor.h>
 #include <nos/processor/amd64def.h>
 
+typedef struct _PAGEDIR_REPRESENTATION {
+    UINT8 buffer[0x200000];
+} PDRPRS;
 
 KERNEL_PROCESSOR_TABLE ProcessorTable = {0, MpNoMultiprocessorArch, ArchAmd64, {0}, &ProcessorTable.ProcessorListHead};
 
-PROCESSOR_INTERNAL_DATA* InternalProcessorArray = (PROCESSOR_INTERNAL_DATA*)0xFFFFFFD000000000;
+PDRPRS* InternalProcessorArray = (PDRPRS*)0xFFFFFFD000000000;
 
 UINT64 NumProcessors = 0;
 
@@ -42,7 +45,7 @@ RFPROCESSOR KRNLAPI KeRegisterProcessor(PROCESSOR_IDENTIFICATION_DATA* Ident) {
         KDebugPrint("KeRegisterProcessor: ERR2");
         while(1);
     }
-    Processor->InternalData = InternalProcessorArray + Processor->Id.ProcessorId;
+    Processor->InternalData = (void*)(InternalProcessorArray + Processor->Id.ProcessorId);
     HwMapVirtualMemory(GetCurrentPageTable(), p, Processor->InternalData, 1, PAGE_2MB | PAGE_WRITE_ACCESS, PAGE_CACHE_WRITE_BACK);
     ZeroMemory(Processor->InternalData, 0x200000);
 
@@ -54,7 +57,7 @@ RFPROCESSOR KRNLAPI KeRegisterProcessor(PROCESSOR_IDENTIFICATION_DATA* Ident) {
 }
 
 RFPROCESSOR KRNLAPI KeGetCurrentProcessor() {
-    return (InternalProcessorArray + CurrentApicId())->Processor;
+    return ((PROCESSOR_INTERNAL_DATA*)(InternalProcessorArray + CurrentApicId()))->Processor;
 }
 
 UINT64 KRNLAPI KeGetCurrentProcessorId() {
@@ -63,5 +66,5 @@ UINT64 KRNLAPI KeGetCurrentProcessorId() {
 
 RFPROCESSOR KRNLAPI KeGetProcessorById(UINT64 ProcessorId) {
     if(ProcessorId >= NumProcessors) return NULL;
-    return (InternalProcessorArray + ProcessorId)->Processor;
+    return ((PROCESSOR_INTERNAL_DATA*)(InternalProcessorArray + ProcessorId))->Processor;
 }

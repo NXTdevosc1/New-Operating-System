@@ -1,15 +1,13 @@
-#include <nos/task/internal.h>
-volatile UINT64 LastThreadId = 0, LastProcessId = 1; // Kernel Process is PID 0
-
-
-
-THREAD_LIST ThreadList = {INITIAL_MUTEX, 0, {0}, NULL, THREAD_LIST_MAGIC};
-PROCESS_LIST ProcessList = {INITIAL_MUTEX, 0, {0}, NULL, PROCESS_LIST_MAGIC};
+#include <nos/nos.h>
+#include <nos/task/process.h>
 
 SUBSYSTEM_DESCRIPTOR Subsystems[0x100] = {0};
 
+NSTATUS ProcessEvt(PEPROCESS Process, UINT Event, HANDLE Handle, UINT64 Access) {
+    return STATUS_SUCCESS;
+}
 
-NSTATUS KRNLAPI ExCreateProcess(
+NSTATUS KRNLAPI KeCreateProcess(
     IN OPT PEPROCESS ParentProcess,
     OUT PEPROCESS* OutProcess,
     IN UINT64 CreateFlags,
@@ -20,77 +18,83 @@ NSTATUS KRNLAPI ExCreateProcess(
 ) {
     // Runtime Checks
     if(!Subsystems[Subsystem].Flags) return STATUS_SUBSYSTEM_NOT_PRESENT;
-    if(ParentProcess && !ExProcessExists(ParentProcess)) return STATUS_INVALID_PARAMETER;
-    // Process allocation
-    PEPROCESS Process;
-    PROCESS_LIST* Processes = &ProcessList;
-    unsigned long Index;
-    while(Processes) {
-        ExMutexWait(NULL, &Processes->Mutex, 0);
-        if(_BitScanForward64(&Index, ~Processes->Present)) {
-            _bittestandset64(&Processes->Present, Index);
-            Process = &Processes->Processes[Index];
-            ExMutexRelease(NULL, &Processes->Mutex);
-            break;
-        }
-        if(!Processes->Next) {
-            SerialLog("Processes->Next");
-            while(1);
-        }
-        ExMutexRelease(NULL, &Processes->Mutex);
-        Processes = Processes->Next;
+    POBJECT ObParent = NULL;
+    POBJECT Ob;
+    if(ParentProcess) {
+        if(!KeProcessExists(ParentProcess)) return STATUS_INVALID_PARAMETER;
+        ObParent = ParentProcess->ProcessObject;
+        _InterlockedIncrement64(&ParentProcess->NumberOfChildProcesses);
     }
+    // Process allocation
+    NSTATUS s = ObCreateObject(
+        ObParent,
+        &Ob,
+        0,
+        OBJECT_PROCESS,
+        NULL,
+        sizeof(EPROCESS),
+        ProcessEvt
+    );
+
+
+    if(NERROR(s)) {
+        KDebugPrint("failed to create object process status : %d", s);
+        while(1) __halt();
+    }
+
+
+    PEPROCESS Process = Ob->Address;
+
     // Setting up the process
-    Process->ProcessId = _InterlockedIncrement64(&LastProcessId) - 1;
+    Process->ProcessObject = Ob;
+    Process->ProcessId = Ob->ObjectId;
     Process->Parent = ParentProcess;
     Process->Flags = CreateFlags;
     Process->ProcessDisplayName = DisplayName;
     Process->Path = Path;
     Process->Subsystem = Subsystem;
 
-    Process->ParentList = Processes;
-    Process->ParentListIndex = Index;
 
     if(OutProcess) *OutProcess = Process;
+
+    if(Process->Subsystem == SUBSYSTEM_NATIVE) {
+        // Kernel mode process
+        KernelProcess->VmSearchStart = NosInitData->NosKernelImageBase;
+        KernelProcess->VmSearchEnd = (void*)-1;
+        KernelProcess->PageTable = GetCurrentPageTable();
+    }
+
     // Create main thread
-    NSTATUS s = ExCreateThread(Process, NULL, 0, EntryPoint);
+    s = KeCreateThread(Process, NULL, 0, EntryPoint);
     if(NERROR(s)) {
         // TODO : Remove process
+        KDebugPrint("createprocess : failed to create thread status : %d", s);
         while(1);
     }
     return STATUS_SUCCESS;
 }
 
+#include <nos/ob/obutil.h>
 
 
+BOOLEAN KeProcessExists(PEPROCESS Process) {
+    UINT64 f = PAGE_WRITE_ACCESS;
 
-BOOLEAN ExProcessExists(PEPROCESS Process) {
-    if(!Process) return FALSE;
-    // TODO : Check if the page of the pointer is accessible
-    // Check if the process is in the process list
-    PROCESS_LIST* l = Process->ParentList;
-    if(l->Magic != PROCESS_LIST_MAGIC ||
-    Process->ParentListIndex > 63 ||
-    Process != &l->Processes[Process->ParentListIndex]
+    if(!Process || !KeCheckMemoryAccess(KernelProcess, Process, sizeof(EPROCESS), &f)) return FALSE;
+    if(!ObCheckObject(Process->ProcessObject) || Process->ProcessObject->ObjectType != OBJECT_PROCESS ||
+    Process->ProcessObject->Address != Process
     ) return FALSE;
-    
+
     return TRUE;
 }
 
 // Finds the process and returns raw pointer
-PEPROCESS ExGetProcessById(UINT64 ProcessId) {
-    PROCESS_LIST* pl = &ProcessList;
-    UINT64 m;
-    unsigned long Index;
-    while(pl) {
-        m = pl->Present;
-        while(_BitScanForward64(&Index, m)) {
-            _bittestandreset64(&m, Index);
-            if(pl->Processes[Index].ProcessId == ProcessId) return &pl->Processes[Index];
-        }
-        pl = pl->Next;
-    }
-    return NULL;
+PEPROCESS KeGetProcessById(UINT64 ProcessId) {
+    HANDLE h;
+    if(NERROR(ObOpenHandleById(KernelProcess, OBJECT_PROCESS, ProcessId, 0, &h))) return NULL;
+    PEPROCESS p = ObiReferenceByHandle(h)->Object->Address;
+    ObCloseHandle(KernelProcess, h);
+    return p;
 }
 
 NSTATUS KRNLAPI KeAcquireControlFlag(IN PEPROCESS Process, IN UINT64 ControlBit) {
@@ -104,4 +108,17 @@ NSTATUS KRNLAPI KeReleaseControlFlag(IN PEPROCESS Process, IN UINT64 ControlBit)
     if(!Process) Process = KernelProcess;
     _bittestandreset64(&Process->ControlBitmask, ControlBit);
     return STATUS_SUCCESS;
+}
+
+void KiInitMultitaskingSubsystem() {
+    if(NERROR(KeCreateProcess(NULL,
+    &KernelProcess,
+    0,
+    SUBSYSTEM_NATIVE,
+    L"NOS System.",
+    L"//NewOS/System/noskx64.exe",
+    NULL
+    ))) RaiseInitError(0);
+
+    
 }
