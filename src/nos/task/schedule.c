@@ -27,6 +27,10 @@ void KRNLAPI KeSchedulingSystemInit() {
         while(1) __halt();
     }
 
+    // Setup scheduler data in internal cpu structure
+    Processor->InternalData->SchedulingEnabled = TRUE;
+    Processor->InternalData->CurrentThread = KeGetThreadById(0);
+
     CpuEnableApicTimer();
 }
 

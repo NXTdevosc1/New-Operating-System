@@ -49,9 +49,9 @@ void CpuInitDescriptors(PROCESSOR* Processor) {
         while(1);
     }
 
-    Processor->Tss.rsp0 += 0x8000;
-    Processor->Tss.ist1 += 0x8000;
-    Processor->Tss.ist2 += 0x8000;
+    Processor->Tss.rsp0 += 0xF000;
+    Processor->Tss.ist1 += 0xF000;
+    Processor->Tss.ist2 += 0xF000; // add 8 for stack alignment
 
 
     Processor->Tss.IOPB_offset = sizeof(TASK_STATE_SEGMENT);
@@ -105,5 +105,6 @@ void CpuEnableApicTimer() {
 }
 
 void CpuDisableApicTimer() {
-
+    ApicWrite(APIC_TIMER_LVT, APIC_LVT_INTMASK);
 }
+

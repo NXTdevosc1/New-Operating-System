@@ -39,7 +39,7 @@ Searching Symbol : vsprintf_s
 Symbol Found, base : 0000000000192480, IAT_TARGET : 000000007E011010, RVA : 0000000000001480
  loaded
 Memory Count:
-102
+106
 Mapping System Pages :
 7E000000
 FFFF800000000000
@@ -63,12 +63,12 @@ Section:
 .text
 1000
 400
-4F036
+4F0A6
 Section:
 .rdata
 51000
 4F600
-22F62
+22FB2
 Section:
 .data
 74000
@@ -95,47 +95,50 @@ Preboot Launch
 Driver Startup.
 __AcpiInitTables__
 ACPI: 
-RSDP 0xFFFF80000018BE28FFFF8000004B20C8 FFFF8000004B20CD (v2142756884 H‹œ$ )
+RSDP 0xFFFF80000018BE28FFFF8000004B20D8 FFFF8000004B20DD (v2142756884 H‹œ$ )
 
 
 ACPI: 
-€¾ 0xFFFF8000004B20C8FFFF8000004B20CD 7FB7D000 (v4688806 %-4.4s 0x%8.8X%8.8X %06X (v%.2d %-6.6s %-8.8s %08X %-4.4s %08X) RSDT< 0 RSDT< 3C)
+€¾ 0xFFFF8000004B20D8FFFF8000004B20DD 7FB7D000 (v4688918 %-4.4s 0x%8.8X%8.8X %06X (v%.2d %-6.6s %-8.8s %08X %-4.4s %08X) RSDT< 0 RSDT< 3C)
 
 
 ACPI: 
-à½ 0xFFFF8000004B20C8FFFF8000004B20CD 7FB79000 (v4688806 %-4.4s 0x%8.8X%8.8X %06X (v%.2d %-6.6s %-8.8s %08X %-4.4s %08X) FACPô 0 FACPô F4)
+à½ 0xFFFF8000004B20D8FFFF8000004B20DD 7FB79000 (v4688918 %-4.4s 0x%8.8X%8.8X %06X (v%.2d %-6.6s %-8.8s %08X %-4.4s %08X) FACPô 0 FACPô F4)
 
 
 ACPI: 
- ½ 0xFFFF8000004B20C8FFFF8000004B20CD 7FB7A000 (v4688806 %-4.4s 0x%8.8X%8.8X %06X (v%.2d %-6.6s %-8.8s %08X %-4.4s %08X) DSDTË  0 DSDTË  FFFF8000000020CB)
+ ½ 0xFFFF8000004B20D8FFFF8000004B20DD 7FB7A000 (v4688918 %-4.4s 0x%8.8X%8.8X %06X (v%.2d %-6.6s %-8.8s %08X %-4.4s %08X) DSDTÊ! 0 DSDTÊ! FFFF8000000021CA)
 
 
 ACPI: 
- 0xFFFF8000004B20C8FFFF8000004B20CD FFFF80000018BD50
+ 0xFFFF8000004B20D8FFFF8000004B20DD FFFF80000018BD50
 
 
 ACPI: 
-à½ 0xFFFF8000004B20C8FFFF8000004B20CD 7FB78000 (v4688806 %-4.4s 0x%8.8X%8.8X %06X (v%.2d %-6.6s %-8.8s %08X %-4.4s %08X) APICx 0 APICx FFFF800000000078)
+à½ 0xFFFF8000004B20D8FFFF8000004B20DD 7FB78000 (v4688918 %-4.4s 0x%8.8X%8.8X %06X (v%.2d %-6.6s %-8.8s %08X %-4.4s %08X) APIC 0 APIC FFFF800000000090)
 
 
 ACPI: 
-à½ 0xFFFF8000004B20C8FFFF8000004B20CD 7FB77000 (v4688806 %-4.4s 0x%8.8X%8.8X %06X (v%.2d %-6.6s %-8.8s %08X %-4.4s %08X) HPET8 0 HPET8 38)
+à½ 0xFFFF8000004B20D8FFFF8000004B20DD 7FB77000 (v4688918 %-4.4s 0x%8.8X%8.8X %06X (v%.2d %-6.6s %-8.8s %08X %-4.4s %08X) HPET8 0 HPET8 38)
 
 
 ACPI: 
-à½ 0xFFFF8000004B20C8FFFF8000004B20CD 7FB76000 (v4688806 %-4.4s 0x%8.8X%8.8X %06X (v%.2d %-6.6s %-8.8s %08X %-4.4s %08X) MCFG< 0 MCFG< FFFF80000000003C)
+à½ 0xFFFF8000004B20D8FFFF8000004B20DD 7FB76000 (v4688918 %-4.4s 0x%8.8X%8.8X %06X (v%.2d %-6.6s %-8.8s %08X %-4.4s %08X) MCFG< 0 MCFG< FFFF80000000003C)
 
 
 ACPI: 
-à½ 0xFFFF8000004B20C8FFFF8000004B20CD 7FB75000 (v4688806 %-4.4s 0x%8.8X%8.8X %06X (v%.2d %-6.6s %-8.8s %08X %-4.4s %08X) WAET( 0 WAET( FFFF800000000028)
+à½ 0xFFFF8000004B20D8FFFF8000004B20DD 7FB75000 (v4688918 %-4.4s 0x%8.8X%8.8X %06X (v%.2d %-6.6s %-8.8s %08X %-4.4s %08X) WAET( 0 WAET( FFFF800000000028)
 
 
 ACPI: 
-à½ 0xFFFF8000004B20C8FFFF8000004B20CD 7FB74000 (v4688806 %-4.4s 0x%8.8X%8.8X %06X (v%.2d %-6.6s %-8.8s %08X %-4.4s %08X) BGRT8 0 BGRT8 FFFF800000000038)
+à½ 0xFFFF8000004B20D8FFFF8000004B20DD 7FB74000 (v4688918 %-4.4s 0x%8.8X%8.8X %06X (v%.2d %-6.6s %-8.8s %08X %-4.4s %08X) BGRT8 0 BGRT8 FFFF800000000038)
 
 
 APIC Found
 lapic id 0 flags 1 pid 0
+lapic id 1 flags 1 pid 1
+lapic id 2 flags 1 pid 2
+lapic id 3 flags 1 pid 3
 IO apic id 0 addr FEC00000 irq base 0
 Max Redir Entry 23
 ACPI_MADT_TYPE_INTERRUPT_OVERRIDE Bus : 0 GSI : 2 SOURCE : 0
@@ -153,36 +156,36 @@ HPET Found Address : FED00000, HPET Mapped Address : FFFF800000522000
 Hpet Frequency : 100000000 HZ
 IOApic SetInt (Router : 0)
 __AcpiLoadTables__
-Ð¡K:  (Definition Block level)
+à¡K:  (Definition Block level)
 
-¢K:  (Definition Block level)
+ ¢K:  (Definition Block level)
 
 
 ACPI table initialization:
 
-Table [: DsInitializeObjects] (id FFFF8000004BA268) - 1 Objects with 18446603336225922845 Devices, 0 Regions, 18446603336221196288 Methods (18446603340516163583/18446603336221196288/18446603336221196352 Serial/Non/Cvt)
+Table [: DsInitializeObjects] (id FFFF8000004BA278) - 1 Objects with 18446603336225922957 Devices, 0 Regions, 18446603336221196288 Methods (18446603340516163583/18446603336221196288/18446603336221196352 Serial/Non/Cvt)
 
 ACPI: 
 18446603336222817992 ACPI AML tables successfully acquired and loaded
 
 
 Final data object initialization: 
-Namespace contains 18446603336222817984 (0xFFFF8000004B5B60) objects
+Namespace contains 18446603336222817984 (0xFFFF8000004B5B70) objects
 
 Completing secondary ACPI Tables initialization
-àLK:  NsEvaluate (nseval)
+ðLK:  NsEvaluate (nseval)
 
-NK:  NsEvaluate
+NK:  NsEvaluate
 
 Evaluate _PIC Status = 0
 KERNEL Final Initialization Step called, Initializing the scheduling system...
 Enabling the apic timer, interrupt number : 221
-APIC Timer frequency : 1044979200 HZ
+APIC Timer frequency : 1044838400 HZ
 Tables:
 SN : FACP Length : 244
-SN : DSDT Length : 8395
+SN : DSDT Length : 8650
 SN : FACS Length : 64
-SN : APIC Length : 120
+SN : APIC Length : 144
 SN : HPET Length : 56
 SN : MCFG Length : 60
 SN : WAET Length : 40
@@ -195,7 +198,7 @@ System is already in ACPI mode
 
 Initializing General Purpose Events (GPEs):
 
-    Initialized GPE FFFF80000018BE30 to FFFF8000004B7A38 [evgpeblk] 9 regs on interrupt 0xFFFF80000047A373 % 
+    Initialized GPE FFFF80000018BE30 to FFFF8000004B7A48 [evgpeblk] 9 regs on interrupt 0xFFFF80000047A3E30% 
 
 AcpiOsInstallInt
 IOApic SetInt (Override SRC : 9 GSI : 9)
@@ -203,136 +206,136 @@ IOApic SetInt (Router : 0)
 __ACPI_INIT_OBJECTS__
 Initializing Device/Processor/Thermal objects and executing _INI/_STA methods:
 
-àLK:  NsEvaluate (nseval)
+ðLK:  NsEvaluate (nseval)
 
-NK:  NsEvaluate
+NK:  NsEvaluate
 
-    Executed 18446603336222817968 _INI methods requiring 18446603336226134904 _STA executions (examined 18446603336226134872 objects)
+    Executed 18446603336222817968 _INI methods requiring 18446603336226134920 _STA executions (examined 18446603336226134888 objects)
 
 __ACPI_GET_DEVICES__
-àLK:  NsEvaluate (nseval)
+ðLK:  NsEvaluate (nseval)
 
-NK:  NsEvaluate
+NK:  NsEvaluate
 
-àLK:  NsEvaluate (nseval)
+ðLK:  NsEvaluate (nseval)
 
-NK:  NsEvaluate
+NK:  NsEvaluate
 
-àLK:  NsEvaluate (nseval)
+ðLK:  NsEvaluate (nseval)
 
-NK:  NsEvaluate
+NK:  NsEvaluate
 
-àLK:  NsEvaluate (nseval)
+ðLK:  NsEvaluate (nseval)
 
-NK:  NsEvaluate
+NK:  NsEvaluate
 
-àLK:  NsEvaluate (nseval)
+ðLK:  NsEvaluate (nseval)
 
-NK:  NsEvaluate
+NK:  NsEvaluate
 
-àLK:  NsEvaluate (nseval)
+ðLK:  NsEvaluate (nseval)
 
-NK:  NsEvaluate
+NK:  NsEvaluate
 
-àLK:  NsEvaluate (nseval)
+ðLK:  NsEvaluate (nseval)
 
-NK:  NsEvaluate
+NK:  NsEvaluate
 
-àLK:  NsEvaluate (nseval)
+ðLK:  NsEvaluate (nseval)
 
-NK:  NsEvaluate
+NK:  NsEvaluate
 
-àLK:  NsEvaluate (nseval)
+ðLK:  NsEvaluate (nseval)
 
-NK:  NsEvaluate
+NK:  NsEvaluate
 
-àLK:  NsEvaluate (nseval)
+ðLK:  NsEvaluate (nseval)
 
-NK:  NsEvaluate
+NK:  NsEvaluate
 
-àLK:  NsEvaluate (nseval)
+ðLK:  NsEvaluate (nseval)
 
-NK:  NsEvaluate
+NK:  NsEvaluate
 
-àLK:  NsEvaluate (nseval)
+ðLK:  NsEvaluate (nseval)
 
-NK:  NsEvaluate
+NK:  NsEvaluate
 
-àLK:  NsEvaluate (nseval)
+ðLK:  NsEvaluate (nseval)
 
-NK:  NsEvaluate
+NK:  NsEvaluate
 
-àLK:  NsEvaluate (nseval)
+ðLK:  NsEvaluate (nseval)
 
-NK:  NsEvaluate
+NK:  NsEvaluate
 
-àLK:  NsEvaluate (nseval)
+ðLK:  NsEvaluate (nseval)
 
-NK:  NsEvaluate
+NK:  NsEvaluate
 
-àLK:  NsEvaluate (nseval)
+ðLK:  NsEvaluate (nseval)
 
-NK:  NsEvaluate
+NK:  NsEvaluate
 
-àLK:  NsEvaluate (nseval)
+ðLK:  NsEvaluate (nseval)
 
-NK:  NsEvaluate
+NK:  NsEvaluate
 
-àLK:  NsEvaluate (nseval)
+ðLK:  NsEvaluate (nseval)
 
-NK:  NsEvaluate
+NK:  NsEvaluate
 
-àLK:  NsEvaluate (nseval)
+ðLK:  NsEvaluate (nseval)
 
-NK:  NsEvaluate
+NK:  NsEvaluate
 
-àLK:  NsEvaluate (nseval)
+ðLK:  NsEvaluate (nseval)
 
-NK:  NsEvaluate
+NK:  NsEvaluate
 
-àLK:  NsEvaluate (nseval)
+ðLK:  NsEvaluate (nseval)
 
-NK:  NsEvaluate
+NK:  NsEvaluate
 
-àLK:  NsEvaluate (nseval)
+ðLK:  NsEvaluate (nseval)
 
-NK:  NsEvaluate
+NK:  NsEvaluate
 
-àLK:  NsEvaluate (nseval)
+ðLK:  NsEvaluate (nseval)
 
-NK:  NsEvaluate
+NK:  NsEvaluate
 
-àLK:  NsEvaluate (nseval)
+ðLK:  NsEvaluate (nseval)
 
-NK:  NsEvaluate
+NK:  NsEvaluate
 
-àLK:  NsEvaluate (nseval)
+ðLK:  NsEvaluate (nseval)
 
-NK:  NsEvaluate
+NK:  NsEvaluate
 
-àLK:  NsEvaluate (nseval)
+ðLK:  NsEvaluate (nseval)
 
-NK:  NsEvaluate
+NK:  NsEvaluate
 
-àLK:  NsEvaluate (nseval)
+ðLK:  NsEvaluate (nseval)
 
-NK:  NsEvaluate
+NK:  NsEvaluate
 
-àLK:  NsEvaluate (nseval)
+ðLK:  NsEvaluate (nseval)
 
-NK:  NsEvaluate
+NK:  NsEvaluate
 
-àLK:  NsEvaluate (nseval)
+ðLK:  NsEvaluate (nseval)
 
-NK:  NsEvaluate
+NK:  NsEvaluate
 
-àLK:  NsEvaluate (nseval)
+ðLK:  NsEvaluate (nseval)
 
-NK:  NsEvaluate
+NK:  NsEvaluate
 
-àLK:  NsEvaluate (nseval)
+ðLK:  NsEvaluate (nseval)
 
-NK:  NsEvaluate
+NK:  NsEvaluate
 
 RETURN_STATUS :
 0
@@ -340,3 +343,5 @@ drvend
 IRQ 2
 Hpet Interrupt
 EOI
+Internal interrupt #13 , RIP : 0, CS : FFFF8000000076D6, RFLAGS : 8, RSP : 86, SS : FFFF80000045EFE0
+#GPF ErrCode : 0

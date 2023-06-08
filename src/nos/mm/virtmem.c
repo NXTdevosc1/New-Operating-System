@@ -1,7 +1,7 @@
 #include <nos/nos.h>
 #include <nos/mm/mm.h>
 
-PVOID KRNLAPI MmiPreosAllocateMemory(
+PVOID MmiPreosAllocateMemory(
     IN UINT64 NumPages,
     IN UINT64 PageAttributes,
     IN UINT64 CachePolicy
