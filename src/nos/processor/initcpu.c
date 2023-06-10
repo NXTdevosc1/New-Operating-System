@@ -38,6 +38,15 @@ void KiInitBootCpu() {
 
 }
 
+void __declspec(noreturn) HwMultiProcessorEntry() {
+    CpuEnableFeatures();
+    RFPROCESSOR Processor = KeGetCurrentProcessor();
+    Processor->ProcessorEnabled = TRUE;
+    CpuInitDescriptors(Processor);
+    KDebugPrint("Processor#%d enabled.", KeGetCurrentProcessorId());
+    for(;;) __halt();
+}
+
 #define PAT_MSR 0x277
 
 // PAT Memory Types

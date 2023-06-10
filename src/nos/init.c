@@ -4,6 +4,7 @@
 */
 #include <nos/nos.h>
 #include <nos/loader/loader.h>
+#include <nos/processor/hw.h>
 
 /*
  * The initialization entry point of the NOS Kernel
@@ -24,6 +25,8 @@ extern void NOSINTERNAL KiDumpPhysicalMemoryEntries();
 int  testh() {
     return 0;
 }
+
+extern void HwInitTrampoline();
 
     
 void __declspec(noreturn) NosSystemInit() {
@@ -94,6 +97,41 @@ void __declspec(noreturn) NosSystemInit() {
 
 
     // Stall function requires the timer to receive interrupts
+
+    
+    // Setup init trampoline
+    {
+        KDebugPrint("INIT_AP_TRAMPOLINE at 0x%x, SymbolStart : %x", NosInitData->InitTrampoline, HwInitTrampoline);
+        // // Copy trampoline
+        KeMapVirtualMemory(KernelProcess, NosInitData->InitTrampoline, NosInitData->InitTrampoline, 8, PAGE_WRITE_ACCESS | PAGE_EXECUTE, PAGE_CACHE_DISABLE);
+        memcpy(NosInitData->InitTrampoline, HwInitTrampoline, 0x8000);
+        // Rebase trampolie
+        UINT64 base = (UINT64)NosInitData->InitTrampoline;
+        // page table
+        *(UINT64*)(base + 0x1000) += base;
+        *(UINT64*)(base + 0x2000) += base;
+        // gdtr
+        *(UINT64*)(base + 0x4002) += base;
+        // page table
+        *(UINT64*)(base + 0x6000) = (UINT64)KernelProcess->PageTable;
+        __wbinvd();
+
+    }
+
+
+    for(UINT64 i = 0;i<NumProcessors;i++) {
+        RFPROCESSOR Processor = KeGetProcessorById(i);
+        if(!Processor) {
+            KDebugPrint("KRNL_STARTUP ERR10");
+            while(1) __halt();
+        }
+        KDebugPrint("Processor#%d Characteristics : %x", Processor->Id.ProcessorId, Processor->Id.Characteristics);
+
+        // Init the processor
+        if(Processor->Id.Characteristics & PROCESSOR_BOOTABLE) {
+            HwBootProcessor(Processor);
+        }
+    }
 
     // KeEnableScheduler();
     // for(;;) __halt();

@@ -3,6 +3,7 @@ section .text
 global SchedulerEntry
 
 extern LocalApicAddress
+extern Schedule
 
 ; Internal Processor Descriptors
 IPRSDSC equ 0xFFFFFFD000000000
@@ -11,6 +12,9 @@ IPRSDSC equ 0xFFFFFFD000000000
 
 ; ------- STACK IS NOT 16 Byte aligned, STACK IS 8 BYTE ALIGNED ------
 SchedulerEntry:
+
+
+    push rcx
     push rbx
     push rax
     ; Read APIC ID
@@ -22,10 +26,17 @@ SchedulerEntry:
     mov rax, IPRSDSC
     add rbx, rax
 
+    mov rcx, rbx ; RCX Contains INTERNAL_CPU_DATA
+
+
 ; Save registers
+
+
+
     mov rbx, [rbx + 8] ; CURRENT_THREAD
-    pop qword [rbx + 0x1028] ; RAX
-    pop qword [rbx + 0x1030] ; RBX
+    pop qword [rbx + 0x1030] ; RAX
+    pop qword [rbx + 0x1038] ; RBX
+    pop qword [rbx + 0x1040] ; RCX
 
     fxsave [rbx]
     pop qword [rbx + 0x1008] ; RIP
@@ -35,7 +46,6 @@ SchedulerEntry:
     movdqa [rbx + 0x1020], xmm0 ; RFLAGS, RSP
 
     ; Save other General purpose registers
-    mov [rbx + 0x1040], rcx
     mov [rbx + 0x1048], rdx
     mov [rbx + 0x1050], rsi
     mov [rbx + 0x1058], rdi
@@ -47,9 +57,10 @@ SchedulerEntry:
     mov [rbx + 0x1088], r13
     mov [rbx + 0x1090], r14
     mov [rbx + 0x1098], r15
+    mov [rbx + 0x10A0], rbp
     ; Page Table
     mov rax, cr3
-    mov [rbx + 0x10A0], rax
+    mov [rbx + 0x10A8], rax
     ; other segments
     mov ax, gs
     shl eax, 16
@@ -58,20 +69,27 @@ SchedulerEntry:
     mov ax, es
     shl rax, 16
     mov ax, ds
-    mov [rbx + 0x10A8], rax ; DS, ES, FS, GS
+    mov [rbx + 0x10B0], rax ; DS, ES, FS, GS
 
 ; call scheduling function
-sub rsp, 0x50
-add rsp, 0x58 ; for alignment
-mov rax, rbx
-; Restore registers (returned in rax)
-
+push 0
+push rcx
+sub rsp, 0x100
+call Schedule ; RCX = Internl CPU Data
+add rsp, 0x100
+pop rcx
+sub rsp, 8
 ; Restore page table
-    mov rbx, [rax + 0x10A0]
+    mov rbx, [rax + 0x10A8]
+    mov rdx, cr3
+    cmp rdx, rbx
+    je .NoTlbFlush
+    mov rax, 0xbabafefe
+    jmp $
     mov cr3, rbx
+.NoTlbFlush:
 
-    mov rcx, [rax + 0x1040]
-    mov rdx, [rax + 0x1048]
+; Restore registers (returned in rax)
     mov rsi, [rax + 0x1050]
     mov rdi, [rax + 0x1058]
     mov r8, [rax + 0x1060]
@@ -82,19 +100,35 @@ mov rax, rbx
     mov r13, [rax + 0x1088]
     mov r14, [rax + 0x1090]
     mov r15, [rax + 0x1098]
-
+    mov rbp, [rax + 0x10A0]
 ; Setup stack frame
     push qword [rax + 0x1008]
     movdqa xmm0, [rax + 0x1010]
     movdqa [rsp + 8], xmm0
     movdqa xmm0, [rax + 0x1020]
     movdqa [rsp + 0x18], xmm0
-
-; Set timer frequency
-
-; restore remaining registers & segments
-    mov rcx, 0xfafbabe
-    jmp $
-
+; restore segments
+    mov rbx, [rax + 0x10B0]
+    mov ds, bx
+    shr rbx, 16
+    mov es, bx
+    shr rbx, 16
+    mov fs, bx
+    shr rbx, 16
+    mov gs, bx
+; Set timer frequency, and EOI
+    mov rbx, [rel LocalApicAddress]
+    mov rdx, [rcx + 0x20] ; Timer freq
+    ;shr rdx, 10 ; 1024 Task switches / s
+    mov [rbx + 0x380], edx ; Initial Count
+    mov dword [rbx + 0xB0], 0 ; Eoi
+; Restore remaining registers
+    mov rdx, [rax + 0x1048]
+    mov rcx, [rax + 0x1040]
+    mov rbx, [rax + 0x1038]
+    fxrstor [rax]
+    mov rax, [rax + 0x1030]
+; Switch Tasks
+    o64 iret
 
     

@@ -140,7 +140,7 @@ BOOLEAN KRNLAPI KeRegisterSystemInterrupt(
 
     if(UseWrapper) {
         Processor->SystemInterruptHandlers[Vec - 220] = Handler;
-        CpuSetInterrupt(Processor, Vec, DisableInterrupts ? InterruptGate : TrapGate, NosSystemInterruptService);
+        CpuSetInterrupt(Processor, Vec, (DisableInterrupts == TRUE) ? (InterruptGate) : (TrapGate), NosSystemInterruptService);
     } else {
         // Manually set the interrupt
         IDT_ENTRY* Entry = &Processor->Idt[Vec];
@@ -149,7 +149,7 @@ BOOLEAN KRNLAPI KeRegisterSystemInterrupt(
         Entry->Address0 = (UINT64)Handler;
         Entry->Address1 = (UINT64)Handler >> 16;
         Entry->Address2 = (UINT64)Handler >> 32;
-        Entry->Type = DisableInterrupts ? InterruptGate : TrapGate;
+        Entry->Type = (DisableInterrupts == TRUE) ? (InterruptGate) : (TrapGate);
         Entry->Present = 1;
     }
 

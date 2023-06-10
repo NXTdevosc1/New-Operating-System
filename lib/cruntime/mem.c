@@ -16,12 +16,9 @@ EXPORT void *memcpy(
    const void *src,
    unsigned long long count
 ) {
-    while(count) {
-        *(char*)dest = *(char*)src;
-        ((char*)dest)++;
-        ((char*)src)++;
-        count--;
-    }
+    char* d = dest;
+    const char *s = src;
+    for(unsigned long long i = 0;i<count;i++, d++, s++) *d = *s;
     return dest;
 }
 

@@ -41,12 +41,25 @@ EFI_STATUS EFIAPI UefiEntry(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TABLE* Syst
 	gST = SystemTable;
 	gBS = SystemTable->BootServices;
 	gImageHandle = ImageHandle;
+
+
 		Print(L"Test Str : %a\n", tst2);
 	gBS->HandleProtocol(ImageHandle, &gEfiLoadedImageProtocolGuid, (void**)&LoadedImage);
 	// BlZeroAlignedMemory(&NosInitData, sizeof(NOS_INITDATA));
 	// Initialize Boot Graphics
 	BlInitBootGraphics();
 	
+	// Find a place to put init trampoline
+	for(int i = 1;i<245 /*max page number + 8 + padding for SIPI*/;i++) {
+		NosInitData.InitTrampoline = (void*)((UINT64)i << 12);
+		if(EFI_ERROR(gBS->AllocatePages(AllocateAddress, EfiLoaderData, 8, (EFI_PHYSICAL_ADDRESS*)&NosInitData.InitTrampoline))) {
+			if(i == 244) {
+				Print(L"Failed to allocate SIPI Trampoline in address range 0x1000-0xF4000\n");
+				return EFI_UNSUPPORTED;
+			}
+		} else break;
+	}
+
 	// Query the boot device & partition
 	if(EFI_ERROR(gBS->HandleProtocol(LoadedImage->DeviceHandle, &gEfiSimpleFileSystemProtocolGuid, (void**)&BootPartition))) {
 		Print(L"Failed to get boot partition\n");

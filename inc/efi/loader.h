@@ -128,6 +128,9 @@ typedef struct _NOS_INITDATA {
     UINT64 TotalPagesCount;
     volatile UINT64 AllocatedPagesCount;
 
+    // Processor init trampoline
+    void* InitTrampoline; // 8 pages allocated (pages 0-245) are checked
+
 } NOS_INITDATA;
 
 #ifndef NSYSAPI

@@ -49,9 +49,9 @@ void CpuInitDescriptors(PROCESSOR* Processor) {
         while(1);
     }
 
-    Processor->Tss.rsp0 += 0xF000;
-    Processor->Tss.ist1 += 0xF000;
-    Processor->Tss.ist2 += 0xF000; // add 8 for stack alignment
+    Processor->Tss.rsp0 += 0xE000;
+    Processor->Tss.ist1 += 0xE000;
+    Processor->Tss.ist2 += 0xE000; // add 8 for stack alignment
 
 
     Processor->Tss.IOPB_offset = sizeof(TASK_STATE_SEGMENT);
@@ -60,7 +60,7 @@ void CpuInitDescriptors(PROCESSOR* Processor) {
     SYSTEM_DESCRIPTOR Gdtr = (SYSTEM_DESCRIPTOR){sizeof(NOS_GDT) - 1, &Processor->Gdt};
 
     __SystemLoadGDTAndTSS(&Gdtr);
-    SerialLog("GDT and TSS Loaded successfully");
+    KDebugPrint("GDT and TSS Loaded successfully");
 
     // Initialize Standard Interrupts
     for(int i = 0;i<32;i++) {
@@ -108,3 +108,49 @@ void CpuDisableApicTimer() {
     ApicWrite(APIC_TIMER_LVT, APIC_LVT_INTMASK);
 }
 
+
+void HwBootProcessor(RFPROCESSOR Processor) {
+    KDebugPrint("Booting Processor#%d , SYSTEM: APIC", Processor->Id.ProcessorId);
+
+    // Allocate some stack space for the cpu
+    void* p;
+    if(NERROR(MmAllocatePhysicalMemory(0, 0x10, &p)))
+    {
+        KDebugPrint("Failed to allocate mem for cpu");
+        while(1) __halt();
+    }
+    *(UINT64*)((UINT64)NosInitData->InitTrampoline + 0x6008) = (UINT64)p + 0xE000;
+    
+    ApicWrite(APIC_ERROR_STATUS, 0);
+
+    // Send INIT_IPI
+    ApicWrite(APIC_ICR_HIGH, (ApicRead(APIC_ICR_HIGH) & 0x00ffffff) | (Processor->Id.ProcessorId << 24));
+    ApicWrite(APIC_ICR, (ApicRead(APIC_ICR) & 0xfff00000) | APIC_ICR_DEST_INIT | APIC_ICR_SET_FOR_INIT | APIC_ICR_CLEAR_FOR_INIT);
+
+    ApicIpiWait();
+    // Send INIT_IPI Level-deassert
+
+    ApicWrite(APIC_ICR_HIGH, (ApicRead(APIC_ICR_HIGH) & 0x00ffffff) | (Processor->Id.ProcessorId << 24));
+    ApicWrite(APIC_ICR,(ApicRead(APIC_ICR) & 0xfff00000) | APIC_ICR_DEST_INIT | APIC_ICR_SET_FOR_INIT);
+
+    ApicIpiWait();
+
+
+    // Boot the AP
+    for(int i = 0;i<2;i++) {
+        ApicWrite(APIC_ERROR_STATUS, 0);
+        ApicWrite(APIC_ICR_HIGH, (ApicRead(APIC_ICR_HIGH) & 0x00ffffff) | (Processor->Id.ProcessorId << 24));
+        ApicWrite(APIC_ICR, (ApicRead(APIC_ICR) & 0xfff00000) | APIC_ICR_DEST_SIPI | ((UINT64)NosInitData->InitTrampoline >> 12));
+        ApicIpiWait();
+    }
+
+    // Wait for processor boot
+    // if it exceeds 3 seconds crash the OS
+
+    for(UINT i = 0;i<6000 && !Processor->ProcessorEnabled;i++) Stall(500);
+    
+    if(!Processor->ProcessorEnabled) {
+        KDebugPrint("Failed to boot processor#%d, halting...", Processor->Id.ProcessorId);
+        while(1) __halt();
+    }
+}
