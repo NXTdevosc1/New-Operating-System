@@ -18,10 +18,12 @@ NSTATUS NSYSAPI KeCreateSubsystem(
 
 
 NSTATUS NSYSAPI NativeSubsystemEntryPoint(void* EntryPoint) {
+    KDebugPrint("NATIVE SUBSYSTEM ENTRY");
     while(1);
 }
 
 NSTATUS NSYSAPI ConsoleSubsystemEntryPoint(void* EntryPoint) {
+    KDebugPrint("CONSOLE SUBSYSTEM ENTRY");
     while(1);
 }
 

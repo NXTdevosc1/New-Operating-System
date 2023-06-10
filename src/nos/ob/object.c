@@ -106,6 +106,12 @@ UINT64 KRNLAPI ObEnumerateObjects(
             *_OutObject = (POBJECT)Object->FirstChild;
             _EnumVal = (UINT64)Object->FirstChild->NextChild;
         }
+        if(!_EnumVal) _EnumVal = (UINT64)-1; // This is the last object
+
+        if((*_OutObject)->ObjectType != ObjectType) {
+            // walk the objects until we find an object with the same type
+            return ObEnumerateObjects(Object, ObjectType, _OutObject, _FirstChild, _EnumVal);
+        }
     } else {
         if(ObjectType == UNDEFINED_OBJECT_TYPE) {
             // This uses an array
@@ -120,7 +126,6 @@ UINT64 KRNLAPI ObEnumerateObjects(
             if(!(*_OutObject)) _EnumVal = (UINT64)-1;
         }
     }
-    if(!_EnumVal) _EnumVal = (UINT64)-1; // This is the last object
     return _EnumVal;
 }
 

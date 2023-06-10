@@ -146,7 +146,9 @@ retry:
 
 void ObiFreeObject(POBJECT Object) {
     UINT64 Index = (((UINT64)Object - (UINT64)_ObObjectArray) / sizeof(OBJECT_DESCRIPTOR));
+    ObjZeroMemory(Object);
     _interlockedbittestandreset64(_ObAllocationTable + ((UINT64)Index >> 6), (UINT64)Index & 0x3F);
+
 }
 
 void ObiLinkChildObject(POBJECT Parent, POBJECT Child) {

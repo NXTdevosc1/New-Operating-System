@@ -154,6 +154,7 @@ BOOLEAN KRNLAPI KeRegisterSystemInterrupt(
     }
 
     ProcessorReleaseLock(Processor, PROCESSOR_IDT_LOCK);
+    KDebugPrint("Registered System INT#%d for CPU#%d", Vec, Processor->Id.ProcessorId);
     *Vector = Vec;
     return TRUE;
 }

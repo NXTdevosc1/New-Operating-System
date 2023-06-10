@@ -24,17 +24,20 @@ NSTATUS KRNLAPI KeCreateThread(
         sizeof(ETHREAD),
         ThreadEvtHandler
     );
+
     if(NERROR(s)) {
         KDebugPrint("failed to create object thread");
         while(1) __halt();
     }
+
+
     Thread = Ob->Address;
     // Setting up the thread
     Thread->ThreadObject = Ob;
     Thread->Process = Process;
     Thread->ThreadId = Ob->ObjectId;
     Thread->Flags = Flags;
-
+    Thread->Ready.Thread = Thread;
     _InterlockedIncrement64(&Process->NumberOfThreads);
 
     if(OutThread) *OutThread = Thread;
@@ -46,7 +49,7 @@ NSTATUS KRNLAPI KeCreateThread(
     return STATUS_SUCCESS;
 }
 
-BOOLEAN KeThreadExists(PETHREAD Thread) {
+BOOLEAN KRNLAPI KeThreadExists(PETHREAD Thread) {
     UINT64 f = PAGE_WRITE_ACCESS;
     if(!Thread || !KeCheckMemoryAccess(KernelProcess, Thread, sizeof(ETHREAD), &f)) return FALSE;
     if(!ObCheckObject(Thread->ThreadObject) || Thread->ThreadObject->ObjectType != OBJECT_THREAD ||
@@ -59,10 +62,31 @@ BOOLEAN KeThreadExists(PETHREAD Thread) {
 #include <nos/ob/obutil.h>
 
 // Finds the thread and returns raw pointer
-PETHREAD KeGetThreadById(UINT64 ThreadId) {
+PETHREAD KRNLAPI KeGetThreadById(UINT64 ThreadId) {
     HANDLE h;
     if(NERROR(ObOpenHandleById(KernelProcess, OBJECT_THREAD, ThreadId, 0, &h))) return NULL;
     PETHREAD t = ObiReferenceByHandle(h)->Object->Address;
     ObCloseHandle(KernelProcess, h);
     return t;
+}
+
+PETHREAD KRNLAPI KeWalkThreads(PEPROCESS Process, UINT64* EnumVal) {
+    POBJECT obj;
+    *EnumVal = ObEnumerateObjects(Process->ProcessObject, OBJECT_THREAD, &obj, NULL, *EnumVal);
+    if(!(*EnumVal)) return NULL;
+
+    return obj->Address;
+}
+
+BOOLEAN KRNLAPI KeSetStaticPriority(PETHREAD Thread, UINT StaticPriority) {
+    Thread->StaticPriority = StaticPriority;
+    if(Thread->DynamicPriority < StaticPriority) Thread->DynamicPriority = StaticPriority;
+    if(!Thread->Ready.Ready) {
+        UINT64 rf = __readeflags();
+        _disable();
+        ScBottomAddReadyThread(Thread);
+        Thread->Ready.Ready = TRUE;
+        __writeeflags(rf);
+    }
+    return TRUE;
 }

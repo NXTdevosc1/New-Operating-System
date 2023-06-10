@@ -59,11 +59,10 @@ NSTATUS KRNLAPI KeCreateProcess(
 
     if(Process->Subsystem == SUBSYSTEM_NATIVE) {
         // Kernel mode process
-        KernelProcess->VmSearchStart = NosInitData->NosKernelImageBase;
-        KernelProcess->VmSearchEnd = (void*)-1;
-        KernelProcess->PageTable = GetCurrentPageTable();
+        Process->VmSearchStart = NosInitData->NosKernelImageBase;
+        Process->VmSearchEnd = (void*)-1;
+        Process->PageTable = GetCurrentPageTable();
     }
-
     // Create main thread
     s = KeCreateThread(Process, NULL, 0, EntryPoint);
     if(NERROR(s)) {
@@ -71,6 +70,7 @@ NSTATUS KRNLAPI KeCreateProcess(
         KDebugPrint("createprocess : failed to create thread status : %d", s);
         while(1);
     }
+
     return STATUS_SUCCESS;
 }
 
@@ -121,4 +121,17 @@ void KiInitMultitaskingSubsystem() {
     ))) RaiseInitError(0);
 
     
+}
+
+BOOLEAN KRNLAPI KeSetProcessPriority(PEPROCESS Process, UINT Priority) {
+    if(Priority > 5 && Priority != PROCESS_PRIORITY_CONSTANT_EXECUTION) return FALSE;
+    PETHREAD Thread;
+    UINT64 ev;
+    Process->Priority = Priority;
+    while((Thread = KeWalkThreads(Process, &ev))) {
+        if(Thread->Ready.Ready) {
+            KeSetStaticPriority(Thread, (Thread->StaticPriority % 5) * Priority);
+        }
+    }
+    return TRUE;
 }

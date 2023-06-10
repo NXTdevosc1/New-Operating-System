@@ -118,7 +118,7 @@ sub rsp, 8
     mov gs, bx
 ; Set timer frequency, and EOI
     mov rbx, [rel LocalApicAddress]
-    mov rdx, [rcx + 0x20] ; Timer freq
+    mov rdx, [rcx + 0x30] ; Timer freq
     ;shr rdx, 10 ; 1024 Task switches / s
     mov [rbx + 0x380], edx ; Initial Count
     mov dword [rbx + 0xB0], 0 ; Eoi

@@ -38,12 +38,38 @@ void KiInitBootCpu() {
 
 }
 
+extern void KRNLAPI KeSchedulingSystemInit();
+
+
+NSTATUS ApicSpuriousInterruptHandler(INTERRUPT_HANDLER_DATA* HandlerData) {
+    KDebugPrint("***SPURIOUS_INTERRUPT***");
+
+    // You should not send EOI for spurious interrupts
+    return STATUS_SUCCESS;
+}
 void __declspec(noreturn) HwMultiProcessorEntry() {
     CpuEnableFeatures();
     RFPROCESSOR Processor = KeGetCurrentProcessor();
     Processor->ProcessorEnabled = TRUE;
+    
+    
     CpuInitDescriptors(Processor);
+    
+    // Enable APIC
+    ApicWrite(0x80, 0); // Set TASK_PRIORITY
+    ApicWrite(0xD0, 0); // Set LOGICAL_DESTINATION
+    ApicWrite(0xE0, 0); // SET DESTINATION_FORMAT
+    UINT8 Spurious;
+    if(!KeRegisterSystemInterrupt(0, &Spurious, TRUE, TRUE, ApicSpuriousInterruptHandler)) {
+        KDebugPrint("APIC Initialization failed. KeRegisterSystemInterrupt != TRUE.");
+        while(1) __halt();
+    }
+    ApicWrite(0xF0, 0x100 | Spurious); // Set SPURIOUS_INTERRUPT_VECTOR
+
+    KeSchedulingSystemInit();
     KDebugPrint("Processor#%d enabled.", KeGetCurrentProcessorId());
+
+    // This is the idle thread routine
     for(;;) __halt();
 }
 
