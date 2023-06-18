@@ -28,22 +28,55 @@ int  testh() {
 
 extern void HwInitTrampoline();
 
+extern inline void DrawRect(UINT x, UINT y, UINT Width, UINT Height, UINT Color) {
+    for(UINT a = y; a<y+Height;a++) {
+        _Memset128U_32((char*)NosInitData->FrameBuffer.BaseAddress + x * 4 + a * NosInitData->FrameBuffer.Pitch, Color, Width >> 2);
+    }
+}
+
+void thread1() {
+    for(;;)
+        DrawRect(20, 20, 100, 100, 0xFFFFFF);
+
+}
+
+void thread2() {
+    for(;;)
+        DrawRect(20, 20, 100, 100, 0xFF);
+
+}
+
+UINT32 errcolors[] = {
+    0,
+    0xFFFFFF,
+    0xFF,
+    0xFF00,
+    0xFF0000,
+    0xFFFF,
+    0xFFFF00  
+};
+
     
-void __declspec(noreturn) NosSystemInit() {
+void NOSENTRY NosSystemInit() {
     SerialLog("NOS_KERNEL : Kernel Booting...");
     
     KiPhysicalMemoryManagerInit();
     ObInitialize();
+    KiInitBootCpu();
     KiInitStandardSubsystems();
     
 
     
 
-    KiInitBootCpu();
     SerialLog(NosInitData->BootHeader->OsName);
     SerialLog("drivers");
     _ui64toa(NosInitData->BootHeader->NumDrivers, bf, 10);
     SerialLog(bf);
+
+    DrawRect(0, 0, 100, 100, 0x43829F0);
+
+    // ConClear();
+
     for(int i=0;i<NosInitData->BootHeader->NumDrivers;i++) {
         SerialLog("drv:");
         NOS_BOOT_DRIVER* Driver = NosInitData->BootHeader->Drivers + i;
@@ -85,6 +118,15 @@ void __declspec(noreturn) NosSystemInit() {
             SerialLog("RETURN_STATUS :");
             _ui64toa(Status, bf, 0x10);
             SerialLog(bf);
+
+            if(NERROR(Status)) {
+                if(Status > 6) Status = 6;
+                _disable();
+                DrawRect(0, 0, 500, 500, errcolors[Status]);
+                DrawRect(0, 0, 100, 100, 0xFFFFFF);
+
+                while(1) __halt();
+            }
         }
 
     }
@@ -118,6 +160,9 @@ void __declspec(noreturn) NosSystemInit() {
 
     }
 
+    // Start using APIC ID to get a processor
+    BootProcessor->ProcessorEnabled = TRUE;
+    
 
     for(UINT64 i = 0;i<NumProcessors;i++) {
         RFPROCESSOR Processor = KeGetProcessorById(i);
@@ -132,24 +177,29 @@ void __declspec(noreturn) NosSystemInit() {
             HwBootProcessor(Processor);
         }
     }
-
+    // for(;;);
     // KeEnableScheduler();
     // for(;;) __halt();
+    // _disable();
+    PETHREAD t1, t2;
+    KeCreateThread(KernelProcess, &t1, 0, thread1, NULL);
+    KeCreateThread(KernelProcess, &t2, 0, thread2, NULL);
+
     for(;;) {
         // for(UINT32 i = 0;i<0xff;i++) {
             UINT32 i = 0xFF;
-            _Memset128A_32((UINT32*)NosInitData->FrameBuffer.BaseAddress + 0x3000, i, (NosInitData->FrameBuffer.Pitch * 4 * NosInitData->FrameBuffer.VerticalResolution) / 0x20);
+            _Memset128U_32((UINT32*)NosInitData->FrameBuffer.BaseAddress + 0x3000, i, (NosInitData->FrameBuffer.Pitch * NosInitData->FrameBuffer.VerticalResolution) / 0x20);
         // }
-        Stall(100000);
+        // Stall(1000000);
         // for(UINT32 i = 0;i<0xff;i++) {
-            _Memset128A_32((UINT32*)NosInitData->FrameBuffer.BaseAddress + 0x3000, i << 8, (NosInitData->FrameBuffer.Pitch * 4 * NosInitData->FrameBuffer.VerticalResolution) / 0x20);
+            _Memset128U_32((UINT32*)NosInitData->FrameBuffer.BaseAddress + 0x3000, i << 8, (NosInitData->FrameBuffer.Pitch * NosInitData->FrameBuffer.VerticalResolution) / 0x20);
         // }
-        Stall(100000);
+        // Stall(1000000);
 
         // for(UINT32 i = 0;i<0xff;i++) {
-            _Memset128A_32((UINT32*)NosInitData->FrameBuffer.BaseAddress + 0x3000, i << 16, (NosInitData->FrameBuffer.Pitch * 4 * NosInitData->FrameBuffer.VerticalResolution) / 0x20);
+            _Memset128U_32((UINT32*)NosInitData->FrameBuffer.BaseAddress + 0x3000, i << 16, (NosInitData->FrameBuffer.Pitch * NosInitData->FrameBuffer.VerticalResolution) / 0x20);
         // }
-        Stall(100000);
+        // Stall(1000000);
 
     }
     for(;;) __halt();

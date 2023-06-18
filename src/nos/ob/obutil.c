@@ -32,9 +32,12 @@ void ObInitialize() {
     _ObHandleArraySize = AlignForward(_ObMaxHandles * sizeof(OBJECT_REFERENCE_DESCRIPTOR), 0x1000);
 
     MmAllocatePhysicalMemory(0, _ObAllocationTableSize >> 12, &_ObAllocationTable);
+    KDebugPrint("Object Manager : Init  %x %x %x", _ObAllocationTableSize, _ObObjectArraySize, _ObHandleArraySize);
     MmAllocatePhysicalMemory(0, _ObAllocationTableSize >> 12, &_ObHandleAllocationTable);
     MmAllocatePhysicalMemory(0, _ObObjectArraySize >> 12, &_ObObjectArray);
     MmAllocatePhysicalMemory(0, _ObHandleArraySize >> 12, &_ObHandleArray);
+
+
 
 
     if(!_ObAllocationTable || !_ObObjectArray || !_ObHandleAllocationTable || !_ObHandleArray) {
@@ -57,7 +60,7 @@ void ObInitialize() {
     ObRegisterObjectType(OBJECT_DEVICE, "Devices", NOS_MAJOR_VERSION, NOS_MINOR_VERSION);
     ObRegisterObjectType(OBJECT_TIMER, "Timers", NOS_MAJOR_VERSION, NOS_MINOR_VERSION);
 
-
+    _ObObjectTypes[OBJECT_THREAD].TotalCreatedObjects++; // Thread object id starts with 1 for compatibility
 }
 
 HANDLE ObiGetOpenHandle(POBJECT Object, PEPROCESS Process) {

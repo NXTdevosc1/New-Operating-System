@@ -42,6 +42,9 @@ EFI_STATUS EFIAPI UefiEntry(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TABLE* Syst
 	gBS = SystemTable->BootServices;
 	gImageHandle = ImageHandle;
 
+	// Eliminate NULL Page
+	EFI_PHYSICAL_ADDRESS __NullPg = 0;
+	gBS->AllocatePages(AllocateAddress, EfiLoaderData, 1, &__NullPg);
 
 		Print(L"Test Str : %a\n", tst2);
 	gBS->HandleProtocol(ImageHandle, &gEfiLoadedImageProtocolGuid, (void**)&LoadedImage);
@@ -150,7 +153,7 @@ EFI_STATUS EFIAPI UefiEntry(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TABLE* Syst
 	Print(L"Test2 : %a\n", tst);
 
 	// Initialize System Heap
-	UINTN NumSystemPages = 1; // In 2MB Pages
+	UINTN NumSystemPages = 10; // In 2MB Pages
 	BlInitSystemHeap(NumSystemPages);
 
 	PE_IMAGE_HDR* ImageHeader;

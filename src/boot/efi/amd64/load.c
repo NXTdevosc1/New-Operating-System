@@ -83,11 +83,20 @@ BOOLEAN BlLoadImage(
 			}
 		}
 	}
-	if(Header->OptionnalDataDirectories.ImportTable.VirtualAddress) {
+	Print(L"RELOC %.16X  SZ %.16X\n", Header->OptionnalDataDirectories.BaseRelocationTable.VirtualAddress, Header->OptionnalDataDirectories.BaseRelocationTable.Size);
+
+
+
+
+
+
+
+	if(Header->OptionnalDataDirectories.BaseRelocationTable.Size) {
+		Print(L"RELOCATING to %.16x...\n", *ImageVirtualBaseAddress);
 		Pe64RelocateImage(Header, Buffer, VasBuffer, *ImageVirtualBaseAddress);
 	}
 
-	if(Header->OptionnalDataDirectories.ImportTable.VirtualAddress) {
+	if(Header->OptionnalDataDirectories.ImportTable.Size) {
 		// Resolve Imported Symbols
 		if(!Pe64LoadImports(
 			Header, VasBuffer, &Header->OptionnalDataDirectories.ImportTable
@@ -96,7 +105,7 @@ BOOLEAN BlLoadImage(
 			return FALSE;
 		}
 	}
-	if(Header->OptionnalDataDirectories.ExportTable.VirtualAddress) {
+	if(Header->OptionnalDataDirectories.ExportTable.Size) {
 		if(ImportingImageVas) {
 			// Export symbols to parent image
 				Print(L"EXPORTS\n");

@@ -79,7 +79,6 @@ NSTATUS KRNLAPI MmAllocateLowMemory(
 }
 
 
-
 // Allocates memory above 4gb
 /*
 No need to split or check if a heap surpasses 4GB barrier while have a physical base of less than 4GB
@@ -88,6 +87,7 @@ All firmwares declare memory above 4GB in a separated heap
 NSTATUS KRNLAPI MmAllocateHighMemory(
     UINT64 Flags, UINT64 NumPages, void** Ptr
 ) {
+    // KDebugPrint("ahm %d", NumPages);
     NOS_MEMORY_LINKED_LIST* PhysicalMem = NosInitData->NosMemoryMap;
     unsigned long Index;
     UINT64 Align = 0x1000;
@@ -100,6 +100,7 @@ NSTATUS KRNLAPI MmAllocateHighMemory(
         NumPages <<= 18;
     }
     if(NosInitData->TotalPagesCount - NosInitData->AllocatedPagesCount < NumPages) return STATUS_OUT_OF_MEMORY;
+    // KDebugPrint("ahm %d %x", NumPages, PhysicalMem);
 
     UINT64 NumBytes = NumPages << 12;
     while(PhysicalMem) {
@@ -112,20 +113,33 @@ NSTATUS KRNLAPI MmAllocateHighMemory(
                     if(Mem->Attributes & MM_DESCRIPTOR_ALLOCATED ||
                      (UINT64)Mem->PhysicalAddress < 0x100000000) continue;
                     if(_interlockedbittestandset(&Mem->Attributes, MM_DESCRIPTOR_BUSY)) continue;
+    // KDebugPrint("ahm 3 %d", NumPages);
+                    
                     if(Mem->NumPages >= ((ExcessBytes(Mem->PhysicalAddress, Align) + NumBytes) >> 12)) {
                         *Ptr = (void*)((UINT64)Mem->PhysicalAddress + ExcessBytes(Mem->PhysicalAddress, Align));
+    // KDebugPrint("ahm 4 %x", Ptr);
+
                         void* addr = *Ptr;
                         // Found Available Memory
                         if(ExcessBytes(Mem->PhysicalAddress, Align)) {
+    // KDebugPrint("ahm 45 %x", Ptr);
+
                             MmCreateMemoryDescriptor(Mem->PhysicalAddress, Mem->Attributes, ExcessBytes(Mem->PhysicalAddress, Align) >> 12);
                         }
+    // KDebugPrint("ahm 4 %x", addr);
+
                         if(!(Flags & MM_ALLOCATE_WITHOUT_DESCRIPTOR)) {
-                            MmCreateMemoryDescriptor((void*)((UINT64)addr), MM_DESCRIPTOR_ALLOCATED, NumPages);
+    // KDebugPrint("ahm 44 %d", NumPages);
+
+                            MmCreateMemoryDescriptor(addr, MM_DESCRIPTOR_ALLOCATED, NumPages);
                         }
+    // KDebugPrint("ahm 44 %d", NumPages);
+
                         (UINT64)Mem->PhysicalAddress = (UINT64)addr + NumBytes;
                         Mem->NumPages -= (NumPages + (ExcessBytes(Mem->PhysicalAddress, Align) >> 12));
                         _bittestandreset(&Mem->Attributes, MM_DESCRIPTOR_BUSY);
                         _interlockedadd64(&NosInitData->AllocatedPagesCount, NumPages);
+    // KDebugPrint("ahm 44 %d", NumPages);
 
                         return STATUS_SUCCESS;
                     }

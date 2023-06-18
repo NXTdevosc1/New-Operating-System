@@ -17,12 +17,18 @@ NSTATUS NSYSAPI KeCreateSubsystem(
 }
 
 
-NSTATUS NSYSAPI NativeSubsystemEntryPoint(void* EntryPoint) {
-    KDebugPrint("NATIVE SUBSYSTEM ENTRY");
-    while(1);
+void NOSENTRY NativeSubsystemEntryPoint(void* EntryPoint, void* Context) {
+    NSTATUS (__cdecl *Entry)(void*) = EntryPoint;
+    PEPROCESS Process = KeGetCurrentProcess();
+    PETHREAD Thread = KeGetCurrentThread();
+    KDebugPrint("NATIVE SUBSYSTEM ENTRY Process %x Thread %x NumThreads %d ApicId %d", Process, Thread, Process->NumberOfThreads, Thread->Processor->Id.ProcessorId);
+    KDebugPrint("Entry Point %x Context %x", Entry, Context);
+    NSTATUS Status = Entry(Context);
+    // Exit the thread
+    while(1) __halt();
 }
 
-NSTATUS NSYSAPI ConsoleSubsystemEntryPoint(void* EntryPoint) {
+void NOSENTRY ConsoleSubsystemEntryPoint(void* EntryPoint, void* Context) {
     KDebugPrint("CONSOLE SUBSYSTEM ENTRY");
     while(1);
 }

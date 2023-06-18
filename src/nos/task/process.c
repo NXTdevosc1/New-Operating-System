@@ -53,6 +53,7 @@ NSTATUS KRNLAPI KeCreateProcess(
     Process->ProcessDisplayName = DisplayName;
     Process->Path = Path;
     Process->Subsystem = Subsystem;
+    Process->Priority = PROCESS_PRIORITY_NORMAL;
 
 
     if(OutProcess) *OutProcess = Process;
@@ -64,7 +65,10 @@ NSTATUS KRNLAPI KeCreateProcess(
         Process->PageTable = GetCurrentPageTable();
     }
     // Create main thread
-    s = KeCreateThread(Process, NULL, 0, EntryPoint);
+    UINT ThreadCreateFlags = 0;
+    if((CreateFlags & PROCESS_CREATE_IDLE)) ThreadCreateFlags |= THREAD_CREATE_IDLE;
+    // NULL Context because entry point has its own context predefined by the subsystem
+    s = KeCreateThread(Process, NULL, ThreadCreateFlags, EntryPoint, NULL);
     if(NERROR(s)) {
         // TODO : Remove process
         KDebugPrint("createprocess : failed to create thread status : %d", s);
@@ -80,7 +84,7 @@ NSTATUS KRNLAPI KeCreateProcess(
 BOOLEAN KeProcessExists(PEPROCESS Process) {
     UINT64 f = PAGE_WRITE_ACCESS;
 
-    if(!Process || !KeCheckMemoryAccess(KernelProcess, Process, sizeof(EPROCESS), &f)) return FALSE;
+    if(!Process || !KeCheckMemoryAccess(KernelProcess, (void*)Process, sizeof(EPROCESS), &f)) return FALSE;
     if(!ObCheckObject(Process->ProcessObject) || Process->ProcessObject->ObjectType != OBJECT_PROCESS ||
     Process->ProcessObject->Address != Process
     ) return FALSE;
@@ -129,9 +133,15 @@ BOOLEAN KRNLAPI KeSetProcessPriority(PEPROCESS Process, UINT Priority) {
     UINT64 ev;
     Process->Priority = Priority;
     while((Thread = KeWalkThreads(Process, &ev))) {
-        if(Thread->Ready.Ready) {
-            KeSetStaticPriority(Thread, (Thread->StaticPriority % 5) * Priority);
-        }
+        Thread->StaticPriority = (Thread->StaticPriority % 5) * (Priority / 5);
     }
     return TRUE;
+}
+
+PEPROCESS KRNLAPI KeGetCurrentProcess() {
+    return KeGetCurrentProcessor()->InternalData->CurrentThread->Process;
+}
+
+UINT64 KRNLAPI KeGetCurrentProcessId() {
+    return KeGetCurrentProcess()->ProcessId;
 }

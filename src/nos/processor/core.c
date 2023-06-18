@@ -3,6 +3,8 @@
 #include <nos/processor/cpudescriptors.h>
 #include <nos/processor/ints.h>
 #include <nos/processor/amd64def.h>
+#include <nos/processor/hw.h>
+
 // NOS_GDT NosGdt = {
 //     {0},
 //     {0, 0, 0b10011010, 0, 0b1010, 0},
@@ -10,6 +12,13 @@
 //     {}
 // }
 extern void __SystemLoadGDTAndTSS(SYSTEM_DESCRIPTOR* Gdtr);
+
+static NSTATUS __inthalt(INTERRUPT_HANDLER_DATA* Hd) {
+    // Interrupts already disabled    
+    KDebugPrint("Received halt system interrupt for cpu#%d", Hd->ProcessorId);
+    for(;;) __halt();
+}
+
 void CpuInitDescriptors(PROCESSOR* Processor) {
     _disable();
     // Creating the interrupt array table
@@ -75,13 +84,15 @@ void CpuInitDescriptors(PROCESSOR* Processor) {
             NosInternalInterruptService
         );
     }
+    // Set shutdown/halt system interrupt 0x14 (INT 0xF0)
+    Processor->SystemInterruptHandlers[0x14] = __inthalt;
+    CpuSetInterrupt(Processor, SYSINT_HALT, InterruptGate, NosSystemInterruptService);
 }
 
 extern void SchedulerEntry();
 
 void CpuEnableApicTimer() {
-    // Request a system interrupt
-    PROCESSOR* Processor = KeGetCurrentProcessor(); // todo : get current processor
+    PROCESSOR* Processor = KeGetCurrentProcessor();
 
 
     KDebugPrint("Enabling the apic timer, interrupt number : %d", Processor->InternalData->SchedulingTimerIv);
@@ -94,8 +105,8 @@ void CpuEnableApicTimer() {
     ApicWrite(APIC_TIMER_LVT, APIC_LVT_INTMASK);
     // Mesure Timer frequency
     ApicWrite(APIC_TIMER_INITIAL_COUNT, -1);
-    Stall(5000); // Stop for 5ms
-    UINT64 Frequency = (((UINT32)-1) - ApicRead(APIC_TIMER_CURRENT_COUNT)) * 200;
+    Stall(50000); // Stall for 50ms
+    UINT64 Frequency = (((UINT32)-1) - ApicRead(APIC_TIMER_CURRENT_COUNT)) * 20;
     KDebugPrint("APIC Timer frequency : %d HZ", Frequency * 0x10);
     Processor->InternalData->SchedulingTimerFrequency = Frequency;
     // Set LVT and One Shot Mode
@@ -108,6 +119,27 @@ void CpuDisableApicTimer() {
     ApicWrite(APIC_TIMER_LVT, APIC_LVT_INTMASK);
 }
 
+void HwSendIpi(UINT8 InterruptNumber, UINT64 ProcessorId, UINT8 InterruptType, UINT8 DestinationType) {
+    UINT64 IcrLow = (ApicRead(APIC_ICR) & 0xfff00000) | InterruptNumber;
+    if(InterruptType == IPI_SYSTEM_MANAGEMENT) {
+        IcrLow |= APIC_ICR_DEST_SMI;
+    } else if(InterruptType == IPI_NON_MASKABLE_INTERRUPT) {
+        IcrLow |= APIC_ICR_DEST_NMI;
+    }
+    if(DestinationType == IPI_DESTINATION_BROADCAST_ALL) {
+        IcrLow |= APIC_ICR_BROADCAST_SELF_INT;
+    } else if(DestinationType == IPI_DESTINATION_BROADCAST_OTHERS) {
+        IcrLow |= APIC_ICR_BROADCAST_INT;
+    } else if(DestinationType == IPI_DESTINATION_SELF) {
+        IcrLow |= APIC_ICR_SELF_INT;
+    } else {
+        ApicWrite(APIC_ICR_HIGH, (ApicRead(APIC_ICR_HIGH) & 0x00ffffff) | (ProcessorId << 24));
+    }
+
+    ApicWrite(APIC_ICR, IcrLow);
+
+    ApicIpiWait();
+}
 
 void HwBootProcessor(RFPROCESSOR Processor) {
     KDebugPrint("Booting Processor#%d , SYSTEM: APIC", Processor->Id.ProcessorId);

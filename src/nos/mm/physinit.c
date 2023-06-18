@@ -3,7 +3,7 @@
 void NOSINTERNAL KiPhysicalMemoryManagerInit() {
     
     NOS_MEMORY_LINKED_LIST* PhysicalMem = NosInitData->NosMemoryMap;
-    unsigned long Index;
+    unsigned long Index = 0;
     UINT64 AllocatedMemory = 0, FreeMemory = 0;
     do {
         for(int c=0;c<0x40;c++) {

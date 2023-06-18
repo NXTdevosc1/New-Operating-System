@@ -10,7 +10,7 @@ KERNEL_PROCESSOR_TABLE ProcessorTable = {0, MpNoMultiprocessorArch, ArchAmd64, {
 
 PDRPRS* InternalProcessorArray = (PDRPRS*)0xFFFFFFD000000000;
 
-UINT64 NumProcessors = 0;
+volatile UINT64 NumProcessors = 0;
 
 NSTATUS ProcessorEvt(PEPROCESS Process, UINT Event, HANDLE Handle, UINT64 DesiredAccess) {
     return STATUS_SUCCESS;
@@ -35,6 +35,9 @@ RFPROCESSOR KRNLAPI KeRegisterProcessor(PROCESSOR_IDENTIFICATION_DATA* Ident) {
         KDebugPrint("KeRegisterProcessor: ERR1");
         while(1);
     }
+    // Manually set object id
+    Object->ObjectId = Ident->ProcessorId;
+
     Processor = Object->Address;
 
     memcpy(&Processor->Id, Ident, sizeof(PROCESSOR_IDENTIFICATION_DATA));
@@ -57,6 +60,10 @@ RFPROCESSOR KRNLAPI KeRegisterProcessor(PROCESSOR_IDENTIFICATION_DATA* Ident) {
 }
 
 RFPROCESSOR KRNLAPI KeGetCurrentProcessor() {
+    // System still is not using the LAPIC
+    if(!BootProcessor->ProcessorEnabled) return BootProcessor;
+    
+    
     return ((PROCESSOR_INTERNAL_DATA*)(InternalProcessorArray + CurrentApicId()))->Processor;
 }
 

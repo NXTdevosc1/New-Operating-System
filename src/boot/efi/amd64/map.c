@@ -65,6 +65,13 @@ void BlMapMemory(
     UINT64 Count,
     UINT64 Flags
 ){
+
+    // Unmap first page (currently for testing)
+    if(!VirtualAddress) {
+        VirtualAddress = (void*)0x1000;
+        Count--;
+    }
+
     if(((UINT64)VirtualAddress & 0xFFFF800000000000) == 0xFFFF800000000000) {
         VirtualAddress = (void*)(((UINT64)VirtualAddress & ~0xFFFF000000000000) | ((UINT64)1 << 48));
     }

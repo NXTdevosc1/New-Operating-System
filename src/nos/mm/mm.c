@@ -1,11 +1,11 @@
 #include <nos/nos.h>
 
-void* KeMainThread = (void*)(UINT64)-1; // for tests
 
 // Mm Find Allocated Memory Continuation Entry
 NOS_MEMORY_DESCRIPTOR* MmFindAMContinuationEntry(void* PhysicalStart) {
     NOS_MEMORY_LINKED_LIST* mem = NosInitData->NosMemoryMap;
     unsigned long Index;
+
     while(mem) {
         for(int i = 0;i<0x40;i++) {
             UINT64 m = mem->AllocatedMemoryDescriptorsMask[i];
@@ -47,7 +47,6 @@ NOS_MEMORY_DESCRIPTOR* MmCreateMemoryDescriptor(
     UINT32 Attributes,
     UINT64 NumPages
 ) {
-
     NOS_MEMORY_DESCRIPTOR* desc;
     if(Attributes & MM_DESCRIPTOR_ALLOCATED) {
         desc = MmFindAMContinuationEntry(PhysicalAddress);
@@ -55,6 +54,7 @@ NOS_MEMORY_DESCRIPTOR* MmCreateMemoryDescriptor(
             desc->NumPages += NumPages;
             return desc;
         }
+    // KDebugPrint("ahm 6");
     } else {
         desc = MmFindFMContinuationEntry(PhysicalAddress);
         if(desc) {
@@ -65,16 +65,19 @@ NOS_MEMORY_DESCRIPTOR* MmCreateMemoryDescriptor(
         // SerialLog("MmCMD: ERR1");
     }
     NOS_MEMORY_LINKED_LIST* mem = NosInitData->NosMemoryMap;
-    unsigned long Index;
+    unsigned long Index = 0;
     for(;;) {
         if(_BitScanForward64(&Index, ~mem->Full)) {
-            ExMutexWait(KeMainThread, &mem->GroupsMutex[Index], 0);
+            // KDebugPrint("ahm 55 %d %x %x %d", NumPages, ~mem->Full, &Index, _BitScanForward64(&Index, ~mem->Full));
+            // while(1);
+            ExMutexWait(NULL, &mem->GroupsMutex[Index], 0);
             unsigned long Index2;
             if(_BitScanForward64(&Index2, ~mem->Groups[Index].Present)) {
                 _bittestandset64(&mem->Groups[Index].Present, Index2);
                 if(mem->Groups[Index].Present == (UINT64)-1) {
                     _bittestandset64(&mem->Full, Index);
                 }
+
                 desc = &mem->Groups[Index].MemoryDescriptors[Index2];
                 desc->PhysicalAddress = PhysicalAddress;
                 desc->Attributes = Attributes;
@@ -83,11 +86,14 @@ NOS_MEMORY_DESCRIPTOR* MmCreateMemoryDescriptor(
                 if(Attributes & MM_DESCRIPTOR_ALLOCATED) {
                     _bittestandset64(&mem->AllocatedMemoryDescriptorsMask[Index], Index2);
                 }
-                ExMutexRelease(KeMainThread, &mem->GroupsMutex[Index]);
+                ExMutexRelease(NULL, &mem->GroupsMutex[Index]);
                 return desc;
             }
-            ExMutexRelease(KeMainThread, &mem->GroupsMutex[Index]);
+            ExMutexRelease(NULL, &mem->GroupsMutex[Index]);
+        // KDebugPrint("ahm 69 %d %x %d", NumPages, ~mem->Full, _BitScanForward64(&Index, ~mem->Full));
+            // while(1);
         }
+
         if(!mem->Next) {
             SerialLog("Allocating New NOS_MEMORY_LINKED_LIST");
             if(NERROR(
@@ -99,9 +105,9 @@ NOS_MEMORY_DESCRIPTOR* MmCreateMemoryDescriptor(
             )) {
                 SerialLog("Failed to allocate new NOS_MEMORY_LINKED_LIST");
                 // TODO : Crash
-                while(1);
+                while(1) __halt();
             }
-            *mem->Next = (NOS_MEMORY_LINKED_LIST){0};
+            ObjZeroMemory(mem->Next);
             // Create the descriptor for the heap
             MmCreateMemoryDescriptor(mem->Next, 0, ConvertToPages(sizeof(NOS_MEMORY_LINKED_LIST)));
             SerialLog("Allocation Success");

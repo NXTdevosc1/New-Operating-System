@@ -1,5 +1,5 @@
 section .text
-
+[BITS 64]
 global NosKernelEntry
 global NosInitData
 
@@ -12,18 +12,22 @@ extern NosSystemInit
 
 ; The NOS Kernel Entry Point
 NosKernelEntry:
-    ; Clear RFLAGS
-    push 0
-    popf
+    mov rsp, _KernelStack
+    mov rbp, rsp
+    sub rsp, 0x1000
 
-    mov rbp, _KernelStack
-    mov rsp, _KernelStack - 0x2000
+    xor rax, rax
+    ; Clear RFLAGS
+    push rax
+    popfq
+    ; Set TPR to 0
+    mov cr8, rax
 
     ; Save NosInitData Pointer in RDI
     mov rbx, NosInitData
     mov [rbx], rdi
 
-    push 0 ; Align data
+    add rsp, 8
 
     jmp NosSystemInit
     hlt
@@ -76,5 +80,5 @@ NosInitData dq 1
 section .bss
 
 align 0x1000
-_KernelStackBase resb 0x100000
+_KernelStackBase resb 0x10000
 _KernelStack:

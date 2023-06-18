@@ -1,8 +1,14 @@
 #include <nos/serial.h>
+
+static inline void SerialSend(char value) {
+    __outbyte(SERIAL_COM1, value);
+}
+
 void SerialWrite(char* Msg) {
     while(*Msg) {
-        __outbyte(0x3F8, *Msg);
+        SerialSend(*Msg);
         Msg++;
     }
-    __outbyte(0x3F8, '\n');
+    // Send to all serial ports
+    SerialSend('\n');
 }

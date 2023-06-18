@@ -26,16 +26,23 @@ BOOLEAN BlisMemEqual(void* a, void* b, UINT64 Count) {
 
 
 void BlCopyAlignedMemory(void* _dest, void* _src, UINT64 NumBytes) {
-	NumBytes >>= 3;
-	for(UINT64 i = 0;i<NumBytes;i++) {
-		((UINT64*)_dest)[i] = ((UINT64*)_src)[i];
-	}
+	// NumBytes >>= 3;
+	volatile UINT8* d = _dest, *s = _src;
+    while(NumBytes) {
+        *d = *s;
+        d++;
+        s++;
+        NumBytes--;
+    }
 }
 void BlZeroAlignedMemory(void* _dest, UINT64 NumBytes) {
-	NumBytes >>= 3;
-	for(UINT64 i = 0;i<NumBytes;i++) {
-		((UINT64*)_dest)[i] = 0;
-	}
+	// NumBytes >>= 3;
+	volatile UINT8* d = _dest;
+    while(NumBytes) {
+        *d = 0;
+        d++;
+        NumBytes--;
+    }
 }
 
 void OutPortB(unsigned short port, unsigned char val) {

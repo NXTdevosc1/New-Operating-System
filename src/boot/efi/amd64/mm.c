@@ -115,7 +115,8 @@ void BlInitSystemHeap(UINTN NumLargePages) {
 char* __SysBase = (char*)0xffff800000000000;
 void* BlAllocateSystemHeap(UINTN NumPages, void** VirtualAddress) {
     if(_NumSystemPages - _UsedSystemPages < NumPages) {
-		BlInitSystemHeap(Convert2MBPages(NumPages));
+		// BlInitSystemHeap(Convert2MBPages(NumPages));
+        BlInitSystemHeap(10); // TODO : FIX BUG
     }
     UINTN HeapLinkIndex = _SysHeapLinkCount - 1;
     

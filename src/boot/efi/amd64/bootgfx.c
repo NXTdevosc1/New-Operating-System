@@ -26,5 +26,5 @@ void BlInitBootGraphics() {
 	NosInitData.FrameBuffer.FbSize = GraphicsProtocol->Mode->FrameBufferSize;
 	NosInitData.FrameBuffer.HorizontalResolution = ModeInfo->HorizontalResolution;
 	NosInitData.FrameBuffer.VerticalResolution = ModeInfo->VerticalResolution;
-	NosInitData.FrameBuffer.Pitch = ModeInfo->PixelsPerScanLine;
+	NosInitData.FrameBuffer.Pitch = ModeInfo->PixelsPerScanLine * 4;
 }

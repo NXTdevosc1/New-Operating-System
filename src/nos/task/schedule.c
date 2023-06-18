@@ -7,12 +7,11 @@ The kernel is required to work in APIC Mode
 void* LocalApicAddress = (void*)-1;
 
 // Called by the scheduler
-static UINT64 s = 0;
+extern void __idle();
+
 extern PETHREAD __fastcall Schedule(PROCESSOR_INTERNAL_DATA* InternalData) {
-    _Memset128A_32((UINT32*)NosInitData->FrameBuffer.BaseAddress, s & 1 ? 0xFF : 0x20, (NosInitData->FrameBuffer.Pitch * 4 * NosInitData->FrameBuffer.VerticalResolution) / 0x40);
-    
-    
     PETHREAD Thread = InternalData->CurrentThread;
+    
     if(InternalData->NextThread) {
         Thread = InternalData->NextThread;
         InternalData->NextThread = NULL;
@@ -20,15 +19,30 @@ extern PETHREAD __fastcall Schedule(PROCESSOR_INTERNAL_DATA* InternalData) {
     }
 
     READY_THREAD_DESCRIPTOR* ReadyThread = InternalData->Processor->ThreadQueue;
+    
+    if(!ReadyThread) {
+// Run Idle Thread
+        InternalData->CurrentThread = InternalData->IdleThread;
+        *(void**)_AddressOfReturnAddress() = __idle;
+        return (PETHREAD)InternalData;
+    }
+
+// Searches for a thread with higher dynamic priority and increase DP for all ready threads
     while(ReadyThread) {
-        KDebugPrint("Ready thread #%d , CPU %d", ReadyThread->Thread->ThreadId, ReadyThread->Thread->Processor->Id.ProcessorId);
+        if(ReadyThread->Thread->DynamicPriority > Thread->DynamicPriority) Thread = ReadyThread->Thread;
+        if(ReadyThread->Thread != InternalData->CurrentThread) ReadyThread->Thread->DynamicPriority++;
         ReadyThread = ReadyThread->Next;
     }
 
+// Check if we have preempted the current running thread
+    if(InternalData->CurrentThread != Thread) {
+        // Move it to the end of the ready queue
+        ScRemoveFromReadyQueue(InternalData->CurrentThread);
+        ScBottomAddReadyThread(InternalData->CurrentThread);
+    }
+    InternalData->CurrentThread->DynamicPriority = InternalData->CurrentThread->StaticPriority;
 
-
-    s++;
-    KDebugPrint("Schedule CALLED, TH : %x , INTERNAL_DATA : %x , APIC_ID : %x", InternalData->CurrentThread, InternalData, InternalData->Processor->Id.ProcessorId);
+    InternalData->CurrentThread = Thread;
     return InternalData->CurrentThread;
 }
 
@@ -41,9 +55,7 @@ void KRNLAPI KiSetSchedulerData(
 
 extern void SchedulerEntry();
 
-void KiIdleThread() {
-    for(;;) __halt();
-}
+
 
 PEPROCESS IdleProcess = NULL;
 
@@ -69,14 +81,14 @@ void KRNLAPI KeSchedulingSystemInit() {
         // get first system thread (kernel init thread)
         Processor->InternalData->CurrentThread = KeWalkThreads(KernelProcess, &ev);
 
-        if(NERROR(KeCreateProcess(NULL, &IdleProcess, 0, SUBSYSTEM_NATIVE, L"System Idle Process", L"", KiIdleThread))) {
+        if(NERROR(KeCreateProcess(NULL, &IdleProcess, PROCESS_CREATE_IDLE, SUBSYSTEM_NATIVE, L"System Idle Process", L"", __idle))) {
             KDebugPrint("Create idle process failed.");
             while(1) __halt();
         }
         ev = 0;
         Processor->InternalData->IdleThread = KeWalkThreads(IdleProcess, &ev);
     } else {
-        if(NERROR(KeCreateThread(IdleProcess, &Processor->InternalData->IdleThread, 0, KiIdleThread))) {
+        if(NERROR(KeCreateThread(IdleProcess, &Processor->InternalData->IdleThread, THREAD_CREATE_IDLE, __idle, NULL))) {
             KDebugPrint("failed to create idle thread");
             while(1) __halt();
         }
@@ -96,7 +108,7 @@ void KRNLAPI KeDisableScheduler() {
 }
 
 // These functions don't required to be atomic because they are executed on the same thread cpu
-void ScTopAddReadyThread(PETHREAD Thread) {
+inline void ScTopAddReadyThread(PETHREAD Thread) {
     Thread->Ready.Previous = NULL;
     Thread->Ready.Next = Thread->Processor->ThreadQueue;
     Thread->Processor->ThreadQueue = &Thread->Ready;
@@ -105,21 +117,22 @@ void ScTopAddReadyThread(PETHREAD Thread) {
     } else {
         Thread->Processor->BottomOfThreadQueue = Thread->Processor->ThreadQueue;
     }
+    Thread->Ready.Ready = TRUE;
 }
-void ScBottomAddReadyThread(PETHREAD Thread) {
+inline void ScBottomAddReadyThread(PETHREAD Thread) {
     Thread->Ready.Previous = Thread->Processor->BottomOfThreadQueue;
     Thread->Ready.Next = NULL;
     if(Thread->Processor->ThreadQueue) {
-    Thread->Processor->BottomOfThreadQueue->Next = &Thread->Ready;
-    Thread->Processor->BottomOfThreadQueue = &Thread->Ready;
-
+        Thread->Processor->BottomOfThreadQueue->Next = &Thread->Ready;
+        Thread->Processor->BottomOfThreadQueue = &Thread->Ready;
     } else {
         Thread->Processor->ThreadQueue = &Thread->Ready;
         Thread->Processor->BottomOfThreadQueue = Thread->Processor->ThreadQueue;
     }
+    Thread->Ready.Ready = TRUE;
 }
 
-void ScRemoveFromReadyQueue(PETHREAD Thread) {
+inline void ScRemoveFromReadyQueue(PETHREAD Thread) {
     Thread->Ready.Ready = FALSE;
     if(Thread->Processor->ThreadQueue == &Thread->Ready) {
         Thread->Processor->ThreadQueue = Thread->Ready.Next;
@@ -129,5 +142,8 @@ void ScRemoveFromReadyQueue(PETHREAD Thread) {
     }
     if(Thread->Ready.Previous) {
         Thread->Ready.Previous->Next = Thread->Ready.Next;
+    }
+    if(Thread->Ready.Next) {
+        Thread->Ready.Next->Previous = Thread->Ready.Previous;
     }
 }

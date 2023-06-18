@@ -8,5 +8,6 @@ void KRNLAPI KDebugPrint(IN char* Message, ...) {
     vsprintf_s(__debug_fmt, 0x1000, Message, args);
     va_end(args);
     SerialLog(__debug_fmt);
+    // ConWrite("Kernel", __debug_fmt, 0xFFFFFF);
     ExReleaseSpinLock(&Lock, f);
 }
