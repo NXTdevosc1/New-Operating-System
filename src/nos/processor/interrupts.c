@@ -27,10 +27,19 @@ NSTATUS KRNLAPI ExInstallInterruptHandler(
 
     // Get Interrupt Information
     IM_INTERRUPT_INFORMATION InterruptInformation;
-    if(!gInterruptRoutingTable.GetInterruptInformation(IrqNumber, &InterruptInformation)) {
-        return STATUS_NOT_FOUND; // Cannot find information about the IRQ
+    if(!(Flags & IM_NO_OVERRIDE) && gInterruptRoutingTable.GetInterruptInformation(IrqNumber, &InterruptInformation)) {
+        IrqNumber = InterruptInformation.Fields.GlobalSystemInterrupt;
+    } else {
+        KDebugPrint("WARNING Failed to query interrupt information, using Flags to determine interrupt parameters");
+        if(Flags & IM_DELIVERY_EXTINT) {
+        InterruptInformation.Fields.DeliveryMode = 0b111;
+        } else InterruptInformation.Fields.DeliveryMode = (Flags & 0b110);
+
+        InterruptInformation.Fields.Polarity = Flags >> 3;
+        InterruptInformation.Fields.TriggerMode = Flags >> 4;
     }
-    IrqNumber = InterruptInformation.Fields.GlobalSystemInterrupt;
+
+    KDebugPrint("DELIVERY_MODE %d POLARITY %d TRIGGERMODE %d", InterruptInformation.Fields.DeliveryMode, InterruptInformation.Fields.Polarity, InterruptInformation.Fields.TriggerMode);
 
     // TODO : Acquire SpinLock
     UINT64 rflags = ExAcquireSpinLock(&Ints->Interrupts[IrqNumber].SpinLock);
@@ -54,6 +63,7 @@ NSTATUS KRNLAPI ExInstallInterruptHandler(
     }
     if(!_BitScanForward64(&IntIndx, ~Ints->Interrupts[IrqNumber].Present)) {
         ExReleaseSpinLock(&Ints->Interrupts[IrqNumber].SpinLock, rflags);
+        KDebugPrint("OS_INSTALL_INT No interrupt slots");
         return STATUS_NO_FREE_SLOTS;
     }
     _bittestandset64(&Ints->Interrupts[IrqNumber].Present, IntIndx);

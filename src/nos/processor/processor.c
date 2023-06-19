@@ -17,10 +17,10 @@ NSTATUS ProcessorEvt(PEPROCESS Process, UINT Event, HANDLE Handle, UINT64 Desire
 }
 
 RFPROCESSOR KRNLAPI KeRegisterProcessor(PROCESSOR_IDENTIFICATION_DATA* Ident) {
-    if(KeGetProcessorById(Ident->ProcessorId)) {
-        KDebugPrint("KeRegisterProcessor: ERR0");
-        while(1);
-    }
+    // if(KeGetProcessorById(Ident->ProcessorId)) {
+    //     KDebugPrint("KeRegisterProcessor: ERR0");
+    //     while(1);
+    // }
     POBJECT Object;
     RFPROCESSOR Processor;
     if(NERROR(ObCreateObject(
@@ -61,6 +61,7 @@ RFPROCESSOR KRNLAPI KeRegisterProcessor(PROCESSOR_IDENTIFICATION_DATA* Ident) {
 
 RFPROCESSOR KRNLAPI KeGetCurrentProcessor() {
     // System still is not using the LAPIC
+    if(!BootProcessor) return NULL;
     if(!BootProcessor->ProcessorEnabled) return BootProcessor;
     
     
@@ -72,6 +73,18 @@ UINT64 KRNLAPI KeGetCurrentProcessorId() {
 }
 
 RFPROCESSOR KRNLAPI KeGetProcessorById(UINT64 ProcessorId) {
-    if(ProcessorId >= NumProcessors) return NULL;
-    return ((PROCESSOR_INTERNAL_DATA*)(InternalProcessorArray + ProcessorId))->Processor;
+    PROCESSOR_INTERNAL_DATA* data = ((PROCESSOR_INTERNAL_DATA*)(InternalProcessorArray + ProcessorId));
+    UINT64 f;
+    if(!KeCheckMemoryAccess(NULL, data, 0x1000, NULL)) return NULL;
+    return data->Processor;
+}
+
+RFPROCESSOR KeGetProcessorByIndex(UINT64 Index) {
+    UINT64 _ev = 0;
+    POBJECT Obj;
+    while((_ev = ObEnumerateObjects(NULL, OBJECT_PROCESSOR, &Obj, NULL, _ev)) != 0) {
+        if(!Index) return Obj->Address;
+        Index--;
+    }
+    return NULL;
 }

@@ -123,7 +123,7 @@ UINT64 KRNLAPI ObEnumerateObjects(
             // This uses a continuous chain
             *_OutObject = ObGetRawObjectByType(ObjectType, (UINT64)_EnumVal);
             ((UINT64)_EnumVal)++;
-            if(!(*_OutObject)) _EnumVal = (UINT64)-1;
+            if(!(*_OutObject)) _EnumVal = 0;
         }
     }
     return _EnumVal;

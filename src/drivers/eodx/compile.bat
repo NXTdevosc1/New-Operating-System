@@ -1,0 +1,1 @@
+cl /O2 *.c /I../../../lib/eodx/inc /I../../../inc /Fo:obj 

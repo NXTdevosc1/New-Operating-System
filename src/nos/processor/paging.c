@@ -69,7 +69,7 @@ NSTATUS KRNLAPI HwMapVirtualMemory(
     {
         RFPTENTRY __m = (RFPTENTRY)&ModelEntry;
         if(PageFlags & PAGE_WRITE_ACCESS) __m->ReadWrite = 1;
-        if(!(PageFlags & PAGE_EXECUTE)) __m->ExecuteDisable = 1;
+        // if(!(PageFlags & PAGE_EXECUTE)) __m->ExecuteDisable = 1;
         if(PageFlags & PAGE_GLOBAL) __m->Global = 1;
         if(PageFlags & PAGE_USER) __m->UserSupervisor = 1;
 

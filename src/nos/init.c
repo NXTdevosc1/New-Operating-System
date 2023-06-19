@@ -113,7 +113,7 @@ void NOSENTRY NosSystemInit() {
         // Check if the driver can start in the preboot phase
         if(Driver->Flags & DRIVER_PREBOOT_LAUNCH) {
             SerialLog("Preboot Launch");
-            
+            KDebugPrint("Running driver %x EntryPoint %x", i, EntryPoint);
             Status = EntryPoint(NULL);
             SerialLog("RETURN_STATUS :");
             _ui64toa(Status, bf, 0x10);
@@ -163,13 +163,12 @@ void NOSENTRY NosSystemInit() {
     // Start using APIC ID to get a processor
     BootProcessor->ProcessorEnabled = TRUE;
     
-
-    for(UINT64 i = 0;i<NumProcessors;i++) {
-        RFPROCESSOR Processor = KeGetProcessorById(i);
-        if(!Processor) {
-            KDebugPrint("KRNL_STARTUP ERR10");
-            while(1) __halt();
-        }
+    UINT64 _ev = 0;
+    POBJECT Out;
+    while((_ev = ObEnumerateObjects(NULL, OBJECT_PROCESSOR, &Out, NULL, _ev)) != 0) {
+        KDebugPrint("Object %x", Out);
+        RFPROCESSOR Processor = Out->Address;
+        KDebugPrint("Processor %x", Processor);
         KDebugPrint("Processor#%d Characteristics : %x", Processor->Id.ProcessorId, Processor->Id.Characteristics);
 
         // Init the processor
@@ -177,6 +176,7 @@ void NOSENTRY NosSystemInit() {
             HwBootProcessor(Processor);
         }
     }
+
     // for(;;);
     // KeEnableScheduler();
     // for(;;) __halt();
@@ -188,19 +188,23 @@ void NOSENTRY NosSystemInit() {
     for(;;) {
         // for(UINT32 i = 0;i<0xff;i++) {
             UINT32 i = 0xFF;
-            _Memset128U_32((UINT32*)NosInitData->FrameBuffer.BaseAddress + 0x3000, i, (NosInitData->FrameBuffer.Pitch * NosInitData->FrameBuffer.VerticalResolution) / 0x20);
+            _Memset128A_32((UINT32*)NosInitData->FrameBuffer.BaseAddress + 0x3000, i, (NosInitData->FrameBuffer.Pitch * NosInitData->FrameBuffer.VerticalResolution) / 0x20);
         // }
         // Stall(1000000);
         // for(UINT32 i = 0;i<0xff;i++) {
-            _Memset128U_32((UINT32*)NosInitData->FrameBuffer.BaseAddress + 0x3000, i << 8, (NosInitData->FrameBuffer.Pitch * NosInitData->FrameBuffer.VerticalResolution) / 0x20);
+            _Memset128A_32((UINT32*)NosInitData->FrameBuffer.BaseAddress + 0x3000, i << 8, (NosInitData->FrameBuffer.Pitch * NosInitData->FrameBuffer.VerticalResolution) / 0x20);
         // }
         // Stall(1000000);
 
         // for(UINT32 i = 0;i<0xff;i++) {
-            _Memset128U_32((UINT32*)NosInitData->FrameBuffer.BaseAddress + 0x3000, i << 16, (NosInitData->FrameBuffer.Pitch * NosInitData->FrameBuffer.VerticalResolution) / 0x20);
+            _Memset128A_32((UINT32*)NosInitData->FrameBuffer.BaseAddress + 0x3000, i << 16, (NosInitData->FrameBuffer.Pitch * NosInitData->FrameBuffer.VerticalResolution) / 0x20);
         // }
         // Stall(1000000);
 
     }
     for(;;) __halt();
+}
+
+void KRNLAPI __KiClearScreen(UINT Color) {
+    _Memset128A_32((UINT32*)NosInitData->FrameBuffer.BaseAddress, Color, (NosInitData->FrameBuffer.Pitch * NosInitData->FrameBuffer.VerticalResolution) / 0x20);
 }

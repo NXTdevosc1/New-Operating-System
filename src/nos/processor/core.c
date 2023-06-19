@@ -120,6 +120,11 @@ void CpuDisableApicTimer() {
 }
 
 void HwSendIpi(UINT8 InterruptNumber, UINT64 ProcessorId, UINT8 InterruptType, UINT8 DestinationType) {
+    if(!LocalApicAddress) {
+        KDebugPrint("WARNING: HwSendIpi Called while not ready");
+        return;
+    }
+
     UINT64 IcrLow = (ApicRead(APIC_ICR) & 0xfff00000) | InterruptNumber;
     if(InterruptType == IPI_SYSTEM_MANAGEMENT) {
         IcrLow |= APIC_ICR_DEST_SMI;

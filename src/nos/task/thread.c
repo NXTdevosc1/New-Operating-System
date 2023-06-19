@@ -45,7 +45,7 @@ NSTATUS KRNLAPI KeCreateThread(
 
     // TODO : Select processor based on load balance
     
-    Thread->Processor = KeGetProcessorById(LastCreateProcessorId);
+    Thread->Processor = KeGetProcessorByIndex(LastCreateProcessorId);
     LastCreateProcessorId++;
     if(LastCreateProcessorId == NumProcessors) LastCreateProcessorId = 0;
 
