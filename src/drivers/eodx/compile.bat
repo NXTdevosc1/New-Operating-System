@@ -1,1 +1,2 @@
-cl /O2 *.c /I../../../lib/eodx/inc /I../../../inc /Fo:obj 
+cl /O2 "../../../lib/noskx64.lib" *.c /I../../../lib/eodx/inc /I../../../inc /Fo:obj/ /Fe:eodx.sys /link /FIXED:no /DYNAMICBASE /MACHINE:x64 /SUBSYSTEM:native /ENTRY:DriverEntry
+copy eodx.sys "..\..\..\diskimg\NewOS\System"

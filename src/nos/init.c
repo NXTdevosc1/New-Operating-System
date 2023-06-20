@@ -56,6 +56,9 @@ UINT32 errcolors[] = {
     0xFFFF00  
 };
 
+NSTATUS DrvEvt(PEPROCESS Process, UINT Event, HANDLE Handle, UINT64 Access) {
+    return STATUS_SUCCESS;
+}
     
 void NOSENTRY NosSystemInit() {
     SerialLog("NOS_KERNEL : Kernel Booting...");
@@ -76,11 +79,11 @@ void NOSENTRY NosSystemInit() {
     DrawRect(0, 0, 100, 100, 0x43829F0);
 
     // ConClear();
+    KDebugPrint("Running PRE BOOT LAUNCH Drivers");
 
     for(int i=0;i<NosInitData->BootHeader->NumDrivers;i++) {
-        SerialLog("drv:");
         NOS_BOOT_DRIVER* Driver = NosInitData->BootHeader->Drivers + i;
-        SerialLog(Driver->DriverPath);
+        KDebugPrint("Driver %s", Driver->DriverPath);
         // Enabled flag discarded as it is already checked by bootloader
         if(!(Driver->Flags & DRIVER_LOADED)) {
             SerialLog("not loaded");
@@ -90,7 +93,7 @@ void NOSENTRY NosSystemInit() {
         // Load the driver into memory
         Driver->Flags &= ~DRIVER_LOADED;
 
-        NSTATUS (__cdecl* EntryPoint)(void* Driver);
+        NSTATUS (__cdecl* EntryPoint)(PDRIVER Driver) = NULL;
 
         NSTATUS Status = KeLoadImage(
             Driver->ImageBuffer,
@@ -98,23 +101,42 @@ void NOSENTRY NosSystemInit() {
             KERNEL_MODE,
             (void**)&EntryPoint // Drivers reside on system process
         );
-
-    memset(NosInitData->FrameBuffer.BaseAddress, 0x20, 0x28000);
-    // while(1) __halt();
-
-
         _ui64toa(Status, bf, 0x10);
         SerialLog(bf);
 
         if(NERROR(Status)) continue;
-        
         Driver->Flags |= DRIVER_LOADED;
+
+// Constructing driver object
+        POBJECT ObjectHeader;
+
+        if(NERROR(ObCreateObject(
+            NULL, &ObjectHeader, OBJECT_PERMANENT, OBJECT_DRIVER, Driver->DriverPath, sizeof(DRIVER), DrvEvt
+        ))) {
+            KDebugPrint("Failed to create driver object.");
+            while(1) __halt();
+        }
+        PDRIVER DriverObject = ObjectHeader->Address;
+        DriverObject->ImageFile = Driver->ImageBuffer;
+        Driver->ImageBuffer = (void*)DriverObject; // The ib is now the object itself
+
+        DriverObject->DriverId = ObjectHeader->ObjectId;
+        DriverObject->ObjectHeader = ObjectHeader;
+        DriverObject->EntryPoint = EntryPoint;
+
+        if(NERROR(ObOpenHandle(ObjectHeader, KernelProcess, HANDLE_ALL_ACCESS, &DriverObject->DriverHandle))) {
+            KDebugPrint("Failed to open driver handle.");
+            while(1) __halt();
+        }
+
+        DriverObject->SystemProcess = KernelProcess;
+
 
         // Check if the driver can start in the preboot phase
         if(Driver->Flags & DRIVER_PREBOOT_LAUNCH) {
             SerialLog("Preboot Launch");
-            KDebugPrint("Running driver %x EntryPoint %x", i, EntryPoint);
-            Status = EntryPoint(NULL);
+            KDebugPrint("Running driver %x EntryPoint %x", DriverObject->DriverId, EntryPoint);
+            Status = EntryPoint(DriverObject);
             SerialLog("RETURN_STATUS :");
             _ui64toa(Status, bf, 0x10);
             SerialLog(bf);
@@ -131,6 +153,27 @@ void NOSENTRY NosSystemInit() {
 
     }
 
+    // Now Run AUTO BOOT LAUNCH Drivers
+    KDebugPrint("Running AUTO BOOT LAUNCH Drivers");
+    for(int i=0;i<NosInitData->BootHeader->NumDrivers;i++) {
+        NOS_BOOT_DRIVER* Driver = NosInitData->BootHeader->Drivers + i;
+        // Enabled flag discarded as it is already checked by bootloader
+        if(!(Driver->Flags & DRIVER_LOADED)) {
+            continue;
+        }
+        PDRIVER DriverObject = (PDRIVER)Driver->ImageBuffer;
+        if(Driver->Flags & DRIVER_BOOT_LAUNCH) {
+            KDebugPrint("BOOT_LAUNCH Driver");
+            KDebugPrint("Running Driver#%d EntryPoint %x", DriverObject->DriverId, DriverObject->EntryPoint);
+            NSTATUS Status = DriverObject->EntryPoint(DriverObject);
+            KDebugPrint("Return status : %d", Status);
+            if(NERROR(Status)) {
+                _disable();
+                KDebugPrint("Driver startup failed");
+                while(1) __halt();
+            }
+        }
+    }
 
 
     SerialLog("drvend");

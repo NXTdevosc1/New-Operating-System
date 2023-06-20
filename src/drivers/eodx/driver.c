@@ -1,7 +1,7 @@
 #include <ddk.h>
 #include <eodx.h>
 
-NSTATUS DriverEntry(void* Driver) {
-    KDebugPrint("EODX Driver Startup.");
+NSTATUS NOSAPI DriverEntry(PDRIVER Driver) {
+    KDebugPrint("EODX Driver Startup. DriverID %u", Driver->DriverId);
     return STATUS_SUCCESS;
 }

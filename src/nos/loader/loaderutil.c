@@ -49,6 +49,7 @@ NSTATUS LoaderImportLibrary(
 		SerialLog(DllName);
 		while(1);
 	} // Otherwise link the kernel without changing variables
+	KDebugPrint("Linking NOSKX64.EXE System");
 	
 	if(!ImageHeader->OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_EXPORT].Size) {
 		SerialLog("NO EXPORT TABLE");

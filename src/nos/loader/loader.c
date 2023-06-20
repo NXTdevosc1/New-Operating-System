@@ -90,7 +90,7 @@ NSTATUS KRNLAPI KeLoadImage(
         PIMAGE_IMPORT_DIRECTORY ImportDir = (PIMAGE_IMPORT_DIRECTORY)((char*)VaBuffer + Header->OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_IMPORT].VirtualAddress);
         for(;ImportDir->NameRva;ImportDir++) {
             char* DllName = (char*)VaBuffer + ImportDir->NameRva;
-            SerialLog(DllName);
+            KDebugPrint("Importing dll %s", DllName);
             LoaderImportLibrary(Header, ImportDir, VaBuffer, DllName);
         }
         
