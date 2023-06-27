@@ -4,7 +4,7 @@
 
 
 
-NSTATUS KRNLAPI RcSend(HANDLE Port, UINT Flags, void* Data, UINT64 SizeOfData, BOOLEAN* Completed) {
+NSTATUS KRNLAPI RcSend(HANDLE Port, UINT Flags, void* Data, UINT64 SizeOfData) {
     
 }
 BOOLEAN KRNLAPI RcReceive(HANDLE Port, PRCHEADER RcHeader);

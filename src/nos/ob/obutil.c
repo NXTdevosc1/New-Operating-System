@@ -52,6 +52,8 @@ void ObInitialize() {
     KDebugPrint("Object Manager : Allocate Table : %u Bytes, Object Array : %u Bytes , Handle Array : %u Bytes", _ObAllocationTableSize, _ObObjectArraySize, _ObHandleArraySize);
 
     // Initialize Standard Object Types
+    ObRegisterObjectType(OBJECT_HANDLE, "Handles", NOS_MAJOR_VERSION, NOS_MINOR_VERSION);
+
     ObRegisterObjectType(OBJECT_PROCESSOR, "Processors", NOS_MAJOR_VERSION, NOS_MINOR_VERSION);
 
     ObRegisterObjectType(OBJECT_PROCESS, "Processes", NOS_MAJOR_VERSION, NOS_MINOR_VERSION);

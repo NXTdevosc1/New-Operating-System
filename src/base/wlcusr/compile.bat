@@ -1,0 +1,1 @@
+cl "../../../lib/osusr.lib" /I../../../inc /O2 *.c /Fo:obj/ /Fe:wlcusr.exe /link /DYNAMICBASE /MACHINE:x64 /SUBSYSTEM:WINDOWS /ENTRY:main

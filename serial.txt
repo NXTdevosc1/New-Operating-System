@@ -6,7 +6,7 @@ Test Str : test123
 Num partition handles : 195
 Data partition found.
 Boot partition and boot drive selected successfully.
-Kernel File Size : 394240
+Kernel File Size : 394752
 Test2 : test123
 System Heap:
 7CE00000
@@ -14,9 +14,9 @@ OPT_HDR_SIZE : 240 FALIGN : 512
 Allocating System Pages : 000000007CE00000
 Image Physical Base : 000000007CE00000 , Image Base : 0000000000000000, Entry point : 0000000000001000
 Copying section .tex VADDR : 0000000000001000 PTR : 0000000000000400, SZ : 0000000000015A00
-Copying section .rda VADDR : 0000000000017000 PTR : 0000000000015E00, SZ : 0000000000002200
-Copying section .dat VADDR : 000000000001A000 PTR : 0000000000018000, SZ : 000000000008C088
-Copying section .pda VADDR : 00000000000A7000 PTR : 000000000005FE00, SZ : 0000000000000600
+Copying section .rda VADDR : 0000000000017000 PTR : 0000000000015E00, SZ : 0000000000002400
+Copying section .dat VADDR : 000000000001A000 PTR : 0000000000018200, SZ : 000000000008C088
+Copying section .pda VADDR : 00000000000A7000 PTR : 0000000000060000, SZ : 0000000000000600
 RELOC 0000000000000000  SZ 0000000000000000
 Loading DLL :
 syscruntime.dll
@@ -35,12 +35,15 @@ Test : test123
 Dll Name : sysc
 Searching Symbol : _ui64toa
 Symbol Found, base : 00000000000A91F0, IAT_TARGET : 000000007CE17000, RVA : 00000000000011F0
+Searching Symbol : memcpy
+Symbol Found, base : 00000000000A93D0, IAT_TARGET : 000000007CE17008, RVA : 00000000000013D0
 Searching Symbol : sprintf_s
-Symbol Found, base : 00000000000A9460, IAT_TARGET : 000000007CE17008, RVA : 0000000000001460
+Symbol Found, base : 00000000000A9460, IAT_TARGET : 000000007CE17010, RVA : 0000000000001460
 Searching Symbol : memcmp
-Symbol Found, base : 00000000000A93A0, IAT_TARGET : 000000007CE17010, RVA : 00000000000013A0
+Symbol Found, base : 00000000000A93A0, IAT_TARGET : 000000007CE17018, RVA : 00000000000013A0
 Searching Symbol : vsprintf_s
-Symbol Found, base : 00000000000A9480, IAT_TARGET : 000000007CE17018, RVA : 0000000000001480
+Symbol Found, base : 00000000000A9480, IAT_TARGET : 000000007CE17020, RVA : 0000000000001480
+ loaded
  loaded
  loaded
 Memory Count:
@@ -54,7 +57,7 @@ FFFF800000001000
 8000000A5000BC48
 Boot Processor : Boot Processor : COM1 Initialized Successfully
 NOS_KERNEL : Kernel Booting...
-Boot Processor : Kernel boot memory : Used 32124928 bytes , free : -
+Boot Processor : Kernel boot memory : Used 32133120 bytes , free : -
 Boot Processor : Object Manager : Init
 Boot Processor : Object Manager : Init  2000 780000 300000
 Boot Processor : Object Manager : Allocate Table : 8192 Bytes, Object Array : 7864320 Bytes , Handle Array : 3145728 Bytes
@@ -63,7 +66,7 @@ Processor#0 : GDT and TSS Loaded successfully
 Processor#0 : create thread 0
 Processor#0 : New Operating System
 Processor#0 : drivers
-Processor#0 : 2
+Processor#0 : 3
 Processor#0 : Running PRE BOOT LAUNCH Drivers
 Processor#0 : Driver NewOS\System\acpi.sys
 Processor#0 : loaded
@@ -202,7 +205,7 @@ Processor#0 : Current processor #0 INTERNAL_DATA FFFFFFD000000000
 Processor#0 : Registered System INT#221 for CPU#0
 Processor#0 : create thread 1
 Processor#0 : Enabling the apic timer, interrupt number : 221
-Processor#0 : APIC Timer frequency : 1005045760 HZ
+Processor#0 : APIC Timer frequency : 1004611840 HZ
 Processor#0 : Tables:
 Processor#0 : SN : FACP Length : 244
 Processor#0 : SN : DSDT Length : 8650
@@ -266,60 +269,35 @@ Processor#0 : Running driver 1 EntryPoint FFFF80000174C000
 Processor#0 : EODX Driver Startup. DriverID 1
 Processor#0 : RETURN_STATUS :
 Processor#0 : 0
-Processor#0 : Running AUTO BOOT LAUNCH Drivers
-Processor#0 : drvend
-Processor#0 : INIT_AP_TRAMPOLINE at 0x1000, SymbolStart : FFFF800000008000
-Processor#0 : Object 100004000
-Processor#0 : Processor FFFF800001400020
-Processor#0 : Processor#0 Characteristics : 0
-Processor#0 : Object 1000041E0
-Processor#0 : Processor FFFF800001402C40
-Processor#0 : Processor#1 Characteristics : 1
-Processor#0 : Booting Processor#1 , SYSTEM: APIC
-Processor#0 : Object 100004258
-Processor#0 : Processor FFFF800001403E50
-Processor#0 : Processor#2 Characteristics : 1
-Processor#0 : Booting Processor#2 , SYSTEM: APIC
-Processor#1 : GDT and TSS Loaded successfully
-Processor#0 : Object 1000042D0
-Processor#0 : Processor FFFF800001405060
-Processor#0 : Processor#3 Characteristics : 1
-Processor#0 : Booting Processor#3 , SYSTEM: APIC
-Processor#1 : Registered System INT#222 for CPU#0
-Processor#2 : GDT and TSS Loaded successfully
-Processor#2 : Registered System INT#223 for CPU#0
-Processor#3 : GDT and TSS Loaded successfully
-Processor#1 : KERNEL Final Initialization Step called, Initializing the scheduling system...
-Processor#3 : Registered System INT#224 for CPU#0
-Processor#1 : Current processor #1 INTERNAL_DATA FFFFFFD000200000
-Processor#1 : Registered System INT#220 for CPU#1
-Processor#3 : KERNEL Final Initialization Step called, Initializing the scheduling system...
-Processor#1 : create thread 1
-Processor#2 : KERNEL Final Initialization Step called, Initializing the scheduling system...
-Processor#2 : Current processor #2 INTERNAL_DATA FFFFFFD000400000
-Processor#2 : Registered System INT#220 for CPU#2
-Processor#2 : create thread 1
-Processor#2 : Enabling the apic timer, interrupt number : 220
-Processor#1 : Enabling the apic timer, interrupt number : 220
-Processor#3 : Current processor #3 INTERNAL_DATA FFFFFFD000600000
-Processor#3 : Registered System INT#220 for CPU#3
-Processor#3 : create thread 1
-Processor#0 : create thread 0
-Processor#3 : Enabling the apic timer, interrupt number : 220
-Processor#0 : create thread 0
-Processor#2 : APIC Timer frequency : 1000289920 HZ
-Processor#1 : APIC Timer frequency : 1004867840 HZ
-Processor#1 : Processor#1 enabled.
-Processor#2 : Processor#2 enabled.
-Processor#3 : APIC Timer frequency : 1000197760 HZ
-Processor#3 : Processor#3 enabled.
+Processor#0 : Driver NewOS\System\rtc.sys
+Processor#0 : loaded
+Processor#0 : Section:
+Processor#0 : .text
+Processor#0 : 1000
+Processor#0 : 400
+Processor#0 : 56
+Processor#0 : Section:
+Processor#0 : .rdata
+Processor#0 : 2000
+Processor#0 : 600
+Processor#0 : 228
+Processor#0 : Section:
+Processor#0 : .pdata
+Processor#0 : 3000
+Processor#0 : A00
+Processor#0 : C
+Processor#0 : ADDR_SPACE_SIZE :
+Processor#0 : 4000
+Processor#0 : Sections copied.
+Processor#0 : IMPORTING...
+Processor#0 : Importing dll noskx64.exe
+Processor#0 : Linking NOSKX64.EXE System
+Processor#0 : Importing dll acpisys.dll
+Processor#0 : HALT : IMPORT LIB
+Processor#0 : acpisys.dll
 Processor#0 : IRQ 2
 Processor#0 : Hpet Interrupt
 Processor#0 : EOI
-Processor#0 : NATIVE SUBSYSTEM ENTRY Process FFFF800001401230 Thread FFFF80000145CE90 NumThreads 3 ApicId 0
-Processor#0 : Entry Point FFFF8000000108C0 Context 0
-Processor#1 : NATIVE SUBSYSTEM ENTRY Process FFFF800001401230 Thread FFFF80000145DFE0 NumThreads 3 ApicId 1
-Processor#1 : Entry Point FFFF800000010940 Context 0
 Processor#0 : IRQ 2
 Processor#0 : Hpet Interrupt
 Processor#0 : EOI

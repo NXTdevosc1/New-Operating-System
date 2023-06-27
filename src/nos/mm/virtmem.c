@@ -89,3 +89,26 @@ BOOLEAN KRNLAPI MmFreeMemory(
     if(!PhysMem) return FALSE;
     return MmFreePhysicalMemory(PhysMem, NumPages);
 }
+
+NSTATUS KRNLAPI MmShareMemory(
+    IN PEPROCESS Source,
+    IN PEPROCESS Destination,
+    IN OUT void** VirtualAddress,
+    IN UINT64 NumPages,
+    IN UINT64 PageAttributes,
+    IN UINT CachePolicy
+) {
+    void* Vmem = KeFindAvailableAddressSpace(Destination, NumPages, NULL, NULL, PageAttributes);
+    if(!Vmem) {
+        return STATUS_OUT_OF_MEMORY;
+    }
+    void* PhysAddr = KeConvertPointer(Source, *VirtualAddress);
+    
+    if(NERROR(KeMapVirtualMemory(Destination, PhysAddr, Vmem, NumPages, PageAttributes, CachePolicy))) {
+        KDebugPrint("MmShareMem : ERR0");
+        while(1) __halt();
+    }
+    *VirtualAddress = Vmem;
+    ProcessReleaseControlLock(Destination, PROCESS_CONTROL_MANAGE_ADDRESS_SPACE);
+    return STATUS_SUCCESS;
+}

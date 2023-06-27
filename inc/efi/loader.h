@@ -103,7 +103,12 @@ typedef struct _NOS_BOOT_HEADER {
     NOS_BOOT_DRIVER Drivers[];
 } NOS_BOOT_HEADER;
 
-
+typedef struct _NOS_LIBRARY_FILE {
+    UINT64 FileSize;
+    UINT16* FileName;
+    UINT16* FilePath;
+    void* Buffer;
+} NOS_LIBRARY_FILE;
 
 typedef struct _NOS_INITDATA {
     // Nos Boot Header (imported from System/boot.nos)
@@ -131,6 +136,9 @@ typedef struct _NOS_INITDATA {
     // Processor init trampoline
     void* InitTrampoline; // 8 pages allocated (pages 0-245) are checked
 
+    // Libraries (Loads all the essential libraries at NewOS\System\Libraries)
+    UINT64 NumDlls;
+    NOS_LIBRARY_FILE* Dlls;
 } NOS_INITDATA;
 
 #ifndef NSYSAPI

@@ -4,7 +4,7 @@ global NosKernelEntry
 global NosInitData
 
 global memset
-global memcpy
+;global memcpy
 global __SystemLoadGDTAndTSS
 
 

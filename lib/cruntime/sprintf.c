@@ -1,7 +1,6 @@
 #define __CRT_SRC
 #include <crt.h>
 #include <stdarg.h>
-
 #define sprintf_ret {*buffer = 0; return 0;}
 #define sprintf_cpbuffer(_buff, _character) {*_buff = _character; _buff++;sizeOfBuffer--;if(!sizeOfBuffer) sprintf_ret;}
 
@@ -93,6 +92,8 @@ EXPORT int vsprintf_s(
     *buffer = 0;
     return 0;
 }
+
+
 
 EXPORT int sprintf_s(
    char *buffer,
