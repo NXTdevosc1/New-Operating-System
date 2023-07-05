@@ -6,6 +6,7 @@ NSTATUS KRNLAPI ObOpenHandle(
     IN UINT64 Access,
     IN HANDLE* Handle
 ) {
+    if(!Process) Process = KernelProcess;
     return ObiCreateHandle(Object, Process, Access, Handle);
 }
 
@@ -68,7 +69,8 @@ NSTATUS KRNLAPI ObOpenHandleByAddress(
     return ObOpenHandle(Obj, Process, Access, Handle);
 }
 
-BOOLEAN ObCloseHandle(PEPROCESS Process, HANDLE Handle) {
+BOOLEAN KRNLAPI ObCloseHandle(PEPROCESS Process, HANDLE Handle) {
+    if(!Process) Process = KernelProcess;
     if(!ObCheckHandle(Handle) || ObiReferenceByHandle(Handle)->Process != Process) {
         return FALSE;
     }
@@ -101,20 +103,21 @@ BOOLEAN ObCloseHandle(PEPROCESS Process, HANDLE Handle) {
     return TRUE;
 }
 
-BOOLEAN ObCheckHandle(HANDLE _Handle) {
+BOOLEAN KRNLAPI ObCheckHandle(HANDLE _Handle) {
     UINT64 Handle = (UINT64)_Handle;
     if(Handle >= _ObMaxHandles) return FALSE;
 
     return TRUE;
 }
 
-void* ObGetObjectByHandle(HANDLE _Handle) {
+PVOID KRNLAPI ObGetObjectByHandle(HANDLE _Handle, POBJECT* Object, OBTYPE ObjectType) {
     if(!ObCheckHandle(_Handle)) return NULL;
-    return _ObHandleArray[(UINT64)_Handle].Object->Address;
+    *Object = _ObHandleArray[(UINT64)_Handle].Object;
+    if((*Object)->ObjectType != ObjectType) return NULL;
+    return (*Object)->Address;
 }
 
-
-BOOLEAN ObLockHandle(HANDLE _Handle) {
+BOOLEAN KRNLAPI ObLockHandle(HANDLE _Handle) {
     if(!ObCheckHandle(_Handle)) return FALSE;
     POBJECT_REFERENCE Ref = ObiReferenceByHandle(_Handle);
 
@@ -128,7 +131,7 @@ BOOLEAN ObLockHandle(HANDLE _Handle) {
     return TRUE;
 }
 
-BOOLEAN ObUnlockHandle(HANDLE _Handle) {
+BOOLEAN KRNLAPI ObUnlockHandle(HANDLE _Handle) {
     if(!ObCheckHandle(_Handle)) return FALSE;
     POBJECT_REFERENCE Ref = ObiReferenceByHandle(_Handle);
     _interlockedbittestandreset64(&Ref->Mutex, 0);

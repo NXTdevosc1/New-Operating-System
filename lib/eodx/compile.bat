@@ -4,5 +4,5 @@ cl /MT /O2 src/*.c src/kernel/*.c /Iinc /I../../inc /LD /Fe:eodxsys.dll /Fo:obj/
 copy eodx.lib ..\
 copy eodxsys.lib ..\
 
-copy eodx.dll ..\..\diskimg\NewOS\System
-copy eodxsys.dll ..\..\diskimg\NewOS\System
+copy eodx.dll ..\..\diskimg\NewOS\System\Libraries
+copy eodxsys.dll ..\..\diskimg\NewOS\System\Libraries

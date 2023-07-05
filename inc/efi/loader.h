@@ -105,9 +105,9 @@ typedef struct _NOS_BOOT_HEADER {
 
 typedef struct _NOS_LIBRARY_FILE {
     UINT64 FileSize;
-    UINT16* FileName;
-    UINT16* FilePath;
-    void* Buffer;
+    UINT16 FileName[0x100];
+    struct _NOS_LIBRARY_FILE* Next;
+    char Buffer[];
 } NOS_LIBRARY_FILE;
 
 typedef struct _NOS_INITDATA {

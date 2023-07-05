@@ -6,21 +6,26 @@ Test Str : test123
 Num partition handles : 195
 Data partition found.
 Boot partition and boot drive selected successfully.
-Kernel File Size : 394752
+Attr : 0000000000000020 Name : eodxsys.dll Size : 1536 NL : 11 .dll
+Attr : 0000000000000020 Name : eodx.dll Size : 1536 NL : 8 .dll
+Attr : 0000000000000020 Name : syscruntime.dll Size : 4608 NL : 15 .dll
+Attr : 0000000000000020 Name : osusr.dll Size : 105472 NL : 9 .dll
+Attr : 0000000000000020 Name : acpisys.dll Size : 3584 NL : 11 .dll
+Attr : 0000000000000020 Name : cruntime.dll Size : 4608 NL : 12 .dll
+Kernel File Size : 395776
 Test2 : test123
 System Heap:
 7CE00000
 OPT_HDR_SIZE : 240 FALIGN : 512
 Allocating System Pages : 000000007CE00000
 Image Physical Base : 000000007CE00000 , Image Base : 0000000000000000, Entry point : 0000000000001000
-Copying section .tex VADDR : 0000000000001000 PTR : 0000000000000400, SZ : 0000000000015A00
-Copying section .rda VADDR : 0000000000017000 PTR : 0000000000015E00, SZ : 0000000000002400
-Copying section .dat VADDR : 000000000001A000 PTR : 0000000000018200, SZ : 000000000008C088
-Copying section .pda VADDR : 00000000000A7000 PTR : 0000000000060000, SZ : 0000000000000600
+Copying section .tex VADDR : 0000000000001000 PTR : 0000000000000400, SZ : 0000000000015E00
+Copying section .rda VADDR : 0000000000017000 PTR : 0000000000016200, SZ : 0000000000002400
+Copying section .dat VADDR : 000000000001A000 PTR : 0000000000018600, SZ : 000000000008C088
+Copying section .pda VADDR : 00000000000A7000 PTR : 0000000000060400, SZ : 0000000000000600
 RELOC 0000000000000000  SZ 0000000000000000
 Loading DLL :
 syscruntime.dll
-File Size : 4608 bytes
 OPT_HDR_SIZE : 240 FALIGN : 512
 Allocating System Pages : 000000007CEA8000
 Image Physical Base : 000000007CEA8000 , Image Base : 00000000000A8000, Entry point : 0000000000000000
@@ -47,7 +52,7 @@ Symbol Found, base : 00000000000A9480, IAT_TARGET : 000000007CE17020, RVA : 0000
  loaded
  loaded
 Memory Count:
-106
+105
 Mapping System Pages :
 7CE00000
 FFFF800000000000
@@ -57,7 +62,7 @@ FFFF800000001000
 8000000A5000BC48
 Boot Processor : Boot Processor : COM1 Initialized Successfully
 NOS_KERNEL : Kernel Booting...
-Boot Processor : Kernel boot memory : Used 32133120 bytes , free : -
+Boot Processor : Kernel boot memory : Used 32272384 bytes , free : -
 Boot Processor : Object Manager : Init
 Boot Processor : Object Manager : Init  2000 780000 300000
 Boot Processor : Object Manager : Allocate Table : 8192 Bytes, Object Array : 7864320 Bytes , Handle Array : 3145728 Bytes
@@ -74,12 +79,12 @@ Processor#0 : Section:
 Processor#0 : .text
 Processor#0 : 1000
 Processor#0 : 400
-Processor#0 : 4F096
+Processor#0 : 4F176
 Processor#0 : Section:
 Processor#0 : .rdata
 Processor#0 : 51000
 Processor#0 : 4F600
-Processor#0 : 23006
+Processor#0 : 2309E
 Processor#0 : Section:
 Processor#0 : .data
 Processor#0 : 75000
@@ -89,12 +94,12 @@ Processor#0 : Section:
 Processor#0 : .pdata
 Processor#0 : 7B000
 Processor#0 : 74000
-Processor#0 : 4CEC
+Processor#0 : 4D04
 Processor#0 : Section:
 Processor#0 : .reloc
 Processor#0 : 80000
 Processor#0 : 78E00
-Processor#0 : F50
+Processor#0 : F54
 Processor#0 : ADDR_SPACE_SIZE :
 Processor#0 : 81000
 Processor#0 : Sections copied.
@@ -104,54 +109,54 @@ Processor#0 : Importing dll noskx64.exe
 Processor#0 : Linking NOSKX64.EXE System
 Processor#0 : 0
 Processor#0 : Preboot Launch
-Processor#0 : Running driver 0 EntryPoint FFFF800001671BB0
+Processor#0 : Running driver 0 EntryPoint FFFF800001671C30
 Processor#0 : Driver Startup.
 Processor#0 : __AcpiInitTables__
 Processor#0 : ACPI: 
-Processor#0 : RSDP 0xFFFF8000000A3DA80 FFFF8000000172A6 (v2142756884 Hãú$†)
+Processor#0 : RSDP 0xFFFF8000000A3D880 FFFF80000006202A (v2142756884 Hãú$†)
 Processor#0 : 
 
 Processor#0 : ACPI: 
-Processor#0 :  0x0FFFF8000000172A6 7FB7D0E8 (v23628806 %-4.4s 0x%8.8X%8.8X %06X (v%.2d %-6.6s %-8.8s %08X %-4.4s %08X) XSDTT 0 XSDTT 54)
+Processor#0 : ‡=
+ 0x0FFFF80000006202A 7FB7D0E8 (v23629030 %-4.4s 0x%8.8X%8.8X %06X (v%.2d %-6.6s %-8.8s %08X %-4.4s %08X) XSDTT 0 XSDTT 54)
 Processor#0 : 
 
 Processor#0 : ACPI: 
-Processor#0 : `=
- 0x0FFFF8000000172A6 7FB79000 (v23628806 %-4.4s 0x%8.8X%8.8X %06X (v%.2d %-6.6s %-8.8s %08X %-4.4s %08X) FACPÙ 0 FACPÙ FFFF8000000000F4)
+Processor#0 : @=
+ 0x0FFFF80000006202A 7FB79000 (v23629030 %-4.4s 0x%8.8X%8.8X %06X (v%.2d %-6.6s %-8.8s %08X %-4.4s %08X) FACPÙ 0 FACPÙ FFFF8000000000F4)
 Processor#0 : 
 
 Processor#0 : ACPI: 
-Processor#0 :  =
- 0x0FFFF8000000172A6 7FB7A000 (v23628806 %-4.4s 0x%8.8X%8.8X %06X (v%.2d %-6.6s %-8.8s %08X %-4.4s %08X) DSDT ! 0 DSDT ! FFFF8000000021CA)
+Processor#0 :  0x0FFFF80000006202A 7FB7A000 (v23629030 %-4.4s 0x%8.8X%8.8X %06X (v%.2d %-6.6s %-8.8s %08X %-4.4s %08X) DSDT ! 0 DSDT ! FFFF8000000021CA)
 Processor#0 : 
 
 Processor#0 : ACPI: 
-Processor#0 :  0x0FFFF8000000172A6 21CA
+Processor#0 :  0x0FFFF80000006202A 21CA
 Processor#0 : 
 
 Processor#0 : ACPI: 
-Processor#0 : `=
- 0x0FFFF8000000172A6 7FB78000 (v23628806 %-4.4s 0x%8.8X%8.8X %06X (v%.2d %-6.6s %-8.8s %08X %-4.4s %08X) APICê 0 APICê FFFF800000000090)
+Processor#0 : @=
+ 0x0FFFF80000006202A 7FB78000 (v23629030 %-4.4s 0x%8.8X%8.8X %06X (v%.2d %-6.6s %-8.8s %08X %-4.4s %08X) APICê 0 APICê FFFF800000000090)
 Processor#0 : 
 
 Processor#0 : ACPI: 
-Processor#0 : `=
- 0x0FFFF8000000172A6 7FB77000 (v23628806 %-4.4s 0x%8.8X%8.8X %06X (v%.2d %-6.6s %-8.8s %08X %-4.4s %08X) HPET8 0 HPET8 38)
+Processor#0 : @=
+ 0x0FFFF80000006202A 7FB77000 (v23629030 %-4.4s 0x%8.8X%8.8X %06X (v%.2d %-6.6s %-8.8s %08X %-4.4s %08X) HPET8 0 HPET8 38)
 Processor#0 : 
 
 Processor#0 : ACPI: 
-Processor#0 : `=
- 0x0FFFF8000000172A6 7FB76000 (v23628806 %-4.4s 0x%8.8X%8.8X %06X (v%.2d %-6.6s %-8.8s %08X %-4.4s %08X) MCFG< 0 MCFG< FFFF80000000003C)
+Processor#0 : @=
+ 0x0FFFF80000006202A 7FB76000 (v23629030 %-4.4s 0x%8.8X%8.8X %06X (v%.2d %-6.6s %-8.8s %08X %-4.4s %08X) MCFG< 0 MCFG< FFFF80000000003C)
 Processor#0 : 
 
 Processor#0 : ACPI: 
-Processor#0 : `=
- 0x0FFFF8000000172A6 7FB75000 (v23628806 %-4.4s 0x%8.8X%8.8X %06X (v%.2d %-6.6s %-8.8s %08X %-4.4s %08X) WAET( 0 WAET( FFFF800000000028)
+Processor#0 : @=
+ 0x0FFFF80000006202A 7FB75000 (v23629030 %-4.4s 0x%8.8X%8.8X %06X (v%.2d %-6.6s %-8.8s %08X %-4.4s %08X) WAET( 0 WAET( FFFF800000000028)
 Processor#0 : 
 
 Processor#0 : ACPI: 
-Processor#0 : `=
- 0x0FFFF8000000172A6 7FB74000 (v23628806 %-4.4s 0x%8.8X%8.8X %06X (v%.2d %-6.6s %-8.8s %08X %-4.4s %08X) BGRT8 0 BGRT8 FFFF800000000038)
+Processor#0 : @=
+ 0x0FFFF80000006202A 7FB74000 (v23629030 %-4.4s 0x%8.8X%8.8X %06X (v%.2d %-6.6s %-8.8s %08X %-4.4s %08X) BGRT8 0 BGRT8 FFFF800000000038)
 Processor#0 : 
 
 Processor#0 : APIC Found
@@ -178,26 +183,26 @@ Processor#0 : Hpet Frequency : 100000000 HZ
 Processor#0 : DELIVERY_MODE 0 POLARITY 0 TRIGGERMODE 0
 Processor#0 : IOApic SetInt (Router : 0)
 Processor#0 : __AcpiLoadTables__
-Processor#0 : °l:  (Definition Block level)
+Processor#0 : †¢l:  (Definition Block level)
 
-Processor#0 : 0¢l:  (Definition Block level)
+Processor#0 : ‡¢l:  (Definition Block level)
 
 Processor#0 : 
 ACPI table initialization:
 
-Processor#0 : Table [: DsInitializeObjects] (id FFFF8000016CA288) - 1 Objects with 18446603336244862845 Devices, 0 Regions, 18446603336221196288 Methods (18446603340516163583/18446603336221196288/18446603336221196352 Serial/Non/Cvt)
+Processor#0 : Table [: DsInitializeObjects] (id FFFF8000016CA338) - 1 Objects with 18446603336244863069 Devices, 0 Regions, 18446603336221196288 Methods (18446603340516163583/18446603336221196288/18446603336221196352 Serial/Non/Cvt)
 
 Processor#0 : ACPI: 
-Processor#0 : 18446603336221867592 ACPI AML tables successfully acquired and loaded
+Processor#0 : 18446603336221867560 ACPI AML tables successfully acquired and loaded
 Processor#0 : 
 
 Processor#0 : Final data object initialization: 
-Processor#0 : Namespace contains 18446603336221867584 (0xFFFF8000016C5B80) objects
+Processor#0 : Namespace contains 18446603336221867552 (0xFFFF8000016C5C30) objects
 
 Processor#0 : Completing secondary ACPI Tables initialization
-Processor#0 : :  NsEvaluate (nseval)
+Processor#0 : ∞Ml:  NsEvaluate (nseval)
 
-Processor#0 : (Nl:  NsEvaluate
+Processor#0 : ÿNl:  NsEvaluate
 
 Processor#0 : Evaluate _PIC Status = 0
 Processor#0 : KERNEL Final Initialization Step called, Initializing the scheduling system...
@@ -205,7 +210,7 @@ Processor#0 : Current processor #0 INTERNAL_DATA FFFFFFD000000000
 Processor#0 : Registered System INT#221 for CPU#0
 Processor#0 : create thread 1
 Processor#0 : Enabling the apic timer, interrupt number : 221
-Processor#0 : APIC Timer frequency : 1004611840 HZ
+Processor#0 : APIC Timer frequency : 1004912000 HZ
 Processor#0 : Tables:
 Processor#0 : SN : FACP Length : 244
 Processor#0 : SN : DSDT Length : 8650
@@ -223,21 +228,22 @@ Processor#0 : System is already in ACPI mode
 
 Processor#0 : Initializing General Purpose Events (GPEs):
 
-Processor#0 :     Initialized GPE FFFF8000000A3DB0 to FFFF8000016C7A58 [evgpeblk] 9 regs on interrupt 0xFFFF80000168A3D3¿%@
+Processor#0 :     Initialized GPE FFFF8000000A3D90 to FFFF8000016C7B08 [evgpeblk] 9 regs on interrupt 0xFFFF80000168A4B3 &@
 
-Processor#0 : AcpiOsInstallInt#9 ISR FFFF80000168DE70 CTX FFFF800001459100
+Processor#0 : AcpiOsInstallInt#9 ISR FFFF80000168DF50 CTX FFFF800001459120
 Processor#0 : DELIVERY_MODE 0 POLARITY 0 TRIGGERMODE 1
 Processor#0 : IOApic SetInt (Override SRC : 9 GSI : 9)
 Processor#0 : IOApic SetInt (Router : 0)
 Processor#0 : __ACPI_INIT_OBJECTS__
 Processor#0 : Initializing Device/Processor/Thermal objects and executing _INI/_STA methods:
 
-Processor#0 : :  NsEvaluate (nseval)
+Processor#0 : ∞Ml:  NsEvaluate (nseval)
 
-Processor#0 : (Nl:  NsEvaluate
+Processor#0 : ÿNl:  NsEvaluate
 
-Processor#0 :     Executed 18446603336221867568 _INI methods requiring 18446603336245074840 _STA executions (examined 18446603336245074808 objects)
+Processor#0 :     Executed 18446603336221867536 _INI methods requiring 18446603336245075016 _STA executions (examined 18446603336245074984 objects)
 
+Processor#0 : Creating ACPI Device Object
 Processor#0 : RETURN_STATUS :
 Processor#0 : 0
 Processor#0 : Driver NewOS\System\eodx.sys
@@ -293,8 +299,424 @@ Processor#0 : IMPORTING...
 Processor#0 : Importing dll noskx64.exe
 Processor#0 : Linking NOSKX64.EXE System
 Processor#0 : Importing dll acpisys.dll
-Processor#0 : HALT : IMPORT LIB
-Processor#0 : acpisys.dll
+Processor#0 : Found boot DLL acpisys.dll
+Processor#0 : Section:
+Processor#0 : .text
+Processor#0 : 1000
+Processor#0 : 400
+Processor#0 : 175
+Processor#0 : Section:
+Processor#0 : .rdata
+Processor#0 : 2000
+Processor#0 : 600
+Processor#0 : 3D4
+Processor#0 : Section:
+Processor#0 : .data
+Processor#0 : 3000
+Processor#0 : A00
+Processor#0 : 8
+Processor#0 : Section:
+Processor#0 : .pdata
+Processor#0 : 4000
+Processor#0 : C00
+Processor#0 : C
+Processor#0 : ADDR_SPACE_SIZE :
+Processor#0 : 5000
+Processor#0 : Sections copied.
+Processor#0 : IMPORTING...
+Processor#0 : Importing dll noskx64.exe
+Processor#0 : Linking NOSKX64.EXE System
+Processor#0 : Importing dll syscruntime.dll
+Processor#0 : Found boot DLL syscruntime.dll
+Processor#0 : Section:
+Processor#0 : .text
+Processor#0 : 1000
+Processor#0 : 400
+Processor#0 : 800
+Processor#0 : Section:
+Processor#0 : .rdata
+Processor#0 : 2000
+Processor#0 : C00
+Processor#0 : 400
+Processor#0 : Section:
+Processor#0 : .pdata
+Processor#0 : 3000
+Processor#0 : 1000
+Processor#0 : 200
+Processor#0 : ADDR_SPACE_SIZE :
+Processor#0 : 4000
+Processor#0 : Sections copied.
+Processor#0 : EXPORTING...
+Processor#0 : Linking DLL...
+Processor#0 : EXPORTING...
+Processor#0 : Linking DLL...
+Processor#0 : 0
+Processor#0 : Running AUTO BOOT LAUNCH Drivers
+Processor#0 : BOOT_LAUNCH Driver
+Processor#0 : Running Driver#2 EntryPoint FFFF800001750000
+Processor#0 : Init LIBS: Calling DLL Entry Point FFFF800001754020
+Processor#0 : ACPI Library entry.
+Processor#0 : Device#0 Name : High Performance Event Timer
+Processor#0 : Device#1 Name : Advanced Configuration And Power Interface 2.0+
+Processor#0 : Found ACPI
+Processor#0 : RTC Driver startup.
+Processor#0 : ACPI_IO_GET_VER FFFF8000016E5000
+Processor#0 : ACPI IO CALLBACK Function 0
+Processor#0 : ACPI Version : 325.39952
+Processor#0 : Return status : 0
+Processor#0 : LIB : e SZ : 600
+Processor#0 : LIB : e SZ : 600
+Processor#0 : LIB : s SZ : 1200
+Processor#0 : LIB : o SZ : 19C00
+Processor#0 : LIB : a SZ : E00
+Processor#0 : LIB : c SZ : 1200
+Processor#0 : drvend
+Processor#0 : INIT_AP_TRAMPOLINE at 0x1000, SymbolStart : FFFF800000008000
+Processor#0 : Object 100004000
+Processor#0 : Processor FFFF800001400020
+Processor#0 : Processor#0 Characteristics : 0
+Processor#0 : Object 100004258
+Processor#0 : Processor FFFF800001402CA0
+Processor#0 : Processor#1 Characteristics : 1
+Processor#0 : Booting Processor#1 , SYSTEM: APIC
+Processor#0 : Object 1000042D0
+Processor#0 : Processor FFFF800001403EB0
+Processor#0 : Processor#2 Characteristics : 1
+Processor#0 : Booting Processor#2 , SYSTEM: APIC
+Processor#1 : GDT and TSS Loaded successfully
+Processor#1 : Registered System INT#222 for CPU#0
+Processor#0 : Object 100004348
+Processor#0 : Processor FFFF8000014050C0
+Processor#0 : Processor#3 Characteristics : 1
+Processor#0 : Booting Processor#3 , SYSTEM: APIC
+Processor#1 : KERNEL Final Initialization Step called, Initializing the scheduling system...
+Processor#1 : Current processor #1 INTERNAL_DATA FFFFFFD000200000
+Processor#1 : Registered System INT#220 for CPU#1
+Processor#3 : GDT and TSS Loaded successfully
+Processor#1 : create thread 1
+Processor#0 : create thread 0
+Processor#3 : Registered System INT#223 for CPU#0
+Processor#1 : Enabling the apic timer, interrupt number : 220
+Processor#3 : KERNEL Final Initialization Step called, Initializing the scheduling system...
+Processor#0 : create thread 0
+Processor#3 : Current processor #3 INTERNAL_DATA FFFFFFD000600000
+Processor#3 : Registered System INT#220 for CPU#3
+Processor#3 : create thread 1
+Processor#2 : GDT and TSS Loaded successfully
+Processor#2 : Registered System INT#224 for CPU#0
+Processor#2 : KERNEL Final Initialization Step called, Initializing the scheduling system...
+Processor#2 : Current processor #2 INTERNAL_DATA FFFFFFD000400000
+Processor#2 : Registered System INT#220 for CPU#2
+Processor#2 : create thread 1
+Processor#3 : Enabling the apic timer, interrupt number : 220
+Processor#2 : Enabling the apic timer, interrupt number : 220
+Processor#1 : APIC Timer frequency : 1001577920 HZ
+Processor#1 : Processor#1 enabled.
+Processor#3 : APIC Timer frequency : 1019333760 HZ
+Processor#3 : Processor#3 enabled.
+Processor#2 : APIC Timer frequency : 1005197760 HZ
+Processor#2 : Processor#2 enabled.
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#2 : NATIVE SUBSYSTEM ENTRY Process FFFF800001401230 Thread FFFF80000145AEE0 NumThreads 3 ApicId 2
+Processor#2 : Entry Point FFFF800000010940 Context 0
+Processor#3 : NATIVE SUBSYSTEM ENTRY Process FFFF800001401230 Thread FFFF80000145C030 NumThreads 3 ApicId 3
+Processor#3 : Entry Point FFFF8000000109C0 Context 0
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
 Processor#0 : IRQ 2
 Processor#0 : Hpet Interrupt
 Processor#0 : EOI

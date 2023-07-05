@@ -19,11 +19,15 @@ NSTATUS NSYSAPI KeCreateSubsystem(
 
 void NOSENTRY NativeSubsystemEntryPoint(void* EntryPoint, void* Context) {
     NSTATUS (__cdecl *Entry)(void*) = EntryPoint;
+    NSTATUS Status;
     PEPROCESS Process = KeGetCurrentProcess();
     PETHREAD Thread = KeGetCurrentThread();
     KDebugPrint("NATIVE SUBSYSTEM ENTRY Process %x Thread %x NumThreads %d ApicId %d", Process, Thread, Process->NumberOfThreads, Thread->Processor->Id.ProcessorId);
     KDebugPrint("Entry Point %x Context %x", Entry, Context);
-    NSTATUS Status = Entry(Context);
+
+    
+
+    Status = Entry(Context);
     // Exit the thread
     while(1) __halt();
 }

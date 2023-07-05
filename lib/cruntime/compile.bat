@@ -4,5 +4,5 @@ cl /O2i- *.c /I../../inc /LD /Fe:cruntime.dll /Fo:obj/ /link /DYNAMICBASE /FIXED
 copy cruntime.lib ..\
 copy syscruntime.lib ..\
 
-copy cruntime.dll ..\..\diskimg\NewOS\System
-copy syscruntime.dll ..\..\diskimg\NewOS\System
+copy cruntime.dll ..\..\diskimg\NewOS\System\Libraries
+copy syscruntime.dll ..\..\diskimg\NewOS\System\Libraries

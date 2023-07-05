@@ -66,7 +66,7 @@ UINT64 KRNLAPI KeReadCounter(
 ) {
     if(!(Timer->Usage & TIMER_USAGE_COUNTER)) return (UINT64)-1;
 
-    return IoProtocol(Timer->KernelHandle, TIMER_IO_READ_COUNTER);
+    return (UINT64)IoProtocol(Timer->KernelHandle, TIMER_IO_READ_COUNTER);
 }
 
 void KRNLAPI KeTimerTick(

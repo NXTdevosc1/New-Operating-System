@@ -63,6 +63,7 @@ void ObInitialize() {
     ObRegisterObjectType(OBJECT_TIMER, "Timers", NOS_MAJOR_VERSION, NOS_MINOR_VERSION);
     ObRegisterObjectType(OBJECT_DRIVER, "Drivers", NOS_MAJOR_VERSION, NOS_MINOR_VERSION);
     ObRegisterObjectType(OBJECT_RCPORT, "Remote Communication Ports", NOS_MAJOR_VERSION, NOS_MINOR_VERSION);
+    ObRegisterObjectType(OBJECT_RESOURCE, "Resources", NOS_MAJOR_VERSION, NOS_MINOR_VERSION);
 
     _ObObjectTypes[OBJECT_THREAD].TotalCreatedObjects++; // Thread object id starts with 1 for compatibility
 }

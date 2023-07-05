@@ -2,8 +2,8 @@
 #include <acpisystem/acpi.h>
 
 NSTATUS DriverEntry(PDRIVER Driver) {
-    KDebugPrint("RTC Driver startup.");
     UINT32 Ver;
+    KDebugPrint("RTC Driver startup. %x", Ver);
     if(!AcpiGetVersion(&Ver)) {
         KDebugPrint("Failed to get acpi version.");
         return STATUS_SUBSYSTEM_NOT_PRESENT;

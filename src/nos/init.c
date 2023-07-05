@@ -95,18 +95,6 @@ void NOSENTRY NosSystemInit() {
 
         NSTATUS (__cdecl* EntryPoint)(PDRIVER Driver) = NULL;
 
-        NSTATUS Status = KeLoadImage(
-            Driver->ImageBuffer,
-            Driver->ImageSize,
-            KERNEL_MODE,
-            (void**)&EntryPoint // Drivers reside on system process
-        );
-        _ui64toa(Status, bf, 0x10);
-        SerialLog(bf);
-
-        if(NERROR(Status)) continue;
-        Driver->Flags |= DRIVER_LOADED;
-
 // Constructing driver object
         POBJECT ObjectHeader;
 
@@ -116,12 +104,27 @@ void NOSENTRY NosSystemInit() {
             KDebugPrint("Failed to create driver object.");
             while(1) __halt();
         }
+
         PDRIVER DriverObject = ObjectHeader->Address;
+        DriverObject->DriverId = ObjectHeader->ObjectId;
+        DriverObject->ObjectHeader = ObjectHeader;
+
+        NSTATUS Status = KeLoadImage(
+            Driver->ImageBuffer,
+            Driver->ImageSize,
+            KERNEL_MODE,
+            ObjectHeader,
+            (void**)&EntryPoint // Drivers reside on system process
+        );
+        _ui64toa(Status, bf, 0x10);
+        SerialLog(bf);
+
+        if(NERROR(Status)) continue;
+        Driver->Flags |= DRIVER_LOADED;
+
         DriverObject->ImageFile = Driver->ImageBuffer;
         Driver->ImageBuffer = (void*)DriverObject; // The ib is now the object itself
 
-        DriverObject->DriverId = ObjectHeader->ObjectId;
-        DriverObject->ObjectHeader = ObjectHeader;
         DriverObject->EntryPoint = EntryPoint;
 
         if(NERROR(ObOpenHandle(ObjectHeader, KernelProcess, HANDLE_ALL_ACCESS, &DriverObject->DriverHandle))) {
@@ -136,6 +139,11 @@ void NOSENTRY NosSystemInit() {
         if(Driver->Flags & DRIVER_PREBOOT_LAUNCH) {
             SerialLog("Preboot Launch");
             KDebugPrint("Running driver %x EntryPoint %x", DriverObject->DriverId, EntryPoint);
+            Status = KiInitLibraries(DriverObject);
+            if(NERROR(Status)) {
+                KDebugPrint("RUN DRIVER LIBS FAILED.");
+                while(1) __halt();
+            }
             Status = EntryPoint(DriverObject);
             SerialLog("RETURN_STATUS :");
             _ui64toa(Status, bf, 0x10);
@@ -165,7 +173,14 @@ void NOSENTRY NosSystemInit() {
         if(Driver->Flags & DRIVER_BOOT_LAUNCH) {
             KDebugPrint("BOOT_LAUNCH Driver");
             KDebugPrint("Running Driver#%d EntryPoint %x", DriverObject->DriverId, DriverObject->EntryPoint);
-            NSTATUS Status = DriverObject->EntryPoint(DriverObject);
+            
+            NSTATUS Status = KiInitLibraries(DriverObject);
+            if(NERROR(Status)) {
+                KDebugPrint("RUN DRIVER LIBS FAILED.");
+                while(1) __halt();
+            }
+            
+            Status = DriverObject->EntryPoint(DriverObject);
             KDebugPrint("Return status : %d", Status);
             if(NERROR(Status)) {
                 _disable();
@@ -175,6 +190,11 @@ void NOSENTRY NosSystemInit() {
         }
     }
 
+    NOS_LIBRARY_FILE* Lib = NosInitData->Dlls;
+    while(Lib) {
+        KDebugPrint("LIB : %s SZ : %x", Lib->FileName, Lib->FileSize);
+        Lib = Lib->Next;
+    }
 
     SerialLog("drvend");
     

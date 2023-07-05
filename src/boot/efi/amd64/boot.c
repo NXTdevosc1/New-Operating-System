@@ -124,6 +124,56 @@ EFI_STATUS EFIAPI UefiEntry(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TABLE* Syst
 	}
 
 	// Load the kernel (TODO : Load Modules and drivers)
+	char bufff[0x1000] = {0};
+	UINTN bsz = 0x1000;
+	UINT16 lastfname[0x200] = {0};
+	EFI_FILE* LibDir;
+	if(EFI_ERROR(OsSystemFolder->Open(OsSystemFolder, &LibDir, L"Libraries", EFI_FILE_MODE_READ, EFI_FILE_DIRECTORY))) {
+		Print(L"Cannot find System/Libraries folder.\n");
+		return EFI_NOT_FOUND;
+	}
+
+	NOS_LIBRARY_FILE** Set = &NosInitData.Dlls;
+
+	for(;;) {
+		EFI_FILE_INFO* info = (EFI_FILE_INFO*)bufff;
+		EFI_STATUS s;
+		if(EFI_ERROR((s = LibDir->Read(LibDir, &bsz, bufff)))) break;
+		bsz = 0x1000;
+		if(StrCmp(lastfname, info->FileName) == 0) break;
+		StrCpyS(lastfname, 0x200, info->FileName);
+		UINTN FileNameLength = (info->Size - 2 - SIZE_OF_EFI_FILE_INFO) >> 1;
+		// Check if the file ends with .dll
+		UINT16* Extension = info->FileName + FileNameLength - 4;
+		if(FileNameLength < 5 || (info->Attribute & EFI_FILE_DIRECTORY) || StrCmp(Extension, L".dll") != 0) continue;
+
+		EFI_FILE* LibraryFile;
+		if(EFI_ERROR(LibDir->Open(LibDir, &LibraryFile, info->FileName, EFI_FILE_MODE_READ, 0))) {
+			Print(L"failed to open %s\n", info->FileName);
+			return EFI_LOAD_ERROR;
+		}
+		
+		NOS_LIBRARY_FILE* Lib;
+
+		if(EFI_ERROR(gBS->AllocatePool(EfiLoaderData, sizeof(NOS_LIBRARY_FILE) + info->FileSize, (void**)&Lib))) {
+			Print(L"Unsufficient memory\n");
+			return EFI_OUT_OF_RESOURCES;
+		}
+		LibraryFile->Read(LibraryFile, &info->FileSize, Lib->Buffer);
+		StrCpyS(Lib->FileName, 0x100, info->FileName);
+		Lib->FileSize = info->FileSize;
+		Lib->Next = NULL;
+
+		*Set = Lib;
+		Set = &Lib->Next;
+
+		LibraryFile->Close(LibraryFile);
+
+
+		Print(L"Attr : %.16x Name : %s Size : %llu NL : %llu %s\n", info->Attribute, info->FileName, info->FileSize, FileNameLength, lastfname + FileNameLength - 4);
+	}
+	LibDir->Close(LibDir);
+
 	EFI_FILE* Kernel;
 	if(EFI_ERROR(OsSystemFolder->Open(OsSystemFolder, &Kernel, L"noskx64.exe", EFI_FILE_MODE_READ, 0))) {
 		Print(L"noskx64.exe is missing.\n");

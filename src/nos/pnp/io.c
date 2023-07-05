@@ -20,6 +20,7 @@ BOOLEAN KRNLAPI IoSetInterface(
 IORESULT KRNLAPI IoProtocol(
     HANDLE DeviceHandle,
     UINT Function,
+    UINT NumParameters,
     ...
 ) {
     POBJECT Object = ObiReferenceByHandle(DeviceHandle)->Object;
@@ -27,7 +28,11 @@ IORESULT KRNLAPI IoProtocol(
     PDEVICE Device = Object->Address;
 
 
-    if(Function >= Device->Io.NumFunctions) return STATUS_INVALID_PARAMETER;
+    if(Function >= Device->Io.NumFunctions) {
+        // Exit the process
+        KDebugPrint("IO ERROR Device %ls Function %d", Device->DisplayName, Function);
+        while(1) __halt();
+    }
     if(Device->Io.Flags & IO_CALLBACK_SYNCHRONOUS) {
         while(_interlockedbittestandset(&Device->Io.Flags, IO_CALLBACK_SPINLOCK)) _mm_pause();
     }

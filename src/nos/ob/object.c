@@ -144,6 +144,10 @@ POBJECT KRNLAPI ObGetRawObjectByType(IN OBTYPE Type, IN UINT64 Index) {
     return Obj;
 }
 
+PVOID KRNLAPI ObGetAddress(POBJECT Object) {
+    return Object->Address;
+}
+
 // Cannot remove type after being registered
 BOOLEAN KRNLAPI ObRegisterObjectType(
     IN OBTYPE Type,

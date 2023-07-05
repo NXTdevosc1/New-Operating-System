@@ -270,30 +270,17 @@ BOOLEAN Pe64LoadImports(
 			
 			return FALSE;
 		}
-		// Load DLL File
-		EFI_FILE* DllFile;
-		UINTN BufferSize = sizeof(EFI_FILE_INFO) + 0x100;
-		if(EFI_ERROR(OsSystemFolder->Open(OsSystemFolder, &DllFile, ConvertedDllName, EFI_FILE_MODE_READ, 0))) {
-			Print(L"%ls is missing.\n", DllName);
-			return FALSE;
+		// Find DLL File
+		NOS_LIBRARY_FILE* Lib = NosInitData.Dlls;
+		void* FileBuffer = NULL;
+		while(Lib) {
+			if(StrCmp(ConvertedDllName, Lib->FileName) == 0) {
+				FileBuffer = Lib->Buffer;
+				break;
+			}
+			Lib = Lib->Next;
 		}
-		EFI_FILE_INFO* FileInfo = (EFI_FILE_INFO*)__finf;
-		if(EFI_ERROR(DllFile->GetInfo(DllFile, &gEfiFileInfoGuid, &BufferSize, (void*)FileInfo)))
-		{
-			Print(L"%ls is corrupt. (failed to get file info)\n", ConvertedDllName);
-			return FALSE;
-		}
-		BufferSize = FileInfo->FileSize;
-		void* FileBuffer;
-		if(EFI_ERROR(gBS->AllocatePool(EfiLoaderData, BufferSize, &FileBuffer))) {
-			Print(L"Failed to allocate memory\n");
-			return FALSE;
-		}
-		if(EFI_ERROR(DllFile->Read(DllFile, &BufferSize, FileBuffer))) {
-			Print(L"Failed to read file.\n");
-			return FALSE;
-		}
-		Print(L"File Size : %llu bytes\n", FileInfo->FileSize);
+		if(!FileBuffer) return FALSE;
 		PE_IMAGE_HDR* HdrStart;
 		void* a, *b, *c; // We will not use those
 		// Load the DLL
@@ -303,9 +290,6 @@ BOOLEAN Pe64LoadImports(
 			Print(L"Failed to import %ls , the DLL may be corrupt\n", ConvertedDllName);
 			return FALSE;
 		}
-		gBS->FreePool(FileBuffer);
-		DllFile->Close(DllFile);
-
 		ImportDirectory++;
 	}
 	return TRUE;

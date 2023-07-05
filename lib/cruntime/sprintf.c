@@ -76,6 +76,22 @@ EXPORT int vsprintf_s(
                     sizeOfBuffer-= buffer - b;
                     break;
                 }
+                case 'l':
+                {
+                    SelSize++;
+                    format++;
+                    char selector2 = selector[SelSize];
+                    if(selector2 == 's') {
+                        short* bf = va_arg(args, short*);
+                    NumArgs++;
+                    while(*bf) {
+                        sprintf_cpbuffer(buffer, *bf);
+                        bf++;
+                    }
+                    }
+
+                    break;
+                }
                 default: {
                     format -= SelSize + 2;
                     goto copybuff;
