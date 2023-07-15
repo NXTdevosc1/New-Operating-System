@@ -43,6 +43,9 @@ NSTATUS AcpiLibEntry() {
 }
 
 BOOLEAN ACPISYSTEM AcpiGetVersion(UINT32* Version) {
-    if(AcpiHandle == INVALID_HANDLE) return FALSE;
-    return (BOOLEAN)IoProtocol(AcpiHandle, ACPI_IO_GET_VERSION, Version);
+    return (BOOLEAN)IoProtocol(AcpiHandle, ACPIO_GET_VERSION, 1, &Version);
+}
+
+void ACPISYSTEM AcpiShutdownSystem() {
+    IoProtocol(AcpiHandle, ACPIO_SHUTDOWN, 0, NULL);
 }

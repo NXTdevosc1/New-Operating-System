@@ -149,3 +149,19 @@ PETHREAD KRNLAPI KeGetCurrentThread() {
 UINT64 KRNLAPI KeGetCurrentThreadId() {
     return KeGetCurrentThread()->ThreadId;
 }
+
+void KRNLAPI KeSetThreadStatus(NSTATUS Status) {
+    KeGetCurrentThread()->Status = Status;
+}
+
+NSTATUS KRNLAPI KeGetThreadStatus() {
+    return KeGetCurrentThread()->Status;
+}
+
+void __declspec(noreturn) KRNLAPI KeRaiseException(NSTATUS ExceptionCode) {
+    PETHREAD Thread = KeGetCurrentThread();
+    KeSetThreadStatus(ExceptionCode);
+    KDebugPrint("KE_RAISE_EXCEPTION : ExceptionCode %d", ExceptionCode);
+    
+    while(1) __halt();
+}

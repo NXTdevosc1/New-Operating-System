@@ -17,26 +17,33 @@ BOOLEAN KRNLAPI IoSetInterface(
     return TRUE;
 }
 
+
 IORESULT KRNLAPI IoProtocol(
     HANDLE DeviceHandle,
     UINT Function,
-    UINT NumParameters,
-    ...
+    UINT8 NumParameters,
+    void** Parameters
 ) {
-    POBJECT Object = ObiReferenceByHandle(DeviceHandle)->Object;
 
-    PDEVICE Device = Object->Address;
-
-
-    if(Function >= Device->Io.NumFunctions) {
-        // Exit the process
-        KDebugPrint("IO ERROR Device %ls Function %d", Device->DisplayName, Function);
-        while(1) __halt();
+    POBJECT ObHeader;
+    PDEVICE Device = ObGetObjectByHandle(DeviceHandle, &ObHeader, OBJECT_DEVICE);
+    if(!Device) {
+        // Crash the process
+        KeRaiseException(STATUS_INVALID_PARAMETER);
     }
+
+    PETHREAD Thread = KeGetCurrentThread();
+    if(NumParameters) {
+        Parameters = KeConvertPointer(Thread->Process, Parameters);
+        if(!Parameters) KeRaiseException(STATUS_INVALID_PARAMETER);
+
+        memcpy((void*)Thread->IoParameters, (void*)Parameters, NumParameters * 8);
+    }
+
     if(Device->Io.Flags & IO_CALLBACK_SYNCHRONOUS) {
-        while(_interlockedbittestandset(&Device->Io.Flags, IO_CALLBACK_SPINLOCK)) _mm_pause();
+        KDebugPrint("SYNCHRONOUS IO");
+        while(1);
     }
-    IORESULT s = Device->Io.IoCallback(DeviceHandle, Object, Function);
-    _interlockedbittestandreset(&Device->Io.Flags, IO_CALLBACK_SPINLOCK);
-    return s;
+
+    return Device->Io.IoCallback(DeviceHandle, Function, NumParameters, (void**)Thread->IoParameters);
 }

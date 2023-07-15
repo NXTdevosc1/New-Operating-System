@@ -6,7 +6,7 @@ call vcvars64.bat
 
 set DRVLIBS="..\..\..\lib"
 
-echo Building acpy.sys
+echo Building acpi.sys
 cd src/drivers/acpi
 call ./compile.bat
 echo building eodx.sys
