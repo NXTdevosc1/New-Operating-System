@@ -1,0 +1,2 @@
+cl *.c /O2 /GS- "%DRVLIBS%\noskx64.lib" "%DRVLIBS%\acpisys.lib" /I../../../inc /Fe:usbkeyboard.sys /Fo:obj/ /link /DYNAMICBASE /SUBSYSTEM:native /MACHINE:X64 /ENTRY:DriverEntry
+copy usbkeyboard.sys "..\..\..\diskimg\NewOS\System"

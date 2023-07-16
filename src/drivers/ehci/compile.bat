@@ -1,0 +1,2 @@
+cl *.c /O2 /GS- "%DRVLIBS%\noskx64.lib" "%DRVLIBS%\acpisys.lib" /I../../../inc /Fe:ehci.sys /Fo:obj/ /link /DYNAMICBASE /SUBSYSTEM:native /MACHINE:X64 /ENTRY:DriverEntry
+copy ehci.sys "..\..\..\diskimg\NewOS\System"

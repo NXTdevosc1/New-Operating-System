@@ -60,6 +60,7 @@ typedef enum {
     SubsystemDriver
 } DriverType;
 
+
 // Driver flags
 #define DRIVER_ENABLED 1 // Defines if the driver image should be loaded during the boot phase
 /*
@@ -82,7 +83,8 @@ BOOT Launch:
 // For e.g. USB Controller driver, mouse/keyboard drivers
 
 typedef struct _NOS_BOOT_DRIVER {
-    UINT32 DriverType;
+    UINT16 DriverType;
+    UINT16 DeviceType;
     UINT32 Flags;
     UINT8 DriverPath[255];
     UINT16 EndChar0;

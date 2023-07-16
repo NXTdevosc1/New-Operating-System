@@ -17,7 +17,7 @@ NSTATUS AcpiLibEntry() {
     while((_EnumerationValue = ObEnumerateObjects(NULL, OBJECT_DEVICE, &Obj, NULL, _EnumerationValue))) {
         Device = ObGetAddress(Obj);
 
-        if(PnpGetDeviceName(Device, DeviceName)) {
+        if(KeGetDeviceName(Device, DeviceName)) {
             KDebugPrint("Device#%d Name : %ls", NumDevices, DeviceName);
 
             if(memcmp(DeviceName, L"Advanced Configuration And Power Interface", 42 * 2) == 0) {

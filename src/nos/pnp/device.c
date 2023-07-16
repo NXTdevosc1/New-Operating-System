@@ -10,11 +10,11 @@ NSTATUS DeviceEvtHandler(PEPROCESS Process, UINT Event, HANDLE Handle, UINT64 Ac
     }
     return STATUS_SUCCESS;
 }
-PDEVICE KRNLAPI PnpCreateDevice(
+PDEVICE KRNLAPI KeCreateDevice(
     UINT DeviceType,
     UINT64 DeviceCharacteristics,
-    PNPID* PnpId,
-    UINT16* DisplayName
+    UINT16* DisplayName,
+    void* Context
 ){
 
 
@@ -30,10 +30,6 @@ PDEVICE KRNLAPI PnpCreateDevice(
 
     PDEVICE Device = Object->Address;
 
-    Device->PnpId.Parent = PnpId->Parent;
-    Device->PnpId.DeviceLocation.Raw = PnpId->DeviceLocation.Raw;
-
-
     Device->DeviceType = DeviceType;
     Device->DeviceCharacteristics = DeviceCharacteristics;
 
@@ -41,17 +37,18 @@ PDEVICE KRNLAPI PnpCreateDevice(
 
     Device->DisplayName = KiMakeSystemNameW(DisplayName, Device->DisplayNameLength);
     Device->ObjectDescriptor = Object;
+    Device->Context = Context;
 
     return Device;
 }
 
 
-BOOLEAN KRNLAPI PnpGetDeviceName(PDEVICE Device, UINT16* DeviceName) {
+BOOLEAN KRNLAPI KeGetDeviceName(PDEVICE Device, UINT16* DeviceName) {
     memcpy(DeviceName, Device->DisplayName, (Device->DisplayNameLength + 1) << 1);    
     return TRUE;
 }
 
-BOOLEAN KRNLAPI PnpDeleteDevice(PDEVICE Device) {
+BOOLEAN KRNLAPI KeRemoveDevice(PDEVICE Device) {
     HANDLE h;
     if(NERROR(ObOpenHandleByAddress(KernelProcess, Device, OBJECT_DEVICE, 0, &h))) return FALSE;
 
