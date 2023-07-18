@@ -61,3 +61,4 @@ BOOLEAN KRNLAPI KeRemoveDevice(PDEVICE Device) {
     return TRUE;
 
 }
+

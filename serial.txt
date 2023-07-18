@@ -6,48 +6,49 @@ Test Str : test123
 Num partition handles : 195
 Data partition found.
 Boot partition and boot drive selected successfully.
+Attr : 0000000000000020 Name : sddk.dll Size : 2048 NL : 8 .dll
 Attr : 0000000000000020 Name : eodxsys.dll Size : 1536 NL : 11 .dll
 Attr : 0000000000000020 Name : eodx.dll Size : 1536 NL : 8 .dll
 Attr : 0000000000000020 Name : syscruntime.dll Size : 4608 NL : 15 .dll
 Attr : 0000000000000020 Name : osusr.dll Size : 105472 NL : 9 .dll
-Attr : 0000000000000020 Name : acpisys.dll Size : 3584 NL : 11 .dll
+Attr : 0000000000000020 Name : acpisys.dll Size : 4608 NL : 11 .dll
 Attr : 0000000000000020 Name : cruntime.dll Size : 4608 NL : 12 .dll
-Kernel File Size : 395776
+Kernel File Size : 398336
 Test2 : test123
 System Heap:
 7CE00000
 OPT_HDR_SIZE : 240 FALIGN : 512
 Allocating System Pages : 000000007CE00000
 Image Physical Base : 000000007CE00000 , Image Base : 0000000000000000, Entry point : 0000000000001000
-Copying section .tex VADDR : 0000000000001000 PTR : 0000000000000400, SZ : 0000000000015E00
-Copying section .rda VADDR : 0000000000017000 PTR : 0000000000016200, SZ : 0000000000002400
-Copying section .dat VADDR : 000000000001A000 PTR : 0000000000018600, SZ : 000000000008C088
-Copying section .pda VADDR : 00000000000A7000 PTR : 0000000000060400, SZ : 0000000000000600
+Copying section .tex VADDR : 0000000000001000 PTR : 0000000000000400, SZ : 0000000000016400
+Copying section .rda VADDR : 0000000000018000 PTR : 0000000000016800, SZ : 0000000000002600
+Copying section .dat VADDR : 000000000001B000 PTR : 0000000000018E00, SZ : 000000000008C088
+Copying section .pda VADDR : 00000000000A8000 PTR : 0000000000060C00, SZ : 0000000000000800
 RELOC 0000000000000000  SZ 0000000000000000
 Loading DLL :
 syscruntime.dll
 OPT_HDR_SIZE : 240 FALIGN : 512
-Allocating System Pages : 000000007CEA8000
-Image Physical Base : 000000007CEA8000 , Image Base : 00000000000A8000, Entry point : 0000000000000000
+Allocating System Pages : 000000007CEA9000
+Image Physical Base : 000000007CEA9000 , Image Base : 00000000000A9000, Entry point : 0000000000000000
 Copying section .tex VADDR : 0000000000001000 PTR : 0000000000000400, SZ : 0000000000000800
 Copying section .rda VADDR : 0000000000002000 PTR : 0000000000000C00, SZ : 0000000000000400
 Copying section .pda VADDR : 0000000000003000 PTR : 0000000000001000, SZ : 0000000000000200
 RELOC 0000000000000000  SZ 0000000000000000
 EXPORTS
-ETVA : 00000000000021B0, ET : 000000007CEAA1B0
+ETVA : 00000000000021B0, ET : 000000007CEAB1B0
 NR : 000000000000226E, NPR : 0000000000002214, EATR : 00000000000021D8
 Test : test123
 Dll Name : sysc
 Searching Symbol : _ui64toa
-Symbol Found, base : 00000000000A91F0, IAT_TARGET : 000000007CE17000, RVA : 00000000000011F0
+Symbol Found, base : 00000000000AA1F0, IAT_TARGET : 000000007CE18000, RVA : 00000000000011F0
 Searching Symbol : memcpy
-Symbol Found, base : 00000000000A93D0, IAT_TARGET : 000000007CE17008, RVA : 00000000000013D0
+Symbol Found, base : 00000000000AA3D0, IAT_TARGET : 000000007CE18008, RVA : 00000000000013D0
 Searching Symbol : sprintf_s
-Symbol Found, base : 00000000000A9460, IAT_TARGET : 000000007CE17010, RVA : 0000000000001460
+Symbol Found, base : 00000000000AA460, IAT_TARGET : 000000007CE18010, RVA : 0000000000001460
 Searching Symbol : memcmp
-Symbol Found, base : 00000000000A93A0, IAT_TARGET : 000000007CE17018, RVA : 00000000000013A0
+Symbol Found, base : 00000000000AA3A0, IAT_TARGET : 000000007CE18018, RVA : 00000000000013A0
 Searching Symbol : vsprintf_s
-Symbol Found, base : 00000000000A9480, IAT_TARGET : 000000007CE17020, RVA : 0000000000001480
+Symbol Found, base : 00000000000AA480, IAT_TARGET : 000000007CE18020, RVA : 0000000000001480
  loaded
  loaded
  loaded
@@ -67,10 +68,10 @@ FFFF800000000000
 A
 Booted successfully.
 FFFF800000001000
-8000000A5000BC48
+8000000A6000BC48
 Boot Processor : Boot Processor : COM1 Initialized Successfully
 NOS_KERNEL : Kernel Booting...
-Boot Processor : Kernel boot memory : Used 32305152 bytes , free : -
+Boot Processor : Kernel boot memory : Used 32321536 bytes , free : -
 Boot Processor : Object Manager : Init
 Boot Processor : Object Manager : Init  2000 780000 300000
 Boot Processor : Object Manager : Allocate Table : 8192 Bytes, Object Array : 7864320 Bytes , Handle Array : 3145728 Bytes
@@ -87,26 +88,26 @@ Processor#0 : Section:
 Processor#0 : .text
 Processor#0 : 1000
 Processor#0 : 400
-Processor#0 : 4F186
+Processor#0 : 4F236
 Processor#0 : Section:
 Processor#0 : .rdata
 Processor#0 : 51000
-Processor#0 : 4F600
-Processor#0 : 230A2
+Processor#0 : 4F800
+Processor#0 : 23122
 Processor#0 : Section:
 Processor#0 : .data
 Processor#0 : 75000
-Processor#0 : 72800
-Processor#0 : 5BC0
+Processor#0 : 72A00
+Processor#0 : 5C00
 Processor#0 : Section:
 Processor#0 : .pdata
 Processor#0 : 7B000
-Processor#0 : 74000
-Processor#0 : 4D10
+Processor#0 : 74200
+Processor#0 : 4D28
 Processor#0 : Section:
 Processor#0 : .reloc
 Processor#0 : 80000
-Processor#0 : 78E00
+Processor#0 : 79000
 Processor#0 : F50
 Processor#0 : ADDR_SPACE_SIZE :
 Processor#0 : 81000
@@ -117,55 +118,55 @@ Processor#0 : Importing dll noskx64.exe
 Processor#0 : Linking NOSKX64.EXE System
 Processor#0 : 0
 Processor#0 : Preboot Launch
-Processor#0 : Running driver 0 EntryPoint FFFF800001671C50
+Processor#0 : Running driver 0 EntryPoint FFFF800001671D00
 Processor#0 : Driver Startup.
 Processor#0 : __AcpiInitTables__
 Processor#0 : ACPI: 
-Processor#0 : RSDP 0xFFFF8000000A3D980 FFFF80000006202A (v2142756884 Hãú$†)
+Processor#0 : RSDP 0xFFFF8000000A4D980 FFFF80000006302A (v2142756884 Hãú$†)
 Processor#0 : 
 
 Processor#0 : ACPI: 
-Processor#0 : =
- 0x0FFFF80000006202A 7FB7D0E8 (v23641302 %-4.4s 0x%8.8X%8.8X %06X (v%.2d %-6.6s %-8.8s %08X %-4.4s %08X) XSDTT 0 XSDTT 54)
+Processor#0 : M
+ 0x0FFFF80000006302A 7FB7D0E8 (v23640118 %-4.4s 0x%8.8X%8.8X %06X (v%.2d %-6.6s %-8.8s %08X %-4.4s %08X) XSDTT 0 XSDTT 54)
 Processor#0 : 
 
 Processor#0 : ACPI: 
-Processor#0 : P=
- 0x0FFFF80000006202A 7FB79000 (v23641302 %-4.4s 0x%8.8X%8.8X %06X (v%.2d %-6.6s %-8.8s %08X %-4.4s %08X) FACPÙ 0 FACPÙ FFFF8000000000F4)
+Processor#0 : PM
+ 0x0FFFF80000006302A 7FB79000 (v23640118 %-4.4s 0x%8.8X%8.8X %06X (v%.2d %-6.6s %-8.8s %08X %-4.4s %08X) FACPÙ 0 FACPÙ FFFF8000000000F4)
 Processor#0 : 
 
 Processor#0 : ACPI: 
-Processor#0 : =
- 0x0FFFF80000006202A 7FB7A000 (v23641302 %-4.4s 0x%8.8X%8.8X %06X (v%.2d %-6.6s %-8.8s %08X %-4.4s %08X) DSDT ! 0 DSDT ! FFFF8000000021CA)
+Processor#0 : M
+ 0x0FFFF80000006302A 7FB7A000 (v23640118 %-4.4s 0x%8.8X%8.8X %06X (v%.2d %-6.6s %-8.8s %08X %-4.4s %08X) DSDT ! 0 DSDT ! FFFF8000000021CA)
 Processor#0 : 
 
 Processor#0 : ACPI: 
-Processor#0 :  0x0FFFF80000006202A 21CA
+Processor#0 :  0x0FFFF80000006302A 21CA
 Processor#0 : 
 
 Processor#0 : ACPI: 
-Processor#0 : P=
- 0x0FFFF80000006202A 7FB78000 (v23641302 %-4.4s 0x%8.8X%8.8X %06X (v%.2d %-6.6s %-8.8s %08X %-4.4s %08X) APICê 0 APICê FFFF800000000090)
+Processor#0 : PM
+ 0x0FFFF80000006302A 7FB78000 (v23640118 %-4.4s 0x%8.8X%8.8X %06X (v%.2d %-6.6s %-8.8s %08X %-4.4s %08X) APICê 0 APICê FFFF800000000090)
 Processor#0 : 
 
 Processor#0 : ACPI: 
-Processor#0 : P=
- 0x0FFFF80000006202A 7FB77000 (v23641302 %-4.4s 0x%8.8X%8.8X %06X (v%.2d %-6.6s %-8.8s %08X %-4.4s %08X) HPET8 0 HPET8 38)
+Processor#0 : PM
+ 0x0FFFF80000006302A 7FB77000 (v23640118 %-4.4s 0x%8.8X%8.8X %06X (v%.2d %-6.6s %-8.8s %08X %-4.4s %08X) HPET8 0 HPET8 38)
 Processor#0 : 
 
 Processor#0 : ACPI: 
-Processor#0 : P=
- 0x0FFFF80000006202A 7FB76000 (v23641302 %-4.4s 0x%8.8X%8.8X %06X (v%.2d %-6.6s %-8.8s %08X %-4.4s %08X) MCFG< 0 MCFG< FFFF80000000003C)
+Processor#0 : PM
+ 0x0FFFF80000006302A 7FB76000 (v23640118 %-4.4s 0x%8.8X%8.8X %06X (v%.2d %-6.6s %-8.8s %08X %-4.4s %08X) MCFG< 0 MCFG< FFFF80000000003C)
 Processor#0 : 
 
 Processor#0 : ACPI: 
-Processor#0 : P=
- 0x0FFFF80000006202A 7FB75000 (v23641302 %-4.4s 0x%8.8X%8.8X %06X (v%.2d %-6.6s %-8.8s %08X %-4.4s %08X) WAET( 0 WAET( FFFF800000000028)
+Processor#0 : PM
+ 0x0FFFF80000006302A 7FB75000 (v23640118 %-4.4s 0x%8.8X%8.8X %06X (v%.2d %-6.6s %-8.8s %08X %-4.4s %08X) WAET( 0 WAET( FFFF800000000028)
 Processor#0 : 
 
 Processor#0 : ACPI: 
-Processor#0 : P=
- 0x0FFFF80000006202A 7FB74000 (v23641302 %-4.4s 0x%8.8X%8.8X %06X (v%.2d %-6.6s %-8.8s %08X %-4.4s %08X) BGRT8 0 BGRT8 FFFF800000000038)
+Processor#0 : PM
+ 0x0FFFF80000006302A 7FB74000 (v23640118 %-4.4s 0x%8.8X%8.8X %06X (v%.2d %-6.6s %-8.8s %08X %-4.4s %08X) BGRT8 0 BGRT8 FFFF800000000038)
 Processor#0 : 
 
 Processor#0 : APIC Found
@@ -192,26 +193,26 @@ Processor#0 : Hpet Frequency : 100000000 HZ
 Processor#0 : DELIVERY_MODE 0 POLARITY 0 TRIGGERMODE 0
 Processor#0 : IOApic SetInt (Router : 0)
 Processor#0 : __AcpiLoadTables__
-Processor#0 : –•l:  (Definition Block level)
+Processor#0 : •l:  (Definition Block level)
 
-Processor#0 : ¶l:  (Definition Block level)
+Processor#0 : 0¶l:  (Definition Block level)
 
 Processor#0 : 
 ACPI table initialization:
 
-Processor#0 : Table [: DsInitializeObjects] (id FFFF8000016CA668) - 1 Objects with 18446603336244869741 Devices, 0 Regions, 18446603336221196288 Methods (18446603340516163583/18446603336221196288/18446603336221196352 Serial/Non/Cvt)
+Processor#0 : Table [: DsInitializeObjects] (id FFFF8000016CA688) - 1 Objects with 18446603336244869917 Devices, 0 Regions, 18446603336221196288 Methods (18446603340516163583/18446603336221196288/18446603336221196352 Serial/Non/Cvt)
 
 Processor#0 : ACPI: 
-Processor#0 : 18446603336221867576 ACPI AML tables successfully acquired and loaded
+Processor#0 : 18446603336221871672 ACPI AML tables successfully acquired and loaded
 Processor#0 : 
 
 Processor#0 : Final data object initialization: 
-Processor#0 : Namespace contains 18446603336221867568 (0xFFFF8000016C6470) objects
+Processor#0 : Namespace contains 18446603336221871664 (0xFFFF8000016C6490) objects
 
 Processor#0 : Completing secondary ACPI Tables initialization
-Processor#0 : Ul:  NsEvaluate (nseval)
+Processor#0 : Vl:  NsEvaluate (nseval)
 
-Processor#0 : Wl:  NsEvaluate
+Processor#0 : 8Wl:  NsEvaluate
 
 Processor#0 : Evaluate _PIC Status = 0
 Processor#0 : KERNEL Final Initialization Step called, Initializing the scheduling system...
@@ -219,7 +220,7 @@ Processor#0 : Current processor #0 INTERNAL_DATA FFFFFFD000000000
 Processor#0 : Registered System INT#221 for CPU#0
 Processor#0 : create thread 1
 Processor#0 : Enabling the apic timer, interrupt number : 221
-Processor#0 : APIC Timer frequency : 1006315840 HZ
+Processor#0 : APIC Timer frequency : 1007387840 HZ
 Processor#0 : Tables:
 Processor#0 : SN : FACP Length : 244
 Processor#0 : SN : DSDT Length : 8650
@@ -237,20 +238,20 @@ Processor#0 : System is already in ACPI mode
 
 Processor#0 : Initializing General Purpose Events (GPEs):
 
-Processor#0 :     Initialized GPE FFFF8000000A3DA0 to FFFF8000016C83E8 [evgpeblk] 9 regs on interrupt 0xFFFF80000168D4A30.@
+Processor#0 :     Initialized GPE FFFF8000000A4DA0 to FFFF8000016C8408 [evgpeblk] 9 regs on interrupt 0xFFFF80000168D5530.@
 
-Processor#0 : AcpiOsInstallInt#9 ISR FFFF80000168F960 CTX FFFF80000145A140
+Processor#0 : AcpiOsInstallInt#9 ISR FFFF80000168FA10 CTX FFFF80000145A140
 Processor#0 : DELIVERY_MODE 0 POLARITY 0 TRIGGERMODE 1
 Processor#0 : IOApic SetInt (Override SRC : 9 GSI : 9)
 Processor#0 : IOApic SetInt (Router : 0)
 Processor#0 : __ACPI_INIT_OBJECTS__
 Processor#0 : Initializing Device/Processor/Thermal objects and executing _INI/_STA methods:
 
-Processor#0 : Ul:  NsEvaluate (nseval)
+Processor#0 : Vl:  NsEvaluate (nseval)
 
-Processor#0 : Wl:  NsEvaluate
+Processor#0 : 8Wl:  NsEvaluate
 
-Processor#0 :     Executed 18446603336221867552 _INI methods requiring 18446603336245077128 _STA executions (examined 18446603336245077096 objects)
+Processor#0 :     Executed 18446603336221871648 _INI methods requiring 18446603336245077160 _STA executions (examined 18446603336245077128 objects)
 
 Processor#0 : Creating ACPI Device Object
 Processor#0 : RETURN_STATUS :
@@ -261,27 +262,114 @@ Processor#0 : Section:
 Processor#0 : .text
 Processor#0 : 1000
 Processor#0 : 400
-Processor#0 : 18
+Processor#0 : 2D5
 Processor#0 : Section:
 Processor#0 : .rdata
 Processor#0 : 2000
-Processor#0 : 600
-Processor#0 : 19A
+Processor#0 : 800
+Processor#0 : 386
+Processor#0 : Section:
+Processor#0 : .data
+Processor#0 : 3000
+Processor#0 : C00
+Processor#0 : 80028
 Processor#0 : Section:
 Processor#0 : .pdata
-Processor#0 : 3000
-Processor#0 : 800
+Processor#0 : 84000
+Processor#0 : E00
+Processor#0 : C
+Processor#0 : Section:
+Processor#0 : .reloc
+Processor#0 : 85000
+Processor#0 : 1000
 Processor#0 : C
 Processor#0 : ADDR_SPACE_SIZE :
+Processor#0 : 86000
+Processor#0 : Sections copied.
+Processor#0 : Relocating...
+Processor#0 : IMPORTING...
+Processor#0 : Importing dll noskx64.exe
+Processor#0 : Linking NOSKX64.EXE System
+Processor#0 : Importing dll acpisys.dll
+Processor#0 : Found boot DLL acpisys.dll
+Processor#0 : Section:
+Processor#0 : .text
+Processor#0 : 1000
+Processor#0 : 400
+Processor#0 : 21E
+Processor#0 : Section:
+Processor#0 : .rdata
+Processor#0 : 2000
+Processor#0 : 800
+Processor#0 : 442
+Processor#0 : Section:
+Processor#0 : .data
+Processor#0 : 3000
+Processor#0 : E00
+Processor#0 : 8
+Processor#0 : Section:
+Processor#0 : .pdata
 Processor#0 : 4000
+Processor#0 : 1000
+Processor#0 : 30
+Processor#0 : ADDR_SPACE_SIZE :
+Processor#0 : 5000
 Processor#0 : Sections copied.
 Processor#0 : IMPORTING...
 Processor#0 : Importing dll noskx64.exe
 Processor#0 : Linking NOSKX64.EXE System
+Processor#0 : Importing dll syscruntime.dll
+Processor#0 : Found boot DLL syscruntime.dll
+Processor#0 : Section:
+Processor#0 : .text
+Processor#0 : 1000
+Processor#0 : 400
+Processor#0 : 800
+Processor#0 : Section:
+Processor#0 : .rdata
+Processor#0 : 2000
+Processor#0 : C00
+Processor#0 : 400
+Processor#0 : Section:
+Processor#0 : .pdata
+Processor#0 : 3000
+Processor#0 : 1000
+Processor#0 : 200
+Processor#0 : ADDR_SPACE_SIZE :
+Processor#0 : 4000
+Processor#0 : Sections copied.
+Processor#0 : EXPORTING...
+Processor#0 : Linking DLL...
+Processor#0 : EXPORTING...
+Processor#0 : Linking DLL...
 Processor#0 : 0
 Processor#0 : Preboot Launch
 Processor#0 : Running driver 1 EntryPoint FFFF80000174C000
+Processor#0 : Init LIBS: Calling DLL Entry Point FFFF8000017D20A0
+Processor#0 : ACPI Library entry.
+Processor#0 : Device#0 Name : High Performance Event Timer
+Processor#0 : Device#1 Name : Advanced Configuration And Power Interface 2.0+
+Processor#0 : Found ACPI
 Processor#0 : PCI Driver startup
+Processor#0 : ACPI IO Protocol 2
+Processor#0 : ACPI GET TABLE SIG : MCFG INST : 0 HDR : FFFF8000000A4F30
+Processor#0 : MCFG FFFF800001731000
+Processor#0 : MCFG : FFFF800001731000 NumSegments : 1
+Processor#0 : Max PCI Segment : 0
+Processor#0 : KeOpenEVT
+Processor#0 : KeOpenEVT
+Processor#0 : At Seg 0 Bus 0 Device 0 Function 0
+Processor#0 : PCI Device Class 6 Subclass 0 ProgIf 0
+Processor#0 : KeSignalEVT
+Processor#0 : At Seg 0 Bus 0 Device 1 Function 0
+Processor#0 : PCI Device Class 3 Subclass 0 ProgIf 0
+Processor#0 : KeSignalEVT
+Processor#0 : At Seg 0 Bus 0 Device 2 Function 0
+Processor#0 : PCI Device Class 2 Subclass 0 ProgIf 0
+Processor#0 : KeSignalEVT
+Processor#0 : At Seg 0 Bus 0 Device 3 Function 0
+Processor#0 : PCI Device Class 1 Subclass 8 ProgIf 2
+Processor#0 : KeSignalEVT
 Processor#0 : RETURN_STATUS :
 Processor#0 : 0
 Processor#0 : Driver NewOS\System\rtc.sys
@@ -313,22 +401,22 @@ Processor#0 : Section:
 Processor#0 : .text
 Processor#0 : 1000
 Processor#0 : 400
-Processor#0 : 19E
+Processor#0 : 21E
 Processor#0 : Section:
 Processor#0 : .rdata
 Processor#0 : 2000
-Processor#0 : 600
-Processor#0 : 3FA
+Processor#0 : 800
+Processor#0 : 442
 Processor#0 : Section:
 Processor#0 : .data
 Processor#0 : 3000
-Processor#0 : A00
+Processor#0 : E00
 Processor#0 : 8
 Processor#0 : Section:
 Processor#0 : .pdata
 Processor#0 : 4000
-Processor#0 : C00
-Processor#0 : 18
+Processor#0 : 1000
+Processor#0 : 30
 Processor#0 : ADDR_SPACE_SIZE :
 Processor#0 : 5000
 Processor#0 : Sections copied.
@@ -385,7 +473,7 @@ Processor#0 : Importing dll noskx64.exe
 Processor#0 : Linking NOSKX64.EXE System
 Processor#0 : 0
 Processor#0 : Preboot Launch
-Processor#0 : Running driver 3 EntryPoint FFFF80000175D000
+Processor#0 : Running driver 3 EntryPoint FFFF8000017E8000
 Processor#0 : EODX Driver Startup. DriverID 3
 Processor#0 : RETURN_STATUS :
 Processor#0 : 0
@@ -414,7 +502,7 @@ Processor#0 : Importing dll noskx64.exe
 Processor#0 : Linking NOSKX64.EXE System
 Processor#0 : 0
 Processor#0 : Preboot Launch
-Processor#0 : Running driver 4 EntryPoint FFFF800001761000
+Processor#0 : Running driver 4 EntryPoint FFFF8000017EC000
 Processor#0 : Window Management Driver startup
 Processor#0 : RETURN_STATUS :
 Processor#0 : 0
@@ -443,7 +531,7 @@ Processor#0 : Importing dll noskx64.exe
 Processor#0 : Linking NOSKX64.EXE System
 Processor#0 : 0
 Processor#0 : Preboot Launch
-Processor#0 : Running driver 5 EntryPoint FFFF800001765000
+Processor#0 : Running driver 5 EntryPoint FFFF8000017F0000
 Processor#0 : AHCI Driver startup
 Processor#0 : RETURN_STATUS :
 Processor#0 : 0
@@ -453,17 +541,17 @@ Processor#0 : Section:
 Processor#0 : .text
 Processor#0 : 1000
 Processor#0 : 400
-Processor#0 : 18
+Processor#0 : 49
 Processor#0 : Section:
 Processor#0 : .rdata
 Processor#0 : 2000
 Processor#0 : 600
-Processor#0 : 19A
+Processor#0 : 1DC
 Processor#0 : Section:
 Processor#0 : .pdata
 Processor#0 : 3000
 Processor#0 : 800
-Processor#0 : C
+Processor#0 : 18
 Processor#0 : ADDR_SPACE_SIZE :
 Processor#0 : 4000
 Processor#0 : Sections copied.
@@ -472,8 +560,13 @@ Processor#0 : Importing dll noskx64.exe
 Processor#0 : Linking NOSKX64.EXE System
 Processor#0 : 0
 Processor#0 : Preboot Launch
-Processor#0 : Running driver 6 EntryPoint FFFF800001769000
+Processor#0 : Running driver 6 EntryPoint FFFF8000017F4020
 Processor#0 : EHCI Driver startup
+Processor#0 : KeRegEVT
+Processor#0 : EHCI Device add handler
+Processor#0 : EHCI Device add handler
+Processor#0 : EHCI Device add handler
+Processor#0 : EHCI Device add handler
 Processor#0 : RETURN_STATUS :
 Processor#0 : 0
 Processor#0 : Driver NewOS\System\xhci.sys
@@ -501,8 +594,8 @@ Processor#0 : Importing dll noskx64.exe
 Processor#0 : Linking NOSKX64.EXE System
 Processor#0 : 0
 Processor#0 : Preboot Launch
-Processor#0 : Running driver 7 EntryPoint FFFF80000176D000
-Processor#0 : EHCI Driver startup
+Processor#0 : Running driver 7 EntryPoint FFFF8000017F8000
+Processor#0 : XHCI Driver startup
 Processor#0 : RETURN_STATUS :
 Processor#0 : 0
 Processor#0 : Driver NewOS\System\usbflash.sys
@@ -579,25 +672,26 @@ Processor#0 : Linking NOSKX64.EXE System
 Processor#0 : 0
 Processor#0 : Running AUTO BOOT LAUNCH Drivers
 Processor#0 : BOOT_LAUNCH Driver
-Processor#0 : Running Driver#2 EntryPoint FFFF800001750000
-Processor#0 : Init LIBS: Calling DLL Entry Point FFFF800001754030
+Processor#0 : Running Driver#2 EntryPoint FFFF8000017DB000
+Processor#0 : Init LIBS: Calling DLL Entry Point FFFF8000017DF0A0
 Processor#0 : ACPI Library entry.
 Processor#0 : Device#0 Name : High Performance Event Timer
 Processor#0 : Device#1 Name : Advanced Configuration And Power Interface 2.0+
 Processor#0 : Found ACPI
 Processor#0 : RTC Driver startup.
-Processor#0 : ACPI_IO_GET_VER FFFF8000000A3F28
-Processor#0 : DONE: ACPI IO CALLBACK Function 0
+Processor#0 : ACPI IO Protocol 0
+Processor#0 : ACPI_IO_GET_VER FFFF8000000A4F28
 Processor#0 : ACPI Version : 2.0
-Processor#0 : 22:23:1
-Processor#0 : Day 1 Of the week
-Processor#0 : 16/7/23
+Processor#0 : 13:27:36
+Processor#0 : Day 2 Of the week
+Processor#0 : 17/7/23
 Processor#0 : Return status : 0
+Processor#0 : LIB : s SZ : 800
 Processor#0 : LIB : e SZ : 600
 Processor#0 : LIB : e SZ : 600
 Processor#0 : LIB : s SZ : 1200
 Processor#0 : LIB : o SZ : 19C00
-Processor#0 : LIB : a SZ : E00
+Processor#0 : LIB : a SZ : 1200
 Processor#0 : LIB : c SZ : 1200
 Processor#0 : drvend
 Processor#0 : INIT_AP_TRAMPOLINE at 0x1000, SymbolStart : FFFF800000008000
@@ -617,41 +711,1205 @@ Processor#0 : Object 100004348
 Processor#0 : Processor FFFF8000014058D0
 Processor#0 : Processor#3 Characteristics : 1
 Processor#0 : Booting Processor#3 , SYSTEM: APIC
-Processor#1 : Registered System INT#222 for CPU#0
 Processor#2 : GDT and TSS Loaded successfully
+Processor#2 : Registered System INT#222 for CPU#0
+Processor#1 : Registered System INT#223 for CPU#0
 Processor#1 : KERNEL Final Initialization Step called, Initializing the scheduling system...
 Processor#1 : Current processor #1 INTERNAL_DATA FFFFFFD000200000
-Processor#1 : Registered System INT#220 for CPU#1
-Processor#3 : GDT and TSS Loaded successfully
-Processor#0 : create thread 0
-Processor#3 : Registered System INT#224 for CPU#0
-Processor#1 : create thread 1
-Processor#2 : Registered System INT#223 for CPU#0
-Processor#1 : Enabling the apic timer, interrupt number : 220
-Processor#3 : KERNEL Final Initialization Step called, Initializing the scheduling system...
-Processor#3 : Current processor #3 INTERNAL_DATA FFFFFFD000600000
 Processor#2 : KERNEL Final Initialization Step called, Initializing the scheduling system...
 Processor#2 : Current processor #2 INTERNAL_DATA FFFFFFD000400000
 Processor#2 : Registered System INT#220 for CPU#2
+Processor#1 : Registered System INT#220 for CPU#1
+Processor#1 : create thread 1
 Processor#2 : create thread 1
+Processor#1 : Enabling the apic timer, interrupt number : 220
+Processor#2 : Enabling the apic timer, interrupt number : 220
+Processor#3 : GDT and TSS Loaded successfully
 Processor#0 : create thread 0
+Processor#3 : Registered System INT#224 for CPU#0
+Processor#3 : KERNEL Final Initialization Step called, Initializing the scheduling system...
+Processor#3 : Current processor #3 INTERNAL_DATA FFFFFFD000600000
 Processor#3 : Registered System INT#220 for CPU#3
 Processor#3 : create thread 1
-Processor#2 : Enabling the apic timer, interrupt number : 220
 Processor#3 : Enabling the apic timer, interrupt number : 220
-Processor#1 : APIC Timer frequency : 1050641920 HZ
+Processor#0 : create thread 0
+Processor#1 : APIC Timer frequency : 1000241920 HZ
 Processor#1 : Processor#1 enabled.
-Processor#2 : APIC Timer frequency : 1000235840 HZ
+Processor#2 : APIC Timer frequency : 1002105920 HZ
 Processor#2 : Processor#2 enabled.
-Processor#3 : APIC Timer frequency : 1000205760 HZ
+Processor#3 : APIC Timer frequency : 1000193920 HZ
 Processor#3 : Processor#3 enabled.
 Processor#0 : IRQ 2
 Processor#0 : Hpet Interrupt
 Processor#0 : EOI
-Processor#0 : NATIVE SUBSYSTEM ENTRY Process FFFF800001401230 Thread FFFF800001460090 NumThreads 3 ApicId 0
-Processor#0 : Entry Point FFFF8000000109C0 Context 0
-Processor#1 : NATIVE SUBSYSTEM ENTRY Process FFFF800001401230 Thread FFFF80000145B470 NumThreads 3 ApicId 1
-Processor#1 : Entry Point FFFF800000010940 Context 0
+Processor#1 : NATIVE SUBSYSTEM ENTRY Process FFFF800001401230 Thread FFFF800001461D20 NumThreads 3 ApicId 1
+Processor#1 : Entry Point FFFF800000010EC0 Context 0
+Processor#3 : NATIVE SUBSYSTEM ENTRY Process FFFF800001401230 Thread FFFF80000145EA60 NumThreads 3 ApicId 3
+Processor#3 : Entry Point FFFF800000010E40 Context 0
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
 Processor#0 : IRQ 2
 Processor#0 : Hpet Interrupt
 Processor#0 : EOI
