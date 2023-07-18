@@ -35,20 +35,70 @@ PCI_DEVICE_INDEPENDENT_REGION* PciGetConfiguration(
     return (PCI_DEVICE_INDEPENDENT_REGION*)(Allocation->Address | ((UINT64)Bus << 20) | ((UINT64)Device << 15) | ((UINT64)Function << 12));
 }
 
+UINT64 _PciRead64(PCI_DEVICE_LOCATION* Location, UINT16 Offset) {
+
+}
+UINT32 _PciRead32(PCI_DEVICE_LOCATION* Location, UINT16 Offset) {
+
+}
+UINT16 _PciRead16(PCI_DEVICE_LOCATION* Location, UINT16 Offset) {
+
+}
+UINT8 _PciRead8(PCI_DEVICE_LOCATION* Location, UINT16 Offset) {
+
+}
+
+void _PciWrite64(PCI_DEVICE_LOCATION* Location, UINT16 Offset, UINT64 Value) {
+
+}
+void _PciWrite32(PCI_DEVICE_LOCATION* Location, UINT16 Offset, UINT32 Value) {
+
+}
+void _PciWrite16(PCI_DEVICE_LOCATION* Location, UINT16 Offset, UINT16 Value) {
+
+}
+void _PciWrite8(PCI_DEVICE_LOCATION* Location, UINT16 Offset, UINT8 Value) {
+
+}
+
+UINT16 _PciGetConfigurationByIndex(UINT16 Index) {
+
+}
+
 UINT MaxPciSegment = 0;
 
 HANDLE PciDeviceAddEvent;
 
 PDEVICE PciDeviceObject;
 
-#define PCI_IO_GET_CONFIGURATION 0
+// #define PCI_IO_GET_CONFIGURATION 0
+
 
 IORESULT PciIoCallback(IOPARAMS) {
-    if(Function == PCI_IO_GET_CONFIGURATION) {
-        if(NumParameters != 4) KeRaiseException(STATUS_INVALID_PARAMETER);
-        return (IORESULT)PciGetConfiguration(UINT16VOID Parameters[0], UINT8VOID Parameters[1], UINT8VOID Parameters[2], UINT8VOID Parameters[3]);
+    if(NumParameters != 1) KeRaiseException(STATUS_INVALID_PARAMETER);
+    PCI_DRIVER_INTERFACE* DriverIf = Parameters[0];
+    ObjZeroMemory(DriverIf);
+    if(NumPciSegments) {
+        DriverIf->NumConfigurations = NumPciSegments;
+        DriverIf->IsMemoryMapped = TRUE;
+    } else {
+        DriverIf->NumConfigurations = 1;
+        DriverIf->IsMemoryMapped = FALSE;
     }
-    return STATUS_SUCCESS;
+
+    DriverIf->GetMemoryMappedConfiguration = PciGetConfiguration;
+    DriverIf->GetConfigurationByIndex = _PciGetConfigurationByIndex;
+    DriverIf->Read64 = _PciRead64;
+    DriverIf->Read32 = _PciRead32;
+    DriverIf->Read16 = _PciRead16;
+    DriverIf->Read8 = _PciRead8;
+
+    DriverIf->Write64 = _PciRead64;
+    DriverIf->Write32 = _PciWrite32;
+    DriverIf->Write16 = _PciWrite16;
+    DriverIf->Write8 = _PciWrite8;
+
+    return (IORESULT)TRUE;
 }
 
 NSTATUS DriverEntry(PDRIVER Driver) {
