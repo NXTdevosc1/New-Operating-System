@@ -2,12 +2,15 @@
   "ExpandedNodes": [
     "",
     "\\src",
-    "\\src\\drivers",
-    "\\src\\drivers\\acpi",
-    "\\src\\drivers\\acpi\\source",
-    "\\src\\drivers\\acpi\\source\\include",
-    "\\src\\drivers\\acpi\\source\\include\\platform"
+    "\\src\\boot",
+    "\\src\\boot\\efi",
+    "\\src\\boot\\efi\\amd64",
+    "\\src\\nos",
+    "\\src\\nos\\ob",
+    "\\src\\nos\\rpc",
+    "\\src\\nos\\sys",
+    "\\src\\nos\\task"
   ],
-  "SelectedNode": "\\src\\drivers\\acpi\\source\\include\\acexcep.h",
+  "SelectedNode": "\\src\\nos\\task\\thread.c",
   "PreviewInSolutionExplorer": false
 }

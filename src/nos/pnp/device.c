@@ -43,8 +43,36 @@ PDEVICE KRNLAPI KeCreateDevice(
 }
 
 
-BOOLEAN KRNLAPI KeGetDeviceName(PDEVICE Device, UINT16* DeviceName) {
+BOOLEAN KRNLAPI KeGetDeviceName(PDEVICE Device, UINT16* DeviceName, UINT8* NameLength) {
+    *NameLength = Device->DisplayNameLength;
     memcpy(DeviceName, Device->DisplayName, (Device->DisplayNameLength + 1) << 1);    
+    return TRUE;
+}
+
+BOOLEAN KRNLAPI KeEnumerateDevices(IN OPT PDEVICE ParentDevice, IN PDEVICE* Device, IN OPT UINT16* DeviceName, IN BOOLEAN AbsoluteName, IN UINT64* EnumValue) {
+    POBJECT devobj;
+    if(DeviceName) {
+        UINT64 ev = *EnumValue;
+        UINT8 NameLen = wcslen(DeviceName);
+
+        while((ev = ObEnumerateObjects(ParentDevice ? ParentDevice->ObjectDescriptor : NULL, OBJECT_DEVICE, &devobj, NULL, ev)) != 0) {
+            PDEVICE dev = devobj->Address;
+            if(AbsoluteName && dev->DisplayNameLength == NameLen && memcmp(dev->DisplayName, DeviceName, NameLen << 1) == 0) {
+                *EnumValue = ev;
+                *Device = dev;
+                return TRUE;
+            } else if(dev->DisplayNameLength >= NameLen && memcmp(dev->DisplayName, DeviceName, NameLen << 1) == 0){
+                *EnumValue = ev;
+                *Device = dev;
+                return TRUE;
+            }
+        }
+        return FALSE;
+    }
+    UINT64 ev = ObEnumerateObjects(ParentDevice ? ParentDevice->ObjectDescriptor : NULL, OBJECT_DEVICE, &devobj, NULL, *EnumValue);
+    if(ev == 0) return FALSE;
+    *Device = devobj->Address;
+    *EnumValue = ev;
     return TRUE;
 }
 
@@ -62,3 +90,7 @@ BOOLEAN KRNLAPI KeRemoveDevice(PDEVICE Device) {
 
 }
 
+
+POBJECT KRNLAPI KeGetDeviceObjectHeader(PDEVICE Device) {
+    return Device->ObjectDescriptor;
+}

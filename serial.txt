@@ -3,27 +3,27 @@ BdsDxe: failed to load Boot0001 "UEFI QEMU DVD-ROM QM00005 " from PciRoot(0x0)/P
 BdsDxe: loading Boot0002 "UEFI QEMU HARDDISK QM00001 " from PciRoot(0x0)/Pci(0x1F,0x2)/Sata(0x0,0xFFFF,0x0)
 BdsDxe: starting Boot0002 "UEFI QEMU HARDDISK QM00001 " from PciRoot(0x0)/Pci(0x1F,0x2)/Sata(0x0,0xFFFF,0x0)
 Test Str : test123
-Num partition handles : 195
+Num partition handles : 194
 Data partition found.
 Boot partition and boot drive selected successfully.
-Attr : 0000000000000020 Name : sddk.dll Size : 2048 NL : 8 .dll
+Attr : 0000000000000020 Name : sddk.dll Size : 3072 NL : 8 .dll
 Attr : 0000000000000020 Name : eodxsys.dll Size : 1536 NL : 11 .dll
 Attr : 0000000000000020 Name : eodx.dll Size : 1536 NL : 8 .dll
 Attr : 0000000000000020 Name : syscruntime.dll Size : 4608 NL : 15 .dll
 Attr : 0000000000000020 Name : osusr.dll Size : 105472 NL : 9 .dll
-Attr : 0000000000000020 Name : acpisys.dll Size : 4608 NL : 11 .dll
+Attr : 0000000000000020 Name : acpisys.dll Size : 3584 NL : 11 .dll
 Attr : 0000000000000020 Name : cruntime.dll Size : 4608 NL : 12 .dll
-Kernel File Size : 398336
+Kernel File Size : 398848
 Test2 : test123
 System Heap:
 7CE00000
 OPT_HDR_SIZE : 240 FALIGN : 512
 Allocating System Pages : 000000007CE00000
 Image Physical Base : 000000007CE00000 , Image Base : 0000000000000000, Entry point : 0000000000001000
-Copying section .tex VADDR : 0000000000001000 PTR : 0000000000000400, SZ : 0000000000016400
-Copying section .rda VADDR : 0000000000018000 PTR : 0000000000016800, SZ : 0000000000002600
-Copying section .dat VADDR : 000000000001B000 PTR : 0000000000018E00, SZ : 000000000008C088
-Copying section .pda VADDR : 00000000000A8000 PTR : 0000000000060C00, SZ : 0000000000000800
+Copying section .tex VADDR : 0000000000001000 PTR : 0000000000000400, SZ : 0000000000016600
+Copying section .rda VADDR : 0000000000018000 PTR : 0000000000016A00, SZ : 0000000000002600
+Copying section .dat VADDR : 000000000001B000 PTR : 0000000000019000, SZ : 000000000008C088
+Copying section .pda VADDR : 00000000000A8000 PTR : 0000000000060E00, SZ : 0000000000000800
 RELOC 0000000000000000  SZ 0000000000000000
 Loading DLL :
 syscruntime.dll
@@ -137,11 +137,11 @@ Processor#0 :
 
 Processor#0 : ACPI: 
 Processor#0 : M
- 0x0FFFF80000006302A 7FB7A000 (v23640118 %-4.4s 0x%8.8X%8.8X %06X (v%.2d %-6.6s %-8.8s %08X %-4.4s %08X) DSDTÊ! 0 DSDTÊ! FFFF8000000021CA)
+ 0x0FFFF80000006302A 7FB7A000 (v23640118 %-4.4s 0x%8.8X%8.8X %06X (v%.2d %-6.6s %-8.8s %08X %-4.4s %08X) DSDT¹! 0 DSDT¹! FFFF8000000021B9)
 Processor#0 : 
 
 Processor#0 : ACPI: 
-Processor#0 :  0x0FFFF80000006302A 21CA
+Processor#0 :  0x0FFFF80000006302A 21B9
 Processor#0 : 
 
 Processor#0 : ACPI: 
@@ -220,10 +220,10 @@ Processor#0 : Current processor #0 INTERNAL_DATA FFFFFFD000000000
 Processor#0 : Registered System INT#221 for CPU#0
 Processor#0 : create thread 1
 Processor#0 : Enabling the apic timer, interrupt number : 221
-Processor#0 : APIC Timer frequency : 1006435840 HZ
+Processor#0 : APIC Timer frequency : 1005976000 HZ
 Processor#0 : Tables:
 Processor#0 : SN : FACP Length : 244
-Processor#0 : SN : DSDT Length : 8650
+Processor#0 : SN : DSDT Length : 8633
 Processor#0 : SN : FACS Length : 64
 Processor#0 : SN : APIC Length : 144
 Processor#0 : SN : HPET Length : 56
@@ -240,7 +240,7 @@ Processor#0 : Initializing General Purpose Events (GPEs):
 
 Processor#0 :     Initialized GPE FFFF8000000A4DA0 to FFFF8000016C8408 [evgpeblk] 9 regs on interrupt 0xFFFF80000168D5530.@
 
-Processor#0 : AcpiOsInstallInt#9 ISR FFFF80000168FA10 CTX FFFF80000145A140
+Processor#0 : AcpiOsInstallInt#9 ISR FFFF80000168FA10 CTX FFFF80000145A030
 Processor#0 : DELIVERY_MODE 0 POLARITY 0 TRIGGERMODE 1
 Processor#0 : IOApic SetInt (Override SRC : 9 GSI : 9)
 Processor#0 : IOApic SetInt (Router : 0)
@@ -262,29 +262,29 @@ Processor#0 : Section:
 Processor#0 : .text
 Processor#0 : 1000
 Processor#0 : 400
-Processor#0 : 41B
+Processor#0 : 7F4
 Processor#0 : Section:
 Processor#0 : .rdata
 Processor#0 : 2000
-Processor#0 : A00
-Processor#0 : 446
+Processor#0 : C00
+Processor#0 : 45E
 Processor#0 : Section:
 Processor#0 : .data
 Processor#0 : 3000
-Processor#0 : 1000
-Processor#0 : 80030
+Processor#0 : 1200
+Processor#0 : 100030
 Processor#0 : Section:
 Processor#0 : .pdata
-Processor#0 : 84000
-Processor#0 : 1200
-Processor#0 : 18
+Processor#0 : 104000
+Processor#0 : 1400
+Processor#0 : 84
 Processor#0 : Section:
 Processor#0 : .reloc
-Processor#0 : 85000
-Processor#0 : 1400
+Processor#0 : 105000
+Processor#0 : 1600
 Processor#0 : C
 Processor#0 : ADDR_SPACE_SIZE :
-Processor#0 : 86000
+Processor#0 : 106000
 Processor#0 : Sections copied.
 Processor#0 : Relocating...
 Processor#0 : IMPORTING...
@@ -296,21 +296,21 @@ Processor#0 : Section:
 Processor#0 : .text
 Processor#0 : 1000
 Processor#0 : 400
-Processor#0 : 21E
+Processor#0 : 1B8
 Processor#0 : Section:
 Processor#0 : .rdata
 Processor#0 : 2000
-Processor#0 : 800
-Processor#0 : 442
+Processor#0 : 600
+Processor#0 : 3EA
 Processor#0 : Section:
 Processor#0 : .data
 Processor#0 : 3000
-Processor#0 : E00
+Processor#0 : A00
 Processor#0 : 8
 Processor#0 : Section:
 Processor#0 : .pdata
 Processor#0 : 4000
-Processor#0 : 1000
+Processor#0 : C00
 Processor#0 : 30
 Processor#0 : ADDR_SPACE_SIZE :
 Processor#0 : 5000
@@ -318,41 +318,17 @@ Processor#0 : Sections copied.
 Processor#0 : IMPORTING...
 Processor#0 : Importing dll noskx64.exe
 Processor#0 : Linking NOSKX64.EXE System
-Processor#0 : Importing dll syscruntime.dll
-Processor#0 : Found boot DLL syscruntime.dll
-Processor#0 : Section:
-Processor#0 : .text
-Processor#0 : 1000
-Processor#0 : 400
-Processor#0 : 800
-Processor#0 : Section:
-Processor#0 : .rdata
-Processor#0 : 2000
-Processor#0 : C00
-Processor#0 : 400
-Processor#0 : Section:
-Processor#0 : .pdata
-Processor#0 : 3000
-Processor#0 : 1000
-Processor#0 : 200
-Processor#0 : ADDR_SPACE_SIZE :
-Processor#0 : 4000
-Processor#0 : Sections copied.
-Processor#0 : EXPORTING...
-Processor#0 : Linking DLL...
 Processor#0 : EXPORTING...
 Processor#0 : Linking DLL...
 Processor#0 : 0
 Processor#0 : Preboot Launch
 Processor#0 : Running driver 1 EntryPoint FFFF80000174C000
-Processor#0 : Init LIBS: Calling DLL Entry Point FFFF8000017D20A0
+Processor#0 : Init LIBS: Calling DLL Entry Point FFFF8000018520A0
 Processor#0 : ACPI Library entry.
-Processor#0 : Device#0 Name : High Performance Event Timer
-Processor#0 : Device#1 Name : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Found ACPI
+Processor#0 : ACPI Device name : Advanced Configuration And Power Interface 2.0+ 47
 Processor#0 : PCI Driver startup
 Processor#0 : ACPI IO Protocol 2
-Processor#0 : ACPI GET TABLE SIG : MCFG INST : 0 HDR : FFFF8000000A4EB0
+Processor#0 : ACPI GET TABLE SIG : MCFG INST : 0 HDR : FFFF8000000A4F38
 Processor#0 : MCFG FFFF800001731000
 Processor#0 : MCFG : FFFF800001731000 NumSegments : 1
 Processor#0 : Max PCI Segment : 0
@@ -367,8 +343,14 @@ Processor#0 : KeSignalEVT
 Processor#0 : At Seg 0 Bus 0 Device 2 Function 0
 Processor#0 : PCI Device Class 2 Subclass 0 ProgIf 0
 Processor#0 : KeSignalEVT
-Processor#0 : At Seg 0 Bus 0 Device 3 Function 0
-Processor#0 : PCI Device Class 1 Subclass 8 ProgIf 2
+Processor#0 : At Seg 0 Bus 0 Device 31 Function 0
+Processor#0 : PCI Device Class 6 Subclass 1 ProgIf 0
+Processor#0 : KeSignalEVT
+Processor#0 : At Seg 0 Bus 0 Device 31 Function 2
+Processor#0 : PCI Device Class 1 Subclass 6 ProgIf 1
+Processor#0 : KeSignalEVT
+Processor#0 : At Seg 0 Bus 0 Device 31 Function 3
+Processor#0 : PCI Device Class 12 Subclass 5 ProgIf 0
 Processor#0 : KeSignalEVT
 Processor#0 : RETURN_STATUS :
 Processor#0 : 0
@@ -401,21 +383,21 @@ Processor#0 : Section:
 Processor#0 : .text
 Processor#0 : 1000
 Processor#0 : 400
-Processor#0 : 21E
+Processor#0 : 1B8
 Processor#0 : Section:
 Processor#0 : .rdata
 Processor#0 : 2000
-Processor#0 : 800
-Processor#0 : 442
+Processor#0 : 600
+Processor#0 : 3EA
 Processor#0 : Section:
 Processor#0 : .data
 Processor#0 : 3000
-Processor#0 : E00
+Processor#0 : A00
 Processor#0 : 8
 Processor#0 : Section:
 Processor#0 : .pdata
 Processor#0 : 4000
-Processor#0 : 1000
+Processor#0 : C00
 Processor#0 : 30
 Processor#0 : ADDR_SPACE_SIZE :
 Processor#0 : 5000
@@ -423,28 +405,6 @@ Processor#0 : Sections copied.
 Processor#0 : IMPORTING...
 Processor#0 : Importing dll noskx64.exe
 Processor#0 : Linking NOSKX64.EXE System
-Processor#0 : Importing dll syscruntime.dll
-Processor#0 : Found boot DLL syscruntime.dll
-Processor#0 : Section:
-Processor#0 : .text
-Processor#0 : 1000
-Processor#0 : 400
-Processor#0 : 800
-Processor#0 : Section:
-Processor#0 : .rdata
-Processor#0 : 2000
-Processor#0 : C00
-Processor#0 : 400
-Processor#0 : Section:
-Processor#0 : .pdata
-Processor#0 : 3000
-Processor#0 : 1000
-Processor#0 : 200
-Processor#0 : ADDR_SPACE_SIZE :
-Processor#0 : 4000
-Processor#0 : Sections copied.
-Processor#0 : EXPORTING...
-Processor#0 : Linking DLL...
 Processor#0 : EXPORTING...
 Processor#0 : Linking DLL...
 Processor#0 : 0
@@ -473,7 +433,7 @@ Processor#0 : Importing dll noskx64.exe
 Processor#0 : Linking NOSKX64.EXE System
 Processor#0 : 0
 Processor#0 : Preboot Launch
-Processor#0 : Running driver 3 EntryPoint FFFF8000017E8000
+Processor#0 : Running driver 3 EntryPoint FFFF800001860000
 Processor#0 : EODX Driver Startup. DriverID 3
 Processor#0 : RETURN_STATUS :
 Processor#0 : 0
@@ -502,7 +462,7 @@ Processor#0 : Importing dll noskx64.exe
 Processor#0 : Linking NOSKX64.EXE System
 Processor#0 : 0
 Processor#0 : Preboot Launch
-Processor#0 : Running driver 4 EntryPoint FFFF8000017EC000
+Processor#0 : Running driver 4 EntryPoint FFFF800001864000
 Processor#0 : Window Management Driver startup
 Processor#0 : RETURN_STATUS :
 Processor#0 : 0
@@ -512,32 +472,63 @@ Processor#0 : Section:
 Processor#0 : .text
 Processor#0 : 1000
 Processor#0 : 400
-Processor#0 : 48
+Processor#0 : 114
 Processor#0 : Section:
 Processor#0 : .rdata
 Processor#0 : 2000
 Processor#0 : 600
-Processor#0 : 1E4
+Processor#0 : 2BA
+Processor#0 : Section:
+Processor#0 : .data
+Processor#0 : 3000
+Processor#0 : 0
+Processor#0 : 58
+Processor#0 : Section:
+Processor#0 : .pdata
+Processor#0 : 4000
+Processor#0 : A00
+Processor#0 : 3C
+Processor#0 : ADDR_SPACE_SIZE :
+Processor#0 : 5000
+Processor#0 : Sections copied.
+Processor#0 : IMPORTING...
+Processor#0 : Importing dll noskx64.exe
+Processor#0 : Linking NOSKX64.EXE System
+Processor#0 : Importing dll sddk.dll
+Processor#0 : Found boot DLL sddk.dll
+Processor#0 : Section:
+Processor#0 : .text
+Processor#0 : 1000
+Processor#0 : 400
+Processor#0 : E8
+Processor#0 : Section:
+Processor#0 : .rdata
+Processor#0 : 2000
+Processor#0 : 600
+Processor#0 : 388
 Processor#0 : Section:
 Processor#0 : .pdata
 Processor#0 : 3000
-Processor#0 : 800
-Processor#0 : 18
+Processor#0 : A00
+Processor#0 : 30
 Processor#0 : ADDR_SPACE_SIZE :
 Processor#0 : 4000
 Processor#0 : Sections copied.
 Processor#0 : IMPORTING...
 Processor#0 : Importing dll noskx64.exe
 Processor#0 : Linking NOSKX64.EXE System
+Processor#0 : EXPORTING...
+Processor#0 : Linking DLL...
 Processor#0 : 0
 Processor#0 : Preboot Launch
-Processor#0 : Running driver 5 EntryPoint FFFF8000017F0000
+Processor#0 : Running driver 5 EntryPoint FFFF800001868000
+Processor#0 : Init LIBS: Calling DLL Entry Point FFFF80000186D000
+Processor#0 : System Driver Developement Kit (SDDK) Entry Point.
 Processor#0 : AHCI Driver startup
+Processor#0 : PCI IO DRVIF FFFF80000186A000
 Processor#0 : KeRegEVT
-Processor#0 : AHCI PCI Device ADD Event
-Processor#0 : AHCI PCI Device ADD Event
-Processor#0 : AHCI PCI Device ADD Event
-Processor#0 : AHCI PCI Device ADD Event
+Processor#0 : Found AHCI Controller at addresscode FA000
+Processor#0 : HBA C1084000
 Processor#0 : RETURN_STATUS :
 Processor#0 : 0
 Processor#0 : Driver NewOS\System\ehci.sys
@@ -565,9 +556,11 @@ Processor#0 : Importing dll noskx64.exe
 Processor#0 : Linking NOSKX64.EXE System
 Processor#0 : 0
 Processor#0 : Preboot Launch
-Processor#0 : Running driver 6 EntryPoint FFFF8000017F4020
+Processor#0 : Running driver 6 EntryPoint FFFF800001871020
 Processor#0 : EHCI Driver startup
 Processor#0 : KeRegEVT
+Processor#0 : EHCI Device add handler
+Processor#0 : EHCI Device add handler
 Processor#0 : EHCI Device add handler
 Processor#0 : EHCI Device add handler
 Processor#0 : EHCI Device add handler
@@ -599,7 +592,7 @@ Processor#0 : Importing dll noskx64.exe
 Processor#0 : Linking NOSKX64.EXE System
 Processor#0 : 0
 Processor#0 : Preboot Launch
-Processor#0 : Running driver 7 EntryPoint FFFF8000017F8000
+Processor#0 : Running driver 7 EntryPoint FFFF800001875000
 Processor#0 : XHCI Driver startup
 Processor#0 : RETURN_STATUS :
 Processor#0 : 0
@@ -677,26 +670,24 @@ Processor#0 : Linking NOSKX64.EXE System
 Processor#0 : 0
 Processor#0 : Running AUTO BOOT LAUNCH Drivers
 Processor#0 : BOOT_LAUNCH Driver
-Processor#0 : Running Driver#2 EntryPoint FFFF8000017DB000
-Processor#0 : Init LIBS: Calling DLL Entry Point FFFF8000017DF0A0
+Processor#0 : Running Driver#2 EntryPoint FFFF800001857000
+Processor#0 : Init LIBS: Calling DLL Entry Point FFFF80000185B0A0
 Processor#0 : ACPI Library entry.
-Processor#0 : Device#0 Name : High Performance Event Timer
-Processor#0 : Device#1 Name : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Found ACPI
+Processor#0 : ACPI Device name : Advanced Configuration And Power Interface 2.0+ 47
 Processor#0 : RTC Driver startup.
 Processor#0 : ACPI IO Protocol 0
 Processor#0 : ACPI_IO_GET_VER FFFF8000000A4F28
 Processor#0 : ACPI Version : 2.0
-Processor#0 : 17:47:1
-Processor#0 : Day 3 Of the week
-Processor#0 : 18/7/23
+Processor#0 : 18:16:30
+Processor#0 : Day 4 Of the week
+Processor#0 : 19/7/23
 Processor#0 : Return status : 0
-Processor#0 : LIB : s SZ : 800
+Processor#0 : LIB : s SZ : C00
 Processor#0 : LIB : e SZ : 600
 Processor#0 : LIB : e SZ : 600
 Processor#0 : LIB : s SZ : 1200
 Processor#0 : LIB : o SZ : 19C00
-Processor#0 : LIB : a SZ : 1200
+Processor#0 : LIB : a SZ : E00
 Processor#0 : LIB : c SZ : 1200
 Processor#0 : drvend
 Processor#0 : INIT_AP_TRAMPOLINE at 0x1000, SymbolStart : FFFF800000008000
@@ -712,45 +703,51 @@ Processor#0 : Processor FFFF8000014046C0
 Processor#0 : Processor#2 Characteristics : 1
 Processor#0 : Booting Processor#2 , SYSTEM: APIC
 Processor#1 : GDT and TSS Loaded successfully
-Processor#1 : Registered System INT#222 for CPU#0
-Processor#1 : KERNEL Final Initialization Step called, Initializing the scheduling system...
-Processor#1 : Current processor #1 INTERNAL_DATA FFFFFFD000200000
-Processor#1 : Registered System INT#220 for CPU#1
-Processor#2 : GDT and TSS Loaded successfully
-Processor#2 : Registered System INT#223 for CPU#0
-Processor#2 : KERNEL Final Initialization Step called, Initializing the scheduling system...
-Processor#2 : Current processor #2 INTERNAL_DATA FFFFFFD000400000
-Processor#2 : Registered System INT#220 for CPU#2
-Processor#2 : create thread 1
-Processor#1 : create thread 1
-Processor#2 : Enabling the apic timer, interrupt number : 220
 Processor#0 : Object 100004348
 Processor#0 : Processor FFFF8000014058D0
 Processor#0 : Processor#3 Characteristics : 1
 Processor#0 : Booting Processor#3 , SYSTEM: APIC
-Processor#1 : Enabling the apic timer, interrupt number : 220
+Processor#2 : GDT and TSS Loaded successfully
+Processor#2 : Registered System INT#223 for CPU#0
+Processor#1 : Registered System INT#222 for CPU#0
+Processor#1 : KERNEL Final Initialization Step called, Initializing the scheduling system...
+Processor#1 : Current processor #1 INTERNAL_DATA FFFFFFD000200000
+Processor#1 : Registered System INT#220 for CPU#1
+Processor#2 : KERNEL Final Initialization Step called, Initializing the scheduling system...
 Processor#3 : GDT and TSS Loaded successfully
+Processor#2 : Current processor #2 INTERNAL_DATA FFFFFFD000400000
+Processor#1 : create thread 1
 Processor#3 : Registered System INT#224 for CPU#0
 Processor#3 : KERNEL Final Initialization Step called, Initializing the scheduling system...
+Processor#1 : Enabling the apic timer, interrupt number : 220
+Processor#2 : Registered System INT#220 for CPU#2
+Processor#2 : create thread 1
+Processor#0 : create thread 0
+Processor#2 : Enabling the apic timer, interrupt number : 220
+Processor#0 : create thread 0
 Processor#3 : Current processor #3 INTERNAL_DATA FFFFFFD000600000
 Processor#3 : Registered System INT#220 for CPU#3
 Processor#3 : create thread 1
 Processor#3 : Enabling the apic timer, interrupt number : 220
-Processor#0 : create thread 0
-Processor#0 : create thread 0
-Processor#2 : APIC Timer frequency : 1000427840 HZ
-Processor#2 : Processor#2 enabled.
-Processor#1 : APIC Timer frequency : 1000405760 HZ
+Processor#1 : APIC Timer frequency : 1001897920 HZ
 Processor#1 : Processor#1 enabled.
-Processor#3 : APIC Timer frequency : 1003165760 HZ
+Processor#2 : APIC Timer frequency : 1003893760 HZ
+Processor#2 : Processor#2 enabled.
+Processor#3 : APIC Timer frequency : 1007467840 HZ
 Processor#3 : Processor#3 enabled.
 Processor#0 : IRQ 2
 Processor#0 : Hpet Interrupt
 Processor#0 : EOI
-Processor#0 : NATIVE SUBSYSTEM ENTRY Process FFFF800001401230 Thread FFFF8000014604E0 NumThreads 3 ApicId 0
-Processor#0 : Entry Point FFFF800000010E40 Context 0
-Processor#1 : NATIVE SUBSYSTEM ENTRY Process FFFF800001401230 Thread FFFF800001461E40 NumThreads 3 ApicId 1
-Processor#1 : Entry Point FFFF800000010EC0 Context 0
+Processor#0 : NATIVE SUBSYSTEM ENTRY Process FFFF800001401230 Thread FFFF8000014604B0 NumThreads 3 ApicId 0
+Processor#0 : Entry Point FFFF800000010EC0 Context 0
+Processor#3 : NATIVE SUBSYSTEM ENTRY Process FFFF800001401230 Thread FFFF80000145EB50 NumThreads 3 ApicId 3
+Processor#3 : Entry Point FFFF800000010E40 Context 0
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
+Processor#0 : IRQ 2
+Processor#0 : Hpet Interrupt
+Processor#0 : EOI
 Processor#0 : IRQ 2
 Processor#0 : Hpet Interrupt
 Processor#0 : EOI

@@ -9,4 +9,7 @@ cd ../acpisys
 call ./compile.bat
 cd ../osusr
 call ./compile.bat
+cd ../sddk
+call ./compile.bat
+
 cd ../..

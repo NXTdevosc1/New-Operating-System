@@ -76,12 +76,13 @@ BOOLEAN KRNLAPI ObCloseHandle(PEPROCESS Process, HANDLE Handle) {
     }
     POBJECT_REFERENCE Ref = _ObHandleArray + (UINT64)Handle;
     ObLockHandle(Handle);
+
     // Unlink the reference
     UINT64 rflags = ExAcquireSpinLock(&Ref->Object->SpinLock);
     if(Ref->Object->References == Ref) Ref->Object->References = Ref->Next;
     else if(Ref->Object->ReferencesLastNode == Ref) Ref->Object->ReferencesLastNode = Ref->Previous;
 
-    Ref->Previous->Next = Ref->Next;
+    if(Ref->Previous) Ref->Previous->Next = Ref->Next;
 
     // Check if the object is not permanent and can be destroyed
     
@@ -91,14 +92,17 @@ BOOLEAN KRNLAPI ObCloseHandle(PEPROCESS Process, HANDLE Handle) {
 
     if(!Obj->NumReferences && !(Obj->Characteristics & OBJECT_PERMANENT)) {
         Ref->Object->EventHandler(NULL, OBJECT_EVENT_DESTROY, (HANDLE)Ref->Object, Ref->Access);
+       
         ObiFreeObject(Obj);
         __writeeflags(rflags);
+
     } else {
         ExReleaseSpinLock(&Ref->Object->SpinLock, rflags);
     }
 
     // De-Allocate the reference
     ObjZeroMemory(Ref);
+    
     _interlockedbittestandreset64(_ObHandleAllocationTable + ((UINT64)Handle >> 6), (UINT64)Handle & 0x3F);
     return TRUE;
 }

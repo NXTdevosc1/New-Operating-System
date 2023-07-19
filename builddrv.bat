@@ -85,3 +85,6 @@ bedit drvadd 0 1 "NewOS\System\usbkeyboard.sys"
 
 
 copy boot.nos diskimg\NewOS\System
+
+wsl sudo make createfs
+echo Build finished.

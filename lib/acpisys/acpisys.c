@@ -8,39 +8,24 @@ HANDLE AcpiHandle = INVALID_HANDLE;
 
 NSTATUS AcpiLibEntry() {
     KDebugPrint("ACPI Library entry.");
-    NSTATUS Status = STATUS_SUCCESS;
     UINT64 _EnumerationValue = 0;
-    POBJECT Obj;
     PDEVICE Device;
     UINT16 DeviceName[MAX_DEVICE_NAME_LENGTH + 1];
-    UINT NumDevices = 0;
-    while((_EnumerationValue = ObEnumerateObjects(NULL, OBJECT_DEVICE, &Obj, NULL, _EnumerationValue))) {
-        Device = ObGetAddress(Obj);
+    UINT8 DevNameLen = 0;
 
-        if(KeGetDeviceName(Device, DeviceName)) {
-            KDebugPrint("Device#%d Name : %ls", NumDevices, DeviceName);
-
-            if(memcmp(DeviceName, L"Advanced Configuration And Power Interface", 42 * 2) == 0) {
-                // Check if the name starts with ACPI {version}
-                KDebugPrint("Found ACPI");
-                if(NERROR(ObOpenHandle(Obj, NULL, 0, &AcpiHandle))
-                && AcpiHandle == INVALID_HANDLE // In case handle is already open
-                ) {
-                    KDebugPrint("Failed to open acpi handle. %x");
-                    return -1;
-                }
-                return STATUS_SUCCESS;
+    if(KeEnumerateDevices(NULL, &Device, L"Advanced Configuration And Power Interface", FALSE, &_EnumerationValue)) {
+        KeGetDeviceName(Device, DeviceName, &DevNameLen);
+        KDebugPrint("ACPI Device name : %ls %d", DeviceName, DevNameLen);
+        if(NERROR(ObOpenHandle(KeGetDeviceObjectHeader(Device), NULL, 0, &AcpiHandle))
+            && AcpiHandle == INVALID_HANDLE // In case handle is already open
+            ) {
+                KDebugPrint("Failed to open acpi handle. %x");
+                return STATUS_UNSUPPORTED;
             }
-
-        
-        } else {
-            KDebugPrint("Device#%d has no display name.", NumDevices);
-        }
-
-        NumDevices++;
+        return STATUS_SUCCESS;
     }
 
-    // You can use NULL to refer to the system process
+    KDebugPrint("No ACPI was found.");
     return STATUS_NOT_FOUND;
 }
 
