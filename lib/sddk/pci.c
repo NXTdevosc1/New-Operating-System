@@ -20,3 +20,18 @@ BOOLEAN SYSAPI PciQueryInterface(OUT PCI_DRIVER_INTERFACE* DriverInterface) {
     KDebugPrint("No PCI was found");
     return FALSE;
 }
+
+NSTATUS SYSAPI EnableMsiInterrupts(PCI_DRIVER_INTERFACE* Pci, PCI_DEVICE_LOCATION* Location) {
+    if(!(Pci->Read8(Location, PCI_STATUS) & (1 << 4))) return STATUS_UNSUPPORTED; // Capabilites are not supported
+    KDebugPrint("Enabling MSI Interrupts Device %d Bus %d Function %d", Location->Fields.Device, Location->Fields.Bus, Location->Fields.Bus);
+    UINT8 Cptr = Pci->Read8(Location, PCI_CAPABILITYPTR) & ~3;
+    while(Cptr) {
+        UINT8 CapId = Pci->Read8(Location, Cptr + PCI_CAPABILITY_ID);
+        KDebugPrint("cptr %x capid %x", Cptr, CapId);
+        if(CapId == PCI_MSI_CAPABILITY) {
+            KDebugPrint("Found MSI Capability");
+        }
+        Cptr = Pci->Read8(Location, Cptr + PCI_CAPABILITY_NEXT) & ~3;
+    }
+    return STATUS_UNSUPPORTED;
+}

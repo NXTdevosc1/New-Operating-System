@@ -1,6 +1,9 @@
 #include <nos/nos.h>
 #include <nos/mm/mm.h>
 
+#define PAGE_HALFPTR ((UINT64)0x8000000)
+
+
 PVOID MmiPreosAllocateMemory(
     IN UINT64 NumPages,
     IN UINT64 PageAttributes,
@@ -8,6 +11,7 @@ PVOID MmiPreosAllocateMemory(
  ) {
     UINT64 Flags = 0;
     if(PageAttributes & PAGE_2MB) Flags |= ALLOCATE_2MB_ALIGNED_MEMORY;
+    if(PageAttributes & PAGE_)
     void* Ptr;
     if(NERROR(MmAllocatePhysicalMemory(Flags, NumPages, &Ptr))) {
         return NULL;
@@ -50,6 +54,10 @@ PVOID KRNLAPI MmAllocateMemory(
     // TODO : Allocate Fragmented memory instead of contiguous memory
     UINT64 Flags = 0;
     if(PageAttributes & PAGE_2MB) Flags |= ALLOCATE_2MB_ALIGNED_MEMORY;
+    if(PageAttributes & PAGE_HALFPTR) Flags |= ALLOCATE_BELOW_4GB;
+
+    PageAttributes &= ~PAGE_HALFPTR;
+
     void* Ptr;
     if(NERROR(MmAllocatePhysicalMemory(Flags, NumPages, &Ptr))) {
         return NULL;

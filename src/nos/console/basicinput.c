@@ -16,6 +16,25 @@ struct {
 
 extern void DrawRect(UINT x, UINT y, UINT Width, UINT Height, UINT Color);
 
+UINT32 Dbgcolors[10] = {
+    0xFFFFFF, // white 00
+    0xFF, // blue 01
+    0xFF00, // green 02
+    0xFF0000, // red
+    0x7000FF, // purple
+    0xFF00F6, // pink
+    0xFFF600, // yellow
+    0xFF9800, // orange
+    0x00FFE5, // light blue
+    0xCAFF00, // pistache
+
+};
+
+void KRNLAPI KiDrawDebugRect(UINT8 DbgStage) {
+
+    DrawRect(DbgStage * 30, 0, 200, 200, Dbgcolors[DbgStage]);
+}
+
 void ConClear() {
     if(!ConBuffer) {
         NumberOfLines = NosInitData->FrameBuffer.VerticalResolution / 35;

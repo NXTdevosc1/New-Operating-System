@@ -4,6 +4,10 @@
 #include <nos/processor/hw.h>
 
 #include <intmgr.h>
+
+extern void DrawRect(UINT x, UINT y, UINT Width, UINT Height, UINT Color);
+extern void KRNLAPI KiDrawDebugRect(UINT8 DbgStage);
+
 void* NosInternalInterruptHandler(UINT64 InterruptNumber, void* InterruptStack) {
     INTERRUPT_STACK_FRAME* StackFrame = InterruptStack;
     INTERRUPT_ERRCODE_STACK_FRAME* ErrStack = InterruptStack;
@@ -24,29 +28,34 @@ void* NosInternalInterruptHandler(UINT64 InterruptNumber, void* InterruptStack) 
     StackFrame->Rflags, StackFrame->StackPointer, StackFrame->StackSegment
     );
         KDebugPrint("Kernel-Mode Process Crashed.");
+        DrawRect(0, 0, 500, 500, 0xFFFF);
     }
     
     switch(InterruptNumber) {
         case CPU_INTERRUPT_DIVIDED_BY_0:
         {
             SerialLog("#DIV");
+        KiDrawDebugRect(0);
 
             break;
         }
         case CPU_INTERRUPT_DEBUG_EXCEPTION:
         {
             SerialLog("#DBG");
+        KiDrawDebugRect(1);
 
             break;
         }
         case CPU_INTERRUPT_NON_MASKABLE_INTERRUPT:
         {
             SerialLog("#NMI");
+        KiDrawDebugRect(2);
 
             break;
         }
         case CPU_INTERRUPT_PAGE_FAULT:
         {
+        KiDrawDebugRect(3);
             
             KDebugPrint("#PF ErrCode : %d", ErrStack->ErrorCode);
             KDebugPrint("CR2 : %x", __readcr2());
@@ -63,11 +72,15 @@ void* NosInternalInterruptHandler(UINT64 InterruptNumber, void* InterruptStack) 
         }
         case CPU_INTERRUPT_GENERAL_PROTECTION_FAULT:
         {
+        KiDrawDebugRect(4);
+
             KDebugPrint("#GPF ErrCode : %d", ErrStack->ErrorCode);
             break;
         }
         case CPU_INTERRUPT_DOUBLE_FAULT:
         {
+        KiDrawDebugRect(5);
+
             SerialLog("#DF");
 
             break;

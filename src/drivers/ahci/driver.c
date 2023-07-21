@@ -20,15 +20,11 @@ NSTATUS PciAddEvent(SYSTEM_DEVICE_ADD_CONTEXT* Context) {
         UINT8 DevSubclass = Pci.Read8(&Context->DeviceData.PciDeviceData.PciDeviceLocation, PCI_SUBCLASS);
         UINT8 ProgIf = Pci.Read8(&Context->DeviceData.PciDeviceData.PciDeviceLocation, PCI_PROGIF);
        
-        if(DevClass == 1 && DevSubclass == 6 && ProgIf == 1) {
-            KDebugPrint("Found AHCI Controller at addresscode %x", Context->DeviceData.PciDeviceData.PciDeviceLocation.Address);
-            PCI_DEVICE_LOCATION* DeviceConfig = &Context->DeviceData.PciDeviceData.PciDeviceLocation;
-            HBA_REGISTERS* Hba = PciGetBaseAddress(&Pci, DeviceConfig, 5);
-            KDebugPrint("HBA %x", Hba);
-
-            KeMapVirtualMemory(NULL, Hba, Hba, AHCI_CONFIGURATION_PAGES, PAGE_WRITE_ACCESS, PAGE_CACHE_DISABLE);
-
-            Hba->GlobalHostControl.AhciEnable = 1;
+        if(Context->DeviceData.PciDeviceData.Class == 1 &&
+        Context->DeviceData.PciDeviceData.Subclass == 6 &&
+        Context->DeviceData.PciDeviceData.ProgIf == 1
+        ) {
+            NSTATUS s = AhciInitDevice(&Context->DeviceData.PciDeviceData.PciDeviceLocation);
             
         }
     }
