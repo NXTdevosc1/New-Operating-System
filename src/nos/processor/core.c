@@ -22,14 +22,7 @@ static NSTATUS __inthalt(INTERRUPT_HANDLER_DATA* Hd) {
 void CpuInitDescriptors(PROCESSOR* Processor) {
     _disable();
     // Creating the interrupt array table
-    INTERRUPT_ARRAY* Interrupts;
-    Interrupts = MmAllocateMemory(KernelProcess, ConvertToPages(sizeof(INTERRUPT_ARRAY)), PAGE_WRITE_ACCESS | PAGE_GLOBAL, PAGE_CACHE_WRITE_THROUGH);
-    if(!Interrupts) {
-        SerialLog("Failed to allocate interrupt array.");
-        while(1);
-    }
-    ObjZeroMemory(Interrupts);
-    Processor->Interrupts = Interrupts;
+
     SYSTEM_DESCRIPTOR Idtr = {0xFFF, Processor->Idt};
     __lidt(&Idtr);
     // Setting up the GDT

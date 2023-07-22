@@ -1,5 +1,6 @@
 #include "sddkinternal.h"
 #include <pcidef.h>
+#include <intrin.h>
 
 BOOLEAN SYSAPI PciQueryInterface(OUT PCI_DRIVER_INTERFACE* DriverInterface) {
     HANDLE PciHandle = INVALID_HANDLE;
@@ -21,8 +22,13 @@ BOOLEAN SYSAPI PciQueryInterface(OUT PCI_DRIVER_INTERFACE* DriverInterface) {
     return FALSE;
 }
 
-NSTATUS SYSAPI EnableMsiInterrupts(PCI_DRIVER_INTERFACE* Pci, PCI_DEVICE_LOCATION* Location) {
+NSTATUS SYSAPI EnableMsiInterrupts(PCI_DRIVER_INTERFACE* Pci, PCI_DEVICE_LOCATION* Location, INTERRUPT_SERVICE_HANDLER Handler, void* Context) {
     if(!(Pci->Read8(Location, PCI_STATUS) & (1 << 4))) return STATUS_UNSUPPORTED; // Capabilites are not supported
+    
+    // Enable PCI Interrupts
+    // Remove Interrupt Disable (0x400), Set BUS Muster/I/O Space/MM Space (7)
+    Pci->Write16(Location, PCI_COMMAND, (Pci->Read16(Location, PCI_COMMAND) & ~0x400) | 7);
+
     KDebugPrint("Enabling MSI Interrupts Device %d Bus %d Function %d", Location->Fields.Device, Location->Fields.Bus, Location->Fields.Bus);
     UINT8 Cptr = Pci->Read8(Location, PCI_CAPABILITYPTR) & ~3;
     while(Cptr) {
@@ -30,6 +36,30 @@ NSTATUS SYSAPI EnableMsiInterrupts(PCI_DRIVER_INTERFACE* Pci, PCI_DEVICE_LOCATIO
         KDebugPrint("cptr %x capid %x", Cptr, CapId);
         if(CapId == PCI_MSI_CAPABILITY) {
             KDebugPrint("Found MSI Capability");
+            // Allocate an interrupt
+            UINT32 Iv = -1;
+            UINT64 ProcessorId;
+            NSTATUS s;
+            if(NERROR((s = KeInstallInterruptHandler(&Iv, &ProcessorId, 0, Handler, Context)))) {
+                return s;
+            }
+            UINT64 Address = (__readmsr(0x1B)/*APIC Base MSR*/ & ((UINT64)~0xFFF)) | (ProcessorId << 12);
+            if((Pci->Read16(Location, Cptr + MSI_MESSAGE_CONTROL) & 0x80)) {
+                // Use MSI64
+                Pci->Write64(Location, Cptr + MSI_MESSAGE_ADDRESS, Address);
+                Pci->Write32(Location, Cptr + MSI64_MESSAGE_DATA, Iv | (1 << 14) /*Assert*/);
+                Pci->Write32(Location, Cptr + MSI64_MASK, 0);
+            } else {
+                // Use MSI32
+                Pci->Write32(Location, Cptr + MSI_MESSAGE_ADDRESS, Address);
+                Pci->Write32(Location, Cptr + MSI_MESSAGE_DATA, Iv | (1 << 14) /*Assert*/);
+                Pci->Write32(Location, Cptr + MSI_MASK, 0);
+
+            }
+            // Enable MSI
+            Pci->Write16(Location, Cptr + MSI_MESSAGE_CONTROL, (Pci->Read16(Location, Cptr + MSI_MESSAGE_CONTROL)) | 1);
+        
+            return STATUS_SUCCESS;
         }
         Cptr = Pci->Read8(Location, Cptr + PCI_CAPABILITY_NEXT) & ~3;
     }

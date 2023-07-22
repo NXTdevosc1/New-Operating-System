@@ -11,7 +11,6 @@ PVOID MmiPreosAllocateMemory(
  ) {
     UINT64 Flags = 0;
     if(PageAttributes & PAGE_2MB) Flags |= ALLOCATE_2MB_ALIGNED_MEMORY;
-    if(PageAttributes & PAGE_)
     void* Ptr;
     if(NERROR(MmAllocatePhysicalMemory(Flags, NumPages, &Ptr))) {
         return NULL;

@@ -11,72 +11,142 @@ struct {
     IR_END_OF_INTERRUPT Eoi;
 } gInterruptRoutingTable = {0};
 
+static inline UINT8 KiAllocateIV(PROCESSOR* Processor, UINT Irq, IM_INTERRUPT_INFORMATION* Int, INTERRUPT_SERVICE_HANDLER Handler, void* Context) {
+    INTERRUPT_DESCRIPTOR* en;
+    KDebugPrint("A");
+    if(Irq != -1) {
+    KDebugPrint("C %x %x", Processor, Processor->Interrupts);
+
+        // Find entry with same IRQ
+        for(int i = 0;i<188;i++) {
+            if(Processor->Interrupts->Interrupts[i].Present &&
+            Processor->Interrupts->Interrupts[i].Irq == Irq
+            ) {
+                KDebugPrint("B");
+                UINT64 cpf = ExAcquireSpinLock(&Processor->Interrupts->Interrupts[i].SpinLock);
+                ULONG Index;
+                if(!_BitScanForward64(&Index, ~Processor->Interrupts->Interrupts[i].Present)) {
+                    KeRaiseException(STATUS_OUT_OF_INTERRUPTS);
+                };
+                KDebugPrint("B");
+
+                en = Processor->Interrupts->Interrupts[i].Descriptors + Index;
+                en->Handler = Handler;
+                en->Context = Context;
+                if(Processor->Interrupts->Interrupts[i].Present == 0) {
+                KDebugPrint("Bb");
+
+                    // Set an interrupt entry
+                    CpuSetInterrupt(Processor, i + 0x20, InterruptGate, NosIrqService);
+                    if(NERROR(gInterruptRoutingTable.SetInterrupt(Int->Fields.GlobalSystemInterrupt,
+                    0, i + 0x20, Processor->Id.ProcessorId, Int->Fields.DeliveryMode,Int->Fields.Polarity, Int->Fields.TriggerMode
+                    ))) {
+                        KDebugPrint("ROUTER FAILED TO SET INTERRUPT");
+                        while(1) __halt();
+                    }
+                KDebugPrint("Bb");
+
+                }
+                _bittestandset64(&Processor->Interrupts->Interrupts[i].Present, Index);
+                ExReleaseSpinLock(&Processor->Interrupts->Interrupts[i].SpinLock, cpf);
+                KDebugPrint("B");
+
+                return i + 0x20;
+            }
+        }
+    KDebugPrint("C");
+
+    }
+    KDebugPrint("A");
+
+    // Otherwise allocate a new entry
+    for(int i = 0;i<188;i++) {
+        if(!Processor->Interrupts->Interrupts[i].Present) {
+            if(_interlockedbittestandset64(&Processor->Interrupts->Interrupts[i].SpinLock, 0)) continue;
+            if(Processor->Interrupts->Interrupts[i].Present) {
+                _bittestandreset64(&Processor->Interrupts->Interrupts[i].SpinLock, 0);
+                continue;
+            }
+    KDebugPrint("A");
+
+            en = Processor->Interrupts->Interrupts[i].Descriptors;
+            en->Handler = Handler;
+            en->Context = Context;
+
+            Processor->Interrupts->Interrupts[i].Present = 1;
+            CpuSetInterrupt(Processor, i + 0x20, InterruptGate, NosIrqService);
+            if(Irq != -1) {
+                if(NERROR(gInterruptRoutingTable.SetInterrupt(Int->Fields.GlobalSystemInterrupt,
+                    0, i + 0x20, Processor->Id.ProcessorId, Int->Fields.DeliveryMode,Int->Fields.Polarity, Int->Fields.TriggerMode
+                    ))) {
+                        KDebugPrint("ROUTER FAILED TO SET INTERRUPT BUG2");
+                        while(1) __halt();
+                    }
+            }
+            _bittestandreset64(&Processor->Interrupts->Interrupts[i].SpinLock, 0);
+            return i + 0x20;
+        }
+    }
+
+    KDebugPrint("BBBBUG");
+
+    KeRaiseException(STATUS_OUT_OF_INTERRUPTS);
+}
+
+static SPINLOCK SelectCpuLock = 0;
+UINT64 ProcessorSelector = 0;
+
 // Processor Interrupt Utilities
-NSTATUS KRNLAPI ExInstallInterruptHandler(
-    IN UINT32 IrqNumber,
+NSTATUS KRNLAPI KeInstallInterruptHandler(
+    IN OUT UINT32* InterruptVector, // -1 if no irq is assigned, returns an arbitrary irq number
+    OUT UINT64* _ProcessorId,
     IN UINT Flags,
     IN INTERRUPT_SERVICE_HANDLER Handler,
     IN OPT void* Context
 ) {
-    /*
-    TODO : Choose the processor based on the IRQ Number
-    */
-    PROCESSOR* Processor = BootProcessor;
+    // Choosing a CPU
+    UINT64 cpf = ExAcquireSpinLock(&SelectCpuLock);
+    if(ProcessorSelector == NumProcessors) ProcessorSelector = 0;
+    PROCESSOR* Processor = KeGetProcessorByIndex(ProcessorSelector);
+    if(!Processor) {
+        KDebugPrint("KE_INSTALL_INT BUG0");
+        while(1) __halt();
+    }
+    ProcessorSelector++;
+    KDebugPrint("CPU#%u Selected for Interrupt %u", Processor->Id.ProcessorId, (*InterruptVector));
+    ExReleaseSpinLock(&SelectCpuLock, cpf);
 
+    // If it is a device Interrupt, try to find an override for it
     INTERRUPT_ARRAY* Ints = Processor->Interrupts;
-
-    // Get Interrupt Information
+    
+    UINT32 Irq = *InterruptVector;
     IM_INTERRUPT_INFORMATION InterruptInformation;
-    if(!(Flags & IM_NO_OVERRIDE) && gInterruptRoutingTable.GetInterruptInformation(IrqNumber, &InterruptInformation)) {
-        IrqNumber = InterruptInformation.Fields.GlobalSystemInterrupt;
-    } else {
-        KDebugPrint("WARNING Failed to query interrupt information, using Flags to determine interrupt parameters");
-        if(Flags & IM_DELIVERY_EXTINT) {
-        InterruptInformation.Fields.DeliveryMode = 0b111;
-        } else InterruptInformation.Fields.DeliveryMode = (Flags & 0b110);
+    if(Irq != -1) {
+        // Get Interrupt Information
+        if(!(Flags & IM_NO_OVERRIDE) && gInterruptRoutingTable.GetInterruptInformation(Irq, &InterruptInformation)) {
+            Irq = InterruptInformation.Fields.GlobalSystemInterrupt;
+        } else {
+            KDebugPrint("WARNING Failed to query interrupt information, using Flags to determine interrupt parameters");
+            if(Flags & IM_DELIVERY_EXTINT) {
+            InterruptInformation.Fields.DeliveryMode = 0b111;
+            } else InterruptInformation.Fields.DeliveryMode = (Flags & 0b110);
 
-        InterruptInformation.Fields.Polarity = Flags >> 3;
-        InterruptInformation.Fields.TriggerMode = Flags >> 4;
-    }
-
-    KDebugPrint("DELIVERY_MODE %d POLARITY %d TRIGGERMODE %d", InterruptInformation.Fields.DeliveryMode, InterruptInformation.Fields.Polarity, InterruptInformation.Fields.TriggerMode);
-
-    // TODO : Acquire SpinLock
-    UINT64 rflags = ExAcquireSpinLock(&Ints->Interrupts[IrqNumber].SpinLock);
-    UINT32 IntIndx;
-    if(!Ints->Interrupts[IrqNumber].Present) {
-        CpuSetInterrupt(
-            Processor,
-            IrqNumber + 0x20,
-            InterruptGate,
-            NosIrqService
-        );
-        if(NERROR(gInterruptRoutingTable.SetInterrupt(
-            IrqNumber, 0, IrqNumber + 0x20, Processor->Id.ProcessorId,
-            InterruptInformation.Fields.DeliveryMode,
-            InterruptInformation.Fields.Polarity,
-            InterruptInformation.Fields.TriggerMode
-        ))) {
-            SerialLog("ROUTER FAILED TO SET INTERRUPT.");
-            while(1) __halt();
+            InterruptInformation.Fields.Polarity = Flags >> 3;
+            InterruptInformation.Fields.TriggerMode = Flags >> 4;
         }
-    }
-    if(!_BitScanForward64(&IntIndx, ~Ints->Interrupts[IrqNumber].Present)) {
-        ExReleaseSpinLock(&Ints->Interrupts[IrqNumber].SpinLock, rflags);
-        KDebugPrint("OS_INSTALL_INT No interrupt slots");
-        return STATUS_NO_FREE_SLOTS;
-    }
-    _bittestandset64(&Ints->Interrupts[IrqNumber].Present, IntIndx);
-    INTERRUPT_DESCRIPTOR* Descriptor = &Ints->Interrupts[IrqNumber].Descriptors[IntIndx];
-    Descriptor->Context = Context;
-    Descriptor->Handler = Handler;
-    ExReleaseSpinLock(&Ints->Interrupts[IrqNumber].SpinLock, rflags);
 
+        KDebugPrint("DELIVERY_MODE %d POLARITY %d TRIGGERMODE %d", InterruptInformation.Fields.DeliveryMode, InterruptInformation.Fields.Polarity, InterruptInformation.Fields.TriggerMode);
+    } else KDebugPrint("Allocating arbitrary irq");
+
+    UINT8 IntVec = KiAllocateIV(Processor, Irq, &InterruptInformation, Handler, Context);
+    *InterruptVector = IntVec;
+    *_ProcessorId = Processor->Id.ProcessorId;
     return STATUS_SUCCESS;
 }
 
-NSTATUS KRNLAPI ExRemoveInterruptHandler(
-    IN UINT32 IrqNumber,
+NSTATUS KRNLAPI KeRemoveInterruptHandler(
+    IN PROCESSOR* Processor,
+    IN UINT8 InterruptVector,
     IN INTERRUPT_SERVICE_HANDLER Handler
 ) {
     // TODO : Check if handler exists (PAGE_EXECUTABLE Check)
@@ -84,31 +154,30 @@ NSTATUS KRNLAPI ExRemoveInterruptHandler(
     /*
     TODO : Choose the processor based on the IRQ Number
     */
-    PROCESSOR* Processor = BootProcessor;
     INTERRUPT_ARRAY* Ints = Processor->Interrupts;
 
     // TODO : Acquire SpinLock
-    UINT64 rflags = ExAcquireSpinLock(&Ints->Interrupts[IrqNumber].SpinLock);
+    UINT64 rflags = ExAcquireSpinLock(&Ints->Interrupts[InterruptVector].SpinLock);
 
 
     UINT32 IntIndx;
-    UINT64 Bitmask = Ints->Interrupts[IrqNumber].Present;
+    UINT64 Bitmask = Ints->Interrupts[InterruptVector].Present;
     while(_BitScanForward64(&IntIndx, Bitmask)) {
         _bittestandreset64(&Bitmask, IntIndx);
-        INTERRUPT_DESCRIPTOR* Descriptor = &Ints->Interrupts[IrqNumber].Descriptors[IntIndx];
+        INTERRUPT_DESCRIPTOR* Descriptor = &Ints->Interrupts[InterruptVector].Descriptors[IntIndx];
         if(Descriptor->Handler == Handler) {
-            _bittestandreset64(&Ints->Interrupts[IrqNumber].Present, IntIndx);
+            _bittestandreset64(&Ints->Interrupts[InterruptVector].Present, IntIndx);
             ObjZeroMemory(Descriptor);
 
-            if(!Ints->Interrupts[IrqNumber].Present) {
-                CpuRemoveInterrupt(Processor, IrqNumber + 0x20);
-                ExReleaseSpinLock(&Ints->Interrupts[IrqNumber].SpinLock, rflags);
+            if(!Ints->Interrupts[InterruptVector].Present) {
+                CpuRemoveInterrupt(Processor, InterruptVector + 0x20);
+                ExReleaseSpinLock(&Ints->Interrupts[InterruptVector].SpinLock, rflags);
 
             }
             return STATUS_SUCCESS;
         }
     }
-    ExReleaseSpinLock(&Ints->Interrupts[IrqNumber].SpinLock, rflags);
+    ExReleaseSpinLock(&Ints->Interrupts[InterruptVector].SpinLock, rflags);
     return STATUS_NOT_FOUND;
 }
 

@@ -53,6 +53,13 @@ RFPROCESSOR KRNLAPI KeRegisterProcessor(PROCESSOR_IDENTIFICATION_DATA* Ident) {
     ZeroMemory(Processor->InternalData, 0x200000);
 
     Processor->InternalData->Processor = Processor;
+
+    Processor->Interrupts = MmAllocateMemory(KernelProcess, ConvertToPages(sizeof(INTERRUPT_ARRAY)), PAGE_WRITE_ACCESS | PAGE_GLOBAL, PAGE_CACHE_WRITE_THROUGH);
+    if(!Processor->Interrupts) {
+        SerialLog("Failed to allocate interrupt array.");
+        while(1);
+    }
+    ObjZeroMemory(Processor->Interrupts);
     
 
     _InterlockedIncrement64(&NumProcessors);

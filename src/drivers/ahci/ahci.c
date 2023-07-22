@@ -41,6 +41,6 @@ NSTATUS AhciInitDevice(PCI_DEVICE_LOCATION* ploc) {
     KDebugPrint("AHCI Enabled successfully NUM_CMD_SLOTS %d", Ahc->NumSlots);
     
     // Enable MSI Interrupts
-    EnableMsiInterrupts(&Pci, ploc);
+    EnableMsiInterrupts(&Pci, ploc, AhciInterruptHandler, Ahc);
     return STATUS_SUCCESS;
 }
