@@ -49,17 +49,17 @@ PCI_DEVICE_INDEPENDENT_REGION* PciGetConfiguration(
 
 // CURRENTLY LEGACY PCI IS NOT IMPLEMENTED
 
-UINT64 _PciRead64(PCI_DEVICE_LOCATION* Location, UINT16 Offset) {
-    if(!SegmentAddresses[Location->Fields.Segment]) {
-        KeRaiseException(STATUS_INVALID_PCI_ACCESS);
-    }
-    return *(UINT64*)((Location->Address & 0xFFFF000) | SegmentAddresses[Location->Fields.Segment] | Offset);
-}
+
 UINT32 _PciRead32(PCI_DEVICE_LOCATION* Location, UINT16 Offset) {
     if(!SegmentAddresses[Location->Fields.Segment]) {
         KeRaiseException(STATUS_INVALID_PCI_ACCESS);
     }
     return *(UINT32*)((Location->Address & 0xFFFF000) | SegmentAddresses[Location->Fields.Segment] | Offset);
+}
+UINT64 _PciRead64(PCI_DEVICE_LOCATION* Location, UINT16 Offset) {
+    UINT64 ret = _PciRead32(Location, Offset);
+    ret |= ((UINT64)_PciRead32(Location, Offset + 4)) << 32;
+    return ret;
 }
 UINT16 _PciRead16(PCI_DEVICE_LOCATION* Location, UINT16 Offset) {
     if(!SegmentAddresses[Location->Fields.Segment]) {
@@ -74,17 +74,15 @@ UINT8 _PciRead8(PCI_DEVICE_LOCATION* Location, UINT16 Offset) {
     return *(UINT8*)((Location->Address & 0xFFFF000) | SegmentAddresses[Location->Fields.Segment] | Offset);
 }
 
-void _PciWrite64(PCI_DEVICE_LOCATION* Location, UINT16 Offset, UINT64 Value) {
-    if(!SegmentAddresses[Location->Fields.Segment]) {
-            KeRaiseException(STATUS_INVALID_PCI_ACCESS);
-        }
-    *(UINT64*)((Location->Address & 0xFFFF000) | SegmentAddresses[Location->Fields.Segment] | Offset) = Value;
-}
 void _PciWrite32(PCI_DEVICE_LOCATION* Location, UINT16 Offset, UINT32 Value) {
     if(!SegmentAddresses[Location->Fields.Segment]) {
             KeRaiseException(STATUS_INVALID_PCI_ACCESS);
         }
     *(UINT32*)((Location->Address & 0xFFFF000) | SegmentAddresses[Location->Fields.Segment] | Offset) = Value;
+}
+void _PciWrite64(PCI_DEVICE_LOCATION* Location, UINT16 Offset, UINT64 Value) {
+    _PciWrite32(Location, Offset, Value);
+    _PciWrite32(Location, Offset + 4, Value >> 32);
 }
 void _PciWrite16(PCI_DEVICE_LOCATION* Location, UINT16 Offset, UINT16 Value) {
     if(!SegmentAddresses[Location->Fields.Segment]) {

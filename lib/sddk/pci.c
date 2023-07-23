@@ -65,3 +65,12 @@ NSTATUS SYSAPI EnableMsiInterrupts(PCI_DRIVER_INTERFACE* Pci, PCI_DEVICE_LOCATIO
     }
     return STATUS_UNSUPPORTED;
 }
+
+
+PVOID SYSAPI PciGetBaseAddress(PCI_DRIVER_INTERFACE* _Pci, PCI_DEVICE_LOCATION* _PciAddress, UINT _BarIndex){
+    UINT64 Bar = _Pci->Read32(_PciAddress, PCI_BAR + (_BarIndex * 4));
+    if((Bar & PCI_BAR_64BIT)) {
+        Bar |= ((UINT64)_Pci->Read32(_PciAddress, PCI_BAR + 4 + (_BarIndex * 4))) << 32;
+    }
+    return (void*)(Bar & ~0xF);
+}

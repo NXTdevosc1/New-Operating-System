@@ -38,7 +38,7 @@ static inline UINT8 KiAllocateIV(PROCESSOR* Processor, UINT Irq, IM_INTERRUPT_IN
 
                     // Set an interrupt entry
                     CpuSetInterrupt(Processor, i + 0x20, InterruptGate, NosIrqService);
-                    if(NERROR(gInterruptRoutingTable.SetInterrupt(Int->Fields.GlobalSystemInterrupt,
+                    if(NERROR(gInterruptRoutingTable.SetInterrupt(Irq,
                     0, i + 0x20, Processor->Id.ProcessorId, Int->Fields.DeliveryMode,Int->Fields.Polarity, Int->Fields.TriggerMode
                     ))) {
                         KDebugPrint("ROUTER FAILED TO SET INTERRUPT");
@@ -76,7 +76,7 @@ static inline UINT8 KiAllocateIV(PROCESSOR* Processor, UINT Irq, IM_INTERRUPT_IN
             Processor->Interrupts->Interrupts[i].Present = 1;
             CpuSetInterrupt(Processor, i + 0x20, InterruptGate, NosIrqService);
             if(Irq != -1) {
-                if(NERROR(gInterruptRoutingTable.SetInterrupt(Int->Fields.GlobalSystemInterrupt,
+                if(NERROR(gInterruptRoutingTable.SetInterrupt(Irq,
                     0, i + 0x20, Processor->Id.ProcessorId, Int->Fields.DeliveryMode,Int->Fields.Polarity, Int->Fields.TriggerMode
                     ))) {
                         KDebugPrint("ROUTER FAILED TO SET INTERRUPT BUG2");

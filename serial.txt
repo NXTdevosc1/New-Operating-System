@@ -58,10 +58,10 @@ Symbol Found, base : 00000000000AA480, IAT_TARGET : 000000007CE18020, RVA : 0000
  loaded
  loaded
  loaded
-? loaded
+ loaded
  loaded
 Memory Count:
-103
+117
 Mapping System Pages :
 7CE00000
 FFFF800000000000
@@ -137,16 +137,16 @@ Processor#0 :
 
 Processor#0 : ACPI: 
 Processor#0 : M
- 0x0FFFF80000006302A 7FB7A000 (v23640278 %-4.4s 0x%8.8X%8.8X %06X (v%.2d %-6.6s %-8.8s %08X %-4.4s %08X) DSDTº  0 DSDTº  FFFF8000000020BA)
+ 0x0FFFF80000006302A 7FB7A000 (v23640278 %-4.4s 0x%8.8X%8.8X %06X (v%.2d %-6.6s %-8.8s %08X %-4.4s %08X) DSDT! 0 DSDT! FFFF80000000210D)
 Processor#0 : 
 
 Processor#0 : ACPI: 
-Processor#0 :  0x0FFFF80000006302A 20BA
+Processor#0 :  0x0FFFF80000006302A 210D
 Processor#0 : 
 
 Processor#0 : ACPI: 
 Processor#0 : PM
- 0x0FFFF80000006302A 7FB78000 (v23640278 %-4.4s 0x%8.8X%8.8X %06X (v%.2d %-6.6s %-8.8s %08X %-4.4s %08X) APICx 0 APICx FFFF800000000078)
+ 0x0FFFF80000006302A 7FB78000 (v23640278 %-4.4s 0x%8.8X%8.8X %06X (v%.2d %-6.6s %-8.8s %08X %-4.4s %08X) APIC€ 0 APIC€ FFFF800000000080)
 Processor#0 : 
 
 Processor#0 : ACPI: 
@@ -171,6 +171,7 @@ Processor#0 :
 
 Processor#0 : APIC Found
 Processor#0 : lapic id 0 flags 1 pid 0
+Processor#0 : lapic id 1 flags 1 pid 1
 Processor#0 : IO apic id 0 addr FEC00000 irq base 0
 Processor#0 : Max Redir Entry 23
 Processor#0 : ACPI_MADT_TYPE_INTERRUPT_OVERRIDE Bus : 0 GSI : 2 SOURCE : 0
@@ -180,14 +181,14 @@ Processor#0 : ACPI_MADT_TYPE_INTERRUPT_OVERRIDE Bus : 0 GSI : A SOURCE : A
 Processor#0 : ACPI_MADT_TYPE_INTERRUPT_OVERRIDE Bus : 0 GSI : B SOURCE : B
 Processor#0 : ACPI_MADT_TYPE_LOCAL_APIC_NMI pid FF lint 1 intiflags 0
 Processor#0 : Registered System INT#220 for CPU#0
-Processor#0 : Set Scheduler Data : LAPIC : FFFF800001731000
+Processor#0 : Set Scheduler Data : LAPIC : FFFF800001761000
 Processor#0 : MCFG Found
 Processor#0 : Num Segments : 1
 Processor#0 : PCI seg#0 SB : 0 EB : 255 ADDR : B0000000
 Processor#0 : Test get seg: S0 : 1 S1 : 0
-Processor#0 : HPET Found Address : FED00000, HPET Mapped Address : FFFF800001734000
+Processor#0 : HPET Found Address : FED00000, HPET Mapped Address : FFFF800001764000
 Processor#0 : Hpet Frequency : 100000000 HZ
-Processor#0 : CPU#0 Select for Interrupt 0
+Processor#0 : CPU#0 Selected for Interrupt 0
 Processor#0 : DELIVERY_MODE 0 POLARITY 0 TRIGGERMODE 0
 Processor#0 : A
 Processor#0 : C FFFF800001400020 FFFF800001600000
@@ -223,12 +224,12 @@ Processor#0 : Current processor #0 INTERNAL_DATA FFFFFFD000000000
 Processor#0 : Registered System INT#221 for CPU#0
 Processor#0 : create thread 1
 Processor#0 : Enabling the apic timer, interrupt number : 221
-Processor#0 : APIC Timer frequency : 1006521920 HZ
+Processor#0 : APIC Timer frequency : 1006536000 HZ
 Processor#0 : Tables:
 Processor#0 : SN : FACP Length : 244
-Processor#0 : SN : DSDT Length : 8378
+Processor#0 : SN : DSDT Length : 8461
 Processor#0 : SN : FACS Length : 64
-Processor#0 : SN : APIC Length : 120
+Processor#0 : SN : APIC Length : 128
 Processor#0 : SN : HPET Length : 56
 Processor#0 : SN : MCFG Length : 60
 Processor#0 : SN : WAET Length : 40
@@ -243,11 +244,11 @@ Processor#0 : Initializing General Purpose Events (GPEs):
 
 Processor#0 :     Initialized GPE FFFF8000000A4DA0 to FFFF8000016C8418 [evgpeblk] 9 regs on interrupt 0xFFFF80000168D5F30.@
 
-Processor#0 : AcpiOsInstallInt#9 ISR FFFF80000168FAB0 CTX FFFF800001455080
-Processor#0 : CPU#0 Select for Interrupt 9
+Processor#0 : AcpiOsInstallInt#9 ISR FFFF80000168FAB0 CTX FFFF800001456B10
+Processor#0 : CPU#1 Selected for Interrupt 9
 Processor#0 : DELIVERY_MODE 0 POLARITY 0 TRIGGERMODE 1
 Processor#0 : A
-Processor#0 : C FFFF800001400020 FFFF800001600000
+Processor#0 : C FFFF8000014034B0 FFFF800001731000
 Processor#0 : C
 Processor#0 : A
 Processor#0 : A
@@ -271,26 +272,26 @@ Processor#0 : Section:
 Processor#0 : .text
 Processor#0 : 1000
 Processor#0 : 400
-Processor#0 : 7F4
+Processor#0 : 834
 Processor#0 : Section:
 Processor#0 : .rdata
 Processor#0 : 2000
-Processor#0 : C00
+Processor#0 : E00
 Processor#0 : 45E
 Processor#0 : Section:
 Processor#0 : .data
 Processor#0 : 3000
-Processor#0 : 1200
+Processor#0 : 1400
 Processor#0 : 100030
 Processor#0 : Section:
 Processor#0 : .pdata
 Processor#0 : 104000
-Processor#0 : 1400
+Processor#0 : 1600
 Processor#0 : 84
 Processor#0 : Section:
 Processor#0 : .reloc
 Processor#0 : 105000
-Processor#0 : 1600
+Processor#0 : 1800
 Processor#0 : C
 Processor#0 : ADDR_SPACE_SIZE :
 Processor#0 : 106000
@@ -331,15 +332,15 @@ Processor#0 : EXPORTING...
 Processor#0 : Linking DLL...
 Processor#0 : 0
 Processor#0 : Preboot Launch
-Processor#0 : Running driver 1 EntryPoint FFFF80000174D000
-Processor#0 : Init LIBS: Calling DLL Entry Point FFFF8000018530A0
+Processor#0 : Running driver 1 EntryPoint FFFF80000177D000
+Processor#0 : Init LIBS: Calling DLL Entry Point FFFF8000018830A0
 Processor#0 : ACPI Library entry.
 Processor#0 : ACPI Device name : Advanced Configuration And Power Interface 2.0+ 47
 Processor#0 : PCI Driver startup
 Processor#0 : ACPI IO Protocol 2
 Processor#0 : ACPI GET TABLE SIG : MCFG INST : 0 HDR : FFFF8000000A4F38
-Processor#0 : MCFG FFFF800001732000
-Processor#0 : MCFG : FFFF800001732000 NumSegments : 1
+Processor#0 : MCFG FFFF800001762000
+Processor#0 : MCFG : FFFF800001762000 NumSegments : 1
 Processor#0 : Max PCI Segment : 0
 Processor#0 : KeOpenEVT
 Processor#0 : KeOpenEVT
@@ -442,7 +443,7 @@ Processor#0 : Importing dll noskx64.exe
 Processor#0 : Linking NOSKX64.EXE System
 Processor#0 : 0
 Processor#0 : Preboot Launch
-Processor#0 : Running driver 3 EntryPoint FFFF800001861000
+Processor#0 : Running driver 3 EntryPoint FFFF800001891000
 Processor#0 : EODX Driver Startup. DriverID 3
 Processor#0 : RETURN_STATUS :
 Processor#0 : 0
@@ -471,7 +472,7 @@ Processor#0 : Importing dll noskx64.exe
 Processor#0 : Linking NOSKX64.EXE System
 Processor#0 : 0
 Processor#0 : Preboot Launch
-Processor#0 : Running driver 4 EntryPoint FFFF800001865000
+Processor#0 : Running driver 4 EntryPoint FFFF800001895000
 Processor#0 : Window Management Driver startup
 Processor#0 : RETURN_STATUS :
 Processor#0 : 0
@@ -481,12 +482,12 @@ Processor#0 : Section:
 Processor#0 : .text
 Processor#0 : 1000
 Processor#0 : 400
-Processor#0 : 443
+Processor#0 : 4B5
 Processor#0 : Section:
 Processor#0 : .rdata
 Processor#0 : 2000
 Processor#0 : A00
-Processor#0 : 4EA
+Processor#0 : 5D6
 Processor#0 : Section:
 Processor#0 : .data
 Processor#0 : 3000
@@ -509,17 +510,17 @@ Processor#0 : Section:
 Processor#0 : .text
 Processor#0 : 1000
 Processor#0 : 400
-Processor#0 : 2B8
+Processor#0 : 318
 Processor#0 : Section:
 Processor#0 : .rdata
 Processor#0 : 2000
 Processor#0 : 800
-Processor#0 : 44C
+Processor#0 : 474
 Processor#0 : Section:
 Processor#0 : .pdata
 Processor#0 : 3000
 Processor#0 : E00
-Processor#0 : 3C
+Processor#0 : 48
 Processor#0 : ADDR_SPACE_SIZE :
 Processor#0 : 4000
 Processor#0 : Sections copied.
@@ -530,25 +531,31 @@ Processor#0 : EXPORTING...
 Processor#0 : Linking DLL...
 Processor#0 : 0
 Processor#0 : Preboot Launch
-Processor#0 : Running driver 5 EntryPoint FFFF8000018691E0
-Processor#0 : Init LIBS: Calling DLL Entry Point FFFF80000186E000
+Processor#0 : Running driver 5 EntryPoint FFFF800001899270
+Processor#0 : Init LIBS: Calling DLL Entry Point FFFF80000189E000
 Processor#0 : System Driver Developement Kit (SDDK) Entry Point.
 Processor#0 : AHCI Driver startup
-Processor#0 : PCI IO DRVIF FFFF80000186B000
+Processor#0 : PCI IO DRVIF FFFF80000189B000
 Processor#0 : KeRegEVT
-Processor#0 : Found AHCI Controller at location FFFF800001455F28
-Processor#0 : AHCI Base Address C1084000
-Processor#0 : Resetting AHC FFFF800001456420
+Processor#0 : AHCI Device add (Class 6 Subclass 0 Progif 0)
+Processor#0 : AHCI Device add (Class 3 Subclass 0 Progif 0)
+Processor#0 : AHCI Device add (Class 2 Subclass 0 Progif 0)
+Processor#0 : AHCI Device add (Class 6 Subclass 1 Progif 0)
+Processor#0 : AHCI Device add (Class 1 Subclass 6 Progif 1)
+Processor#0 : Found AHCI Controller at location FFFF8000014579B8
+Processor#0 : AHCI Base Address C1084000 BAR5 C1084000
+Processor#0 : Resetting AHC FFFF800001457EB0
 Processor#0 : AHCI Resetted successfully
 Processor#0 : AHCI Enabled successfully NUM_CMD_SLOTS 32
 Processor#0 : Enabling MSI Interrupts Device 31 Bus 0 Function 0
 Processor#0 : cptr 80 capid 5
 Processor#0 : Found MSI Capability
-Processor#0 : CPU#0 Select for Interrupt -/
+Processor#0 : CPU#0 Selected for Interrupt 4294967295
 Processor#0 : Allocating arbitrary irq
 Processor#0 : A
 Processor#0 : A
 Processor#0 : A
+Processor#0 : AHCI Device add (Class 12 Subclass 5 Progif 0)
 Processor#0 : RETURN_STATUS :
 Processor#0 : 0
 Processor#0 : Driver NewOS\System\ehci.sys
@@ -576,7 +583,7 @@ Processor#0 : Importing dll noskx64.exe
 Processor#0 : Linking NOSKX64.EXE System
 Processor#0 : 0
 Processor#0 : Preboot Launch
-Processor#0 : Running driver 6 EntryPoint FFFF800001872020
+Processor#0 : Running driver 6 EntryPoint FFFF8000018A2020
 Processor#0 : EHCI Driver startup
 Processor#0 : KeRegEVT
 Processor#0 : EHCI Device add handler
@@ -612,7 +619,7 @@ Processor#0 : Importing dll noskx64.exe
 Processor#0 : Linking NOSKX64.EXE System
 Processor#0 : 0
 Processor#0 : Preboot Launch
-Processor#0 : Running driver 7 EntryPoint FFFF800001876000
+Processor#0 : Running driver 7 EntryPoint FFFF8000018A6000
 Processor#0 : XHCI Driver startup
 Processor#0 : RETURN_STATUS :
 Processor#0 : 0
@@ -690,17 +697,17 @@ Processor#0 : Linking NOSKX64.EXE System
 Processor#0 : 0
 Processor#0 : Running AUTO BOOT LAUNCH Drivers
 Processor#0 : BOOT_LAUNCH Driver
-Processor#0 : Running Driver#2 EntryPoint FFFF800001858000
-Processor#0 : Init LIBS: Calling DLL Entry Point FFFF80000185C0A0
+Processor#0 : Running Driver#2 EntryPoint FFFF800001888000
+Processor#0 : Init LIBS: Calling DLL Entry Point FFFF80000188C0A0
 Processor#0 : ACPI Library entry.
 Processor#0 : ACPI Device name : Advanced Configuration And Power Interface 2.0+ 47
 Processor#0 : RTC Driver startup.
 Processor#0 : ACPI IO Protocol 0
 Processor#0 : ACPI_IO_GET_VER FFFF8000000A4F28
 Processor#0 : ACPI Version : 2.0
-Processor#0 : 20:30:9
-Processor#0 : Day 7 Of the week
-Processor#0 : 22/7/23
+Processor#0 : 0:34:37
+Processor#0 : Day 1 Of the week
+Processor#0 : 23/7/23
 Processor#0 : Return status : 0
 Processor#0 : LIB : s SZ : 1000
 Processor#0 : LIB : e SZ : 600
@@ -714,243 +721,28 @@ Processor#0 : INIT_AP_TRAMPOLINE at 0x1000, SymbolStart : FFFF800000008000
 Processor#0 : Object 100004000
 Processor#0 : Processor FFFF800001400020
 Processor#0 : Processor#0 Characteristics : 0
+Processor#0 : Object 100004258
+Processor#0 : Processor FFFF8000014034B0
+Processor#0 : Processor#1 Characteristics : 1
+Processor#0 : Booting Processor#1 , SYSTEM: APIC
 Processor#0 : create thread 0
+Processor#1 : GDT and TSS Loaded successfully
 Processor#0 : create thread 0
+Processor#1 : Registered System INT#222 for CPU#0
+Processor#1 : KERNEL Final Initialization Step called, Initializing the scheduling system...
+Processor#1 : Current processor #1 INTERNAL_DATA FFFFFFD000200000
+Processor#1 : Registered System INT#220 for CPU#1
+Processor#1 : create thread 1
+Processor#1 : Enabling the apic timer, interrupt number : 220
+Processor#1 : APIC Timer frequency : 1014307840 HZ
+Processor#1 : Processor#1 enabled.
 Processor#0 : IRQ 0
 Processor#0 : Hpet Interrupt
 Processor#0 : EOI
-Processor#0 : NATIVE SUBSYSTEM ENTRY Process FFFF800001401230 Thread FFFF800001456A10 NumThreads 3 ApicId 0
-Processor#0 : Entry Point FFFF800000010E40 Context 0
-Processor#0 : NATIVE SUBSYSTEM ENTRY Process FFFF800001401230 Thread FFFF800001458370 NumThreads 3 ApicId 0
+Processor#0 : NATIVE SUBSYSTEM ENTRY Process FFFF800001401230 Thread FFFF800001459E00 NumThreads 3 ApicId 0
 Processor#0 : Entry Point FFFF800000010EC0 Context 0
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : EOI
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : EOI
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : EOI
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : EOI
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : EOI
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : EOI
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : EOI
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : EOI
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : EOI
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : EOI
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : EOI
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : EOI
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : EOI
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : EOI
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : EOI
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : EOI
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : EOI
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : EOI
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : EOI
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : EOI
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : EOI
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : EOI
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : EOI
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : EOI
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : EOI
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : EOI
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : EOI
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : EOI
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : EOI
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : EOI
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : EOI
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : EOI
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : EOI
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : EOI
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : EOI
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : EOI
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : EOI
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : EOI
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : EOI
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : EOI
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : EOI
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : EOI
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : EOI
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : EOI
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : EOI
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : EOI
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : EOI
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : EOI
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : EOI
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : EOI
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : EOI
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : EOI
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : EOI
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : EOI
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : EOI
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : EOI
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : EOI
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : EOI
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : EOI
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : EOI
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : EOI
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : EOI
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : EOI
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : EOI
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : EOI
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : EOI
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : EOI
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : EOI
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : EOI
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : EOI
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : EOI
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : EOI
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : EOI
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : EOI
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : EOI
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : EOI
+Processor#1 : NATIVE SUBSYSTEM ENTRY Process FFFF800001401230 Thread FFFF8000014584A0 NumThreads 3 ApicId 1
+Processor#1 : Entry Point FFFF800000010E40 Context 0
 Processor#0 : IRQ 0
 Processor#0 : Hpet Interrupt
 Processor#0 : EOI

@@ -17,6 +17,7 @@ void AhciReset(PAHCI Ahci) {
     KDebugPrint("Resetting AHC %x", Ahci);
     DWORD pi = Ahci->Hba->PortsImplemented;
     ULONG i;
+    // Stop all the ports
     while(_BitScanForward(&i, pi)){
         _bittestandreset(&pi, i);
         Ahci->Ports[i].CommandStatus &= ~PORTxCMDxSTART;
@@ -25,9 +26,9 @@ void AhciReset(PAHCI Ahci) {
         while(Ahci->Ports[i].CommandStatus & PORTxCMDxFRR) _mm_pause();
     }
     // Reset the HBA
-    Ahci->Hba->GlobalHostControl.HbaReset = 1;
-    while(Ahci->Hba->GlobalHostControl.HbaReset) _mm_pause();
-    Ahci->Hba->GlobalHostControl.AhciEnable = 1;
+    Ahci->Hba->Ghc |= HBA_GHC_RESET;
+    while(Ahci->Hba->Ghc & HBA_GHC_RESET) Stall(10);
+    Ahci->Hba->Ghc = HBA_GHC_AHCI_ENABLE;
 
     KDebugPrint("AHCI Resetted successfully");
 
