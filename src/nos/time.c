@@ -102,7 +102,7 @@ void KRNLAPI Stall(UINT64 MicroSeconds) {
 }
 
 void KRNLAPI Sleep(UINT64 Milliseconds) {
-
+    Stall(Milliseconds * 1000);
 }
 
 // returns time since boot in micro seconds

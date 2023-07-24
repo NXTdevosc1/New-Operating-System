@@ -100,11 +100,11 @@ void _PciWrite8(PCI_DEVICE_LOCATION* Location, UINT16 Offset, UINT8 Value) {
 UINT16 _PciGetConfigurationByIndex(UINT16 Index) {
     UINT16 Config = 0;
     for(;;) {
-        if(Config == 0xFFFF) return (UINT16)-1;
         if(PciSegments[Config]) {
             Index--;
             if(!Index) break;
         }
+        if(Config == 0xFFFF) return (UINT16)-1;
         Config++;
     }
     return Config;
@@ -178,7 +178,7 @@ NSTATUS DriverEntry(PDRIVER Driver) {
     PciDeviceAddEvent = KeOpenEvent(SYSTEM_EVENT_DEVICE_ADD);
 
     // Create Main Pci Device
-    PciDeviceObject = KeCreateDevice(DEVICE_PIPE, 0, L"Peripheral Component Interconnect (PCI)", NULL);
+    PciDeviceObject = KeCreateDevice(VIRTUAL_DEVICE, 0, L"Peripheral Component Interconnect (PCI)", NULL);
 
     IO_INTERFACE_DESCRIPTOR If = {0};
     If.NumFunctions = 2;
@@ -207,6 +207,8 @@ NSTATUS DriverEntry(PDRIVER Driver) {
                         KDebugPrint("At Seg %d Bus %d Device %d Function %d", Segment, Bus, Device, Function);
                         KDebugPrint("PCI Device Class %d Subclass %d ProgIf %d", DeviceConfig->Hdr.ClassCode[2], DeviceConfig->Hdr.ClassCode[1], DeviceConfig->Hdr.ClassCode[0]);
                     
+
+
                         SYSTEM_DEVICE_ADD_CONTEXT* Ctx = MmAllocatePool(sizeof(SYSTEM_DEVICE_ADD_CONTEXT), 0);
                         Ctx->BusType = BUS_PCI;
                         Ctx->DeviceData.PciDeviceData.PciDeviceLocation.Address = 0;
@@ -216,12 +218,18 @@ NSTATUS DriverEntry(PDRIVER Driver) {
                         Ctx->DeviceData.PciDeviceData.PciDeviceLocation.Fields.Device = Device;
                         Ctx->DeviceData.PciDeviceData.PciDeviceLocation.Fields.Function = Function;
 
+
+
                         Ctx->DeviceData.PciDeviceData.VendorId = DeviceConfig->Hdr.VendorId;
                         Ctx->DeviceData.PciDeviceData.DeviceId = DeviceConfig->Hdr.DeviceId;
                         Ctx->DeviceData.PciDeviceData.Class = DeviceConfig->Hdr.ClassCode[2];
                         Ctx->DeviceData.PciDeviceData.Subclass = DeviceConfig->Hdr.ClassCode[1];
                         Ctx->DeviceData.PciDeviceData.ProgIf = DeviceConfig->Hdr.ClassCode[0];
 
+                        // Set default command register
+                        _PciWrite16(&Ctx->DeviceData.PciDeviceData.PciDeviceLocation,
+                        PCI_COMMAND, 0x547 
+                        );
 
                         void* _dump;
                         

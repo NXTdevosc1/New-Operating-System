@@ -1,4 +1,5 @@
 #include <nos/nos.h>
+#include <nos/pnp/pnp.h>
 #include <nos/processor/processor.h>
 #include <nos/processor/ints.h>
 #include <nos/processor/hw.h>
@@ -11,8 +12,9 @@ extern void KRNLAPI KiDrawDebugRect(UINT8 DbgStage);
 void* NosInternalInterruptHandler(UINT64 InterruptNumber, void* InterruptStack) {
     INTERRUPT_STACK_FRAME* StackFrame = InterruptStack;
     INTERRUPT_ERRCODE_STACK_FRAME* ErrStack = InterruptStack;
+    PETHREAD Thread = KeGetCurrentThread();
 
-
+    KDebugPrint("ThreadId %u RunningDriverId %u Running IO On device : %ls", Thread->ThreadId, Thread->RunningDriver ? Thread->RunningDriver->DriverId : -1, Thread->RunningIo.IoDevice ? Thread->RunningIo.IoDevice->DisplayName : L"No IO is running.");
     if(KeGetCurrentProcess()->Subsystem == SUBSYSTEM_NATIVE) {
         _disable();
         // Shutdown other cpus

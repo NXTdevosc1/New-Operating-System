@@ -9,11 +9,11 @@ NSTATUS AhciInitDevice(PCI_DEVICE_LOCATION* ploc) {
     Ahc->Hba = PciGetBaseAddress(&Pci, ploc, 5);
     KeMapVirtualMemory(NULL, (void*)Ahc->Hba, (void*)Ahc->Hba, 3, PAGE_WRITE_ACCESS, PAGE_CACHE_DISABLE);
 
-    KDebugPrint("AHCI Base Address %x BAR5 %x", Ahc->Hba, Pci.Read64(ploc, PCI_BAR + 5 * 4));
+    KDebugPrint("AHCI Base Address %x BAR5 %x", Ahc->Hba, Pci.Read64(ploc, 4 + PCI_BAR + 5 * 4));
 
     // Reset the AHC
     // Fill the rest of the structure
-    Ahc->Ports = (void*)(((char*)Ahc->Hba) + AHCI_PORTS_OFFSET);
+    Ahc->HbaPorts = (void*)(((char*)Ahc->Hba) + AHCI_PORTS_OFFSET);
 
     Ahc->Device = KeCreateDevice(DEVICE_CONTROLLER, 0, L"Advanced Host Controller Interface (AHCI)", Ahc);
     if(!Ahc->Device) {
@@ -25,10 +25,8 @@ NSTATUS AhciInitDevice(PCI_DEVICE_LOCATION* ploc) {
 
     // Setup the AHCI
     Ahc->Hba->Ghc = HBA_GHC_AHCI_ENABLE;
-    Ahc->Hba->InterruptStatus = 0;
-    if(Ahc->Hba->ExtendedHostCapabilities.BiosOsHandoff
-    ) {
-        KDebugPrint("AHC Supports BIOS/OS Handoff OS %x BB %x BO %x", Ahc->Hba->BiosOsHandoffControlAndStatus.OsOwnedSemaphore, Ahc->Hba->BiosOsHandoffControlAndStatus.BiosBusy, Ahc->Hba->BiosOsHandoffControlAndStatus.BiosOwnedSemaphore);
+    if(Ahc->Hba->ExtendedHostCapabilities.BiosOsHandoff) {
+    KDebugPrint("AHC Supports BIOS/OS Handoff OS %x BB %x BO %x", Ahc->Hba->BiosOsHandoffControlAndStatus.OsOwnedSemaphore, Ahc->Hba->BiosOsHandoffControlAndStatus.BiosBusy, Ahc->Hba->BiosOsHandoffControlAndStatus.BiosOwnedSemaphore);
         Ahc->Hba->BiosOsHandoffControlAndStatus.OsOwnedSemaphore = 1;
         while(Ahc->Hba->BiosOsHandoffControlAndStatus.BiosOwnedSemaphore);
 
@@ -51,5 +49,26 @@ NSTATUS AhciInitDevice(PCI_DEVICE_LOCATION* ploc) {
     
     // Enable MSI Interrupts
     EnableMsiInterrupts(&Pci, ploc, AhciInterruptHandler, Ahc);
+    
+    Ahc->Hba->Ghc |= HBA_GHC_INTENABLE;
+
+    // Initialize each port
+    DWORD pi = Ahc->Hba->PortsImplemented;
+    ULONG iPort;
+    while(_BitScanForward(&iPort, pi)) {
+        _bittestandreset(&pi, iPort);
+        HBA_PORT* HbaPort = Ahc->HbaPorts + iPort;
+        KeMapVirtualMemory(NULL, (void*)HbaPort, (void*)HbaPort, 1, PAGE_WRITE_ACCESS, PAGE_CACHE_DISABLE);
+        PAHCIPORT Port = Ahc->Ports + Ahc->NumPorts;
+        Ahc->NumPorts++;
+        
+        // Initialize port values
+        Port->Ahci = Ahc;
+        Port->PortIndex = iPort;
+        Port->HbaPort = HbaPort;
+        
+        AhciInitPort(Port);
+
+    }
     return STATUS_SUCCESS;
 }

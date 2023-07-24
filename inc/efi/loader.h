@@ -114,14 +114,14 @@ typedef struct _NOS_LIBRARY_FILE {
 
 typedef struct _NOS_INITDATA {
     // Nos Boot Header (imported from System/boot.nos)
-    NOS_BOOT_HEADER* BootHeader;
+    NOS_BOOT_HEADER* BootHeader; // 0x00
     // Nos Image Data
-    void* NosKernelImageBase;
-    void* NosFile;
-    UINT64 NosKernelImageSize;
+    void* NosKernelImageBase; // 0x08
+    void* NosFile; // 0x10
+    UINT64 NosKernelImageSize; // 0x18
 
     // EFI Frame Buffer
-    FRAME_BUFFER_DESCRIPTOR FrameBuffer;
+    FRAME_BUFFER_DESCRIPTOR FrameBuffer; // 0x20
     // EFI Memory Map
     UINT64 MemoryCount;
     UINT64 MemoryDescriptorSize;

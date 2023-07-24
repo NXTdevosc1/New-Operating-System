@@ -17,7 +17,6 @@ PDEVICE KRNLAPI KeCreateDevice(
     void* Context
 ){
 
-
     POBJECT Object;
 
     NSTATUS S = ObCreateObject(NULL, &Object,

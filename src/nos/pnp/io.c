@@ -45,5 +45,10 @@ IORESULT KRNLAPI IoProtocol(
         while(1);
     }
 
-    return Device->Io.IoCallback(DeviceHandle, Function, NumParameters, (void**)Thread->IoParameters);
+    
+    Thread->RunningIo.IoDevice = Device;
+    Thread->RunningIo.Function = Function;
+    IORESULT res = Device->Io.IoCallback(DeviceHandle, Function, NumParameters, (void**)Thread->IoParameters);
+    Thread->RunningIo.IoDevice = NULL;
+    return res;
 }

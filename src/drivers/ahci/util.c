@@ -1,8 +1,12 @@
 #include <ahci.h>
 
 PVOID AhciAllocate(PAHCI Ahci, UINT64 Pages, UINT PageAttributes) {
-    PVOID Ret = MmAllocateMemory(NULL, Pages, PageAttributes | (Ahci->LongAddresses ? 0 : PAGE_HALFPTR));
+    PVOID Ret = MmAllocateMemory(NULL, Pages, PageAttributes | (Ahci->LongAddresses ? 0 : PAGE_HALFPTR) | PAGE_WRITE_ACCESS, PAGE_CACHE_DISABLE);
     if(!Ret) AhciAbort(Ahci, STATUS_OUT_OF_MEMORY);
+
+    if(PageAttributes & PAGE_2MB) {
+        ZeroMemory(Ret, Pages << 21);
+    } else ZeroMemory(Ret, Pages << 12);
 
     return Ret;
 }
@@ -20,10 +24,10 @@ void AhciReset(PAHCI Ahci) {
     // Stop all the ports
     while(_BitScanForward(&i, pi)){
         _bittestandreset(&pi, i);
-        Ahci->Ports[i].CommandStatus &= ~PORTxCMDxSTART;
-        while(Ahci->Ports[i].CommandStatus & PORTxCMDxCR) _mm_pause();
-        Ahci->Ports[i].CommandStatus &= ~PORTxCMDxFRE;
-        while(Ahci->Ports[i].CommandStatus & PORTxCMDxFRR) _mm_pause();
+        Ahci->HbaPorts[i].CommandStatus &= ~PORTxCMDxSTART;
+        while(Ahci->HbaPorts[i].CommandStatus & PORTxCMDxCR) _mm_pause();
+        Ahci->HbaPorts[i].CommandStatus &= ~PORTxCMDxFRE;
+        while(Ahci->HbaPorts[i].CommandStatus & PORTxCMDxFRR) _mm_pause();
     }
     // Reset the HBA
     Ahci->Hba->Ghc |= HBA_GHC_RESET;

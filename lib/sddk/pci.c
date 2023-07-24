@@ -26,8 +26,8 @@ NSTATUS SYSAPI EnableMsiInterrupts(PCI_DRIVER_INTERFACE* Pci, PCI_DEVICE_LOCATIO
     if(!(Pci->Read8(Location, PCI_STATUS) & (1 << 4))) return STATUS_UNSUPPORTED; // Capabilites are not supported
     
     // Enable PCI Interrupts
-    // Remove Interrupt Disable (0x400), Set BUS Muster/I/O Space/MM Space (7)
-    Pci->Write16(Location, PCI_COMMAND, (Pci->Read16(Location, PCI_COMMAND) & ~0x400) | 7);
+    // Remove Interrupt Disable (0x400)
+    Pci->Write16(Location, PCI_COMMAND, (Pci->Read16(Location, PCI_COMMAND) & ~0x400));
 
     KDebugPrint("Enabling MSI Interrupts Device %d Bus %d Function %d", Location->Fields.Device, Location->Fields.Bus, Location->Fields.Bus);
     UINT8 Cptr = Pci->Read8(Location, PCI_CAPABILITYPTR) & ~3;

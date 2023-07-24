@@ -59,6 +59,10 @@ UINT32 errcolors[] = {
 NSTATUS DrvEvt(PEPROCESS Process, UINT Event, HANDLE Handle, UINT64 Access) {
     return STATUS_SUCCESS;
 }
+
+__declspec(dllexport) NOS_INITDATA* __fastcall KiGetInitData() {
+    return NosInitData;
+}
     
 void NOSENTRY NosSystemInit() {
     SerialLog("NOS_KERNEL : Kernel Booting...");
@@ -69,7 +73,7 @@ void NOSENTRY NosSystemInit() {
     KiInitStandardSubsystems();
     
 
-    
+    PETHREAD kInitThread = KeGetCurrentThread();
 
     SerialLog(NosInitData->BootHeader->OsName);
     SerialLog("drivers");
@@ -144,7 +148,9 @@ void NOSENTRY NosSystemInit() {
                 KDebugPrint("RUN DRIVER LIBS FAILED.");
                 while(1) __halt();
             }
+            kInitThread->RunningDriver = DriverObject;
             Status = EntryPoint(DriverObject);
+            kInitThread->RunningDriver = NULL;
             SerialLog("RETURN_STATUS :");
             _ui64toa(Status, bf, 0x10);
             SerialLog(bf);
@@ -179,8 +185,11 @@ void NOSENTRY NosSystemInit() {
                 KDebugPrint("RUN DRIVER LIBS FAILED.");
                 while(1) __halt();
             }
+            kInitThread->RunningDriver = DriverObject;
             
             Status = DriverObject->EntryPoint(DriverObject);
+            kInitThread->RunningDriver = NULL;
+
             KDebugPrint("Return status : %d", Status);
             if(NERROR(Status)) {
                 _disable();
@@ -247,6 +256,23 @@ void NOSENTRY NosSystemInit() {
     PETHREAD t1, t2;
     KeCreateThread(KernelProcess, &t1, 0, thread1, NULL);
     KeCreateThread(KernelProcess, &t2, 0, thread2, NULL);
+
+    KDebugPrint("Drivers runned successfully, physical devices:");
+
+    PDEVICE dev;
+    _ev = 0;
+    while(KeEnumerateDevices(NULL, &dev, NULL, FALSE, &_ev)) {
+        if(dev->DeviceType != VIRTUAL_DEVICE) {
+            KDebugPrint("Physical Device#%u Type %u : %ls", dev->ObjectDescriptor->ObjectId, dev->DeviceType, dev->DisplayName);
+        }
+    }
+    KDebugPrint("Virtual devices:");
+    _ev = 0;
+    while(KeEnumerateDevices(NULL, &dev, NULL, FALSE, &_ev)) {
+        if(dev->DeviceType == VIRTUAL_DEVICE) {
+            KDebugPrint("Virtual Device#%u Type %u : %ls", dev->ObjectDescriptor->ObjectId, dev->DeviceType, dev->DisplayName);
+        }
+    }
 
     for(;;) {
         // for(UINT32 i = 0;i<0xff;i++) {
