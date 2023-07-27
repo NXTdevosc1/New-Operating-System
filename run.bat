@@ -1,1 +1,1 @@
-qemu-system-x86_64 -smp 2 -no-reboot -no-shutdown -m 4G -M q35 -monitor stdio -drive file=build/uefi.img,format=raw -serial file:serial.txt -drive if=pflash,format=raw,unit=0,file=build/OVMF_CODE.fd,readonly=on -drive if=pflash,format=raw,unit=1,file=build/OVMF_VARS.fd
+qemu-system-x86_64 -smp 1 -no-reboot -no-shutdown -m 4G -M q35 -monitor stdio -drive file=build/uefi.img,format=raw -serial file:serial.txt -drive if=pflash,format=raw,unit=0,file=build/OVMF_CODE.fd,readonly=on -drive if=pflash,format=raw,unit=1,file=build/OVMF_VARS.fd

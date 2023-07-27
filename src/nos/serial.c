@@ -26,7 +26,7 @@ void SerialInitCom1() {
 }
 
 void SerialWait() {
-    // while(__inbyte(SERIAL_COM1 + 5) & 0x20) _mm_pause();
+    while(!(__inbyte(SERIAL_COM1 + 5) & 0x20)) _mm_pause();
 }
 
 static char format[0x100];
@@ -35,7 +35,7 @@ void SerialWrite(char* Msg) {
     RFPROCESSOR p = KeGetCurrentProcessor();
     UINT64 pid = 0;
     char* hdr;
-    if(p) {
+    if(p && p->ProcessorEnabled) {
         hdr = "Processor#%d : ";
         pid = p->Id.ProcessorId;
     } else {

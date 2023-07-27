@@ -1,6 +1,7 @@
 #include <nos/nos.h>
 #include <nos/processor/processor.h>
 #include <nos/processor/amd64def.h>
+#include <nos/processor/hw.h>
 
 typedef struct _PAGEDIR_REPRESENTATION {
     UINT8 buffer[0x200000];
@@ -63,6 +64,13 @@ RFPROCESSOR KRNLAPI KeRegisterProcessor(PROCESSOR_IDENTIFICATION_DATA* Ident) {
     
 
     _InterlockedIncrement64(&NumProcessors);
+
+    if(BootProcessor) {
+        // This is a secondary processor and APIC is initialized
+        BootProcessor->Id.ProcessorId = HwGetCurrentProcessorId();
+        KDebugPrint("Boot Processor Id Assigned, ID=%u", BootProcessor->Id.ProcessorId);
+    }
+
     return Processor;
 }
 
@@ -76,6 +84,7 @@ RFPROCESSOR KRNLAPI KeGetCurrentProcessor() {
 }
 
 UINT64 KRNLAPI KeGetCurrentProcessorId() {
+    
     return KeGetCurrentProcessor()->Id.ProcessorId;
 }
 

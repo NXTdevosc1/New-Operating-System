@@ -41,7 +41,7 @@ NSTATUS KRNLAPI KeCreateThread(
     Thread->Process = Process;
     Thread->ThreadId = Ob->ObjectId;
     Thread->Flags = Flags;
-    Thread->Ready.Thread = Thread;
+    Thread->QueueEntry.Thread = Thread;
 
     // TODO : Select processor based on load balance
     
@@ -133,10 +133,13 @@ BOOLEAN KRNLAPI KeSetThreadPriority(PETHREAD Thread, UINT ThreadPriority) {
 BOOLEAN KRNLAPI KeSetStaticPriority(PETHREAD Thread, UINT StaticPriority) {
     Thread->StaticPriority = StaticPriority;
     if(Thread->DynamicPriority < StaticPriority) Thread->DynamicPriority = StaticPriority;
-    if(!Thread->Ready.Ready) {
+    
+    
+    // TODO : Send system interrupt
+    if(!GetThreadFlag(Thread, THREAD_READY)) {
         UINT64 rf = __readeflags();
         _disable();
-        ScBottomAddReadyThread(Thread);
+        ScLinkReadyThreadBottom(&Thread->QueueEntry);
         __writeeflags(rf);
     }
     return TRUE;

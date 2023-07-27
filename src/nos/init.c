@@ -82,6 +82,25 @@ void NOSENTRY NosSystemInit() {
 
     DrawRect(0, 0, 100, 100, 0x43829F0);
 
+    // Setup init trampoline
+    {
+        KDebugPrint("INIT_AP_TRAMPOLINE at 0x%x, SymbolStart : %x", NosInitData->InitTrampoline, HwInitTrampoline);
+        // // Copy trampoline
+        KeMapVirtualMemory(KernelProcess, NosInitData->InitTrampoline, NosInitData->InitTrampoline, 8, PAGE_WRITE_ACCESS | PAGE_EXECUTE, PAGE_CACHE_DISABLE);
+        memcpy(NosInitData->InitTrampoline, HwInitTrampoline, 0x8000);
+        // Rebase trampolie
+        UINT64 base = (UINT64)NosInitData->InitTrampoline;
+        // page table
+        *(UINT64*)(base + 0x1000) += base;
+        *(UINT64*)(base + 0x2000) += base;
+        // gdtr
+        *(UINT64*)(base + 0x4002) += base;
+        // page table
+        *(UINT64*)(base + 0x6000) = (UINT64)KernelProcess->PageTable;
+        __wbinvd();
+
+    }
+
     // ConClear();
     KDebugPrint("Running PRE BOOT LAUNCH Drivers");
 
@@ -123,7 +142,10 @@ void NOSENTRY NosSystemInit() {
         _ui64toa(Status, bf, 0x10);
         SerialLog(bf);
 
-        if(NERROR(Status)) continue;
+        if(NERROR(Status)) {
+            KDebugPrint("Failed to load driver image.");
+            KeRaiseException(Status);   
+        }
         Driver->Flags |= DRIVER_LOADED;
 
         DriverObject->ImageFile = Driver->ImageBuffer;
@@ -213,54 +235,23 @@ void NOSENTRY NosSystemInit() {
     // Stall function requires the timer to receive interrupts
 
     
-    // Setup init trampoline
-    {
-        KDebugPrint("INIT_AP_TRAMPOLINE at 0x%x, SymbolStart : %x", NosInitData->InitTrampoline, HwInitTrampoline);
-        // // Copy trampoline
-        KeMapVirtualMemory(KernelProcess, NosInitData->InitTrampoline, NosInitData->InitTrampoline, 8, PAGE_WRITE_ACCESS | PAGE_EXECUTE, PAGE_CACHE_DISABLE);
-        memcpy(NosInitData->InitTrampoline, HwInitTrampoline, 0x8000);
-        // Rebase trampolie
-        UINT64 base = (UINT64)NosInitData->InitTrampoline;
-        // page table
-        *(UINT64*)(base + 0x1000) += base;
-        *(UINT64*)(base + 0x2000) += base;
-        // gdtr
-        *(UINT64*)(base + 0x4002) += base;
-        // page table
-        *(UINT64*)(base + 0x6000) = (UINT64)KernelProcess->PageTable;
-        __wbinvd();
-
-    }
-
-    // Start using APIC ID to get a processor
-    BootProcessor->ProcessorEnabled = TRUE;
     
-    UINT64 _ev = 0;
-    POBJECT Out;
-    while((_ev = ObEnumerateObjects(NULL, OBJECT_PROCESSOR, &Out, NULL, _ev)) != 0) {
-        KDebugPrint("Object %x", Out);
-        RFPROCESSOR Processor = Out->Address;
-        KDebugPrint("Processor %x", Processor);
-        KDebugPrint("Processor#%d Characteristics : %x", Processor->Id.ProcessorId, Processor->Id.Characteristics);
 
-        // Init the processor
-        if(Processor->Id.Characteristics & PROCESSOR_BOOTABLE) {
-            HwBootProcessor(Processor);
-        }
-    }
+    
+    PETHREAD t1, t2;
+    KeCreateThread(KernelProcess, &t1, 0, thread1, NULL);
+    KeCreateThread(KernelProcess, &t2, 0, thread2, NULL);
+
 
     // for(;;);
     // KeEnableScheduler();
     // for(;;) __halt();
     // _disable();
-    PETHREAD t1, t2;
-    KeCreateThread(KernelProcess, &t1, 0, thread1, NULL);
-    KeCreateThread(KernelProcess, &t2, 0, thread2, NULL);
 
     KDebugPrint("Drivers runned successfully, physical devices:");
 
     PDEVICE dev;
-    _ev = 0;
+    UINT64 _ev = 0;
     while(KeEnumerateDevices(NULL, &dev, NULL, FALSE, &_ev)) {
         if(dev->DeviceType != VIRTUAL_DEVICE) {
             KDebugPrint("Physical Device#%u Type %u : %ls", dev->ObjectDescriptor->ObjectId, dev->DeviceType, dev->DisplayName);
@@ -279,15 +270,18 @@ void NOSENTRY NosSystemInit() {
             UINT32 i = 0xFF;
             _Memset128A_32((UINT32*)NosInitData->FrameBuffer.BaseAddress + 0x3000, i, (NosInitData->FrameBuffer.Pitch * NosInitData->FrameBuffer.VerticalResolution) / 0x20);
         // }
-        // Stall(1000000);
+        Sleep(1000);
         // for(UINT32 i = 0;i<0xff;i++) {
             _Memset128A_32((UINT32*)NosInitData->FrameBuffer.BaseAddress + 0x3000, i << 8, (NosInitData->FrameBuffer.Pitch * NosInitData->FrameBuffer.VerticalResolution) / 0x20);
         // }
+        Sleep(1000);
         // Stall(1000000);
 
         // for(UINT32 i = 0;i<0xff;i++) {
             _Memset128A_32((UINT32*)NosInitData->FrameBuffer.BaseAddress + 0x3000, i << 16, (NosInitData->FrameBuffer.Pitch * NosInitData->FrameBuffer.VerticalResolution) / 0x20);
         // }
+        Sleep(1000);
+
         // Stall(1000000);
 
     }

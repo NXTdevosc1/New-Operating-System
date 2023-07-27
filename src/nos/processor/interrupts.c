@@ -320,7 +320,7 @@ void __fastcall NosIrqHandler(UINT64 InterruptNumber, void* InterruptStack) {
 
     // memset(NosInitData->FrameBuffer.BaseAddress, (NumIrqs & 1) ? 0xFF : 0, 0x5000 * 4);
     NumIrqs++;
-    gInterruptRoutingTable.Eoi();
+    ApicWrite(0xB0, 0);
     KDebugPrint("EOI");
 }
 

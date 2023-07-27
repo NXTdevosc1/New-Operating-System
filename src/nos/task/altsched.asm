@@ -1,21 +1,17 @@
 section .text
 
-global SchedulerEntry
-
-global __Schedule
+global __AltSchedule ; Called via INT 0xF1
 
 extern LocalApicAddress
-extern Schedule
-
+extern Schedule 
 
 ; Internal Processor Descriptors
 IPRSDSC equ 0xFFFFFFD000000000
 
-
-
 ; ------- STACK IS NOT 16 Byte aligned, STACK IS 8 BYTE ALIGNED ------
-SchedulerEntry:
-
+__AltSchedule:
+    mov rax, 0xcafefafa
+    jmp $
 
     push rcx
     push rbx
@@ -77,8 +73,8 @@ SchedulerEntry:
 ; call scheduling function
 push 0
 push rcx
-xor rdx, rdx ; Not alt sched
 sub rsp, 0x100
+mov rdx, 1
 call Schedule ; RCX = Internl CPU Data
 add rsp, 0x100
 pop rcx
@@ -123,9 +119,9 @@ sub rsp, 8
 ; Set timer frequency, and EOI
     mov rbx, [rel LocalApicAddress]
     mov rdx, [rcx + 0x30] ; Timer freq
-    shr rdx, 10 ; 1024 Task switches / s
+    shr rdx, 3 ; 1024 Task switches / s
     mov [rbx + 0x380], edx ; Initial Count
-    mov dword [rbx + 0xB0], 0 ; Eoi
+    ;mov dword [rbx + 0xB0], 0 ; Eoi
 ; Restore remaining registers
     mov rdx, [rax + 0x1048]
     mov rcx, [rax + 0x1040]
@@ -135,28 +131,3 @@ sub rsp, 8
 ; Switch Tasks
     o64 iret
 
-    
-
-global __idle
-
-__idle:
-    ; Set timer frequency, and EOI
-    mov rbx, [rel LocalApicAddress]
-    mov rdx, [rax + 0x30] ; Timer freq
-    shr rdx, 3 ; 1024 Task switches / s
-    mov [rbx + 0x380], edx ; Initial Count
-    mov dword [rbx + 0xB0], 0 ; Eoi
-    mov rax, 0xcafebabe ; HALT
-    sti
-.__halt:
-    hlt
-    jmp .__halt
-; in case of a bug
-    cli
-    mov rax, 0xdeadbeef
-    hlt
-    jmp $
-
-__Schedule:
-    int 0xF1
-    ret

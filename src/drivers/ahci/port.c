@@ -36,6 +36,9 @@ void AhciInitPort(PAHCIPORT Port) {
     Port->HbaPort->CommandStatus |= PORTxCMDxFRE;
     while(!(Port->HbaPort->CommandStatus & PORTxCMDxFRR));
 
+    // Enable all interrupts (Another time)
+    Port->HbaPort->InterruptEnable = -1;
+
     BOOLEAN DeviceDetected = FALSE;
 
     if(Port->Ahci->Hba->HostCapabilities.SupportsStaggeredSpinup) {

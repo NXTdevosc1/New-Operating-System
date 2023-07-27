@@ -3,14 +3,7 @@
 #include <intmgr.h>
 #include <nos/pnp/pnp.h>
 #include <nosio.h>
-typedef volatile struct _KTIMER {
-    PDEVICE Device;
-    POBJECT TimerObject;
-    UINT Usage;
-    UINT64 Frequency; // in HZ
-    UINT64 TickCounter;
-    HANDLE KernelHandle;
-} KTIMER, *PKTIMER;
+
 
 PKTIMER BestCounter = NULL;
 PKTIMER BestTimeAndDateSource = NULL;
@@ -66,7 +59,7 @@ UINT64 KRNLAPI KeReadCounter(
 ) {
     if(!(Timer->Usage & TIMER_USAGE_COUNTER)) return (UINT64)-1;
 
-    return (UINT64)IoProtocol(Timer->KernelHandle, TIMER_IO_READ_COUNTER, 0, NULL);
+    return (UINT64)Timer->Device->Io.IoCallback(NULL, TIMER_IO_READ_COUNTER, 0, NULL);
 }
 
 void KRNLAPI KeTimerTick(
@@ -92,8 +85,8 @@ void KRNLAPI Stall(UINT64 MicroSeconds) {
         StopFraction -= BestCounter->Frequency;
         StopSecond++;
     }
-    _enable();
     // KDebugPrint("Stall : StopUS : %x StopS : %x", StopFraction, StopSecond);
+    _enable();
     for(;;) {
         if(BestCounter->TickCounter > StopSecond) return;
         if(BestCounter->TickCounter == StopSecond && KeReadCounter(BestCounter) >= StopFraction) return;
@@ -102,7 +95,25 @@ void KRNLAPI Stall(UINT64 MicroSeconds) {
 }
 
 void KRNLAPI Sleep(UINT64 Milliseconds) {
-    Stall(Milliseconds * 1000);
+    KDebugPrint("Sleep %u ms", Milliseconds);
+    PETHREAD Thread = KeGetCurrentThread();
+    Thread->SleepUntil.CounterValue = KeReadCounter(BestCounter) + (Milliseconds % MILLISCALE) * ((BestCounter->Frequency >= MILLISCALE) ? (BestCounter->Frequency / MILLISCALE) : 1);
+    Thread->SleepUntil.TicksSinceBoot = BestCounter->TickCounter + (Milliseconds / MILLISCALE);
+    _disable();
+    // Thread->SleepUntil = KeReadCounter(BestCounter) + 0x1000;
+    // KDebugPrint("Sleep %u ms FREQ %x THREAD#%u SU %x SL(BEFORE) %x SLB %x", Milliseconds, BestCounter->Frequency, Thread->ThreadId, Thread->SleepUntil, Thread->Processor->SleepQueue, Thread->Processor->BottomOfSleepQueue);
+    ScUnlinkReadyThread(&Thread->QueueEntry);
+    // KDebugPrint("ASL(AFTER) %x SLB %x ThreadId %x", Thread->Processor->SleepQueue, Thread->Processor->BottomOfSleepQueue, Thread->ThreadId);
+    // KDebugPrint("ACRT %x N %x P %x", &Thread->QueueEntry, Thread->QueueEntry.Previous, Thread->QueueEntry.Next);
+    
+    ScLinkSleepThreadBottom(&Thread->QueueEntry);
+    // KDebugPrint("BSL(AFTER) %x SLB %x ThreadId %x", Thread->Processor->SleepQueue, Thread->Processor->BottomOfSleepQueue, Thread->ThreadId);
+    // KDebugPrint("BCRT %x N %x P %x", &Thread->QueueEntry, Thread->QueueEntry.Previous, Thread->QueueEntry.Next);
+
+    
+    _enable();
+    __halt();
+    KDebugPrint("Returned to the thread successfully");
 }
 
 // returns time since boot in micro seconds

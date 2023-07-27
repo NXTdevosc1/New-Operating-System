@@ -80,6 +80,7 @@ void CpuInitDescriptors(PROCESSOR* Processor) {
     // Set shutdown/halt system interrupt 0x14 (INT 0xF0)
     Processor->SystemInterruptHandlers[0x14] = __inthalt;
     CpuSetInterrupt(Processor, SYSINT_HALT, InterruptGate, NosSystemInterruptService);
+
 }
 
 extern void SchedulerEntry();
@@ -137,6 +138,10 @@ void HwSendIpi(UINT8 InterruptNumber, UINT64 ProcessorId, UINT8 InterruptType, U
     ApicWrite(APIC_ICR, IcrLow);
 
     ApicIpiWait();
+}
+
+UINT64 HwGetCurrentProcessorId() {
+    return ApicRead(APIC_ID) >> 24;
 }
 
 void HwBootProcessor(RFPROCESSOR Processor) {
