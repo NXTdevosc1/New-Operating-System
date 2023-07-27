@@ -95,25 +95,16 @@ void KRNLAPI Stall(UINT64 MicroSeconds) {
 }
 
 void KRNLAPI Sleep(UINT64 Milliseconds) {
-    KDebugPrint("Sleep %u ms", Milliseconds);
+    _disable();
     PETHREAD Thread = KeGetCurrentThread();
     Thread->SleepUntil.CounterValue = KeReadCounter(BestCounter) + (Milliseconds % MILLISCALE) * ((BestCounter->Frequency >= MILLISCALE) ? (BestCounter->Frequency / MILLISCALE) : 1);
     Thread->SleepUntil.TicksSinceBoot = BestCounter->TickCounter + (Milliseconds / MILLISCALE);
-    _disable();
-    // Thread->SleepUntil = KeReadCounter(BestCounter) + 0x1000;
-    // KDebugPrint("Sleep %u ms FREQ %x THREAD#%u SU %x SL(BEFORE) %x SLB %x", Milliseconds, BestCounter->Frequency, Thread->ThreadId, Thread->SleepUntil, Thread->Processor->SleepQueue, Thread->Processor->BottomOfSleepQueue);
+    
     ScUnlinkReadyThread(&Thread->QueueEntry);
-    // KDebugPrint("ASL(AFTER) %x SLB %x ThreadId %x", Thread->Processor->SleepQueue, Thread->Processor->BottomOfSleepQueue, Thread->ThreadId);
-    // KDebugPrint("ACRT %x N %x P %x", &Thread->QueueEntry, Thread->QueueEntry.Previous, Thread->QueueEntry.Next);
-    
     ScLinkSleepThreadBottom(&Thread->QueueEntry);
-    // KDebugPrint("BSL(AFTER) %x SLB %x ThreadId %x", Thread->Processor->SleepQueue, Thread->Processor->BottomOfSleepQueue, Thread->ThreadId);
-    // KDebugPrint("BCRT %x N %x P %x", &Thread->QueueEntry, Thread->QueueEntry.Previous, Thread->QueueEntry.Next);
 
-    
-    _enable();
-    __halt();
-    KDebugPrint("Returned to the thread successfully");
+    // The scheduler will automatically enable interrupts
+    __Schedule();
 }
 
 // returns time since boot in micro seconds

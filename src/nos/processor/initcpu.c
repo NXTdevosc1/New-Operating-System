@@ -69,7 +69,7 @@ void __declspec(noreturn) HwMultiProcessorEntry() {
     KeSchedulingSystemInit();
     KDebugPrint("Processor#%d enabled.", KeGetCurrentProcessorId());
 
-    // This is the idle thread routine
+    // idling
     for(;;) __halt();
 }
 

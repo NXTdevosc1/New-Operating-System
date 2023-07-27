@@ -9,6 +9,14 @@ void* LocalApicAddress = (void*)-1;
 // Called by the scheduler
 extern void __idle();
 
+// void testddd() {
+    
+//     while(1) {
+//         KDebugPrint("TTESSSST");
+//         Sleep(1000);
+//     } 
+// }
+
 extern PETHREAD __fastcall Schedule(PROCESSOR_INTERNAL_DATA* InternalData, BOOLEAN Alt) {
     PETHREAD Thread = NULL;
     // Check on next thread
@@ -19,35 +27,36 @@ extern PETHREAD __fastcall Schedule(PROCESSOR_INTERNAL_DATA* InternalData, BOOLE
     }
     // Check on sleeping threads
     PTHREAD_QUEUE_ENTRY Queue = InternalData->Processor->SleepQueue;
-    UINT64 Cnt = KeReadCounter(BestCounter);
-    for(;Queue;Queue = Queue->Next) {
-        KDebugPrint("sleep queue looping");
-        if(BestCounter->TickCounter < Queue->Thread->SleepUntil.TicksSinceBoot) continue;
-        if(BestCounter->TickCounter == Queue->Thread->SleepUntil.TicksSinceBoot &&
-        Cnt < Queue->Thread->SleepUntil.CounterValue
-        ) continue;
+    if(Queue) {
+        UINT64 Cnt = KeReadCounter(BestCounter);
+        for(;Queue;Queue = Queue->Next) {
+            // KDebugPrint("sleep queue looping");
+            if(BestCounter->TickCounter < Queue->Thread->SleepUntil.TicksSinceBoot) continue;
+            if(BestCounter->TickCounter == Queue->Thread->SleepUntil.TicksSinceBoot &&
+            Cnt < Queue->Thread->SleepUntil.CounterValue
+            ) continue;
 
-        Thread = Queue->Thread;
-        ScUnlinkSleepThread(Queue);
-        if(Thread == InternalData->CurrentThread) {
-            ScLinkReadyThreadBottom(Queue);
+            Thread = Queue->Thread;
+            ScUnlinkSleepThread(Queue);
+
+            KDebugPrint("Thread #%u Woke up : %ls", Thread->ThreadId, Thread->Process->ProcessDisplayName);
+            // Thread->Registers.rip = testddd;
+
+            break;
         }
-        KDebugPrint("Thread #%u Woke up", Thread->ThreadId);
-
-        break;
     }
-    KDebugPrint("_____________________________");
+    // KDebugPrint("_____________________________");
     // Check on waiting threads
     if(!Thread) {
         Thread = InternalData->CurrentThread; // Use current thread to compare against other threads
         Queue = InternalData->Processor->ThreadQueue;
         if(!Queue) {
-            // if(!Alt) {
-            //     ApicWrite(0xB0, 0);
-            // }
-            // KDebugPrint("IDLE");
-            // Run idle thread
+            // KDebugPrint("IDLING...");
+            InternalData->CurrentThread = InternalData->IdleThread;
             *(void**)_AddressOfReturnAddress() = __idle;
+            if(!Alt) {
+                ApicWrite(0xB0, 0); // Send EOI
+            }
             return (PETHREAD)InternalData;
         }
         if(!GetThreadFlag(Thread, THREAD_READY)) { // this thread just went to sleep
@@ -58,24 +67,20 @@ extern PETHREAD __fastcall Schedule(PROCESSOR_INTERNAL_DATA* InternalData, BOOLE
             if(Queue->Thread != InternalData->CurrentThread) Queue->Thread->DynamicPriority++;
         }
     }
-    if(Thread != InternalData->CurrentThread) {
-        // We now selected a thread, the last one should go back to the end of the list
-        if(GetThreadFlag(InternalData->CurrentThread, THREAD_READY)) {
-            ScUnlinkReadyThread(&InternalData->CurrentThread->QueueEntry);
-        }
-        ScLinkReadyThreadBottom(&InternalData->CurrentThread->QueueEntry);
+    // We now selected a thread, this one should go back to the end of the list
+    if(GetThreadFlag(Thread, THREAD_READY)) {
+        ScUnlinkReadyThread(&Thread->QueueEntry);
     }
+    ScLinkReadyThreadBottom(&Thread->QueueEntry);
+
     Thread->DynamicPriority = Thread->StaticPriority;
 
     // Now set current thread
     InternalData->CurrentThread = Thread;
-    InternalData->NextThread = Thread;
-
-
-    KDebugPrint("SCHED %u RIP %x RFLAGS %x CS %x RSP %x SS %x", Thread->ThreadId, Thread->Registers.rip, Thread->Registers.rflags,
-    Thread->Registers.cs, Thread->Registers.rsp, Thread->Registers.ss
-    );
-
+    Thread->Registers.rflags |= 0x200;
+    // KDebugPrint("SCHED %u CNT %x RIP %x RFLAGS %x CS %x RSP %x SS %x", Thread->ThreadId, Cnt, Thread->Registers.rip, Thread->Registers.rflags,
+    // Thread->Registers.cs, Thread->Registers.rsp, Thread->Registers.ss
+    // );
     return Thread;
 }
 
@@ -157,7 +162,7 @@ void KRNLAPI KeSchedulingSystemInit() {
             KDebugPrint("failed to create idle thread");
             while(1) __halt();
         }
-        // Processor->InternalData->CurrentThread = Processor->InternalData->IdleThread;
+        Processor->InternalData->CurrentThread = Processor->InternalData->IdleThread;
     }
     Processor->InternalData->IdleThread->StaticPriority = 0;
     Processor->InternalData->IdleThread->DynamicPriority = 0;
@@ -166,19 +171,24 @@ void KRNLAPI KeSchedulingSystemInit() {
 
     CpuEnableApicTimer();
 
-    __halt();
-    __halt();
-    __halt();
+    // __halt();
+    // __halt();
+    // __halt();
 
 
-    while(1) {
-        KDebugPrint("Trying sleep");
-        Sleep(1);
-    }
+    // while(1) {
+    //     KDebugPrint("Trying sleep");
+    //     Sleep(1000);
+    // }
 }
 
-extern inline void __fastcall ScLinkReadyThreadBottom(PTHREAD_QUEUE_ENTRY Entry) {
+void __fastcall ScLinkReadyThreadBottom(PTHREAD_QUEUE_ENTRY Entry) {
+    // KDebugPrint("LNK_RDY_BOTM");
     PETHREAD Thread = Entry->Thread;
+    if(GetThreadFlag(Thread, THREAD_READY)) {
+        KDebugPrint("SC_BUG0 0");
+        while(1) __halt();
+    }
     if(Thread->Processor->ThreadQueue) {
         Thread->Processor->BottomOfThreadQueue->Next = Entry;
         Entry->Previous = Thread->Processor->BottomOfThreadQueue;
@@ -187,10 +197,17 @@ extern inline void __fastcall ScLinkReadyThreadBottom(PTHREAD_QUEUE_ENTRY Entry)
         Thread->Processor->ThreadQueue = Entry;
         Thread->Processor->BottomOfThreadQueue = Entry;
     }
+    SetThreadFlag(Thread, THREAD_READY);
 }
 
-extern inline void __fastcall ScLinkSleepThreadBottom(PTHREAD_QUEUE_ENTRY Entry) {
+void __fastcall ScLinkSleepThreadBottom(PTHREAD_QUEUE_ENTRY Entry) {
+    // KDebugPrint("LNK_SLP_BOTM");
+
     PETHREAD Thread = Entry->Thread;
+    if(GetThreadFlag(Thread, THREAD_READY)) {
+        KDebugPrint("SC_BUG0 1");
+        while(1) __halt();
+    }
     if(Thread->Processor->SleepQueue) {
         Thread->Processor->BottomOfSleepQueue->Next = Entry;
         Entry->Previous = Thread->Processor->BottomOfSleepQueue;
@@ -200,14 +217,19 @@ extern inline void __fastcall ScLinkSleepThreadBottom(PTHREAD_QUEUE_ENTRY Entry)
         Thread->Processor->BottomOfSleepQueue = Entry;
     }
 }
+void __fastcall ScUnlinkReadyThread(PTHREAD_QUEUE_ENTRY Entry) {
+    // KDebugPrint("ULNK_RDY");
 
-extern inline void __fastcall ScUnlinkReadyThread(PTHREAD_QUEUE_ENTRY Entry) {
     // CASE 1 (if its the first entry)
     // CASE 2 (if its a middle entry)
     // CASE 3 (if its the last entry)
     // CASE 4 (if its the only entry)
 
     PETHREAD Thread = Entry->Thread;
+    if(!GetThreadFlag(Thread, THREAD_READY)) {
+        KDebugPrint("SC_BUG0 2");
+        while(1) __halt();
+    }
     if(Thread->Processor->ThreadQueue == Entry) {
         if(Thread->Processor->BottomOfThreadQueue == Entry) {
             // CASE 4
@@ -228,15 +250,24 @@ extern inline void __fastcall ScUnlinkReadyThread(PTHREAD_QUEUE_ENTRY Entry) {
 
     Entry->Previous = NULL;
     Entry->Next = NULL;
+
+    ResetThreadFlag(Thread, THREAD_READY);
 }
 
-extern inline void __fastcall ScUnlinkSleepThread(PTHREAD_QUEUE_ENTRY Entry) {
+void __fastcall ScUnlinkSleepThread(PTHREAD_QUEUE_ENTRY Entry) {
+
+    // KDebugPrint("UNLK SLEEP");
+
     // CASE 1 (if its the first entry)
     // CASE 2 (if its a middle entry)
     // CASE 3 (if its the last entry)
     // CASE 4 (if its the only entry)
 
     PETHREAD Thread = Entry->Thread;
+    if(GetThreadFlag(Thread, THREAD_READY)) {
+        KDebugPrint("SC_BUG0 3");
+        while(1) __halt();
+    }
     if(Thread->Processor->SleepQueue == Entry) {
         if(Thread->Processor->BottomOfSleepQueue == Entry) {
             // CASE 4

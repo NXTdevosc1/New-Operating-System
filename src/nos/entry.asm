@@ -14,7 +14,7 @@ extern NosSystemInit
 NosKernelEntry:
     mov rsp, _KernelStack
     mov rbp, rsp
-    sub rsp, 0x1000
+    sub rsp, 0x8000
 
     xor rax, rax
     ; Clear RFLAGS
@@ -80,5 +80,5 @@ NosInitData dq 1
 section .bss
 
 align 0x1000
-_KernelStackBase resb 0x10000
+_KernelStackBase resq 0x10000
 _KernelStack:

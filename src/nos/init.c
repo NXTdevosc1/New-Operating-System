@@ -74,7 +74,7 @@ void NOSENTRY NosSystemInit() {
     
 
     PETHREAD kInitThread = KeGetCurrentThread();
-
+    KeSetThreadPriority(kInitThread, THREAD_PRIORITY_HIGH);
     SerialLog(NosInitData->BootHeader->OsName);
     SerialLog("drivers");
     _ui64toa(NosInitData->BootHeader->NumDrivers, bf, 10);

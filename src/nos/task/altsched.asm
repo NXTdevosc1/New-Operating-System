@@ -10,8 +10,7 @@ IPRSDSC equ 0xFFFFFFD000000000
 
 ; ------- STACK IS NOT 16 Byte aligned, STACK IS 8 BYTE ALIGNED ------
 __AltSchedule:
-    mov rax, 0xcafefafa
-    jmp $
+
 
     push rcx
     push rbx
@@ -119,7 +118,7 @@ sub rsp, 8
 ; Set timer frequency, and EOI
     mov rbx, [rel LocalApicAddress]
     mov rdx, [rcx + 0x30] ; Timer freq
-    shr rdx, 3 ; 1024 Task switches / s
+    shr rdx, 10 ; 1024 Task switches / s
     mov [rbx + 0x380], edx ; Initial Count
     ;mov dword [rbx + 0xB0], 0 ; Eoi
 ; Restore remaining registers
