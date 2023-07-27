@@ -9,7 +9,7 @@ static UINT64 LastCreateProcessorId = 0;
 
 NSTATUS KRNLAPI KeCreateThread(
     IN PEPROCESS Process,
-    OUT PETHREAD* OutThread,
+    OUT OPT PETHREAD* OutThread,
     IN UINT64 Flags,
     IN void* EntryPoint,
     IN void* Context
@@ -45,7 +45,7 @@ NSTATUS KRNLAPI KeCreateThread(
 
     // TODO : Select processor based on load balance
     
-    Thread->Processor = KeGetProcessorByIndex(LastCreateProcessorId);
+    Thread->Processor = KeGetProcessorByIndex(0);
     LastCreateProcessorId++;
     if(LastCreateProcessorId == NumProcessors) LastCreateProcessorId = 0;
 
@@ -79,6 +79,9 @@ NSTATUS KRNLAPI KeCreateThread(
     Thread->Registers.rflags = 0x200; // Interrupt enable
     // Allocate the stack (TODO : Use a dynamic stack)
     PVOID Stack = MmAllocateMemory(Process, 0x10, PAGE_WRITE_ACCESS, 0);
+    Thread->StackMem = Stack;
+    Thread->StackPages = 0x10;
+
     Thread->Registers.rsp = (UINT64)Stack + 0xE008;
     Thread->Registers.rbp = (UINT64)Stack + 0x10000;
 
@@ -103,6 +106,8 @@ BOOLEAN KRNLAPI KeThreadExists(PETHREAD Thread) {
 
     return TRUE;
 }
+
+
 
 #include <nos/ob/obutil.h>
 

@@ -46,6 +46,11 @@ void thread2() {
 
 }
 
+void thread3() {
+    // Testing thread exit functionnality
+    KDebugPrint("THREAD3 Created, testing thread exit functionnality");
+}
+
 UINT32 errcolors[] = {
     0,
     0xFFFFFF,
@@ -177,6 +182,10 @@ void NOSENTRY NosSystemInit() {
             _ui64toa(Status, bf, 0x10);
             SerialLog(bf);
 
+                KDebugPrint("%ls : TID %d PID %d PRID %d", KeGetCurrentThread()->Process->ProcessDisplayName, KeGetCurrentThreadId(), KeGetCurrentProcessId(), KeGetCurrentProcessorId());
+            while(1) {
+            }
+
             if(NERROR(Status)) {
                 if(Status > 6) Status = 6;
                 _disable();
@@ -239,9 +248,11 @@ void NOSENTRY NosSystemInit() {
 
     
     PETHREAD t1, t2;
-    KeCreateThread(KernelProcess, &t1, 0, thread1, NULL);
-    KeCreateThread(KernelProcess, &t2, 0, thread2, NULL);
-
+    // KeCreateThread(KernelProcess, &t1, 0, thread1, NULL);
+    // KeCreateThread(KernelProcess, &t2, 0, thread2, NULL);
+    // KeCreateThread(KernelProcess, &t2, 0, thread3, NULL);
+    // KeCreateThread(KernelProcess, &t2, 0, thread3, NULL);
+    // KeCreateThread(KernelProcess, &t2, 0, thread3, NULL);
 
     // for(;;);
     // KeEnableScheduler();
@@ -266,19 +277,21 @@ void NOSENTRY NosSystemInit() {
     }
 
     for(;;) {
+        KDebugPrint("KTHREADS %u", KernelProcess->NumberOfThreads);
         // for(UINT32 i = 0;i<0xff;i++) {
             UINT32 i = 0xFF;
-            _Memset128A_32((UINT32*)NosInitData->FrameBuffer.BaseAddress + 0x3000, i, (NosInitData->FrameBuffer.Pitch * NosInitData->FrameBuffer.VerticalResolution) / 0x20);
+            // _Memset128A_32((UINT32*)NosInitData->FrameBuffer.BaseAddress + 0x3000, i, (NosInitData->FrameBuffer.Pitch * NosInitData->FrameBuffer.VerticalResolution) / 0x20);
         // }
         Sleep(1000);
+        continue;
         // for(UINT32 i = 0;i<0xff;i++) {
-            _Memset128A_32((UINT32*)NosInitData->FrameBuffer.BaseAddress + 0x3000, i << 8, (NosInitData->FrameBuffer.Pitch * NosInitData->FrameBuffer.VerticalResolution) / 0x20);
+            // _Memset128A_32((UINT32*)NosInitData->FrameBuffer.BaseAddress + 0x3000, i << 8, (NosInitData->FrameBuffer.Pitch * NosInitData->FrameBuffer.VerticalResolution) / 0x20);
         // }
         Sleep(1000);
         // Stall(1000000);
 
         // for(UINT32 i = 0;i<0xff;i++) {
-            _Memset128A_32((UINT32*)NosInitData->FrameBuffer.BaseAddress + 0x3000, i << 16, (NosInitData->FrameBuffer.Pitch * NosInitData->FrameBuffer.VerticalResolution) / 0x20);
+            // _Memset128A_32((UINT32*)NosInitData->FrameBuffer.BaseAddress + 0x3000, i << 16, (NosInitData->FrameBuffer.Pitch * NosInitData->FrameBuffer.VerticalResolution) / 0x20);
         // }
         Sleep(1000);
 

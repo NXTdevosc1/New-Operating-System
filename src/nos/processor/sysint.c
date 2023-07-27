@@ -6,6 +6,8 @@
 void NosSystemInterruptHandler(UINT64 InterruptNumber, void* InterruptStack) {
     KDebugPrint("SYSTEM_INTERRUPT !");
     PROCESSOR* Processor = KeGetCurrentProcessor();
+    Processor->State = PROCESSOR_STATE_INTERRUPT;
+
     INTERRUPT_HANDLER_DATA HandlerData = {0};
     HandlerData.InterruptNumber = InterruptNumber;
     HandlerData.ProcessorId = Processor->Id.ProcessorId;
@@ -13,4 +15,6 @@ void NosSystemInterruptHandler(UINT64 InterruptNumber, void* InterruptStack) {
     
     NSTATUS Status = Processor->SystemInterruptHandlers[InterruptNumber](&HandlerData);
     while(1) __halt();
+
+    Processor->State = PROCESSOR_STATE_NORMAL;
 }

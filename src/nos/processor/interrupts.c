@@ -307,6 +307,8 @@ UINT64 NumIrqs = 0;
 
 void __fastcall NosIrqHandler(UINT64 InterruptNumber, void* InterruptStack) {
     KDebugPrint("IRQ %d", InterruptNumber);
+    PROCESSOR* Processor = KeGetCurrentProcessor();
+    Processor->State = PROCESSOR_STATE_INTERRUPT;
 
     INTERRUPT_HANDLER_DATA HandlerData = {0};
     UINT64 p = BootProcessor->Interrupts->Interrupts[InterruptNumber].Present;
@@ -321,7 +323,7 @@ void __fastcall NosIrqHandler(UINT64 InterruptNumber, void* InterruptStack) {
     // memset(NosInitData->FrameBuffer.BaseAddress, (NumIrqs & 1) ? 0xFF : 0, 0x5000 * 4);
     NumIrqs++;
     ApicWrite(0xB0, 0);
-    KDebugPrint("EOI");
+    Processor->State = PROCESSOR_STATE_NORMAL;
 }
 
 BOOLEAN KRNLAPI KeQueryInterruptInformation(UINT Irq, PIM_INTERRUPT_INFORMATION InterruptInformation) {

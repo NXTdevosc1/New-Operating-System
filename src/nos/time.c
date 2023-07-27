@@ -95,15 +95,17 @@ void KRNLAPI Stall(UINT64 MicroSeconds) {
 }
 
 void KRNLAPI Sleep(UINT64 Milliseconds) {
-    _disable();
     PETHREAD Thread = KeGetCurrentThread();
+    // KDebugPrint("Thread#%u is sleeping for %ums", Thread->ThreadId, Milliseconds);
+    
+    _disable();
     Thread->SleepUntil.CounterValue = KeReadCounter(BestCounter) + (Milliseconds % MILLISCALE) * ((BestCounter->Frequency >= MILLISCALE) ? (BestCounter->Frequency / MILLISCALE) : 1);
     Thread->SleepUntil.TicksSinceBoot = BestCounter->TickCounter + (Milliseconds / MILLISCALE);
     
     ScUnlinkReadyThread(&Thread->QueueEntry);
     ScLinkSleepThreadBottom(&Thread->QueueEntry);
 
-    // The scheduler will automatically enable interrupts
+    // The scheduler will automatically re-enable interrupts
     __Schedule();
 }
 

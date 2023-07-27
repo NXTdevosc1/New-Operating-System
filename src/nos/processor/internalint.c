@@ -13,6 +13,10 @@ void* NosInternalInterruptHandler(UINT64 InterruptNumber, void* InterruptStack) 
     INTERRUPT_STACK_FRAME* StackFrame = InterruptStack;
     INTERRUPT_ERRCODE_STACK_FRAME* ErrStack = InterruptStack;
     PETHREAD Thread = KeGetCurrentThread();
+    PROCESSOR* Processor = KeGetCurrentProcessor();
+
+    Processor->State = PROCESSOR_STATE_INTERRUPT;
+
 
     KDebugPrint("ThreadId %u RunningDriverId %u Running IO On device : %ls", Thread->ThreadId, Thread->RunningDriver ? Thread->RunningDriver->DriverId : -1, Thread->RunningIo.IoDevice ? Thread->RunningIo.IoDevice->DisplayName : L"No IO is running.");
     if(KeGetCurrentProcess()->Subsystem == SUBSYSTEM_NATIVE) {
@@ -90,5 +94,8 @@ void* NosInternalInterruptHandler(UINT64 InterruptNumber, void* InterruptStack) 
     }
         
     while(1) __halt(); // TODO : Task Switch
+
+    Processor->State = PROCESSOR_STATE_NORMAL;
+
     return InterruptStack;
 }

@@ -46,9 +46,9 @@ void RunEvents(PEVENT Event, EVTHANDLERSTRUCT* Handler) {
     if(_interlockedbittestandset(&Handler->Running, 0)) return;
     EVTSTRUCT* Evt = Event->Events;
     while(Evt) {
-        NSTATUS Status = Handler->Handler(Evt->Context);
-        if(NERROR(Status)) {
-            KDebugPrint("ERROR STATUS %d for HANDLER %x in EVENT %d", Status, Handler->Handler, Event->EventId);
+        // Run event handlers asynchronously in separate threads
+        if(NERROR(KeCreateThread(KeGetCurrentProcess(), NULL, 0, Handler->Handler, Evt->Context))){
+            KDebugPrint("ERROR: EVENT FAILED TO CREATE THREAD");
         }
         Evt = Evt->Next;
     }

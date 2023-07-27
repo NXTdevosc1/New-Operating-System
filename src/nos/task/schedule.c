@@ -19,6 +19,13 @@ extern void __idle();
 
 extern PETHREAD __fastcall Schedule(PROCESSOR_INTERNAL_DATA* InternalData, BOOLEAN Alt) {
     PETHREAD Thread = NULL;
+
+    // TEMPORARY BUG CHECK
+    if(!InternalData->CurrentThread) {
+        KDebugPrint("SCHED BUGCHECK 0");
+        while(1) __halt();
+    }
+
     // Check on next thread
     if(InternalData->NextThread) {
         Thread = InternalData->NextThread;
@@ -37,10 +44,10 @@ extern PETHREAD __fastcall Schedule(PROCESSOR_INTERNAL_DATA* InternalData, BOOLE
             ) continue;
 
             Thread = Queue->Thread;
+            // KDebugPrint("UNLINKING");
             ScUnlinkSleepThread(Queue);
 
-            KDebugPrint("Thread #%u Woke up : %ls", Thread->ThreadId, Thread->Process->ProcessDisplayName);
-            // Thread->Registers.rip = testddd;
+            // KDebugPrint("Thread #%u Woke up : %ls", Thread->ThreadId, Thread->Process->ProcessDisplayName);
 
             break;
         }
@@ -59,7 +66,9 @@ extern PETHREAD __fastcall Schedule(PROCESSOR_INTERNAL_DATA* InternalData, BOOLE
             }
             return (PETHREAD)InternalData;
         }
-        if(!GetThreadFlag(Thread, THREAD_READY)) { // this thread just went to sleep
+        if(!GetThreadFlag(Thread, THREAD_READY)
+        || Thread == InternalData->IdleThread
+        ) { // this thread just went to sleep
             Thread = Queue->Thread; // Set to the first ready thread
         }
         for(;Queue;Queue = Queue->Next) {
@@ -182,7 +191,7 @@ void KRNLAPI KeSchedulingSystemInit() {
     // }
 }
 
-void __fastcall ScLinkReadyThreadBottom(PTHREAD_QUEUE_ENTRY Entry) {
+extern inline void __fastcall ScLinkReadyThreadBottom(PTHREAD_QUEUE_ENTRY Entry) {
     // KDebugPrint("LNK_RDY_BOTM");
     PETHREAD Thread = Entry->Thread;
     if(GetThreadFlag(Thread, THREAD_READY)) {
@@ -200,7 +209,7 @@ void __fastcall ScLinkReadyThreadBottom(PTHREAD_QUEUE_ENTRY Entry) {
     SetThreadFlag(Thread, THREAD_READY);
 }
 
-void __fastcall ScLinkSleepThreadBottom(PTHREAD_QUEUE_ENTRY Entry) {
+extern inline void __fastcall ScLinkSleepThreadBottom(PTHREAD_QUEUE_ENTRY Entry) {
     // KDebugPrint("LNK_SLP_BOTM");
 
     PETHREAD Thread = Entry->Thread;
@@ -217,7 +226,7 @@ void __fastcall ScLinkSleepThreadBottom(PTHREAD_QUEUE_ENTRY Entry) {
         Thread->Processor->BottomOfSleepQueue = Entry;
     }
 }
-void __fastcall ScUnlinkReadyThread(PTHREAD_QUEUE_ENTRY Entry) {
+extern inline void __fastcall ScUnlinkReadyThread(PTHREAD_QUEUE_ENTRY Entry) {
     // KDebugPrint("ULNK_RDY");
 
     // CASE 1 (if its the first entry)
@@ -238,10 +247,12 @@ void __fastcall ScUnlinkReadyThread(PTHREAD_QUEUE_ENTRY Entry) {
         } else {
             // CASE 1
             Thread->Processor->ThreadQueue = Entry->Next;
+            Entry->Next->Previous = NULL;
         }
     } else if(Thread->Processor->BottomOfThreadQueue == Entry) {
         // CASE 3
         Thread->Processor->BottomOfThreadQueue = Entry->Previous;
+        Entry->Previous->Next = NULL;
     } else {
         // CASE 2
         Entry->Previous->Next = Entry->Next;
@@ -254,7 +265,7 @@ void __fastcall ScUnlinkReadyThread(PTHREAD_QUEUE_ENTRY Entry) {
     ResetThreadFlag(Thread, THREAD_READY);
 }
 
-void __fastcall ScUnlinkSleepThread(PTHREAD_QUEUE_ENTRY Entry) {
+extern inline void __fastcall ScUnlinkSleepThread(PTHREAD_QUEUE_ENTRY Entry) {
 
     // KDebugPrint("UNLK SLEEP");
 
@@ -265,7 +276,7 @@ void __fastcall ScUnlinkSleepThread(PTHREAD_QUEUE_ENTRY Entry) {
 
     PETHREAD Thread = Entry->Thread;
     if(GetThreadFlag(Thread, THREAD_READY)) {
-        KDebugPrint("SC_BUG0 3");
+        KDebugPrint("SC_BUG0 3 Thread #%u", KeGetCurrentThreadId());
         while(1) __halt();
     }
     if(Thread->Processor->SleepQueue == Entry) {
@@ -276,10 +287,12 @@ void __fastcall ScUnlinkSleepThread(PTHREAD_QUEUE_ENTRY Entry) {
         } else {
             // CASE 1
             Thread->Processor->SleepQueue = Entry->Next;
+            Entry->Next->Previous = NULL;
         }
     } else if(Thread->Processor->BottomOfSleepQueue == Entry) {
         // CASE 3
         Thread->Processor->BottomOfSleepQueue = Entry->Previous;
+        Entry->Previous->Next = NULL;
     } else {
         // CASE 2
         Entry->Previous->Next = Entry->Next;

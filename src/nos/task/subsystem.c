@@ -18,18 +18,18 @@ NSTATUS NSYSAPI KeCreateSubsystem(
 
 
 void NOSENTRY NativeSubsystemEntryPoint(void* EntryPoint, void* Context) {
+    KDebugPrint("Hello thread");
     NSTATUS (__cdecl *Entry)(void*) = EntryPoint;
     NSTATUS Status;
     PEPROCESS Process = KeGetCurrentProcess();
     PETHREAD Thread = KeGetCurrentThread();
-    KDebugPrint("NATIVE SUBSYSTEM ENTRY Process %x Thread %x NumThreads %d ApicId %d", Process, Thread, Process->NumberOfThreads, Thread->Processor->Id.ProcessorId);
-    KDebugPrint("Entry Point %x Context %x", Entry, Context);
+    KDebugPrint("Kernel mode thread#%u created", Thread->ThreadId);
 
     
 
     Status = Entry(Context);
     // Exit the thread
-    while(1) __halt();
+    KeExitThread(Thread, Status);
 }
 
 void NOSENTRY ConsoleSubsystemEntryPoint(void* EntryPoint, void* Context) {
