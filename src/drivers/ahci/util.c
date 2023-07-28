@@ -49,9 +49,9 @@ void AhciReadModelNumber(PAHCIPORT Port) {
         if(Second) index = LastIndex;
         else LastIndex = i;
 
-        Port->OsDriveIdentify.Name[i] = Port->AtaDeviceIdentify.ModelNumber[index];
-        LastChar = Port->AtaDeviceIdentify.ModelNumber[i];
-        if(Port->AtaDeviceIdentify.ModelNumber[index] > 0x20) {
+        Port->OsDriveIdentify.Name[i] = Port->AtaDeviceIdentify->ModelNumber[index];
+        LastChar = Port->AtaDeviceIdentify->ModelNumber[i];
+        if(Port->AtaDeviceIdentify->ModelNumber[index] > 0x20) {
             LastCharIndex = i;
         }
         Second ^= 1;

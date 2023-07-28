@@ -13,17 +13,17 @@ Attr : 0000000000000020 Name : syscruntime.dll Size : 4608 NL : 15 .dll
 Attr : 0000000000000020 Name : osusr.dll Size : 105472 NL : 9 .dll
 Attr : 0000000000000020 Name : acpisys.dll Size : 3584 NL : 11 .dll
 Attr : 0000000000000020 Name : cruntime.dll Size : 4608 NL : 12 .dll
-Kernel File Size : 412672
+Kernel File Size : 415744
 Test2 : test123
 System Heap:
 7CE00000
 OPT_HDR_SIZE : 240 FALIGN : 512
 Allocating System Pages : 000000007CE00000
 Image Physical Base : 000000007CE00000 , Image Base : 0000000000000000, Entry point : 00000000000011E0
-Copying section .tex VADDR : 0000000000001000 PTR : 0000000000000400, SZ : 0000000000018600
-Copying section .rda VADDR : 000000000001A000 PTR : 0000000000018A00, SZ : 0000000000003200
-Copying section .dat VADDR : 000000000001E000 PTR : 000000000001BC00, SZ : 00000000000FC500
-Copying section .pda VADDR : 000000000011B000 PTR : 0000000000064000, SZ : 0000000000000600
+Copying section .tex VADDR : 0000000000001000 PTR : 0000000000000400, SZ : 0000000000018A00
+Copying section .rda VADDR : 000000000001A000 PTR : 0000000000018E00, SZ : 0000000000003400
+Copying section .dat VADDR : 000000000001E000 PTR : 000000000001C200, SZ : 00000000000FC500
+Copying section .pda VADDR : 000000000011B000 PTR : 0000000000065000, SZ : 0000000000000800
 RELOC 0000000000000000  SZ 0000000000000000
 Loading DLL :
 syscruntime.dll
@@ -71,7 +71,7 @@ FFFF8000000011E0
 8000000E7000BC48
 Boot Processor : Boot Processor : COM1 Initialized Successfully
 NOS_KERNEL : Kernel Booting...
-Boot Processor : Kernel boot memory : Used 32342016 bytes , free : -
+Boot Processor : Kernel boot memory : Used 32350208 bytes , free : -
 Boot Processor : Object Manager : Init
 Boot Processor : Object Manager : Init  2000 780000 300000
 Boot Processor : Object Manager : Allocate Table : 8192 Bytes, Object Array : 7864320 Bytes , Handle Array : 3145728 Bytes
@@ -211,7 +211,7 @@ Processor#0 : Object 100004000
 Processor#0 : Processor FFFF800001400020
 Processor#0 : Processor#0 Characteristics : 0
 Processor#0 : Object 100004258
-Processor#0 : Processor FFFF800001403500
+Processor#0 : Processor FFFF800001403520
 Processor#0 : Processor#1 Characteristics : 1
 Processor#0 : Booting Processor#1 , SYSTEM: APIC
 Processor#1 : GDT and TSS Loaded successfully
@@ -232,9 +232,9 @@ Processor#0 : Current processor #0 INTERNAL_DATA FFFFFFD000000000
 Processor#0 : Registered System INT#222 for CPU#0
 Processor#0 : create thread 1
 Processor#0 : Enabling the apic timer, interrupt number : 222
-Processor#1 : APIC Timer frequency : 1003483840 HZ
+Processor#1 : APIC Timer frequency : 1001304000 HZ
 Processor#1 : P1 looping...
-Processor#0 : APIC Timer frequency : 1000217920 HZ
+Processor#0 : APIC Timer frequency : 1000069760 HZ
 Processor#0 : Tables:
 Processor#0 : SN : FACP Length : 244
 Processor#0 : SN : DSDT Length : 8461
@@ -252,13 +252,13 @@ Processor#0 : System is already in ACPI mode
 
 Processor#0 : Initializing General Purpose Events (GPEs):
 
-Processor#0 :     Initialized GPE FFFF8000000DED40 to FFFF8000016C8418 [evgpeblk] 9 regs on interrupt 0xFFFF80000168D613€.@
+Processor#0 :     Initialized GPE FFFF8000000DED40 to FFFF8000016C8418 [evgpeblk] 9 regs on interrupt 0xFFFF80000168D613 .@
 
-Processor#0 : AcpiOsInstallInt#9 ISR FFFF80000168FAD0 CTX FFFF800001458540
+Processor#0 : AcpiOsInstallInt#9 ISR FFFF80000168FAD0 CTX FFFF800001458580
 Processor#0 : CPU#1 Selected for Interrupt 9
 Processor#0 : DELIVERY_MODE 0 POLARITY 0 TRIGGERMODE 1
 Processor#0 : A
-Processor#0 : C FFFF800001403500 FFFF800001732000
+Processor#0 : C FFFF800001403520 FFFF800001732000
 Processor#0 : C
 Processor#0 : A
 Processor#0 : A
@@ -521,24 +521,24 @@ Processor#0 : Section:
 Processor#0 : .text
 Processor#0 : 1000
 Processor#0 : 400
-Processor#0 : A9B
+Processor#0 : 103B
 Processor#0 : Section:
 Processor#0 : .rdata
-Processor#0 : 2000
-Processor#0 : 1000
-Processor#0 : 898
+Processor#0 : 3000
+Processor#0 : 1600
+Processor#0 : B6A
 Processor#0 : Section:
 Processor#0 : .data
-Processor#0 : 3000
+Processor#0 : 4000
 Processor#0 : 0
 Processor#0 : 58
 Processor#0 : Section:
 Processor#0 : .pdata
-Processor#0 : 4000
-Processor#0 : 1A00
-Processor#0 : 90
-Processor#0 : ADDR_SPACE_SIZE :
 Processor#0 : 5000
+Processor#0 : 2200
+Processor#0 : B4
+Processor#0 : ADDR_SPACE_SIZE :
+Processor#0 : 6000
 Processor#0 : Sections copied.
 Processor#0 : IMPORTING...
 Processor#0 : Importing dll noskx64.exe
@@ -592,11 +592,11 @@ Processor#0 : EXPORTING...
 Processor#0 : Linking DLL...
 Processor#0 : 0
 Processor#0 : Preboot Launch
-Processor#0 : Running driver 5 EntryPoint FFFF8000018DE2F0
-Processor#0 : Init LIBS: Calling DLL Entry Point FFFF8000018E3000
+Processor#0 : Running driver 5 EntryPoint FFFF8000018DE510
+Processor#0 : Init LIBS: Calling DLL Entry Point FFFF8000018E4000
 Processor#0 : System Driver Developement Kit (SDDK) Entry Point.
 Processor#0 : AHCI Driver startup
-Processor#0 : PCI IO DRVIF FFFF8000018E0000
+Processor#0 : PCI IO DRVIF FFFF8000018E1000
 Processor#0 : KeRegEVT
 Processor#0 : create thread 0
 Processor#0 : create thread 0
@@ -631,7 +631,7 @@ Processor#0 : Importing dll noskx64.exe
 Processor#0 : Linking NOSKX64.EXE System
 Processor#0 : 0
 Processor#0 : Preboot Launch
-Processor#0 : Running driver 6 EntryPoint FFFF80000194B020
+Processor#0 : Running driver 6 EntryPoint FFFF80000194C020
 Processor#0 : EHCI Driver startup
 Processor#0 : KeRegEVT
 Processor#0 : create thread 0
@@ -667,7 +667,7 @@ Processor#0 : Importing dll noskx64.exe
 Processor#0 : Linking NOSKX64.EXE System
 Processor#0 : 0
 Processor#0 : Preboot Launch
-Processor#0 : Running driver 7 EntryPoint FFFF8000019AF000
+Processor#0 : Running driver 7 EntryPoint FFFF8000019B0000
 Processor#0 : XHCI Driver startup
 Processor#0 : RETURN_STATUS :
 Processor#0 : 0
@@ -753,7 +753,7 @@ Processor#0 : RTC Driver startup.
 Processor#0 : ACPI IO Protocol 0
 Processor#0 : ACPI_IO_GET_VER FFFF8000000DEEC8
 Processor#0 : ACPI Version : 2.0
-Processor#0 : 12:19:57
+Processor#0 : 14:22:51
 Processor#0 : Day 6 Of the week
 Processor#0 : 28/7/23
 Processor#0 : Return status : 0
@@ -796,25 +796,33 @@ Processor#0 : Thread #7 exited with code 0
 Processor#0 : Hello thread
 Processor#0 : Kernel mode thread#8 created
 Processor#0 : AHCI Device add (Class 1 Subclass 6 Progif 1)
-Processor#0 : Found AHCI Controller at location FFFF8000014593E8
+Processor#0 : Found AHCI Controller at location FFFF800001459428
 Processor#0 : Hello thread
 Processor#0 : Kernel mode thread#9 created
 Processor#0 : AHCI Device add (Class 12 Subclass 5 Progif 0)
 Processor#0 : Exitting thread #9
+Processor#0 : Thread #9 exited with code 0
 Processor#0 : Hello thread
 Processor#0 : Kernel mode thread#10 created
 Processor#0 : EHCI Device add handler
 Processor#0 : Exitting thread #10
 Processor#0 : Thread #10 exited with code 0
 Processor#0 : Hello thread
+Processor#0 : Kernel mode thread#11 created
+Processor#0 : EHCI Device add handler
+Processor#0 : Exitting thread #11
+Processor#0 : Thread #11 exited with code 0
+Processor#0 : Hello thread
 Processor#0 : Kernel mode thread#12 created
 Processor#0 : EHCI Device add handler
 Processor#0 : Exitting thread #12
 Processor#0 : Thread #12 exited with code 0
 Processor#0 : Hello thread
-Processor#0 : Kernel mode thread#14 created
+Processor#0 : Kernel mode thread#13 created
 Processor#0 : EHCI Device add handler
-Processor#0 : Exitting thread #14
+Processor#0 : Exitting thread #13
+Processor#0 : Thread #13 exited with code 0
+Processor#0 : Hello thread
 Processor#0 : Hello thread
 Processor#0 : Kernel mode thread#15 created
 Processor#0 : EHCI Device add handler
@@ -825,41 +833,33 @@ Processor#0 : Kernel mode thread#16 created
 Processor#0 : Hello thread
 Processor#0 : Kernel mode thread#17 created
 Processor#0 : Hello thread
-Processor#0 : Kernel mode thread#19 created
-Processor#0 : THREAD3 Created, testing thread exit functionnality
-Processor#0 : Exitting thread #19
-Processor#0 : Thread #19 exited with code 96
-Processor#0 : Hello thread
-Processor#0 : Kernel mode thread#5 created
-Processor#0 : AHCI Device add (Class 3 Subclass 0 Progif 0)
-Processor#0 : Exitting thread #5
-Processor#0 : Thread #5 exited with code 0
-Processor#0 : Thread #9 exited with code 0
-Processor#0 : Hello thread
-Processor#0 : Kernel mode thread#11 created
-Processor#0 : EHCI Device add handler
-Processor#0 : Exitting thread #11
-Processor#0 : Thread #11 exited with code 0
-Processor#0 : Thread #14 exited with code 0
-Processor#0 : Hello thread
 Processor#0 : Kernel mode thread#18 created
 Processor#0 : THREAD3 Created, testing thread exit functionnality
 Processor#0 : Exitting thread #18
 Processor#0 : Thread #18 exited with code 96
 Processor#0 : Hello thread
+Processor#0 : Kernel mode thread#19 created
+Processor#0 : THREAD3 Created, testing thread exit functionnality
+Processor#0 : Exitting thread #19
+Processor#0 : Thread #19 exited with code 96
+Processor#0 : Hello thread
 Processor#0 : Kernel mode thread#20 created
 Processor#0 : THREAD3 Created, testing thread exit functionnality
 Processor#0 : Exitting thread #20
 Processor#0 : Thread #20 exited with code 96
-Processor#0 : AHCI Base Address C1084000 BAR5 11001AF400000000
-Processor#0 : Resetting AHC FFFF800001475330
-Processor#0 : AHCI Resetted successfully
-Processor#0 : AHCI Enabled successfully NUM_CMD_SLOTS 32
 Processor#0 : Hello thread
-Processor#0 : Kernel mode thread#13 created
+Processor#0 : Kernel mode thread#5 created
+Processor#0 : AHCI Device add (Class 3 Subclass 0 Progif 0)
+Processor#0 : Exitting thread #5
+Processor#0 : Thread #5 exited with code 0
+Processor#0 : AHCI Base Address C1084000 BAR5 11001AF400000000
+Processor#0 : Resetting AHC FFFF800001A0F000
+Processor#0 : AHCI Resetted successfully
+Processor#0 : AHCI Enabled successfully MAX_SLOT 31
+Processor#0 : Kernel mode thread#14 created
 Processor#0 : EHCI Device add handler
-Processor#0 : Exitting thread #13
-Processor#0 : Thread #13 exited with code 0
+Processor#0 : Exitting thread #14
+Processor#0 : Thread #14 exited with code 0
 Processor#0 : Enabling MSI Interrupts Device 31 Bus 0 Function 0
 Processor#0 : cptr 80 capid 5
 Processor#0 : Found MSI Capability
@@ -868,47 +868,89 @@ Processor#0 : Allocating arbitrary irq
 Processor#0 : A
 Processor#0 : A
 Processor#0 : A
+Processor#0 : create thread 0
+Processor#0 : create thread 0
+Processor#0 : create thread 0
+Processor#0 : create thread 0
+Processor#0 : create thread 0
+Processor#0 : create thread 0
+Processor#0 : Exitting thread #8
+Processor#0 : Thread #8 exited with code 0
+Processor#0 : Hello thread
+Processor#0 : Kernel mode thread#21 created
+Processor#0 : Hello thread
+Processor#0 : Kernel mode thread#22 created
+Processor#0 : Hello thread
+Processor#0 : Kernel mode thread#23 created
+Processor#0 : Hello thread
+Processor#0 : Kernel mode thread#24 created
+Processor#0 : Hello thread
+Processor#0 : Kernel mode thread#25 created
+Processor#0 : Hello thread
+Processor#0 : Kernel mode thread#26 created
 Processor#0 : IRQ 1
 Processor#0 : AHCI : Interrupt on port 0
 Processor#0 : AHCI : D2H Reg FIS
-Processor#0 : IRQ 1
-Processor#0 : AHCI : Interrupt on port 0
-Processor#0 : AHCI : D2H Reg FIS
-Processor#0 : Device detected on port 0
-Processor#0 : Port signature 101
+Processor#0 : AHCI Interrupt handler exit.
 Processor#0 : IRQ 1
 Processor#0 : AHCI : Interrupt on port 1
 Processor#0 : AHCI : D2H Reg FIS
-Processor#0 : No device detected on port 1
+Processor#0 : AHCI Interrupt handler exit.
 Processor#0 : IRQ 1
-Processor#0 : AHCI : Interrupt on port 2
+Processor#0 : AHCI : Interrupt on port 0
 Processor#0 : AHCI : D2H Reg FIS
+Processor#0 : AHCI Interrupt handler exit.
+Processor#0 : Device detected on port 0
+Processor#0 : Port signature 101
+Processor#0 : AHCI : Initializing ATA Device on Port #0 IDENTIFY_CMD#0
+Processor#0 : Suspended thread#21
 Processor#0 : IRQ 1
-Processor#0 : AHCI : Interrupt on port 2
+Processor#0 : AHCI : Interrupt on port 0
+Processor#0 : Command #0 Compeleted.
+Processor#0 : Thread #21 Resumed
 Processor#0 : AHCI : D2H Reg FIS
-Processor#0 : Device detected on port 2
-Processor#0 : Port signature EB140101
+Processor#0 : AHCI Interrupt handler exit.
 Processor#0 : IRQ 1
 Processor#0 : AHCI : Interrupt on port 3
 Processor#0 : AHCI : D2H Reg FIS
-Processor#0 : No device detected on port 3
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
+Processor#0 : AHCI Interrupt handler exit.
+Processor#0 : thread#21 back to work
+Processor#0 : AHCI Command#0 issued successfully SATA_ACTIVE 0 CI 0
+Processor#0 : Model Number : QEMU HARDDISK
+Processor#0 : Exitting thread #21
+Processor#0 : Thread #21 exited with code 96
+Processor#0 : IRQ 1
+Processor#0 : AHCI : Interrupt on port 2
+Processor#0 : AHCI : D2H Reg FIS
+Processor#0 : AHCI Interrupt handler exit.
+Processor#0 : IRQ 1
+Processor#0 : AHCI : Interrupt on port 2
+Processor#0 : AHCI : D2H Reg FIS
+Processor#0 : AHCI Interrupt handler exit.
+Processor#0 : Device detected on port 2
+Processor#0 : Port signature EB140101
+Processor#0 : Exitting thread #23
+Processor#0 : Thread #23 exited with code -6
 Processor#0 : IRQ 1
 Processor#0 : AHCI : Interrupt on port 4
 Processor#0 : AHCI : D2H Reg FIS
-Processor#0 : No device detected on port 4
+Processor#0 : AHCI Interrupt handler exit.
 Processor#0 : IRQ 1
 Processor#0 : AHCI : Interrupt on port 5
 Processor#0 : AHCI : D2H Reg FIS
+Processor#0 : AHCI Interrupt handler exit.
+Processor#0 : No device detected on port 1
+Processor#0 : Exitting thread #22
+Processor#0 : Thread #22 exited with code -6
+Processor#0 : No device detected on port 3
+Processor#0 : Exitting thread #24
+Processor#0 : Thread #24 exited with code -6
+Processor#0 : No device detected on port 4
+Processor#0 : Exitting thread #25
+Processor#0 : Thread #25 exited with code -6
 Processor#0 : No device detected on port 5
-Processor#0 : Exitting thread #8
-Processor#0 : Thread #8 exited with code 0
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
+Processor#0 : Exitting thread #26
+Processor#0 : Thread #26 exited with code -6
 Processor#0 : IRQ 0
 Processor#0 : Hpet Interrupt
 Processor#0 : IRQ 0
@@ -930,70 +972,3 @@ Processor#0 : Hpet Interrupt
 Processor#0 : IRQ 0
 Processor#0 : Hpet Interrupt
 Processor#0 : KTHREADS 3
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt

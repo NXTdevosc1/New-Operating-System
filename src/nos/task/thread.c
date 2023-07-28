@@ -201,8 +201,14 @@ void KRNLAPI KeResumeThread(PETHREAD Thread) {
         // Send internal interrupt (without waiting)
         KeRemoteExecute(Thread->Processor, KiThreadResumeRoutine, (void*)Thread, FALSE);
     } else {
+        UINT64 f = __readeflags();
         _disable();
         KiThreadResumeRoutine(Thread);
-        _enable();
+        __writeeflags(f);
     }
+}
+
+UINT64 KRNLAPI KeGetThreadFlags(PETHREAD Thread) {
+    KDebugPrint("Get th flags %x", Thread->Flags);
+    return Thread->Flags;
 }

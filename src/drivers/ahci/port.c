@@ -14,10 +14,9 @@ void AhciEnablePort(PAHCIPORT Port) {
 
 void AhciInitPort(PAHCIPORT Port) {
 
-    Port->ValidCmd = ((UINT32)-1) >> (31 - Port->Ahci->MaxSlotNumber);
-    Port->PendingCmd = ~Port->ValidCmd;
+    Port->AllocatedCmd = ~(((UINT32)-1) >> (31 - Port->Ahci->MaxSlotNumber));
 
-    
+
     Port->CommandList = AhciAllocate(Port->Ahci, ConvertToPages(sizeof(AHCI_COMMAND_LIST_ENTRY) * (Port->Ahci->MaxSlotNumber + 1)), 0);
     Port->CommandTable = AhciAllocate(Port->Ahci, ConvertToPages(sizeof(AHCI_COMMAND_TABLE) * (Port->Ahci->MaxSlotNumber + 1)), 0);
     Port->ReceivedFis = AhciAllocate(Port->Ahci, 1, 0);
@@ -26,11 +25,21 @@ void AhciInitPort(PAHCIPORT Port) {
 
     UINT64 rf = AhciPhysicalAddress(Port->ReceivedFis), cl = AhciPhysicalAddress(Port->CommandList), ct = AhciPhysicalAddress(Port->CommandTable);
 
+    Port->_PhysReceivedFis = (void*)rf;
+    Port->_PhysCommandList = (void*)cl;
+    Port->_PhysCommandTable = (void*)ct;
+
     Port->HbaPort->FisBaseAddressLow = rf;
     Port->HbaPort->FisBaseAddressHigh = rf >> 32;
 
     Port->HbaPort->CommandListBaseAddressLow = cl;
     Port->HbaPort->CommandListBaseAddressHigh = cl >> 32;
+
+    // Init command list
+    for(int i = 0;i<=Port->Ahci->MaxSlotNumber;i++) {
+        Port->CommandList[i].PrdtLength = 1;
+        Port->CommandList[i].CommandTableAddress = (UINT64)(Port->_PhysCommandTable + i);
+    }
 
     *(volatile UINT32*)&Port->HbaPort->SataError = -1;
     
@@ -123,4 +132,11 @@ void AhciInitPort(PAHCIPORT Port) {
 
 
     AhciEnablePort(Port);
+
+
+    if(Port->Atapi == FALSE) {
+        AhciInitAtaDevice(Port);
+    } else {
+
+    }
 }

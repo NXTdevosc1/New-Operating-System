@@ -16,10 +16,29 @@ NSTATUS __cdecl AhciInterruptHandler(INTERRUPT_HANDLER_DATA* Interrupt) {
         if(hbp->InterruptStatus.D2HRegisterFisInterrupt) {
             Port->FirstD2H = 1;
 
+            DWORD CommandIssue = Port->HbaPort->CommandIssue;
+            DWORD Pending = Port->PendingCmd;
+            ULONG CmdIndex;
+            while(_BitScanForward(&CmdIndex, Pending)) {
+                _bittestandreset(&Pending, CmdIndex);
+                if(!_bittest(&CommandIssue, CmdIndex)) {
+                    KDebugPrint("Command #%u Compeleted.", CmdIndex);
+                    
+                    *Port->Commands[CmdIndex].ReturnCode = STATUS_SUCCESS;
+                    PETHREAD Thread = Port->Commands[CmdIndex].Thread;
+
+                    while(!(KeGetThreadFlags(Thread) & (1 << THREAD_SUSPENDED))) _mm_pause();
+                    _interlockedbittestandreset(&Port->PendingCmd, CmdIndex);
+                    // The thread should free the cmd slot after resuming
+                    KeResumeThread(Thread);
+                }
+            }
+            hbp->InterruptStatus.D2HRegisterFisInterrupt = 1;
             KDebugPrint("AHCI : D2H Reg FIS");
         } 
         if(hbp->InterruptStatus.PioSetupFisInterrupt) {
             KDebugPrint("AHCI : PIO Setup FIS");
+            hbp->InterruptStatus.PioSetupFisInterrupt = 1;
         }
         if(hbp->InterruptStatus.PhyRdyChangeStatus) {
             KDebugPrint("AHCI : PHYRDI Change");
@@ -29,9 +48,19 @@ NSTATUS __cdecl AhciInterruptHandler(INTERRUPT_HANDLER_DATA* Interrupt) {
         if(hbp->InterruptStatus.PortConnectChangeStatus) {
             KDebugPrint("AHCI : PORT_CONNECT_CHANGE");
             Port->HbaPort->SataError.Exchanged = 1;
+            hbp->SataControl.DeviceDetectionInitialization = 0;
         }
-        *(volatile UINT32*)&hbp->InterruptStatus = *(volatile UINT32*)&hbp->InterruptStatus;
+        if(hbp->InterruptStatus.TaskFileErrorStatus) {
+            KDebugPrint("AHCI : TFERR");
+            hbp->InterruptStatus.TaskFileErrorStatus = 1;
+        }
+        if(hbp->InterruptStatus.UnknownFisInterrupt) {
+            KDebugPrint("AHCI: UNKNOWN FIS");
+            hbp->SataError.UnknownFisType = 0;
+        }
+        // *(volatile UINT32*)&hbp->InterruptStatus = *(volatile UINT32*)&hbp->InterruptStatus;
     }
     Ahci->Hba->InterruptStatus = GlobalInterruptStatus;
+    KDebugPrint("AHCI Interrupt handler exit.");
     return STATUS_SUCCESS;
 }
