@@ -23,14 +23,18 @@ NSTATUS __cdecl AhciInterruptHandler(INTERRUPT_HANDLER_DATA* Interrupt) {
                 _bittestandreset(&Pending, CmdIndex);
                 if(!_bittest(&CommandIssue, CmdIndex)) {
                     KDebugPrint("Command #%u Compeleted.", CmdIndex);
-                    
-                    *Port->Commands[CmdIndex].ReturnCode = STATUS_SUCCESS;
-                    PETHREAD Thread = Port->Commands[CmdIndex].Thread;
-
-                    while(!(KeGetThreadFlags(Thread) & (1 << THREAD_SUSPENDED))) _mm_pause();
                     _interlockedbittestandreset(&Port->PendingCmd, CmdIndex);
-                    // The thread should free the cmd slot after resuming
-                    KeResumeThread(Thread);
+                    if(Port->Commands[CmdIndex].Async) {
+                        _InterlockedIncrement64(Port->Commands[CmdIndex].ReturnSet.IncrementOnDone);
+                        _interlockedbittestandreset(&Port->AllocatedCmd, CmdIndex);
+                    } else {
+                        *Port->Commands[CmdIndex].ReturnSet.ReturnCode = STATUS_SUCCESS;
+                        PETHREAD Thread = Port->Commands[CmdIndex].Thread;
+
+                        while(!(KeGetThreadFlags(Thread) & (1 << THREAD_SUSPENDED))) _mm_pause();
+                        // The thread should free the cmd slot after resuming
+                        KeResumeThread(Thread);
+                    }
                 }
             }
             hbp->InterruptStatus.D2HRegisterFisInterrupt = 1;

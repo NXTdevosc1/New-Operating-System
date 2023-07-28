@@ -3,7 +3,7 @@ BdsDxe: failed to load Boot0001 "UEFI QEMU DVD-ROM QM00005 " from PciRoot(0x0)/P
 BdsDxe: loading Boot0002 "UEFI QEMU HARDDISK QM00001 " from PciRoot(0x0)/Pci(0x1F,0x2)/Sata(0x0,0xFFFF,0x0)
 BdsDxe: starting Boot0002 "UEFI QEMU HARDDISK QM00001 " from PciRoot(0x0)/Pci(0x1F,0x2)/Sata(0x0,0xFFFF,0x0)
 Test Str : test123
-Num partition handles : 194
+Num partition handles : 193
 Data partition found.
 Boot partition and boot drive selected successfully.
 Attr : 0000000000000020 Name : sddk.dll Size : 4096 NL : 8 .dll
@@ -89,7 +89,7 @@ Boot Processor : Section:
 Boot Processor : .text
 Boot Processor : 1000
 Boot Processor : 400
-Boot Processor : 4F2F6
+Boot Processor : 4F386
 Boot Processor : Section:
 Boot Processor : .rdata
 Boot Processor : 51000
@@ -127,15 +127,15 @@ Boot Processor : RSDP 0xFFFF8000000DED38FFFF80000001A4C8 FFFF8000000DECA8 (v2142
 Boot Processor : 
 
 Boot Processor : ACPI: 
-Boot Processor : êÌ 0xFFFF80000001A4C8FFFF8000000DECA8 7FB7D0E8 (v23640310 %-4.4s 0x%8.8X%8.8X %06X (v%.2d %-6.6s %-8.8s %08X %-4.4s %08X) XSDTT 0 XSDTT FFFF800000000054)
+Boot Processor : êÌ 0xFFFF80000001A4C8FFFF8000000DECA8 7FB7D0E8 (v23640454 %-4.4s 0x%8.8X%8.8X %06X (v%.2d %-6.6s %-8.8s %08X %-4.4s %08X) XSDTT 0 XSDTT FFFF800000000054)
 Boot Processor : 
 
 Boot Processor : ACPI: 
-Boot Processor : Ï 0xFFFF80000001A4C8FFFF8000000DEC08 7FB79000 (v23640310 %-4.4s 0x%8.8X%8.8X %06X (v%.2d %-6.6s %-8.8s %08X %-4.4s %08X) FACPÙ 0 FACPÙ FFFF8000000000F4)
+Boot Processor : Ï 0xFFFF80000001A4C8FFFF8000000DEC08 7FB79000 (v23640454 %-4.4s 0x%8.8X%8.8X %06X (v%.2d %-6.6s %-8.8s %08X %-4.4s %08X) FACPÙ 0 FACPÙ FFFF8000000000F4)
 Boot Processor : 
 
 Boot Processor : ACPI: 
-Boot Processor : ∞Ï 0xFFFF80000001A4C8FFFF8000000DEBC8 7FB7A000 (v23640310 %-4.4s 0x%8.8X%8.8X %06X (v%.2d %-6.6s %-8.8s %08X %-4.4s %08X) DSDT! 0 DSDT! FFFF80000000210D)
+Boot Processor : ∞Ï 0xFFFF80000001A4C8FFFF8000000DEBC8 7FB7A000 (v23640454 %-4.4s 0x%8.8X%8.8X %06X (v%.2d %-6.6s %-8.8s %08X %-4.4s %08X) DSDT! 0 DSDT! FFFF80000000210D)
 Boot Processor : 
 
 Boot Processor : ACPI: 
@@ -143,23 +143,23 @@ Boot Processor :  0xFFFF80000001A4C8FFFF8000000DEBC8 210D
 Boot Processor : 
 
 Boot Processor : ACPI: 
-Boot Processor : Ï 0xFFFF80000001A4C8FFFF8000000DEC08 7FB78000 (v23640310 %-4.4s 0x%8.8X%8.8X %06X (v%.2d %-6.6s %-8.8s %08X %-4.4s %08X) APICÄ 0 APICÄ FFFF800000000080)
+Boot Processor : Ï 0xFFFF80000001A4C8FFFF8000000DEC08 7FB78000 (v23640454 %-4.4s 0x%8.8X%8.8X %06X (v%.2d %-6.6s %-8.8s %08X %-4.4s %08X) APICÄ 0 APICÄ FFFF800000000080)
 Boot Processor : 
 
 Boot Processor : ACPI: 
-Boot Processor : Ï 0xFFFF80000001A4C8FFFF8000000DEC08 7FB77000 (v23640310 %-4.4s 0x%8.8X%8.8X %06X (v%.2d %-6.6s %-8.8s %08X %-4.4s %08X) HPET8 0 HPET8 38)
+Boot Processor : Ï 0xFFFF80000001A4C8FFFF8000000DEC08 7FB77000 (v23640454 %-4.4s 0x%8.8X%8.8X %06X (v%.2d %-6.6s %-8.8s %08X %-4.4s %08X) HPET8 0 HPET8 38)
 Boot Processor : 
 
 Boot Processor : ACPI: 
-Boot Processor : Ï 0xFFFF80000001A4C8FFFF8000000DEC08 7FB76000 (v23640310 %-4.4s 0x%8.8X%8.8X %06X (v%.2d %-6.6s %-8.8s %08X %-4.4s %08X) MCFG< 0 MCFG< FFFF80000000003C)
+Boot Processor : Ï 0xFFFF80000001A4C8FFFF8000000DEC08 7FB76000 (v23640454 %-4.4s 0x%8.8X%8.8X %06X (v%.2d %-6.6s %-8.8s %08X %-4.4s %08X) MCFG< 0 MCFG< FFFF80000000003C)
 Boot Processor : 
 
 Boot Processor : ACPI: 
-Boot Processor : Ï 0xFFFF80000001A4C8FFFF8000000DEC08 7FB75000 (v23640310 %-4.4s 0x%8.8X%8.8X %06X (v%.2d %-6.6s %-8.8s %08X %-4.4s %08X) WAET( 0 WAET( FFFF800000000028)
+Boot Processor : Ï 0xFFFF80000001A4C8FFFF8000000DEC08 7FB75000 (v23640454 %-4.4s 0x%8.8X%8.8X %06X (v%.2d %-6.6s %-8.8s %08X %-4.4s %08X) WAET( 0 WAET( FFFF800000000028)
 Boot Processor : 
 
 Boot Processor : ACPI: 
-Boot Processor : Ï 0xFFFF80000001A4C8FFFF8000000DEC08 7FB74000 (v23640310 %-4.4s 0x%8.8X%8.8X %06X (v%.2d %-6.6s %-8.8s %08X %-4.4s %08X) BGRT8 0 BGRT8 FFFF800000000038)
+Boot Processor : Ï 0xFFFF80000001A4C8FFFF8000000DEC08 7FB74000 (v23640454 %-4.4s 0x%8.8X%8.8X %06X (v%.2d %-6.6s %-8.8s %08X %-4.4s %08X) BGRT8 0 BGRT8 FFFF800000000038)
 Boot Processor : 
 
 Boot Processor : APIC Found
@@ -197,7 +197,7 @@ Processor#0 : @¶l:  (Definition Block level)
 Processor#0 : 
 ACPI table initialization:
 
-Processor#0 : Table [: DsInitializeObjects] (id FFFF8000016CA698) - 1 Objects with 18446603336244870109 Devices, 0 Regions, 18446603336221196288 Methods (18446603340516163583/18446603336221196288/18446603336221196352 Serial/Non/Cvt)
+Processor#0 : Table [: DsInitializeObjects] (id FFFF8000016CA698) - 1 Objects with 18446603336244870253 Devices, 0 Regions, 18446603336221196288 Methods (18446603340516163583/18446603336221196288/18446603336221196352 Serial/Non/Cvt)
 
 Processor#0 : ACPI: 
 Processor#0 : 18446603336222109144 ACPI AML tables successfully acquired and loaded
@@ -232,9 +232,9 @@ Processor#0 : Current processor #0 INTERNAL_DATA FFFFFFD000000000
 Processor#0 : Registered System INT#222 for CPU#0
 Processor#0 : create thread 1
 Processor#0 : Enabling the apic timer, interrupt number : 222
-Processor#1 : APIC Timer frequency : 1001304000 HZ
+Processor#1 : APIC Timer frequency : 1003285760 HZ
 Processor#1 : P1 looping...
-Processor#0 : APIC Timer frequency : 1000069760 HZ
+Processor#0 : APIC Timer frequency : 1000080000 HZ
 Processor#0 : Tables:
 Processor#0 : SN : FACP Length : 244
 Processor#0 : SN : DSDT Length : 8461
@@ -252,9 +252,9 @@ Processor#0 : System is already in ACPI mode
 
 Processor#0 : Initializing General Purpose Events (GPEs):
 
-Processor#0 :     Initialized GPE FFFF8000000DED40 to FFFF8000016C8418 [evgpeblk] 9 regs on interrupt 0xFFFF80000168D613†.@
+Processor#0 :     Initialized GPE FFFF8000000DED40 to FFFF8000016C8418 [evgpeblk] 9 regs on interrupt 0xFFFF80000168D6A3†.@
 
-Processor#0 : AcpiOsInstallInt#9 ISR FFFF80000168FAD0 CTX FFFF800001458580
+Processor#0 : AcpiOsInstallInt#9 ISR FFFF80000168FB60 CTX FFFF800001458580
 Processor#0 : CPU#1 Selected for Interrupt 9
 Processor#0 : DELIVERY_MODE 0 POLARITY 0 TRIGGERMODE 1
 Processor#0 : A
@@ -521,12 +521,12 @@ Processor#0 : Section:
 Processor#0 : .text
 Processor#0 : 1000
 Processor#0 : 400
-Processor#0 : 103B
+Processor#0 : 13FB
 Processor#0 : Section:
 Processor#0 : .rdata
 Processor#0 : 3000
-Processor#0 : 1600
-Processor#0 : B6A
+Processor#0 : 1800
+Processor#0 : CAA
 Processor#0 : Section:
 Processor#0 : .data
 Processor#0 : 4000
@@ -535,7 +535,7 @@ Processor#0 : 58
 Processor#0 : Section:
 Processor#0 : .pdata
 Processor#0 : 5000
-Processor#0 : 2200
+Processor#0 : 2600
 Processor#0 : B4
 Processor#0 : ADDR_SPACE_SIZE :
 Processor#0 : 6000
@@ -592,7 +592,7 @@ Processor#0 : EXPORTING...
 Processor#0 : Linking DLL...
 Processor#0 : 0
 Processor#0 : Preboot Launch
-Processor#0 : Running driver 5 EntryPoint FFFF8000018DE510
+Processor#0 : Running driver 5 EntryPoint FFFF8000018DE8A0
 Processor#0 : Init LIBS: Calling DLL Entry Point FFFF8000018E4000
 Processor#0 : System Driver Developement Kit (SDDK) Entry Point.
 Processor#0 : AHCI Driver startup
@@ -753,7 +753,7 @@ Processor#0 : RTC Driver startup.
 Processor#0 : ACPI IO Protocol 0
 Processor#0 : ACPI_IO_GET_VER FFFF8000000DEEC8
 Processor#0 : ACPI Version : 2.0
-Processor#0 : 14:22:51
+Processor#0 : 22:4:30
 Processor#0 : Day 6 Of the week
 Processor#0 : 28/7/23
 Processor#0 : Return status : 0
@@ -789,14 +789,8 @@ Processor#0 : AHCI Device add (Class 2 Subclass 0 Progif 0)
 Processor#0 : Exitting thread #6
 Processor#0 : Thread #6 exited with code 0
 Processor#0 : Hello thread
-Processor#0 : Kernel mode thread#7 created
-Processor#0 : AHCI Device add (Class 6 Subclass 1 Progif 0)
-Processor#0 : Exitting thread #7
-Processor#0 : Thread #7 exited with code 0
-Processor#0 : Hello thread
 Processor#0 : Kernel mode thread#8 created
 Processor#0 : AHCI Device add (Class 1 Subclass 6 Progif 1)
-Processor#0 : Found AHCI Controller at location FFFF800001459428
 Processor#0 : Hello thread
 Processor#0 : Kernel mode thread#9 created
 Processor#0 : AHCI Device add (Class 12 Subclass 5 Progif 0)
@@ -823,6 +817,10 @@ Processor#0 : EHCI Device add handler
 Processor#0 : Exitting thread #13
 Processor#0 : Thread #13 exited with code 0
 Processor#0 : Hello thread
+Processor#0 : Kernel mode thread#14 created
+Processor#0 : EHCI Device add handler
+Processor#0 : Exitting thread #14
+Processor#0 : Thread #14 exited with code 0
 Processor#0 : Hello thread
 Processor#0 : Kernel mode thread#15 created
 Processor#0 : EHCI Device add handler
@@ -831,17 +829,10 @@ Processor#0 : Thread #15 exited with code 0
 Processor#0 : Hello thread
 Processor#0 : Kernel mode thread#16 created
 Processor#0 : Hello thread
-Processor#0 : Kernel mode thread#17 created
-Processor#0 : Hello thread
 Processor#0 : Kernel mode thread#18 created
 Processor#0 : THREAD3 Created, testing thread exit functionnality
 Processor#0 : Exitting thread #18
 Processor#0 : Thread #18 exited with code 96
-Processor#0 : Hello thread
-Processor#0 : Kernel mode thread#19 created
-Processor#0 : THREAD3 Created, testing thread exit functionnality
-Processor#0 : Exitting thread #19
-Processor#0 : Thread #19 exited with code 96
 Processor#0 : Hello thread
 Processor#0 : Kernel mode thread#20 created
 Processor#0 : THREAD3 Created, testing thread exit functionnality
@@ -852,14 +843,23 @@ Processor#0 : Kernel mode thread#5 created
 Processor#0 : AHCI Device add (Class 3 Subclass 0 Progif 0)
 Processor#0 : Exitting thread #5
 Processor#0 : Thread #5 exited with code 0
+Processor#0 : Found AHCI Controller at location FFFF800001459428
 Processor#0 : AHCI Base Address C1084000 BAR5 11001AF400000000
+Processor#0 : Hello thread
+Processor#0 : Kernel mode thread#17 created
+Processor#0 : Hello thread
+Processor#0 : Kernel mode thread#19 created
+Processor#0 : THREAD3 Created, testing thread exit functionnality
+Processor#0 : Exitting thread #19
+Processor#0 : Thread #19 exited with code 96
+Processor#0 : Hello thread
+Processor#0 : Kernel mode thread#7 created
+Processor#0 : AHCI Device add (Class 6 Subclass 1 Progif 0)
+Processor#0 : Exitting thread #7
+Processor#0 : Thread #7 exited with code 0
 Processor#0 : Resetting AHC FFFF800001A0F000
 Processor#0 : AHCI Resetted successfully
 Processor#0 : AHCI Enabled successfully MAX_SLOT 31
-Processor#0 : Kernel mode thread#14 created
-Processor#0 : EHCI Device add handler
-Processor#0 : Exitting thread #14
-Processor#0 : Thread #14 exited with code 0
 Processor#0 : Enabling MSI Interrupts Device 31 Bus 0 Function 0
 Processor#0 : cptr 80 capid 5
 Processor#0 : Found MSI Capability
@@ -897,30 +897,53 @@ Processor#0 : AHCI : Interrupt on port 1
 Processor#0 : AHCI : D2H Reg FIS
 Processor#0 : AHCI Interrupt handler exit.
 Processor#0 : IRQ 1
+Processor#0 : AHCI : Interrupt on port 3
+Processor#0 : AHCI : D2H Reg FIS
+Processor#0 : AHCI Interrupt handler exit.
+Processor#0 : IRQ 1
 Processor#0 : AHCI : Interrupt on port 0
 Processor#0 : AHCI : D2H Reg FIS
 Processor#0 : AHCI Interrupt handler exit.
 Processor#0 : Device detected on port 0
 Processor#0 : Port signature 101
 Processor#0 : AHCI : Initializing ATA Device on Port #0 IDENTIFY_CMD#0
+Processor#0 : IRQ 1
+Processor#0 : AHCI : Interrupt on port 4
+Processor#0 : AHCI : D2H Reg FIS
+Processor#0 : AHCI Interrupt handler exit.
 Processor#0 : Suspended thread#21
 Processor#0 : IRQ 1
 Processor#0 : AHCI : Interrupt on port 0
 Processor#0 : Command #0 Compeleted.
+Processor#0 : Get th flags 2
 Processor#0 : Thread #21 Resumed
-Processor#0 : AHCI : D2H Reg FIS
-Processor#0 : AHCI Interrupt handler exit.
-Processor#0 : IRQ 1
-Processor#0 : AHCI : Interrupt on port 3
 Processor#0 : AHCI : D2H Reg FIS
 Processor#0 : AHCI Interrupt handler exit.
 Processor#0 : thread#21 back to work
 Processor#0 : AHCI Command#0 issued successfully SATA_ACTIVE 0 CI 0
-Processor#0 : Model Number : QEMU HARDDISK
+Processor#0 : Multiple logical sectors per physical sector, Sector size : 512
+Processor#0 : Model Number : QEMU HARDDISK Sector size : 512 Bytes, Disk Size : 45 MB
+Processor#0 : Testing read...
+Processor#0 : IRQ 1
+Processor#0 : AHCI : Interrupt on port 0
+Processor#0 : Command #0 Compeleted.
+Processor#0 : AHCI : D2H Reg FIS
+Processor#0 : AHCI Interrupt handler exit.
+Processor#0 : Read status 0 Buffer: 5452415020494645
+Processor#0 : EFI PART
+Processor#0 : IRQ 1
+Processor#0 : AHCI : Interrupt on port 0
+Processor#0 : Command #0 Compeleted.
+Processor#0 : AHCI : D2H Reg FIS
+Processor#0 : AHCI Interrupt handler exit.
 Processor#0 : Exitting thread #21
-Processor#0 : Thread #21 exited with code 96
+Processor#0 : Thread #21 exited with code 20971552
 Processor#0 : IRQ 1
 Processor#0 : AHCI : Interrupt on port 2
+Processor#0 : AHCI : D2H Reg FIS
+Processor#0 : AHCI Interrupt handler exit.
+Processor#0 : IRQ 1
+Processor#0 : AHCI : Interrupt on port 5
 Processor#0 : AHCI : D2H Reg FIS
 Processor#0 : AHCI Interrupt handler exit.
 Processor#0 : IRQ 1
@@ -930,27 +953,19 @@ Processor#0 : AHCI Interrupt handler exit.
 Processor#0 : Device detected on port 2
 Processor#0 : Port signature EB140101
 Processor#0 : Exitting thread #23
-Processor#0 : Thread #23 exited with code -6
-Processor#0 : IRQ 1
-Processor#0 : AHCI : Interrupt on port 4
-Processor#0 : AHCI : D2H Reg FIS
-Processor#0 : AHCI Interrupt handler exit.
-Processor#0 : IRQ 1
-Processor#0 : AHCI : Interrupt on port 5
-Processor#0 : AHCI : D2H Reg FIS
-Processor#0 : AHCI Interrupt handler exit.
+Processor#0 : Thread #23 exited with code -0971552
 Processor#0 : No device detected on port 1
 Processor#0 : Exitting thread #22
-Processor#0 : Thread #22 exited with code -6
+Processor#0 : Thread #22 exited with code -0971552
 Processor#0 : No device detected on port 3
 Processor#0 : Exitting thread #24
-Processor#0 : Thread #24 exited with code -6
+Processor#0 : Thread #24 exited with code -0971552
 Processor#0 : No device detected on port 4
 Processor#0 : Exitting thread #25
-Processor#0 : Thread #25 exited with code -6
+Processor#0 : Thread #25 exited with code -0971552
 Processor#0 : No device detected on port 5
 Processor#0 : Exitting thread #26
-Processor#0 : Thread #26 exited with code -6
+Processor#0 : Thread #26 exited with code -0971552
 Processor#0 : IRQ 0
 Processor#0 : Hpet Interrupt
 Processor#0 : IRQ 0
@@ -971,4 +986,3 @@ Processor#0 : IRQ 0
 Processor#0 : Hpet Interrupt
 Processor#0 : IRQ 0
 Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3

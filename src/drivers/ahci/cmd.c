@@ -23,7 +23,7 @@ NSTATUS AhciIssueCommandSync(PAHCIPORT Port, UINT Cmd) {
     NSTATUS Ret;
 
     Port->Commands[Cmd].Thread = KeGetCurrentThread();
-    Port->Commands[Cmd].ReturnCode = &Ret;
+    Port->Commands[Cmd].ReturnSet.ReturnCode = &Ret;
 
 
     // Command issue should be set on the port before pending cmd
@@ -44,3 +44,15 @@ NSTATUS AhciIssueCommandSync(PAHCIPORT Port, UINT Cmd) {
     return Ret;
 }
 
+
+// Used to help performing multiple commands at once
+void AhciIssueCommandAsync(PAHCIPORT Port, UINT Cmd, UINT64* IncrementOnDone) {
+    Port->Commands[Cmd].Async = TRUE;
+    Port->Commands[Cmd].ReturnSet.IncrementOnDone = IncrementOnDone;
+
+    // Command issue should be set on the port before pending cmd
+    _interlockedbittestandset(&Port->HbaPort->CommandIssue, Cmd);
+    _interlockedbittestandset(&Port->PendingCmd, Cmd);
+
+    // Allocate cmd automatically reset on async operations
+}
