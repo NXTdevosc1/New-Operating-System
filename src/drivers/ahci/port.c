@@ -14,8 +14,12 @@ void AhciEnablePort(PAHCIPORT Port) {
 
 void AhciInitPort(PAHCIPORT Port) {
 
-    Port->CommandList = AhciAllocate(Port->Ahci, ConvertToPages(sizeof(AHCI_COMMAND_LIST_ENTRY) * Port->Ahci->NumSlots), 0);
-    Port->CommandTable = AhciAllocate(Port->Ahci, ConvertToPages(sizeof(AHCI_COMMAND_TABLE) * Port->Ahci->NumSlots), 0);
+    Port->ValidCmd = ((UINT32)-1) >> (31 - Port->Ahci->MaxSlotNumber);
+    Port->PendingCmd = ~Port->ValidCmd;
+
+    
+    Port->CommandList = AhciAllocate(Port->Ahci, ConvertToPages(sizeof(AHCI_COMMAND_LIST_ENTRY) * (Port->Ahci->MaxSlotNumber + 1)), 0);
+    Port->CommandTable = AhciAllocate(Port->Ahci, ConvertToPages(sizeof(AHCI_COMMAND_TABLE) * (Port->Ahci->MaxSlotNumber + 1)), 0);
     Port->ReceivedFis = AhciAllocate(Port->Ahci, 1, 0);
     // Stop the port
     AhciDisablePort(Port);
@@ -111,10 +115,12 @@ void AhciInitPort(PAHCIPORT Port) {
         Port->Atapi = TRUE;
         Port->HbaPort->CommandStatus |= PORTxCMDxATAPI;
         AHCI_COMMAND_LIST_ENTRY* e = Port->CommandList;
-        for(UINT i = 0;i<Port->Ahci->NumSlots;i++) {
+        for(UINT i = 0;i<=Port->Ahci->MaxSlotNumber;i++) {
             e->Atapi = 1;
         }
     }
+
+
 
     AhciEnablePort(Port);
 }

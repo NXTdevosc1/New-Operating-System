@@ -99,3 +99,34 @@ RFPROCESSOR KeGetProcessorByIndex(UINT64 Index) {
     }
     return NULL;
 }
+
+// if wait, returns status of the remote execution routine
+// otherwise it returns STATUS_SUCCESS
+NSTATUS KRNLAPI KeRemoteExecute(PROCESSOR* Processor, REMOTE_EXECUTE_ROUTINE Routine, void* Context, BOOLEAN Wait) {
+    
+    // Processor will automatically releasse the control bit when the routine is done
+    AcquireProcessorControl(Processor, PROCESSOR_CONTROL_EXECUTE);
+
+    Processor->RemoteExecute.Routine = Routine;
+    Processor->RemoteExecute.Context = Context;
+    Processor->RemoteExecute.Finished = FALSE;
+    Processor->RemoteExecute.Thread = KeGetCurrentThread();
+    Processor->RemoteExecute.Waiting = Wait;
+    HwSendIpi(SYSINT_EXECUTE, Processor->Id.ProcessorId, IPI_NORMAL, IPI_DESTINATION_NORMAL);
+    
+    NSTATUS Status = STATUS_SUCCESS;
+
+    if(Wait) {
+        for(;;) {
+            __wbinvd(); // Update cache
+            if(Processor->RemoteExecute.Finished == FALSE) KeSuspendThread();
+            else {
+                Status = Processor->RemoteExecute.ReturnCode;
+                break;
+            }
+            // If resumed finished should read as true because of cache update
+        }
+    }
+
+    return Status;
+}

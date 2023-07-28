@@ -3,6 +3,7 @@ section .text
 global SchedulerEntry
 
 global __Schedule
+export __Schedule
 
 extern LocalApicAddress
 extern Schedule

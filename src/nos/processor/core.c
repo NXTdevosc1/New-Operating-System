@@ -19,6 +19,8 @@ static NSTATUS __inthalt(INTERRUPT_HANDLER_DATA* Hd) {
     for(;;) __halt();
 }
 
+extern NSTATUS KiRemoteExecuteHandler(INTERRUPT_HANDLER_DATA* HandlerData);
+
 void CpuInitDescriptors(PROCESSOR* Processor) {
     _disable();
     // Creating the interrupt array table
@@ -79,7 +81,12 @@ void CpuInitDescriptors(PROCESSOR* Processor) {
     }
     // Set shutdown/halt system interrupt 0x14 (INT 0xF0)
     Processor->SystemInterruptHandlers[0x14] = __inthalt;
+    // Manual Schedule (INT 0xF1) Setup when Processor Initialization finishes
+    // Remote Execute (INT 0xF2)
+    Processor->SystemInterruptHandlers[0x16] = KiRemoteExecuteHandler;
+
     CpuSetInterrupt(Processor, SYSINT_HALT, InterruptGate, NosSystemInterruptService);
+    CpuSetInterrupt(Processor, SYSINT_EXECUTE, InterruptGate, NosSystemInterruptService);
 
 }
 

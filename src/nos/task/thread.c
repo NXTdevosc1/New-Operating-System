@@ -1,5 +1,6 @@
 #include <nos/nos.h>
 #include <nos/task/process.h>
+#include <nos/processor/hw.h>
 
 NSTATUS ThreadEvtHandler(PEPROCESS Process, UINT Event, HANDLE Handle, UINT64 Access) {
     return STATUS_SUCCESS;
@@ -172,4 +173,36 @@ void __declspec(noreturn) KRNLAPI KeRaiseException(NSTATUS ExceptionCode) {
     KDebugPrint("KE_RAISE_EXCEPTION : ExceptionCode %d", ExceptionCode);
     
     while(1) __halt();
+}
+
+void KRNLAPI KeSuspendThread() {
+    _disable();
+    PETHREAD Thread = KeGetCurrentThread();
+    ScUnlinkReadyThread(&Thread->QueueEntry);
+    SetThreadFlag(Thread, THREAD_SUSPENDED);
+    KDebugPrint("Suspended thread#%u", Thread->ThreadId);
+    __Schedule();
+    KDebugPrint("thread#%u back to work", Thread->ThreadId);
+}
+
+// System Interrupt handler
+NSTATUS KiThreadResumeRoutine(PETHREAD Thread) {
+    ResetThreadFlag(Thread, THREAD_SUSPENDED);
+    ScLinkReadyThreadBottom(&Thread->QueueEntry);
+    KDebugPrint("Thread #%u Resumed", Thread->ThreadId);
+    return STATUS_SUCCESS;
+}
+
+void KRNLAPI KeResumeThread(PETHREAD Thread) {
+    PROCESSOR* Processor = KeGetCurrentProcessor();
+    if(!GetThreadFlag(Thread, THREAD_SUSPENDED)) return;
+    if(Processor != Thread->Processor) {
+        KDebugPrint("Resuming thread from an alternate processor, sending IPI");
+        // Send internal interrupt (without waiting)
+        KeRemoteExecute(Thread->Processor, KiThreadResumeRoutine, (void*)Thread, FALSE);
+    } else {
+        _disable();
+        KiThreadResumeRoutine(Thread);
+        _enable();
+    }
 }

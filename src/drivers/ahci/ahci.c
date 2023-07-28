@@ -3,8 +3,9 @@
 NSTATUS AhciInitDevice(PCI_DEVICE_LOCATION* ploc) {
     KDebugPrint("Found AHCI Controller at location %x", ploc);
 
-    PAHCI Ahc = AllocateNullPool(sizeof(AHCI));
+    PAHCI Ahc = MmAllocateMemory(NULL, ConvertToPages(sizeof(AHCI)), PAGE_WRITE_ACCESS, PAGE_CACHE_DISABLE);
     if(!Ahc) return STATUS_OUT_OF_MEMORY;
+    ObjZeroMemory(Ahc);
 
     Ahc->Hba = PciGetBaseAddress(&Pci, ploc, 5);
     KeMapVirtualMemory(NULL, (void*)Ahc->Hba, (void*)Ahc->Hba, 3, PAGE_WRITE_ACCESS, PAGE_CACHE_DISABLE);
@@ -43,9 +44,9 @@ NSTATUS AhciInitDevice(PCI_DEVICE_LOCATION* ploc) {
     }
 
     AhciReset(Ahc);
-    Ahc->NumSlots = Ahc->Hba->HostCapabilities.NumCommandSlots + 1;
+    Ahc->MaxSlotNumber = Ahc->Hba->HostCapabilities.NumCommandSlots;
 
-    KDebugPrint("AHCI Enabled successfully NUM_CMD_SLOTS %d", Ahc->NumSlots);
+    KDebugPrint("AHCI Enabled successfully MAX_SLOT %d", Ahc->MaxSlotNumber);
     
     // Enable MSI Interrupts
     EnableMsiInterrupts(&Pci, ploc, AhciInterruptHandler, Ahc);
@@ -67,8 +68,9 @@ NSTATUS AhciInitDevice(PCI_DEVICE_LOCATION* ploc) {
         Port->PortIndex = iPort;
         Port->HbaPort = HbaPort;
         
-        AhciInitPort(Port);
-
+        if(NERROR(KeCreateThread(KeGetCurrentProcess(), NULL, 0, AhciInitPort, Port))) {
+            KDebugPrint("AHCI Warning: Failed to create port initializing thread");
+        }
     }
     return STATUS_SUCCESS;
 }

@@ -37,3 +37,25 @@ void AhciReset(PAHCI Ahci) {
     KDebugPrint("AHCI Resetted successfully");
 
 }
+
+void AhciReadModelNumber(PAHCIPORT Port) {
+    UINT16 LastChar = 0xFF;
+    BOOLEAN Second = 0;
+    UINT LastIndex = 0;
+    UINT LastCharIndex = 0;
+    for(UINT i = 0;i<40;i++) {
+        
+        UINT index = i + 1;
+        if(Second) index = LastIndex;
+        else LastIndex = i;
+
+        Port->OsDriveIdentify.Name[i] = Port->AtaDeviceIdentify.ModelNumber[index];
+        LastChar = Port->AtaDeviceIdentify.ModelNumber[i];
+        if(Port->AtaDeviceIdentify.ModelNumber[index] > 0x20) {
+            LastCharIndex = i;
+        }
+        Second ^= 1;
+
+    }
+    Port->OsDriveIdentify.Name[LastCharIndex + 1] = 0;
+}

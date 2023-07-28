@@ -232,9 +232,9 @@ Processor#0 : Current processor #0 INTERNAL_DATA FFFFFFD000000000
 Processor#0 : Registered System INT#222 for CPU#0
 Processor#0 : create thread 1
 Processor#0 : Enabling the apic timer, interrupt number : 222
-Processor#1 : APIC Timer frequency : 1002237760 HZ
+Processor#1 : APIC Timer frequency : 1003483840 HZ
 Processor#1 : P1 looping...
-Processor#0 : APIC Timer frequency : 1000085760 HZ
+Processor#0 : APIC Timer frequency : 1000217920 HZ
 Processor#0 : Tables:
 Processor#0 : SN : FACP Length : 244
 Processor#0 : SN : DSDT Length : 8461
@@ -521,12 +521,12 @@ Processor#0 : Section:
 Processor#0 : .text
 Processor#0 : 1000
 Processor#0 : 400
-Processor#0 : AAB
+Processor#0 : A9B
 Processor#0 : Section:
 Processor#0 : .rdata
 Processor#0 : 2000
 Processor#0 : 1000
-Processor#0 : 888
+Processor#0 : 898
 Processor#0 : Section:
 Processor#0 : .data
 Processor#0 : 3000
@@ -753,7 +753,7 @@ Processor#0 : RTC Driver startup.
 Processor#0 : ACPI IO Protocol 0
 Processor#0 : ACPI_IO_GET_VER FFFF8000000DEEC8
 Processor#0 : ACPI Version : 2.0
-Processor#0 : 12:14:57
+Processor#0 : 12:19:57
 Processor#0 : Day 6 Of the week
 Processor#0 : 28/7/23
 Processor#0 : Return status : 0
@@ -782,11 +782,12 @@ Processor#0 : Hello thread
 Processor#0 : Kernel mode thread#4 created
 Processor#0 : AHCI Device add (Class 6 Subclass 0 Progif 0)
 Processor#0 : Exitting thread #4
+Processor#0 : Thread #4 exited with code 0
 Processor#0 : Hello thread
-Processor#0 : Kernel mode thread#5 created
-Processor#0 : AHCI Device add (Class 3 Subclass 0 Progif 0)
-Processor#0 : Exitting thread #5
-Processor#0 : Thread #5 exited with code 0
+Processor#0 : Kernel mode thread#6 created
+Processor#0 : AHCI Device add (Class 2 Subclass 0 Progif 0)
+Processor#0 : Exitting thread #6
+Processor#0 : Thread #6 exited with code 0
 Processor#0 : Hello thread
 Processor#0 : Kernel mode thread#7 created
 Processor#0 : AHCI Device add (Class 6 Subclass 1 Progif 0)
@@ -796,70 +797,69 @@ Processor#0 : Hello thread
 Processor#0 : Kernel mode thread#8 created
 Processor#0 : AHCI Device add (Class 1 Subclass 6 Progif 1)
 Processor#0 : Found AHCI Controller at location FFFF8000014593E8
-Processor#0 : AHCI Base Address C1084000 BAR5 11001AF400000000
 Processor#0 : Hello thread
 Processor#0 : Kernel mode thread#9 created
 Processor#0 : AHCI Device add (Class 12 Subclass 5 Progif 0)
 Processor#0 : Exitting thread #9
-Processor#0 : Thread #9 exited with code 0
 Processor#0 : Hello thread
 Processor#0 : Kernel mode thread#10 created
 Processor#0 : EHCI Device add handler
 Processor#0 : Exitting thread #10
 Processor#0 : Thread #10 exited with code 0
 Processor#0 : Hello thread
-Processor#0 : Kernel mode thread#11 created
+Processor#0 : Kernel mode thread#12 created
 Processor#0 : EHCI Device add handler
-Processor#0 : Exitting thread #11
-Processor#0 : Thread #11 exited with code 0
-Processor#0 : Hello thread
-Processor#0 : Kernel mode thread#13 created
-Processor#0 : EHCI Device add handler
-Processor#0 : Exitting thread #13
-Processor#0 : Thread #13 exited with code 0
+Processor#0 : Exitting thread #12
+Processor#0 : Thread #12 exited with code 0
 Processor#0 : Hello thread
 Processor#0 : Kernel mode thread#14 created
 Processor#0 : EHCI Device add handler
 Processor#0 : Exitting thread #14
-Processor#0 : Thread #14 exited with code 0
 Processor#0 : Hello thread
 Processor#0 : Kernel mode thread#15 created
 Processor#0 : EHCI Device add handler
 Processor#0 : Exitting thread #15
 Processor#0 : Thread #15 exited with code 0
 Processor#0 : Hello thread
-Processor#0 : Kernel mode thread#17 created
+Processor#0 : Kernel mode thread#16 created
 Processor#0 : Hello thread
-Processor#0 : Kernel mode thread#18 created
-Processor#0 : THREAD3 Created, testing thread exit functionnality
-Processor#0 : Exitting thread #18
-Processor#0 : Thread #18 exited with code 96
+Processor#0 : Kernel mode thread#17 created
 Processor#0 : Hello thread
 Processor#0 : Kernel mode thread#19 created
 Processor#0 : THREAD3 Created, testing thread exit functionnality
 Processor#0 : Exitting thread #19
 Processor#0 : Thread #19 exited with code 96
 Processor#0 : Hello thread
+Processor#0 : Kernel mode thread#5 created
+Processor#0 : AHCI Device add (Class 3 Subclass 0 Progif 0)
+Processor#0 : Exitting thread #5
+Processor#0 : Thread #5 exited with code 0
+Processor#0 : Thread #9 exited with code 0
+Processor#0 : Hello thread
+Processor#0 : Kernel mode thread#11 created
+Processor#0 : EHCI Device add handler
+Processor#0 : Exitting thread #11
+Processor#0 : Thread #11 exited with code 0
+Processor#0 : Thread #14 exited with code 0
+Processor#0 : Hello thread
+Processor#0 : Kernel mode thread#18 created
+Processor#0 : THREAD3 Created, testing thread exit functionnality
+Processor#0 : Exitting thread #18
+Processor#0 : Thread #18 exited with code 96
+Processor#0 : Hello thread
 Processor#0 : Kernel mode thread#20 created
 Processor#0 : THREAD3 Created, testing thread exit functionnality
 Processor#0 : Exitting thread #20
 Processor#0 : Thread #20 exited with code 96
-Processor#0 : Thread #4 exited with code 0
-Processor#0 : Hello thread
-Processor#0 : Kernel mode thread#6 created
-Processor#0 : AHCI Device add (Class 2 Subclass 0 Progif 0)
-Processor#0 : Exitting thread #6
-Processor#0 : Thread #6 exited with code 0
+Processor#0 : AHCI Base Address C1084000 BAR5 11001AF400000000
 Processor#0 : Resetting AHC FFFF800001475330
 Processor#0 : AHCI Resetted successfully
 Processor#0 : AHCI Enabled successfully NUM_CMD_SLOTS 32
 Processor#0 : Hello thread
-Processor#0 : Kernel mode thread#12 created
+Processor#0 : Kernel mode thread#13 created
 Processor#0 : EHCI Device add handler
-Processor#0 : Exitting thread #12
-Processor#0 : Thread #12 exited with code 0
-Processor#0 : Hello thread
-Processor#0 : Kernel mode thread#16 created
+Processor#0 : Exitting thread #13
+Processor#0 : Thread #13 exited with code 0
 Processor#0 : Enabling MSI Interrupts Device 31 Bus 0 Function 0
 Processor#0 : cptr 80 capid 5
 Processor#0 : Found MSI Capability
@@ -869,46 +869,38 @@ Processor#0 : A
 Processor#0 : A
 Processor#0 : A
 Processor#0 : IRQ 1
-Processor#0 : Ahci FFFF800001475330 Interrupt
-Processor#0 : Interrupt on port 0
-Processor#0 : D2H Reg FIS
+Processor#0 : AHCI : Interrupt on port 0
+Processor#0 : AHCI : D2H Reg FIS
 Processor#0 : IRQ 1
-Processor#0 : Ahci FFFF800001475330 Interrupt
-Processor#0 : Interrupt on port 0
-Processor#0 : D2H Reg FIS
+Processor#0 : AHCI : Interrupt on port 0
+Processor#0 : AHCI : D2H Reg FIS
 Processor#0 : Device detected on port 0
 Processor#0 : Port signature 101
 Processor#0 : IRQ 1
-Processor#0 : Ahci FFFF800001475330 Interrupt
-Processor#0 : Interrupt on port 1
-Processor#0 : D2H Reg FIS
+Processor#0 : AHCI : Interrupt on port 1
+Processor#0 : AHCI : D2H Reg FIS
 Processor#0 : No device detected on port 1
 Processor#0 : IRQ 1
-Processor#0 : Ahci FFFF800001475330 Interrupt
-Processor#0 : Interrupt on port 2
-Processor#0 : D2H Reg FIS
+Processor#0 : AHCI : Interrupt on port 2
+Processor#0 : AHCI : D2H Reg FIS
 Processor#0 : IRQ 1
-Processor#0 : Ahci FFFF800001475330 Interrupt
-Processor#0 : Interrupt on port 2
-Processor#0 : D2H Reg FIS
+Processor#0 : AHCI : Interrupt on port 2
+Processor#0 : AHCI : D2H Reg FIS
 Processor#0 : Device detected on port 2
 Processor#0 : Port signature EB140101
 Processor#0 : IRQ 1
-Processor#0 : Ahci FFFF800001475330 Interrupt
-Processor#0 : Interrupt on port 3
-Processor#0 : D2H Reg FIS
+Processor#0 : AHCI : Interrupt on port 3
+Processor#0 : AHCI : D2H Reg FIS
 Processor#0 : No device detected on port 3
-Processor#0 : IRQ 1
-Processor#0 : Ahci FFFF800001475330 Interrupt
-Processor#0 : Interrupt on port 4
-Processor#0 : D2H Reg FIS
 Processor#0 : IRQ 0
 Processor#0 : Hpet Interrupt
+Processor#0 : IRQ 1
+Processor#0 : AHCI : Interrupt on port 4
+Processor#0 : AHCI : D2H Reg FIS
 Processor#0 : No device detected on port 4
 Processor#0 : IRQ 1
-Processor#0 : Ahci FFFF800001475330 Interrupt
-Processor#0 : Interrupt on port 5
-Processor#0 : D2H Reg FIS
+Processor#0 : AHCI : Interrupt on port 5
+Processor#0 : AHCI : D2H Reg FIS
 Processor#0 : No device detected on port 5
 Processor#0 : Exitting thread #8
 Processor#0 : Thread #8 exited with code 0
@@ -933,6 +925,74 @@ Processor#0 : Hpet Interrupt
 Processor#0 : KTHREADS 3
 Processor#0 : IRQ 0
 Processor#0 : Hpet Interrupt
+Processor#0 : IRQ 0
+Processor#0 : Hpet Interrupt
+Processor#0 : IRQ 0
+Processor#0 : Hpet Interrupt
+Processor#0 : KTHREADS 3
+Processor#0 : IRQ 0
+Processor#0 : Hpet Interrupt
+Processor#0 : IRQ 0
+Processor#0 : Hpet Interrupt
+Processor#0 : IRQ 0
+Processor#0 : Hpet Interrupt
+Processor#0 : KTHREADS 3
+Processor#0 : IRQ 0
+Processor#0 : Hpet Interrupt
+Processor#0 : IRQ 0
+Processor#0 : Hpet Interrupt
+Processor#0 : IRQ 0
+Processor#0 : Hpet Interrupt
+Processor#0 : KTHREADS 3
+Processor#0 : IRQ 0
+Processor#0 : Hpet Interrupt
+Processor#0 : IRQ 0
+Processor#0 : Hpet Interrupt
+Processor#0 : IRQ 0
+Processor#0 : Hpet Interrupt
+Processor#0 : KTHREADS 3
+Processor#0 : IRQ 0
+Processor#0 : Hpet Interrupt
+Processor#0 : IRQ 0
+Processor#0 : Hpet Interrupt
+Processor#0 : IRQ 0
+Processor#0 : Hpet Interrupt
+Processor#0 : KTHREADS 3
+Processor#0 : IRQ 0
+Processor#0 : Hpet Interrupt
+Processor#0 : IRQ 0
+Processor#0 : Hpet Interrupt
+Processor#0 : IRQ 0
+Processor#0 : Hpet Interrupt
+Processor#0 : KTHREADS 3
+Processor#0 : IRQ 0
+Processor#0 : Hpet Interrupt
+Processor#0 : IRQ 0
+Processor#0 : Hpet Interrupt
+Processor#0 : IRQ 0
+Processor#0 : Hpet Interrupt
+Processor#0 : KTHREADS 3
+Processor#0 : IRQ 0
+Processor#0 : Hpet Interrupt
+Processor#0 : IRQ 0
+Processor#0 : Hpet Interrupt
+Processor#0 : IRQ 0
+Processor#0 : Hpet Interrupt
+Processor#0 : KTHREADS 3
+Processor#0 : IRQ 0
+Processor#0 : Hpet Interrupt
+Processor#0 : IRQ 0
+Processor#0 : Hpet Interrupt
+Processor#0 : IRQ 0
+Processor#0 : Hpet Interrupt
+Processor#0 : KTHREADS 3
+Processor#0 : IRQ 0
+Processor#0 : Hpet Interrupt
+Processor#0 : IRQ 0
+Processor#0 : Hpet Interrupt
+Processor#0 : IRQ 0
+Processor#0 : Hpet Interrupt
+Processor#0 : KTHREADS 3
 Processor#0 : IRQ 0
 Processor#0 : Hpet Interrupt
 Processor#0 : IRQ 0

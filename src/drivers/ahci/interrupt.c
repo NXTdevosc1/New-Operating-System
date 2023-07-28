@@ -2,8 +2,6 @@
 
 NSTATUS __cdecl AhciInterruptHandler(INTERRUPT_HANDLER_DATA* Interrupt) {
     PAHCI Ahci = Interrupt->Context;
-    KDebugPrint("Ahci %x Interrupt", Ahci);
-
     UINT32 GlobalInterruptStatus = Ahci->Hba->InterruptStatus;
     if(!GlobalInterruptStatus) return STATUS_SUCCESS;
 
@@ -14,22 +12,22 @@ NSTATUS __cdecl AhciInterruptHandler(INTERRUPT_HANDLER_DATA* Interrupt) {
         _bittestandreset64(&gi, Index);
         PAHCIPORT Port = Ahci->Ports + Index;
         HBA_PORT* hbp = Port->HbaPort;
-        KDebugPrint("Interrupt on port %d", Index);
+        KDebugPrint("AHCI : Interrupt on port %d", Index);
         if(hbp->InterruptStatus.D2HRegisterFisInterrupt) {
             Port->FirstD2H = 1;
 
-            KDebugPrint("D2H Reg FIS");
+            KDebugPrint("AHCI : D2H Reg FIS");
         } 
         if(hbp->InterruptStatus.PioSetupFisInterrupt) {
-            KDebugPrint("PIO Setup FIS");
+            KDebugPrint("AHCI : PIO Setup FIS");
         }
         if(hbp->InterruptStatus.PhyRdyChangeStatus) {
-            KDebugPrint("PHYRDI Change");
+            KDebugPrint("AHCI : PHYRDI Change");
             Port->HbaPort->SataError.PhyRdyChange = 1;
             Port->FirstD2H = 1;
         }
         if(hbp->InterruptStatus.PortConnectChangeStatus) {
-            KDebugPrint("PORT_CONNECT_CHANGE");
+            KDebugPrint("AHCI : PORT_CONNECT_CHANGE");
             Port->HbaPort->SataError.Exchanged = 1;
         }
         *(volatile UINT32*)&hbp->InterruptStatus = *(volatile UINT32*)&hbp->InterruptStatus;

@@ -18,3 +18,8 @@ void NosSystemInterruptHandler(UINT64 InterruptNumber, void* InterruptStack) {
 
     Processor->State = PROCESSOR_STATE_NORMAL;
 }
+
+extern NSTATUS KiRemoteExecuteHandler(INTERRUPT_HANDLER_DATA* HandlerData) {
+    KDebugPrint("Remote Execute on processor#%u", HandlerData->ProcessorId);
+    return STATUS_SUCCESS;
+}
