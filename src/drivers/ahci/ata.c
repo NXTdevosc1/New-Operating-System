@@ -48,12 +48,16 @@ void AhciInitAtaDevice(PAHCIPORT Port) {
     char* Buff = AhciAllocate(Port->Ahci, NumBytes >> 12, 0);
 
     KDebugPrint("Testing read...");
-    NSTATUS Status = AhciSataRead(Port, 1, 1, Buff);
+    NSTATUS Status = AhciSataRead(Port, 1, NumBytes >> 9, Buff);
 
     KDebugPrint("Read status %x Buffer: %x", Status, *(UINT64*)Buff);
     KDebugPrint(Buff);
 
     Port->OsDriveIdentify.Device = KeCreateDevice(DEVICE_DISK, 0, Port->OsDriveIdentify.Name, Port);
+    if(!Port->OsDriveIdentify.Device) {
+        KDebugPrint("Failed to create AHCI Device");
+        return;
+    }
 
 }
 

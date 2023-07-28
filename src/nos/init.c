@@ -270,22 +270,22 @@ void NOSENTRY NosSystemInit() {
     KDebugPrint("Drivers runned successfully, physical devices:");
 
     PDEVICE dev;
-    UINT64 _ev = 0;
-    while(KeEnumerateDevices(NULL, &dev, NULL, FALSE, &_ev)) {
-        if(dev->DeviceType != VIRTUAL_DEVICE) {
-            KDebugPrint("Physical Device#%u Type %u : %ls", dev->ObjectDescriptor->ObjectId, dev->DeviceType, dev->DisplayName);
-        }
-    }
-    KDebugPrint("Virtual devices:");
-    _ev = 0;
-    while(KeEnumerateDevices(NULL, &dev, NULL, FALSE, &_ev)) {
-        if(dev->DeviceType == VIRTUAL_DEVICE) {
-            KDebugPrint("Virtual Device#%u Type %u : %ls", dev->ObjectDescriptor->ObjectId, dev->DeviceType, dev->DisplayName);
-        }
-    }
 
     for(;;) {
         KDebugPrint("KTHREADS %u", KernelProcess->NumberOfThreads);
+        UINT64 _ev = 0;
+        while(KeEnumerateDevices(NULL, &dev, NULL, FALSE, &_ev)) {
+            if(dev->DeviceType != VIRTUAL_DEVICE) {
+                KDebugPrint("Physical Device#%u Type %u : %ls", dev->ObjectDescriptor->ObjectId, dev->DeviceType, dev->DisplayName);
+            }
+        }
+        KDebugPrint("Virtual devices:");
+        _ev = 0;
+        while(KeEnumerateDevices(NULL, &dev, NULL, FALSE, &_ev)) {
+            if(dev->DeviceType == VIRTUAL_DEVICE) {
+                KDebugPrint("Virtual Device#%u Type %u : %ls", dev->ObjectDescriptor->ObjectId, dev->DeviceType, dev->DisplayName);
+            }
+        }
         // for(UINT32 i = 0;i<0xff;i++) {
             UINT32 i = 0xFF;
             _Memset128A_32((UINT32*)NosInitData->FrameBuffer.BaseAddress + 0x3000, i, (NosInitData->FrameBuffer.Pitch * NosInitData->FrameBuffer.VerticalResolution) / 0x20);

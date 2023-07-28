@@ -123,43 +123,43 @@ Boot Processor : Running driver 0 EntryPoint FFFF800001671D20
 Boot Processor : Driver Startup.
 Boot Processor : __AcpiInitTables__
 Boot Processor : ACPI: 
-Boot Processor : RSDP 0xFFFF8000000DED38FFFF80000001A4C8 FFFF8000000DECA8 (v2142756884 Hãú$†)
+Boot Processor : RSDP 0xFFFF8000000DED68FFFF80000001A4C8 FFFF8000000DECD8 (v2142756884 Hãú$†)
 Boot Processor : 
 
 Boot Processor : ACPI: 
-Boot Processor : êÌ 0xFFFF80000001A4C8FFFF8000000DECA8 7FB7D0E8 (v23640454 %-4.4s 0x%8.8X%8.8X %06X (v%.2d %-6.6s %-8.8s %08X %-4.4s %08X) XSDTT 0 XSDTT FFFF800000000054)
+Boot Processor : ¿Ì 0xFFFF80000001A4C8FFFF8000000DECD8 7FB7D0E8 (v23640454 %-4.4s 0x%8.8X%8.8X %06X (v%.2d %-6.6s %-8.8s %08X %-4.4s %08X) XSDTT 0 XSDTT 100000054)
 Boot Processor : 
 
 Boot Processor : ACPI: 
-Boot Processor : Ï 0xFFFF80000001A4C8FFFF8000000DEC08 7FB79000 (v23640454 %-4.4s 0x%8.8X%8.8X %06X (v%.2d %-6.6s %-8.8s %08X %-4.4s %08X) FACPÙ 0 FACPÙ FFFF8000000000F4)
+Boot Processor :  Ì 0xFFFF80000001A4C8FFFF8000000DEC38 7FB79000 (v23640454 %-4.4s 0x%8.8X%8.8X %06X (v%.2d %-6.6s %-8.8s %08X %-4.4s %08X) FACPÙ 0 FACPÙ FFFF8000000000F4)
 Boot Processor : 
 
 Boot Processor : ACPI: 
-Boot Processor : ∞Ï 0xFFFF80000001A4C8FFFF8000000DEBC8 7FB7A000 (v23640454 %-4.4s 0x%8.8X%8.8X %06X (v%.2d %-6.6s %-8.8s %08X %-4.4s %08X) DSDT! 0 DSDT! FFFF80000000210D)
+Boot Processor : ‡Ï 0xFFFF80000001A4C8FFFF8000000DEBF8 7FB7A000 (v23640454 %-4.4s 0x%8.8X%8.8X %06X (v%.2d %-6.6s %-8.8s %08X %-4.4s %08X) DSDT! 0 DSDT! FFFF80000000210D)
 Boot Processor : 
 
 Boot Processor : ACPI: 
-Boot Processor :  0xFFFF80000001A4C8FFFF8000000DEBC8 210D
+Boot Processor :  0xFFFF80000001A4C8FFFF8000000DEBF8 210D
 Boot Processor : 
 
 Boot Processor : ACPI: 
-Boot Processor : Ï 0xFFFF80000001A4C8FFFF8000000DEC08 7FB78000 (v23640454 %-4.4s 0x%8.8X%8.8X %06X (v%.2d %-6.6s %-8.8s %08X %-4.4s %08X) APICÄ 0 APICÄ FFFF800000000080)
+Boot Processor :  Ì 0xFFFF80000001A4C8FFFF8000000DEC38 7FB78000 (v23640454 %-4.4s 0x%8.8X%8.8X %06X (v%.2d %-6.6s %-8.8s %08X %-4.4s %08X) APICÄ 0 APICÄ FFFF800000000080)
 Boot Processor : 
 
 Boot Processor : ACPI: 
-Boot Processor : Ï 0xFFFF80000001A4C8FFFF8000000DEC08 7FB77000 (v23640454 %-4.4s 0x%8.8X%8.8X %06X (v%.2d %-6.6s %-8.8s %08X %-4.4s %08X) HPET8 0 HPET8 38)
+Boot Processor :  Ì 0xFFFF80000001A4C8FFFF8000000DEC38 7FB77000 (v23640454 %-4.4s 0x%8.8X%8.8X %06X (v%.2d %-6.6s %-8.8s %08X %-4.4s %08X) HPET8 0 HPET8 38)
 Boot Processor : 
 
 Boot Processor : ACPI: 
-Boot Processor : Ï 0xFFFF80000001A4C8FFFF8000000DEC08 7FB76000 (v23640454 %-4.4s 0x%8.8X%8.8X %06X (v%.2d %-6.6s %-8.8s %08X %-4.4s %08X) MCFG< 0 MCFG< FFFF80000000003C)
+Boot Processor :  Ì 0xFFFF80000001A4C8FFFF8000000DEC38 7FB76000 (v23640454 %-4.4s 0x%8.8X%8.8X %06X (v%.2d %-6.6s %-8.8s %08X %-4.4s %08X) MCFG< 0 MCFG< FFFF80000000003C)
 Boot Processor : 
 
 Boot Processor : ACPI: 
-Boot Processor : Ï 0xFFFF80000001A4C8FFFF8000000DEC08 7FB75000 (v23640454 %-4.4s 0x%8.8X%8.8X %06X (v%.2d %-6.6s %-8.8s %08X %-4.4s %08X) WAET( 0 WAET( FFFF800000000028)
+Boot Processor :  Ì 0xFFFF80000001A4C8FFFF8000000DEC38 7FB75000 (v23640454 %-4.4s 0x%8.8X%8.8X %06X (v%.2d %-6.6s %-8.8s %08X %-4.4s %08X) WAET( 0 WAET( FFFF800000000028)
 Boot Processor : 
 
 Boot Processor : ACPI: 
-Boot Processor : Ï 0xFFFF80000001A4C8FFFF8000000DEC08 7FB74000 (v23640454 %-4.4s 0x%8.8X%8.8X %06X (v%.2d %-6.6s %-8.8s %08X %-4.4s %08X) BGRT8 0 BGRT8 FFFF800000000038)
+Boot Processor :  Ì 0xFFFF80000001A4C8FFFF8000000DEC38 7FB74000 (v23640454 %-4.4s 0x%8.8X%8.8X %06X (v%.2d %-6.6s %-8.8s %08X %-4.4s %08X) BGRT8 0 BGRT8 FFFF800000000038)
 Boot Processor : 
 
 Boot Processor : APIC Found
@@ -200,11 +200,11 @@ ACPI table initialization:
 Processor#0 : Table [: DsInitializeObjects] (id FFFF8000016CA698) - 1 Objects with 18446603336244870253 Devices, 0 Regions, 18446603336221196288 Methods (18446603340516163583/18446603336221196288/18446603336221196352 Serial/Non/Cvt)
 
 Processor#0 : ACPI: 
-Processor#0 : 18446603336222109144 ACPI AML tables successfully acquired and loaded
+Processor#0 : 18446603336222109192 ACPI AML tables successfully acquired and loaded
 Processor#0 : 
 
 Processor#0 : Final data object initialization: 
-Processor#0 : Namespace contains 18446603336222109136 (0xFFFF8000016C64A0) objects
+Processor#0 : Namespace contains 18446603336222109184 (0xFFFF8000016C64A0) objects
 
 Processor#0 : Set Scheduler Data : LAPIC : FFFF800001731000
 Processor#0 : Object 100004000
@@ -232,9 +232,9 @@ Processor#0 : Current processor #0 INTERNAL_DATA FFFFFFD000000000
 Processor#0 : Registered System INT#222 for CPU#0
 Processor#0 : create thread 1
 Processor#0 : Enabling the apic timer, interrupt number : 222
-Processor#1 : APIC Timer frequency : 1003285760 HZ
+Processor#1 : APIC Timer frequency : 1001553920 HZ
 Processor#1 : P1 looping...
-Processor#0 : APIC Timer frequency : 1000080000 HZ
+Processor#0 : APIC Timer frequency : 1000104000 HZ
 Processor#0 : Tables:
 Processor#0 : SN : FACP Length : 244
 Processor#0 : SN : DSDT Length : 8461
@@ -252,7 +252,7 @@ Processor#0 : System is already in ACPI mode
 
 Processor#0 : Initializing General Purpose Events (GPEs):
 
-Processor#0 :     Initialized GPE FFFF8000000DED40 to FFFF8000016C8418 [evgpeblk] 9 regs on interrupt 0xFFFF80000168D6A3†.@
+Processor#0 :     Initialized GPE FFFF8000000DED70 to FFFF8000016C8418 [evgpeblk] 9 regs on interrupt 0xFFFF80000168D6A3†.@
 
 Processor#0 : AcpiOsInstallInt#9 ISR FFFF80000168FB60 CTX FFFF800001458580
 Processor#0 : CPU#1 Selected for Interrupt 9
@@ -271,7 +271,7 @@ Processor#0 :  Vl:  NsEvaluate (nseval)
 
 Processor#0 : HWl:  NsEvaluate
 
-Processor#0 :     Executed 18446603336222109120 _INI methods requiring 18446603336245077176 _STA executions (examined 18446603336245077144 objects)
+Processor#0 :     Executed 18446603336222109168 _INI methods requiring 18446603336245077176 _STA executions (examined 18446603336245077144 objects)
 
 Processor#0 : Creating ACPI Device Object
 Processor#0 : RETURN_STATUS :
@@ -348,7 +348,7 @@ Processor#0 : ACPI Library entry.
 Processor#0 : ACPI Device name : Advanced Configuration And Power Interface 2.0+ 47
 Processor#0 : PCI Driver startup
 Processor#0 : ACPI IO Protocol 2
-Processor#0 : ACPI GET TABLE SIG : MCFG INST : 0 HDR : FFFF8000000DEED8
+Processor#0 : ACPI GET TABLE SIG : MCFG INST : 0 HDR : FFFF8000000DEF08
 Processor#0 : MCFG FFFF800001762000
 Processor#0 : MCFG : FFFF800001762000 NumSegments : 1
 Processor#0 : Max PCI Segment : 0
@@ -521,12 +521,12 @@ Processor#0 : Section:
 Processor#0 : .text
 Processor#0 : 1000
 Processor#0 : 400
-Processor#0 : 13FB
+Processor#0 : 130B
 Processor#0 : Section:
 Processor#0 : .rdata
 Processor#0 : 3000
 Processor#0 : 1800
-Processor#0 : CAA
+Processor#0 : CA2
 Processor#0 : Section:
 Processor#0 : .data
 Processor#0 : 4000
@@ -592,7 +592,7 @@ Processor#0 : EXPORTING...
 Processor#0 : Linking DLL...
 Processor#0 : 0
 Processor#0 : Preboot Launch
-Processor#0 : Running driver 5 EntryPoint FFFF8000018DE8A0
+Processor#0 : Running driver 5 EntryPoint FFFF8000018DE7B0
 Processor#0 : Init LIBS: Calling DLL Entry Point FFFF8000018E4000
 Processor#0 : System Driver Developement Kit (SDDK) Entry Point.
 Processor#0 : AHCI Driver startup
@@ -751,9 +751,9 @@ Processor#0 : ACPI Library entry.
 Processor#0 : ACPI Device name : Advanced Configuration And Power Interface 2.0+ 47
 Processor#0 : RTC Driver startup.
 Processor#0 : ACPI IO Protocol 0
-Processor#0 : ACPI_IO_GET_VER FFFF8000000DEEC8
+Processor#0 : ACPI_IO_GET_VER FFFF8000000DEEF8
 Processor#0 : ACPI Version : 2.0
-Processor#0 : 22:4:30
+Processor#0 : 22:34:34
 Processor#0 : Day 6 Of the week
 Processor#0 : 28/7/23
 Processor#0 : Return status : 0
@@ -771,26 +771,39 @@ Processor#0 : create thread 0
 Processor#0 : create thread 0
 Processor#0 : create thread 0
 Processor#0 : Drivers runned successfully, physical devices:
+Processor#0 : KTHREADS 18
 Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
 Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
 Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
 Processor#0 : Virtual devices:
 Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
 Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
-Processor#0 : KTHREADS 18
 Processor#0 : Hello thread
 Processor#0 : Kernel mode thread#4 created
 Processor#0 : AHCI Device add (Class 6 Subclass 0 Progif 0)
 Processor#0 : Exitting thread #4
 Processor#0 : Thread #4 exited with code 0
 Processor#0 : Hello thread
+Processor#0 : Kernel mode thread#5 created
+Processor#0 : AHCI Device add (Class 3 Subclass 0 Progif 0)
+Processor#0 : Exitting thread #5
+Processor#0 : Thread #5 exited with code 0
+Processor#0 : Hello thread
 Processor#0 : Kernel mode thread#6 created
 Processor#0 : AHCI Device add (Class 2 Subclass 0 Progif 0)
 Processor#0 : Exitting thread #6
 Processor#0 : Thread #6 exited with code 0
 Processor#0 : Hello thread
+Processor#0 : Kernel mode thread#7 created
+Processor#0 : AHCI Device add (Class 6 Subclass 1 Progif 0)
+Processor#0 : Exitting thread #7
+Processor#0 : Thread #7 exited with code 0
+Processor#0 : Hello thread
 Processor#0 : Kernel mode thread#8 created
 Processor#0 : AHCI Device add (Class 1 Subclass 6 Progif 1)
+Processor#0 : Found AHCI Controller at location FFFF800001459428
+Processor#0 : AHCI Base Address C1084000 BAR5 11001AF400000000
+Processor#0 : Resetting AHC FFFF800001A0F000
 Processor#0 : Hello thread
 Processor#0 : Kernel mode thread#9 created
 Processor#0 : AHCI Device add (Class 12 Subclass 5 Progif 0)
@@ -823,41 +836,20 @@ Processor#0 : Exitting thread #14
 Processor#0 : Thread #14 exited with code 0
 Processor#0 : Hello thread
 Processor#0 : Kernel mode thread#15 created
-Processor#0 : EHCI Device add handler
-Processor#0 : Exitting thread #15
-Processor#0 : Thread #15 exited with code 0
 Processor#0 : Hello thread
 Processor#0 : Kernel mode thread#16 created
+Processor#0 : Hello thread
+Processor#0 : Kernel mode thread#17 created
 Processor#0 : Hello thread
 Processor#0 : Kernel mode thread#18 created
 Processor#0 : THREAD3 Created, testing thread exit functionnality
 Processor#0 : Exitting thread #18
 Processor#0 : Thread #18 exited with code 96
 Processor#0 : Hello thread
-Processor#0 : Kernel mode thread#20 created
-Processor#0 : THREAD3 Created, testing thread exit functionnality
-Processor#0 : Exitting thread #20
-Processor#0 : Thread #20 exited with code 96
-Processor#0 : Hello thread
-Processor#0 : Kernel mode thread#5 created
-Processor#0 : AHCI Device add (Class 3 Subclass 0 Progif 0)
-Processor#0 : Exitting thread #5
-Processor#0 : Thread #5 exited with code 0
-Processor#0 : Found AHCI Controller at location FFFF800001459428
-Processor#0 : AHCI Base Address C1084000 BAR5 11001AF400000000
-Processor#0 : Hello thread
-Processor#0 : Kernel mode thread#17 created
-Processor#0 : Hello thread
 Processor#0 : Kernel mode thread#19 created
 Processor#0 : THREAD3 Created, testing thread exit functionnality
 Processor#0 : Exitting thread #19
 Processor#0 : Thread #19 exited with code 96
-Processor#0 : Hello thread
-Processor#0 : Kernel mode thread#7 created
-Processor#0 : AHCI Device add (Class 6 Subclass 1 Progif 0)
-Processor#0 : Exitting thread #7
-Processor#0 : Thread #7 exited with code 0
-Processor#0 : Resetting AHC FFFF800001A0F000
 Processor#0 : AHCI Resetted successfully
 Processor#0 : AHCI Enabled successfully MAX_SLOT 31
 Processor#0 : Enabling MSI Interrupts Device 31 Bus 0 Function 0
@@ -867,6 +859,14 @@ Processor#0 : CPU#0 Selected for Interrupt 4294967295
 Processor#0 : Allocating arbitrary irq
 Processor#0 : A
 Processor#0 : A
+Processor#0 : EHCI Device add handler
+Processor#0 : Exitting thread #15
+Processor#0 : Thread #15 exited with code 0
+Processor#0 : Hello thread
+Processor#0 : Kernel mode thread#20 created
+Processor#0 : THREAD3 Created, testing thread exit functionnality
+Processor#0 : Exitting thread #20
+Processor#0 : Thread #20 exited with code 96
 Processor#0 : A
 Processor#0 : create thread 0
 Processor#0 : create thread 0
@@ -889,15 +889,31 @@ Processor#0 : Kernel mode thread#25 created
 Processor#0 : Hello thread
 Processor#0 : Kernel mode thread#26 created
 Processor#0 : IRQ 1
+Processor#0 : AHCI : Interrupt on port 3
+Processor#0 : AHCI : D2H Reg FIS
+Processor#0 : AHCI Interrupt handler exit.
+Processor#0 : IRQ 1
+Processor#0 : AHCI : Interrupt on port 5
+Processor#0 : AHCI : D2H Reg FIS
+Processor#0 : AHCI Interrupt handler exit.
+Processor#0 : IRQ 1
+Processor#0 : AHCI : Interrupt on port 2
+Processor#0 : AHCI : D2H Reg FIS
+Processor#0 : AHCI Interrupt handler exit.
+Processor#0 : IRQ 1
 Processor#0 : AHCI : Interrupt on port 0
 Processor#0 : AHCI : D2H Reg FIS
 Processor#0 : AHCI Interrupt handler exit.
 Processor#0 : IRQ 1
-Processor#0 : AHCI : Interrupt on port 1
+Processor#0 : AHCI : Interrupt on port 2
 Processor#0 : AHCI : D2H Reg FIS
 Processor#0 : AHCI Interrupt handler exit.
+Processor#0 : Device detected on port 2
+Processor#0 : Port signature EB140101
+Processor#0 : Exitting thread #23
+Processor#0 : Thread #23 exited with code -
 Processor#0 : IRQ 1
-Processor#0 : AHCI : Interrupt on port 3
+Processor#0 : AHCI : Interrupt on port 1
 Processor#0 : AHCI : D2H Reg FIS
 Processor#0 : AHCI Interrupt handler exit.
 Processor#0 : IRQ 1
@@ -907,10 +923,6 @@ Processor#0 : AHCI Interrupt handler exit.
 Processor#0 : Device detected on port 0
 Processor#0 : Port signature 101
 Processor#0 : AHCI : Initializing ATA Device on Port #0 IDENTIFY_CMD#0
-Processor#0 : IRQ 1
-Processor#0 : AHCI : Interrupt on port 4
-Processor#0 : AHCI : D2H Reg FIS
-Processor#0 : AHCI Interrupt handler exit.
 Processor#0 : Suspended thread#21
 Processor#0 : IRQ 1
 Processor#0 : AHCI : Interrupt on port 0
@@ -931,41 +943,24 @@ Processor#0 : AHCI : D2H Reg FIS
 Processor#0 : AHCI Interrupt handler exit.
 Processor#0 : Read status 0 Buffer: 5452415020494645
 Processor#0 : EFI PART
-Processor#0 : IRQ 1
-Processor#0 : AHCI : Interrupt on port 0
-Processor#0 : Command #0 Compeleted.
-Processor#0 : AHCI : D2H Reg FIS
-Processor#0 : AHCI Interrupt handler exit.
 Processor#0 : Exitting thread #21
-Processor#0 : Thread #21 exited with code 20971552
+Processor#0 : Thread #21 exited with code 21491136
 Processor#0 : IRQ 1
-Processor#0 : AHCI : Interrupt on port 2
+Processor#0 : AHCI : Interrupt on port 4
 Processor#0 : AHCI : D2H Reg FIS
 Processor#0 : AHCI Interrupt handler exit.
-Processor#0 : IRQ 1
-Processor#0 : AHCI : Interrupt on port 5
-Processor#0 : AHCI : D2H Reg FIS
-Processor#0 : AHCI Interrupt handler exit.
-Processor#0 : IRQ 1
-Processor#0 : AHCI : Interrupt on port 2
-Processor#0 : AHCI : D2H Reg FIS
-Processor#0 : AHCI Interrupt handler exit.
-Processor#0 : Device detected on port 2
-Processor#0 : Port signature EB140101
-Processor#0 : Exitting thread #23
-Processor#0 : Thread #23 exited with code -0971552
-Processor#0 : No device detected on port 1
-Processor#0 : Exitting thread #22
-Processor#0 : Thread #22 exited with code -0971552
 Processor#0 : No device detected on port 3
 Processor#0 : Exitting thread #24
-Processor#0 : Thread #24 exited with code -0971552
-Processor#0 : No device detected on port 4
-Processor#0 : Exitting thread #25
-Processor#0 : Thread #25 exited with code -0971552
+Processor#0 : Thread #24 exited with code -1491136
 Processor#0 : No device detected on port 5
 Processor#0 : Exitting thread #26
-Processor#0 : Thread #26 exited with code -0971552
+Processor#0 : Thread #26 exited with code -1491136
+Processor#0 : No device detected on port 1
+Processor#0 : Exitting thread #22
+Processor#0 : Thread #22 exited with code -1491136
+Processor#0 : No device detected on port 4
+Processor#0 : Exitting thread #25
+Processor#0 : Thread #25 exited with code -1491136
 Processor#0 : IRQ 0
 Processor#0 : Hpet Interrupt
 Processor#0 : IRQ 0
@@ -973,6 +968,14 @@ Processor#0 : Hpet Interrupt
 Processor#0 : IRQ 0
 Processor#0 : Hpet Interrupt
 Processor#0 : KTHREADS 3
+Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
+Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
+Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
+Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
+Processor#0 : Physical Device#6 Type 1 : QEMU HARDDISK
+Processor#0 : Virtual devices:
+Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
+Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
 Processor#0 : IRQ 0
 Processor#0 : Hpet Interrupt
 Processor#0 : IRQ 0
@@ -980,9 +983,101 @@ Processor#0 : Hpet Interrupt
 Processor#0 : IRQ 0
 Processor#0 : Hpet Interrupt
 Processor#0 : KTHREADS 3
+Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
+Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
+Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
+Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
+Processor#0 : Physical Device#6 Type 1 : QEMU HARDDISK
+Processor#0 : Virtual devices:
+Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
+Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
 Processor#0 : IRQ 0
 Processor#0 : Hpet Interrupt
 Processor#0 : IRQ 0
 Processor#0 : Hpet Interrupt
 Processor#0 : IRQ 0
 Processor#0 : Hpet Interrupt
+Processor#0 : KTHREADS 3
+Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
+Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
+Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
+Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
+Processor#0 : Physical Device#6 Type 1 : QEMU HARDDISK
+Processor#0 : Virtual devices:
+Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
+Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
+Processor#0 : IRQ 0
+Processor#0 : Hpet Interrupt
+Processor#0 : IRQ 0
+Processor#0 : Hpet Interrupt
+Processor#0 : IRQ 0
+Processor#0 : Hpet Interrupt
+Processor#0 : KTHREADS 3
+Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
+Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
+Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
+Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
+Processor#0 : Physical Device#6 Type 1 : QEMU HARDDISK
+Processor#0 : Virtual devices:
+Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
+Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
+Processor#0 : IRQ 0
+Processor#0 : Hpet Interrupt
+Processor#0 : IRQ 0
+Processor#0 : Hpet Interrupt
+Processor#0 : IRQ 0
+Processor#0 : Hpet Interrupt
+Processor#0 : KTHREADS 3
+Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
+Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
+Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
+Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
+Processor#0 : Physical Device#6 Type 1 : QEMU HARDDISK
+Processor#0 : Virtual devices:
+Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
+Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
+Processor#0 : IRQ 0
+Processor#0 : Hpet Interrupt
+Processor#0 : IRQ 0
+Processor#0 : Hpet Interrupt
+Processor#0 : IRQ 0
+Processor#0 : Hpet Interrupt
+Processor#0 : KTHREADS 3
+Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
+Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
+Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
+Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
+Processor#0 : Physical Device#6 Type 1 : QEMU HARDDISK
+Processor#0 : Virtual devices:
+Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
+Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
+Processor#0 : IRQ 0
+Processor#0 : Hpet Interrupt
+Processor#0 : IRQ 0
+Processor#0 : Hpet Interrupt
+Processor#0 : IRQ 0
+Processor#0 : Hpet Interrupt
+Processor#0 : KTHREADS 3
+Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
+Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
+Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
+Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
+Processor#0 : Physical Device#6 Type 1 : QEMU HARDDISK
+Processor#0 : Virtual devices:
+Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
+Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
+Processor#0 : IRQ 0
+Processor#0 : Hpet Interrupt
+Processor#0 : IRQ 0
+Processor#0 : Hpet Interrupt
+Processor#0 : IRQ 0
+Processor#0 : Hpet Interrupt
+Processor#0 : KTHREADS 3
+Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
+Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
+Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
+Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
+Processor#0 : Physical Device#6 Type 1 : QEMU HARDDISK
+Processor#0 : Virtual devices:
+Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
+Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
