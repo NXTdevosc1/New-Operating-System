@@ -95,6 +95,10 @@ extern PETHREAD __fastcall Schedule(PROCESSOR_INTERNAL_DATA* InternalData, BOOLE
 
 void KRNLAPI KiSetLapicAddress(void* _Lapic) {
     LocalApicAddress = _Lapic;
+    BootProcessor->Id.ProcessorId = HwGetCurrentProcessorId();
+    KDebugPrint("Boot Processor Id Assigned, ID=%u", BootProcessor->Id.ProcessorId);
+    BootProcessor->ProcessorEnabled = TRUE;
+
 }
 
 void KRNLAPI KiSetSchedulerData(
@@ -104,7 +108,6 @@ void KRNLAPI KiSetSchedulerData(
     LocalApicAddress = _Lapic;
 
     // Start using APIC ID to get a processor
-    BootProcessor->ProcessorEnabled = TRUE;
     
     UINT64 _ev = 0;
     POBJECT Out;
@@ -129,7 +132,6 @@ PEPROCESS IdleProcess = NULL;
 
 void KRNLAPI KeSchedulingSystemInit() {
     KDebugPrint("KERNEL Final Initialization Step called, Initializing the scheduling system...");
-    _enable();
 
     PROCESSOR* Processor = KeGetCurrentProcessor();
     KDebugPrint("Current processor #%d INTERNAL_DATA %x", Processor->Id.ProcessorId, Processor->InternalData);
@@ -138,6 +140,7 @@ void KRNLAPI KeSchedulingSystemInit() {
         KDebugPrint("KeSchedulingSystemInit Failed : ERR0");
         while(1) __halt();
     }
+
 
 
     {
@@ -153,12 +156,10 @@ void KRNLAPI KeSchedulingSystemInit() {
 
 
     // Setup scheduler data in internal cpu structure
-    Processor->InternalData->SchedulingEnabled = TRUE;
+        UINT64 ev = 0;
 
     if(!IdleProcess) {
-        UINT64 ev = 0;
         // get first system thread (kernel init thread)
-        Processor->InternalData->CurrentThread = KeWalkThreads(KernelProcess, &ev);
 
         if(NERROR(KeCreateProcess(NULL, &IdleProcess, PROCESS_CREATE_IDLE, SUBSYSTEM_NATIVE, L"System Idle Process", L"", __idle))) {
             KDebugPrint("Create idle process failed.");
@@ -171,12 +172,21 @@ void KRNLAPI KeSchedulingSystemInit() {
             KDebugPrint("failed to create idle thread");
             while(1) __halt();
         }
+    }
+
+    if(BootProcessor == Processor) {
+        Processor->InternalData->CurrentThread = KeWalkThreads(KernelProcess, &ev);
+    } else {
         Processor->InternalData->CurrentThread = Processor->InternalData->IdleThread;
     }
+    
+    Processor->InternalData->IdleThread->Processor = Processor;
     Processor->InternalData->IdleThread->StaticPriority = 0;
     Processor->InternalData->IdleThread->DynamicPriority = 0;
 
-    
+    Processor->InternalData->SchedulingEnabled = TRUE;
+    _enable();
+
 
     CpuEnableApicTimer();
 

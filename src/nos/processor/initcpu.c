@@ -66,7 +66,11 @@ void __declspec(noreturn) HwMultiProcessorEntry() {
     }
     ApicWrite(0xF0, 0x100 | Spurious); // Set SPURIOUS_INTERRUPT_VECTOR
 
+
     KeSchedulingSystemInit();
+    _disable();
+    KDebugPrint("P%u looping...", KeGetCurrentProcessorId());
+    while(1) __halt();
     KDebugPrint("Processor#%d enabled.", KeGetCurrentProcessorId());
 
     // idling
