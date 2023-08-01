@@ -1,8 +1,8 @@
 #include <ahci.h>
 
 PVOID AhciAllocate(PAHCI Ahci, UINT64 Pages, UINT PageAttributes) {
-    PVOID Ret = MmAllocateMemory(NULL, Pages, PageAttributes | (Ahci->LongAddresses ? 0 : PAGE_HALFPTR) | PAGE_WRITE_ACCESS, PAGE_CACHE_DISABLE);
-    if(!Ret) AhciAbort(Ahci, STATUS_OUT_OF_MEMORY);
+    PVOID Ret = MmAllocateMemory(NULL, Pages, PageAttributes | (Ahci->LongAddresses ? 0 : PAGE_HALFPTR) | PAGE_WRITE_ACCESS, (PageAttributes & AHCI_WRITE_THROUGH) ? PAGE_CACHE_WRITE_THROUGH : PAGE_CACHE_DISABLE);
+    if(!Ret) return NULL;
 
     if(PageAttributes & PAGE_2MB) {
         ZeroMemory(Ret, Pages << 21);

@@ -1,11 +1,21 @@
 #include <ahci.h>
 
-void AhciInitAtaDevice(PAHCIPORT Port) {
+PVOID __fastcall AhciSataAllocateBuffer(PAHCIPORT Port, UINT64 SizeInSectors) {
+    return AhciAllocate(Port->Ahci, ConvertToPages(SizeInSectors * Port->OsDriveIdentify.SectorSize), 0);
+}
+
+void __fastcall AhciSataFreeBuffer(PAHCIPORT Port, void* Buffer, UINT64 SizeInSectors) {
+    if(!MmFreeMemory(NULL, Buffer, ConvertToPages(SizeInSectors * Port->OsDriveIdentify.SectorSize))) {
+        KDebugPrint("AHCI Warning: SATA_FREE_BUFFER Failed.");
+    }
+}
+
+void AhciInitSataDevice(PAHCIPORT Port) {
 
     Port->AtaDeviceIdentify = AhciAllocate(Port->Ahci, ConvertToPages(sizeof(ATA_IDENTIFY_DEVICE_DATA)), 0);
 
     UINT32 Cmd = AhciAllocateSlot(Port);
-    KDebugPrint("AHCI : Initializing ATA Device on Port #%u IDENTIFY_CMD#%u", Port->PortIndex, Cmd);
+    KDebugPrint("AHCI Thread #%u : Initializing ATA Device on Port #%u IDENTIFY_CMD#%u", KeGetCurrentThreadId(), Port->PortIndex, Cmd);
     AHCI_COMMAND_LIST_ENTRY* Entry = Port->CommandList + Cmd;
     Entry->CommandFisLength = sizeof(ATA_FIS_H2D) >> 2;
     ATA_FIS_H2D* IdentifyFis = (ATA_FIS_H2D*)Port->CommandTable[Cmd].CommandFis;
@@ -59,12 +69,36 @@ void AhciInitAtaDevice(PAHCIPORT Port) {
         return;
     }
 
+    // Create the drive
+
+    DRIVEIO DriveIo = {0};
+
+    DriveIo.Read = AhciSataRead;
+    DriveIo.Write = AhciSataWrite;
+    DriveIo.Allocate = AhciSataAllocateBuffer;
+    DriveIo.Free = AhciSataFreeBuffer;
+
+
+    Port->Drive = KeCreateDrive(
+        &Port->OsDriveIdentify,
+        &DriveIo,
+        Port
+    );
+
+    if(!Port->Drive) {
+        KDebugPrint("AHCI : Failed to create drive for port#%u", Port->PortIndex);
+        return;
+    }
+
 }
 
 
-NSTATUS AhciSataRead(PAHCIPORT Port, UINT64 Lba, UINT64 NumSectors, char* Buffer) {
+NSTATUS __fastcall AhciSataRead(PAHCIPORT Port, UINT64 Lba, UINT64 NumSectors, char* Buffer) {
     if((Lba + NumSectors) >= Port->OsDriveIdentify.NumSectors) return STATUS_OUT_OF_BOUNDS;
     if(((UINT64)Buffer & 0xF)) return STATUS_INVALID_PARAMETER;
+
+    Buffer = (char*)AhciPhysicalAddress(Buffer);
+    if(!Buffer) return STATUS_INVALID_PARAMETER;
 
     UINT64 Operations = 0;
     UINT64 Done = 0;
@@ -91,7 +125,7 @@ NSTATUS AhciSataRead(PAHCIPORT Port, UINT64 Lba, UINT64 NumSectors, char* Buffer
         Fis->Lba2 = Lba >> 24;
         Fis->Lba3 = Lba >> 40;
 
-        Cmd->Prdt->DataBaseAddress = AhciPhysicalAddress(Buffer);
+        Cmd->Prdt->DataBaseAddress = (UINT64)Buffer;
         Cmd->Prdt->DataByteCount = (Chunk * Port->OsDriveIdentify.SectorSize) - 1;
 
         AhciIssueCommandAsync(Port, CommandSlot, &Done);
@@ -105,7 +139,7 @@ NSTATUS AhciSataRead(PAHCIPORT Port, UINT64 Lba, UINT64 NumSectors, char* Buffer
     return STATUS_SUCCESS;
 }
 
-NSTATUS AhciSataWrite(PAHCIPORT Port, UINT64 Lba, UINT64 NumSectors, char* Buffer) {
+NSTATUS __fastcall AhciSataWrite(PAHCIPORT Port, UINT64 Lba, UINT64 NumSectors, char* Buffer) {
     if((Lba + NumSectors) >= Port->OsDriveIdentify.NumSectors) return STATUS_OUT_OF_BOUNDS;
     if(((UINT64)Buffer & 0xF)) return STATUS_INVALID_PARAMETER;
 

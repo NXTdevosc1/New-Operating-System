@@ -7,7 +7,7 @@ NSTATUS ThreadEvtHandler(PEPROCESS Process, UINT Event, HANDLE Handle, UINT64 Ac
 }
 
 static UINT64 LastCreateProcessorId = 0;
-
+static SPINLOCK _SelectPidSpinlock = 0;
 NSTATUS KRNLAPI KeCreateThread(
     IN PEPROCESS Process,
     OUT OPT PETHREAD* OutThread,
@@ -45,11 +45,11 @@ NSTATUS KRNLAPI KeCreateThread(
     Thread->QueueEntry.Thread = Thread;
 
     // TODO : Select processor based on load balance
-    
-    Thread->Processor = KeGetProcessorByIndex(0);
+    UINT64 cpf = ExAcquireSpinLock(&_SelectPidSpinlock);
+    Thread->Processor = KeGetProcessorByIndex(LastCreateProcessorId);
     LastCreateProcessorId++;
     if(LastCreateProcessorId == NumProcessors) LastCreateProcessorId = 0;
-
+    ExReleaseSpinLock(&_SelectPidSpinlock, cpf);
     if(!Thread->Processor) {
         KDebugPrint("Failed to get thread processor");
         while(1) __halt();
@@ -92,9 +92,12 @@ NSTATUS KRNLAPI KeCreateThread(
         BootProcessor->InternalData->IdleThread = Thread;
         // the kernel will remove the main thread from the priority list when it finishes initialization
     }
+    Thread->RunningDriver = KeGetCurrentThread()->RunningDriver;
+
     if(!(Flags & THREAD_CREATE_IDLE)) {
         KeSetThreadPriority(Thread, THREAD_PRIORITY_NORMAL);
     }
+
     return STATUS_SUCCESS;
 }
 
@@ -135,6 +138,12 @@ BOOLEAN KRNLAPI KeSetThreadPriority(PETHREAD Thread, UINT ThreadPriority) {
     return KeSetStaticPriority(Thread, ThreadPriority + 5 * Thread->Process->Priority);
 }
 
+NSTATUS KiSetThreadInReadyQueue(PETHREAD Thread) {
+    KDebugPrint("Remote sclink processorid %u", KeGetCurrentProcessorId());
+    ScLinkReadyThreadBottom(&Thread->QueueEntry);
+    return STATUS_SUCCESS;
+}
+
 // Or you can manually set a priority of your own
 BOOLEAN KRNLAPI KeSetStaticPriority(PETHREAD Thread, UINT StaticPriority) {
     Thread->StaticPriority = StaticPriority;
@@ -142,11 +151,16 @@ BOOLEAN KRNLAPI KeSetStaticPriority(PETHREAD Thread, UINT StaticPriority) {
     
     
     // TODO : Send system interrupt
-    if(!GetThreadFlag(Thread, THREAD_READY)) {
-        UINT64 rf = __readeflags();
-        _disable();
-        ScLinkReadyThreadBottom(&Thread->QueueEntry);
-        __writeeflags(rf);
+    if(!GetThreadFlag(Thread, THREAD_READY) && !GetThreadFlag(Thread, THREAD_SUSPENDED)) {
+        if(Thread->Processor == KeGetCurrentProcessor()) {
+            UINT64 rf = __readeflags();
+            _disable();
+            ScLinkReadyThreadBottom(&Thread->QueueEntry);
+            __writeeflags(rf);
+        } else {
+            KDebugPrint("Set static priority, remote execute thread id %u processor %u", Thread->ThreadId, Thread->Processor->Id.ProcessorId);
+            KeRemoteExecute(Thread->Processor, KiSetThreadInReadyQueue, (void*)Thread, FALSE);
+        }
     }
     return TRUE;
 }

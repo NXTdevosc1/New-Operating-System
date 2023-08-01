@@ -3,6 +3,7 @@ section .text
 extern NosInternalInterruptHandler
 extern NosIrqHandler
 extern NosSystemInterruptHandler
+%include "task/sched.asm"
 
 %macro DeclareIIH 1
 __NosInternalInterruptHandler%1:
@@ -27,70 +28,70 @@ _KFX times 0x1000 db 0
 
 %macro DeclareIRQH 1
 __NosIrqHandler%1:
-    push rax
-    push rbx
-    mov rbx, _KFX
-    fxsave [rbx]
-    push rcx
-    push rdx
-    push rsi
-    push rdi
-    push r8
-    push r9
-    push r10
-    push r11
-    push r12
-    push r13
-    push r14
-    push r15
-    push rbp
+    ; push rax
+    ; push rbx
+    ; mov rbx, _KFX
+    ; fxsave [rbx]
+    ; push rcx
+    ; push rdx
+    ; push rsi
+    ; push rdi
+    ; push r8
+    ; push r9
+    ; push r10
+    ; push r11
+    ; push r12
+    ; push r13
+    ; push r14
+    ; push r15
+    ; push rbp
 
+    SaveTask
+    push rcx
     mov rcx, %1 ; IrqNumber
     lea rdx, [rsp + 15 * 8]
     sub rsp, 0x20
     call NosIrqHandler
     add rsp, 0x20
-    mov rbx, _KFX
-    fxrstor [rbx]
-    pop rbp
-    pop r15
-    pop r14
-    pop r13
-    pop r12
-    pop r11
-    pop r10
-    pop r9
-    pop r8
-    pop rdi
-    pop rsi
-    pop rdx
     pop rcx
-    pop rbx
-    pop rax
-    ;mov rax, 0xfafa
-    ;mov rbx, [rsp]
-    ;mov rcx, [rsp + 8]
-    ;mov rdx, [rsp + 0x10]
-    ;mov rsi, [rsp + 0x18]
-    ;mov rdi, [rsp + 0x20]
-    ;jmp $
-    iretq
+    ; mov rbx, _KFX
+    ; fxrstor [rbx]
+    ; pop rbp
+    ; pop r15
+    ; pop r14
+    ; pop r13
+    ; pop r12
+    ; pop r11
+    ; pop r10
+    ; pop r9
+    ; pop r8
+    ; pop rdi
+    ; pop rsi
+    ; pop rdx
+    ; pop rcx
+    ; pop rbx
+    ; pop rax
+    ; iretq
+    jmp __InternalPreemptionIrq
 %endmacro
 
 %macro DeclarePtrIRQH 1
 dq __NosIrqHandler%1
 %endmacro
 
+
 %macro DeclareSIH 1
 __NosSystemInterruptHandler%1:
+    SaveTask
     push rcx
-    push rdx
     mov rcx, %1 ; System Interrupt Number
     lea rdx, [rsp + 0x10]
+    sub rsp, 0x20
     call NosSystemInterruptHandler
-    pop rdx
+    add rsp, 0x20
     pop rcx
-    iretq
+    ; These interrupts are fired through IPIs
+    jmp __InternalPreemptionIrq
 %endmacro
 
 %macro DeclarePtrSIH 1

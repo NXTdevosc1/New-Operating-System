@@ -14,12 +14,24 @@ void NosSystemInterruptHandler(UINT64 InterruptNumber, void* InterruptStack) {
     HandlerData.Thread = Processor->InternalData->CurrentThread;
     
     NSTATUS Status = Processor->SystemInterruptHandlers[InterruptNumber](&HandlerData);
-    while(1) __halt();
 
     Processor->State = PROCESSOR_STATE_NORMAL;
 }
 
 extern NSTATUS KiRemoteExecuteHandler(INTERRUPT_HANDLER_DATA* HandlerData) {
     KDebugPrint("Remote Execute on processor#%u", HandlerData->ProcessorId);
+    PROCESSOR* Processor = KeGetCurrentProcessor();
+    NSTATUS Status = Processor->RemoteExecute.Routine(Processor->RemoteExecute.Context);
+    if(Processor->RemoteExecute.Waiting) {
+        KDebugPrint("Processor was waiting");
+        Processor->RemoteExecute.ReturnCode = Status;
+        Processor->RemoteExecute.Finished = TRUE;
+        __wbinvd(); // reset cache
+    } else {
+        KDebugPrint("Processor was not waiting");
+
+        // Just release the control
+        ReleaseProcessorControl(Processor, PROCESSOR_CONTROL_EXECUTE);
+    }
     return STATUS_SUCCESS;
 }

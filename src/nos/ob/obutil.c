@@ -52,19 +52,9 @@ void ObInitialize() {
     KDebugPrint("Object Manager : Allocate Table : %u Bytes, Object Array : %u Bytes , Handle Array : %u Bytes", _ObAllocationTableSize, _ObObjectArraySize, _ObHandleArraySize);
 
     // Initialize Standard Object Types
-    ObRegisterObjectType(OBJECT_HANDLE, "Handles", NOS_MAJOR_VERSION, NOS_MINOR_VERSION);
-
-    ObRegisterObjectType(OBJECT_PROCESSOR, "Processors", NOS_MAJOR_VERSION, NOS_MINOR_VERSION);
-
-    ObRegisterObjectType(OBJECT_PROCESS, "Processes", NOS_MAJOR_VERSION, NOS_MINOR_VERSION);
-    ObRegisterObjectType(OBJECT_THREAD, "Threads", NOS_MAJOR_VERSION, NOS_MINOR_VERSION);
-    ObRegisterObjectType(OBJECT_FILE, "Files", NOS_MAJOR_VERSION, NOS_MINOR_VERSION);
-    ObRegisterObjectType(OBJECT_DEVICE, "Devices", NOS_MAJOR_VERSION, NOS_MINOR_VERSION);
-    ObRegisterObjectType(OBJECT_TIMER, "Timers", NOS_MAJOR_VERSION, NOS_MINOR_VERSION);
-    ObRegisterObjectType(OBJECT_DRIVER, "Drivers", NOS_MAJOR_VERSION, NOS_MINOR_VERSION);
-    ObRegisterObjectType(OBJECT_RCPORT, "Remote Communication Ports", NOS_MAJOR_VERSION, NOS_MINOR_VERSION);
-    ObRegisterObjectType(OBJECT_RESOURCE, "Resources", NOS_MAJOR_VERSION, NOS_MINOR_VERSION);
-    ObRegisterObjectType(OBJECT_EVENT, "Events", NOS_MAJOR_VERSION, NOS_MINOR_VERSION);
+    for(int i = 0;i<SYSTEM_DEFINED_OBJECT_MAX;i++) {
+        ObRegisterObjectType(i, "System defined object.", NOS_MAJOR_VERSION, NOS_MINOR_VERSION);
+    }
 
     _ObObjectTypes[OBJECT_THREAD].TotalCreatedObjects++; // Thread object id starts with 1 for compatibility
 }

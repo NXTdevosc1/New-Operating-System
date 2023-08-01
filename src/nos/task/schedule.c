@@ -22,10 +22,10 @@ extern PETHREAD __fastcall Schedule(PROCESSOR_INTERNAL_DATA* InternalData, BOOLE
 
     // TEMPORARY BUG CHECK
     if(!InternalData->CurrentThread) {
-        KDebugPrint("SCHED BUGCHECK 0");
+        KDebugPrint("SCHED BUGCHECK 0 INTRN %x",InternalData);
         while(1) __halt();
     }
-
+ 
     // Check on next thread
     if(InternalData->NextThread) {
         Thread = InternalData->NextThread;

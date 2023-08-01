@@ -14,14 +14,28 @@ void AhciEnablePort(PAHCIPORT Port) {
 
 void AhciInitPort(PAHCIPORT Port) {
 
+    KDebugPrint("AHCI Thread#%u : Initializing port %u", KeGetCurrentThreadId(), Port->PortIndex);
+
     Port->AllocatedCmd = ~(((UINT32)-1) >> (31 - Port->Ahci->MaxSlotNumber));
 
+    KDebugPrint("AHCI Thread%u Allocating resources", KeGetCurrentThreadId());
 
     Port->CommandList = AhciAllocate(Port->Ahci, ConvertToPages(sizeof(AHCI_COMMAND_LIST_ENTRY) * (Port->Ahci->MaxSlotNumber + 1)), 0);
     Port->CommandTable = AhciAllocate(Port->Ahci, ConvertToPages(sizeof(AHCI_COMMAND_TABLE) * (Port->Ahci->MaxSlotNumber + 1)), 0);
     Port->ReceivedFis = AhciAllocate(Port->Ahci, 1, 0);
+
+    if(!Port->CommandList || !Port->CommandTable || !Port->ReceivedFis) {
+        KDebugPrint("AHCI Thread#%u Failed to allocate resources", KeGetCurrentThreadId());
+        return;
+    }
+
+    KDebugPrint("AHCI Thread%u disabling port", KeGetCurrentThreadId());
+
     // Stop the port
     AhciDisablePort(Port);
+
+
+    KDebugPrint("AHCI Thread%u port disabled successfully, setting bars", KeGetCurrentThreadId());
 
     UINT64 rf = AhciPhysicalAddress(Port->ReceivedFis), cl = AhciPhysicalAddress(Port->CommandList), ct = AhciPhysicalAddress(Port->CommandTable);
 
@@ -35,6 +49,7 @@ void AhciInitPort(PAHCIPORT Port) {
     Port->HbaPort->CommandListBaseAddressLow = cl;
     Port->HbaPort->CommandListBaseAddressHigh = cl >> 32;
 
+    KDebugPrint("AHCI Thread #%u Init command list", KeGetCurrentThreadId());
     // Init command list
     for(int i = 0;i<=Port->Ahci->MaxSlotNumber;i++) {
         Port->CommandList[i].PrdtLength = 1;
@@ -135,7 +150,7 @@ void AhciInitPort(PAHCIPORT Port) {
 
 
     if(Port->Atapi == FALSE) {
-        AhciInitAtaDevice(Port);
+        AhciInitSataDevice(Port);
     } else {
 
     }

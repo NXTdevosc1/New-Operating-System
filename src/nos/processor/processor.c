@@ -119,13 +119,15 @@ NSTATUS KRNLAPI KeRemoteExecute(PROCESSOR* Processor, REMOTE_EXECUTE_ROUTINE Rou
     if(Wait) {
         for(;;) {
             __wbinvd(); // Update cache
-            if(Processor->RemoteExecute.Finished == FALSE) KeSuspendThread();
+            if(Processor->RemoteExecute.Finished == FALSE) _mm_pause();
             else {
                 Status = Processor->RemoteExecute.ReturnCode;
                 break;
             }
             // If resumed finished should read as true because of cache update
         }
+        // Manually release control if its synchronous
+        ReleaseProcessorControl(Processor, PROCESSOR_CONTROL_EXECUTE);
     }
 
     return Status;

@@ -1,0 +1,1 @@
+cl /O2 /GL *.c /GS- /Iinc /Fo:obj/ /Fe:fat32.sys /link /DYNAMICBASE /SUBSYSTEM:native /Entry:DriverEntry
