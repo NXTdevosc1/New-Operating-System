@@ -15,7 +15,11 @@ NSTATUS KRNLAPI KeCreateThread(
     IN void* EntryPoint,
     IN void* Context
 ) {
-    if(!KeProcessExists(Process)) return STATUS_INVALID_PARAMETER;
+    if(!Process) Process = KernelProcess;
+    if(!KeProcessExists(Process)) {
+        KDebugPrint("KECREATETHREAD PROCESS %x DOES NOT EXIST", Process);
+        return STATUS_INVALID_PARAMETER;
+    }
     KDebugPrint("create thread %x", Process->ProcessId);
     // Allocate the thread
     PETHREAD Thread;
@@ -48,6 +52,7 @@ NSTATUS KRNLAPI KeCreateThread(
     UINT64 cpf = ExAcquireSpinLock(&_SelectPidSpinlock);
     Thread->Processor = KeGetProcessorByIndex(LastCreateProcessorId);
     LastCreateProcessorId++;
+    // >= instead of == to handle case before any processor is registred
     if(LastCreateProcessorId == NumProcessors) LastCreateProcessorId = 0;
     ExReleaseSpinLock(&_SelectPidSpinlock, cpf);
     if(!Thread->Processor) {
@@ -139,7 +144,7 @@ BOOLEAN KRNLAPI KeSetThreadPriority(PETHREAD Thread, UINT ThreadPriority) {
 }
 
 NSTATUS KiSetThreadInReadyQueue(PETHREAD Thread) {
-    KDebugPrint("Remote sclink processorid %u", KeGetCurrentProcessorId());
+    // KDebugPrint("Remote sclink processorid %u", KeGetCurrentProcessorId());
     ScLinkReadyThreadBottom(&Thread->QueueEntry);
     return STATUS_SUCCESS;
 }
@@ -158,7 +163,7 @@ BOOLEAN KRNLAPI KeSetStaticPriority(PETHREAD Thread, UINT StaticPriority) {
             ScLinkReadyThreadBottom(&Thread->QueueEntry);
             __writeeflags(rf);
         } else {
-            KDebugPrint("Set static priority, remote execute thread id %u processor %u", Thread->ThreadId, Thread->Processor->Id.ProcessorId);
+            // KDebugPrint("Set static priority, remote execute thread id %u processor %u", Thread->ThreadId, Thread->Processor->Id.ProcessorId);
             KeRemoteExecute(Thread->Processor, KiSetThreadInReadyQueue, (void*)Thread, FALSE);
         }
     }

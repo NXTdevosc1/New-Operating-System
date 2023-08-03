@@ -87,7 +87,7 @@ BOOLEAN KRNLAPI KeRegisterEventHandler(
             OBJECT_PERMANENT,
             OBJECT_EVENT,
             NULL,
-            sizeof(PEVENT),
+            sizeof(EVENT),
             EvtObEvt)))
     {
         KDebugPrint("Failed to create event object");
@@ -98,7 +98,6 @@ BOOLEAN KRNLAPI KeRegisterEventHandler(
     Event->EventId = EventId;
     // Register the handler
 RegisterHandler:
-    ExReleaseSpinLock(&sl, cpf);
 
     EVTHANDLERSTRUCT *evth = MmAllocatePool(sizeof(EVTHANDLERSTRUCT), 0);
     evth->Handler = EventHandler;
@@ -116,6 +115,7 @@ RegisterHandler:
         Event->LastHandler = evth;
     }
 
+    ExReleaseSpinLock(&sl, cpf);
     // Run event handler for existing events
     RunEvents(Event, evth);
     return TRUE;

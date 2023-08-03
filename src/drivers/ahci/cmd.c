@@ -30,7 +30,7 @@ NSTATUS AhciIssueCommandSync(PAHCIPORT Port, UINT Cmd) {
     _interlockedbittestandset(&Port->HbaPort->CommandIssue, Cmd);
     _interlockedbittestandset(&Port->PendingCmd, Cmd);
 
-
+    KDebugPrint("Issuing command#%u", Cmd);
 
     // Interrupt handler should wait the thread until it suspends before it resumes it
     while(_bittest(&Port->PendingCmd, Cmd)) KeSuspendThread();

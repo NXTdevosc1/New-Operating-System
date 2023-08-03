@@ -1,14 +1,20 @@
 #include <ahci.h>
 
-PVOID AhciAllocate(PAHCI Ahci, UINT64 Pages, UINT PageAttributes) {
-    PVOID Ret = MmAllocateMemory(NULL, Pages, PageAttributes | (Ahci->LongAddresses ? 0 : PAGE_HALFPTR) | PAGE_WRITE_ACCESS, (PageAttributes & AHCI_WRITE_THROUGH) ? PAGE_CACHE_WRITE_THROUGH : PAGE_CACHE_DISABLE);
-    if(!Ret) return NULL;
+PVOID AhciAllocateMemory(PAHCIPORT Port, UINT64 SizeInBytes) {
+    // AHCI is cache coherent
+    if(Port->Ahci->LongAddresses) return MmAllocatePool(SizeInBytes, 0);
+    else return MmAllocateMemory(NULL, ConvertToPages(SizeInBytes), PAGE_WRITE_ACCESS | PAGE_HALFPTR, 0);
+    
+}
 
-    if(PageAttributes & PAGE_2MB) {
-        ZeroMemory(Ret, Pages << 21);
-    } else ZeroMemory(Ret, Pages << 12);
-
-    return Ret;
+void AhciFreeMemory(PAHCIPORT Port, void* Mem, UINT64 SizeInBytes) {
+    if(Port->Ahci->LongAddresses) {
+        if(!MmFreePool(Mem)) KDebugPrint("AHCI Warning : Free pool failed");
+    } else {
+        if(!MmFreeMemory(NULL, Mem, ConvertToPages(SizeInBytes))) {
+            KDebugPrint("AHCI Warning : Free memory failed");
+        }
+    }
 }
 
 void AhciAbort(PAHCI Ahci, NSTATUS ExitCode) {

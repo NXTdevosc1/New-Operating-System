@@ -16,7 +16,6 @@ NSTATUS DriverEntry(PDRIVER Driver) {
 
 NSTATUS PciAddEvent(SYSTEM_DEVICE_ADD_CONTEXT* Context) {
     if(Context->BusType == BUS_PCI) {
-        KDebugPrint("AHCI Device add (Class %d Subclass %d Progif %d)", Context->DeviceData.PciDeviceData.Class, Context->DeviceData.PciDeviceData.Subclass, Context->DeviceData.PciDeviceData.ProgIf);
         if(Context->DeviceData.PciDeviceData.Class == 1 &&
         Context->DeviceData.PciDeviceData.Subclass == 6 &&
         Context->DeviceData.PciDeviceData.ProgIf == 1

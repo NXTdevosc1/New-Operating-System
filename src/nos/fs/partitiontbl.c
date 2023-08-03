@@ -2,7 +2,8 @@
 #include <nos/fs/fs.h>
 #include <nos/fs/mbr.h>
 #include <nos/fs/gpt.h>
-
+#include <kevent.h>
+#include <kfs.h>
 
 void KiReadGuidPartitionTable(PDRIVE Drive, MBR_PARTITION_RECORD* Record);
 
@@ -10,10 +11,18 @@ static GUID NullGuid = {0};
 static GUID BasicDataPartitionGuid = BASIC_DATA_PARTITION_GUID;
 static GUID EfiSystemPartitionGuid = EFI_SYSTEM_PARTITION_GUID;
 
+HANDLE PartitionAddEvent = INVALID_HANDLE;
+
 NSTATUS KiReadPartitionTable(PDRIVE Drive) {
+
+    if(PartitionAddEvent == INVALID_HANDLE) {
+        PartitionAddEvent = KeOpenEvent(SYSTEM_EVENT_PARTITION_ADD);
+        if(PartitionAddEvent == INVALID_HANDLE) KeRaiseException(STATUS_EVENT_OPEN_FAILED);
+    }
+
     KDebugPrint("Reading partition table for drive : %ls", Drive->DriveId->Name);
     
-    PVOID Buffer = Drive->Io.Allocate(Drive->Context, 1);
+    PVOID Buffer = KeAllocateDriveBuffer(Drive, 1);
     if(!Buffer) return STATUS_OUT_OF_MEMORY;
 
     // Read first sector (MBR)
@@ -21,10 +30,10 @@ NSTATUS KiReadPartitionTable(PDRIVE Drive) {
     MASTER_BOOT_RECORD* Mbr = Buffer;
     
 
-    Drive->Io.Read(Drive->Context, 0, 1, Buffer);
+    KeReadDrive(Drive, 0, 1, Buffer);
 
     if(Mbr->Signature != MBR_SIGNATURE) {
-        Drive->Io.Free(Drive->Context, Buffer, 1);
+        KeFreeDriveBuffer(Drive, Buffer, 1);
         return STATUS_INVALID_FORMAT;
     }
 
@@ -40,7 +49,7 @@ NSTATUS KiReadPartitionTable(PDRIVE Drive) {
     }
     
     KDebugPrint("%u Partitions were found.", Drive->NumPartitions);
-    Drive->Io.Free(Drive->Context, Buffer, 1);
+    KeFreeDriveBuffer(Drive, Buffer, 1);
     return STATUS_SUCCESS;
 }
 
@@ -49,42 +58,52 @@ BOOLEAN CmpGuid(GUID* Guid1, GUID* Guid2) {
 }
 
 void KiReadGuidPartitionTable(PDRIVE Drive, MBR_PARTITION_RECORD* Record) {
-    PARTITION_TABLE_HEADER* Gpt = Drive->Io.Allocate(Drive->Context, 1);
+    PARTITION_TABLE_HEADER* Gpt = KeAllocateDriveBuffer(Drive, 1);
     if(!Gpt) return;
 
-    Drive->Io.Read(Drive->Context, Record->StartingLBA, 1, Gpt);
+    KeReadDrive(Drive, Record->StartingLBA, 1, Gpt);
 
     if(Gpt->Signature != GPT_SIGNATURE) {
         KDebugPrint("Invalid GPT Header in drive#%u", Drive->DriveId);
         return;
     }
 
-    UINT NumSectors = AlignForward(Gpt->NumPartitions * Gpt->PartitionEntrySize, Drive->DriveId->SectorSize) / Drive->DriveId->SectorSize;
+    UINT NumSects = (Gpt->NumPartitions * Gpt->PartitionEntrySize) / Drive->DriveId->SectorSize + 1;
 
-    GUID_PARTITION_ENTRY* AllPartitions = Drive->Io.Allocate(Drive->Context, NumSectors);
+    GUID_PARTITION_ENTRY* AllPartitions = KeAllocateDriveBuffer(Drive, NumSects);
     if(!AllPartitions) {
         KDebugPrint("READ_GPT BUG0");
         while(1) __halt();
     }
 
     KDebugPrint("GPT Signature %s EntrySize %x PartitionsLba %x NumEntries %x", &Gpt->Signature, Gpt->PartitionEntrySize, Gpt->PartitionsLba, (UINT64)Gpt->NumPartitions);
-    Drive->Io.Read(Drive->Context, Gpt->PartitionsLba, NumSectors, AllPartitions);
-
+    KeReadDrive(Drive, Gpt->PartitionsLba, NumSects, AllPartitions);
 
     for(UINT i = 0;i<Gpt->NumPartitions;i++) {
         GUID_PARTITION_ENTRY* Partition = (GUID_PARTITION_ENTRY*)((char*)AllPartitions + i * Gpt->PartitionEntrySize);
         if(CmpGuid(&NullGuid, &Partition->PartitionTypeGuid)) continue;
         KDebugPrint("Partition#%u FIRST_LBA %x LAST_LBA %x Name : %ls", i, Partition->FirstLba, Partition->LastLba, Partition->PartitionName);
+        
+        SYSTEM_PARTITION_ADD_CONTEXT* Context = MmAllocatePool(sizeof(SYSTEM_PARTITION_ADD_CONTEXT), 0);
+        Context->Drive = Drive;
+        Context->StartLba = Partition->FirstLba;
+        Context->EndLba = Partition->LastLba;
+        Context->GuidPartition = TRUE;
+        memcpy(&Context->PartitionInstanceGuid, &Partition->UniquePartitionGuid, 0x10);
+        Context->PartitionAttributes = 0;
+
+
         if(CmpGuid(&BasicDataPartitionGuid, &Partition->PartitionTypeGuid)) {
             KDebugPrint("Basic data partition");
         } else if(CmpGuid(&EfiSystemPartitionGuid, &Partition->PartitionTypeGuid)) {
             KDebugPrint("EFI System partition");
         }
+        KeSignalEvent(PartitionAddEvent, Context, &Context->EventDesc);
     }
 
 
     
 
-    Drive->Io.Free(Drive->Context, AllPartitions, NumSectors);
-    Drive->Io.Free(Drive->Context, Gpt, 1);
+    KeFreeDriveBuffer(Drive, AllPartitions, NumSects);
+    KeFreeDriveBuffer(Drive, Gpt, 1);
 }

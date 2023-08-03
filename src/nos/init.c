@@ -77,14 +77,15 @@ __declspec(dllexport) NOS_INITDATA* __fastcall KiGetInitData() {
     
 void NOSENTRY NosSystemInit() {
     SerialLog("NOS_KERNEL : Kernel Booting...");
-    
     KiPhysicalMemoryManagerInit();
     ObInitialize();
     KiInitBootCpu();
     KiInitStandardSubsystems();
     
+    UINT64 _EnumValue = 0;
+    PETHREAD kInitThread = KeWalkThreads(KernelProcess, &_EnumValue);
 
-    PETHREAD kInitThread = KeGetCurrentThread();
+    KDebugPrint("INIT THREAD ID %u", kInitThread->ThreadId);
     KeSetThreadPriority(kInitThread, THREAD_PRIORITY_HIGH);
     SerialLog(NosInitData->BootHeader->OsName);
     SerialLog("drivers");
@@ -97,7 +98,7 @@ void NOSENTRY NosSystemInit() {
     {
         KDebugPrint("INIT_AP_TRAMPOLINE at 0x%x, SymbolStart : %x", NosInitData->InitTrampoline, HwInitTrampoline);
         // // Copy trampoline
-        KeMapVirtualMemory(KernelProcess, NosInitData->InitTrampoline, NosInitData->InitTrampoline, 8, PAGE_WRITE_ACCESS | PAGE_EXECUTE, PAGE_CACHE_DISABLE);
+        KeMapVirtualMemory(KernelProcess, NosInitData->InitTrampoline, NosInitData->InitTrampoline, 8, PAGE_WRITE_ACCESS | PAGE_EXECUTE, 0);
         memcpy(NosInitData->InitTrampoline, HwInitTrampoline, 0x8000);
         // Rebase trampolie
         UINT64 base = (UINT64)NosInitData->InitTrampoline;
@@ -271,21 +272,23 @@ void NOSENTRY NosSystemInit() {
 
     PDEVICE dev;
 
+    Sleep(3000);
+
+    KDebugPrint("KTHREADS %u", KernelProcess->NumberOfThreads);
+    UINT64 _ev = 0;
+    while(KeEnumerateDevices(NULL, &dev, NULL, FALSE, &_ev)) {
+        if(dev->DeviceType != VIRTUAL_DEVICE) {
+            KDebugPrint("Physical Device#%u Type %u : %ls", dev->ObjectDescriptor->ObjectId, dev->DeviceType, dev->DisplayName);
+        }
+    }
+    KDebugPrint("Virtual devices:");
+    _ev = 0;
+    while(KeEnumerateDevices(NULL, &dev, NULL, FALSE, &_ev)) {
+        if(dev->DeviceType == VIRTUAL_DEVICE) {
+            KDebugPrint("Virtual Device#%u Type %u : %ls", dev->ObjectDescriptor->ObjectId, dev->DeviceType, dev->DisplayName);
+        }
+    }
     for(;;) {
-        KDebugPrint("KTHREADS %u", KernelProcess->NumberOfThreads);
-        UINT64 _ev = 0;
-        while(KeEnumerateDevices(NULL, &dev, NULL, FALSE, &_ev)) {
-            if(dev->DeviceType != VIRTUAL_DEVICE) {
-                KDebugPrint("Physical Device#%u Type %u : %ls", dev->ObjectDescriptor->ObjectId, dev->DeviceType, dev->DisplayName);
-            }
-        }
-        KDebugPrint("Virtual devices:");
-        _ev = 0;
-        while(KeEnumerateDevices(NULL, &dev, NULL, FALSE, &_ev)) {
-            if(dev->DeviceType == VIRTUAL_DEVICE) {
-                KDebugPrint("Virtual Device#%u Type %u : %ls", dev->ObjectDescriptor->ObjectId, dev->DeviceType, dev->DisplayName);
-            }
-        }
         // for(UINT32 i = 0;i<0xff;i++) {
             UINT32 i = 0xFF;
             _Memset128A_32((UINT32*)NosInitData->FrameBuffer.BaseAddress + 0x3000, i, (NosInitData->FrameBuffer.Pitch * NosInitData->FrameBuffer.VerticalResolution) / 0x20);

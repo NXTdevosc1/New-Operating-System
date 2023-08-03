@@ -18,12 +18,11 @@ NSTATUS NSYSAPI KeCreateSubsystem(
 
 
 void NOSENTRY NativeSubsystemEntryPoint(void* EntryPoint, void* Context) {
-    KDebugPrint("Hello thread");
     NSTATUS (__cdecl *Entry)(void*) = EntryPoint;
     NSTATUS Status;
     PEPROCESS Process = KeGetCurrentProcess();
     PETHREAD Thread = KeGetCurrentThread();
-    KDebugPrint("Kernel mode thread#%u created", Thread->ThreadId);
+    // KDebugPrint("Kernel mode thread#%u startup, Entry point %x Driver#%u", Thread->ThreadId, EntryPoint, Thread->RunningDriver ? Thread->RunningDriver->DriverId : -1);
 
     
 

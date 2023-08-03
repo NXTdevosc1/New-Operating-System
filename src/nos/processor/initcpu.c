@@ -70,7 +70,6 @@ void __declspec(noreturn) HwMultiProcessorEntry() {
     KeSchedulingSystemInit();
     // _disable();
     // KDebugPrint("P%u looping...", KeGetCurrentProcessorId());
-    KDebugPrint("Processor#%d enabled.", KeGetCurrentProcessorId());
 
     // idling
     for(;;) __halt();

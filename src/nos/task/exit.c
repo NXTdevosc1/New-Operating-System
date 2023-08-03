@@ -4,7 +4,7 @@
 void KRNLAPI KeExitThread(PETHREAD Thread, NSTATUS ExitCode) {
     if(!Thread) Thread = KeGetCurrentThread();
     
-    KDebugPrint("Exitting thread #%u", Thread->ThreadId);
+    // KDebugPrint("Exitting thread #%u", Thread->ThreadId);
     _disable(); // Avoid task switch
 
 
@@ -35,7 +35,7 @@ void KRNLAPI KeExitThread(PETHREAD Thread, NSTATUS ExitCode) {
 
     Thread->ExitCode = ExitCode;
 
-    KDebugPrint("Thread #%u exited with code %d", Thread->ThreadId, ExitCode);
+    // KDebugPrint("Thread #%u exited with code %d", Thread->ThreadId, ExitCode);
     
     // Destroy the thread object
     if(!ObDestroyObject(Thread->ThreadObject, FALSE)) {

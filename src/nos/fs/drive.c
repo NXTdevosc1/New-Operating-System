@@ -33,3 +33,59 @@ PDRIVE KRNLAPI KeCreateDrive(
 
     return Drive;
 }
+
+BOOLEAN KRNLAPI KeReadDrive(
+    PDRIVE Drive,
+    UINT64 Sector,
+    UINT64 Count,
+    void* Buffer
+) {
+    if(Sector + Count >= Drive->DriveId->NumSectors) return FALSE;
+
+    NSTATUS Status = Drive->Io.Read(
+        Drive->Context,
+        Sector,
+        Count,
+        Buffer
+    );
+    if(NERROR(Status)) KeRaiseException(Status);
+
+    return TRUE;
+}
+
+BOOLEAN KRNLAPI KeWriteDrive(
+    PDRIVE Drive,
+    UINT64 Sector,
+    UINT64 Count,
+    void* Buffer
+) {
+    if(Sector + Count >= Drive->DriveId->NumSectors) return FALSE;
+    
+    NSTATUS Status = Drive->Io.Write(
+        Drive->Context,
+        Sector,
+        Count,
+        Buffer
+    );
+    if(NERROR(Status)) KeRaiseException(Status);
+
+    return TRUE;
+}
+
+PVOID KRNLAPI KeAllocateDriveBuffer(
+    PDRIVE Drive,
+    UINT64 SizeInSectors
+) {
+    if(!SizeInSectors) KeRaiseException(STATUS_INVALID_PARAMETER);
+
+    return Drive->Io.Allocate(Drive->Context, SizeInSectors);
+}
+
+void KRNLAPI KeFreeDriveBuffer(
+    PDRIVE Drive,
+    void* Buffer,
+    UINT64 SizeInSectors
+) {
+    if(!SizeInSectors) KeRaiseException(STATUS_INVALID_PARAMETER);
+    Drive->Io.Free(Drive->Context, Buffer, SizeInSectors);
+}

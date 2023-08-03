@@ -70,7 +70,10 @@ RFPROCESSOR KRNLAPI KeRegisterProcessor(PROCESSOR_IDENTIFICATION_DATA* Ident) {
 
 RFPROCESSOR KRNLAPI KeGetCurrentProcessor() {
     // System still is not using the LAPIC
-    if(!BootProcessor) return NULL;
+    if(!BootProcessor) {
+        SerialLog("KERNEL BUG 0: get processor before initialization");
+        while(1) __halt();
+    }
     if(!BootProcessor->ProcessorEnabled) return BootProcessor;
     
     
@@ -131,4 +134,8 @@ NSTATUS KRNLAPI KeRemoteExecute(PROCESSOR* Processor, REMOTE_EXECUTE_ROUTINE Rou
     }
 
     return Status;
+}
+
+void KRNLAPI KeProcessorReadIdentificationData(RFPROCESSOR Processor, PROCESSOR_IDENTIFICATION_DATA* Identification) {
+    memcpy(Identification, &Processor->Id, sizeof Processor->Id);
 }

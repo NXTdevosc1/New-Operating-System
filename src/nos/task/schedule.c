@@ -175,6 +175,7 @@ void KRNLAPI KeSchedulingSystemInit() {
     }
 
     if(BootProcessor == Processor) {
+        ev = 0;
         Processor->InternalData->CurrentThread = KeWalkThreads(KernelProcess, &ev);
     } else {
         Processor->InternalData->CurrentThread = Processor->InternalData->IdleThread;
@@ -190,6 +191,10 @@ void KRNLAPI KeSchedulingSystemInit() {
 
     CpuEnableApicTimer();
 
+    KDebugPrint("Processor#%d enabled. Current thread %x id %u", Processor->Id.ProcessorId, Processor->InternalData->CurrentThread, Processor->InternalData->CurrentThread->ThreadId);
+
+
+    __halt();
     // __halt();
     // __halt();
     // __halt();

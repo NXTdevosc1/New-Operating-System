@@ -22,6 +22,10 @@ BOOLEAN KeWriteFile(HANDLE File, UINT64 NumBytes, void* Buffer) {
 
 }
 
-BOOLEAN KeEditFileInfo(HANDLE File, UINT InformationType, void* Information) {
+BOOLEAN KeReadFileInformation(HANDLE File, UINT InformationType, void* Information) {
+
+}
+
+BOOLEAN KeWriteFileInformation(HANDLE File, UINT InformationType, void* Information) {
 
 }

@@ -80,5 +80,5 @@ NosInitData dq 1
 section .bss
 
 align 0x1000
-_KernelStackBase resq 0x10000
+_KernelStackBase resb 0x10000
 _KernelStack:

@@ -52,6 +52,9 @@ echo Building USB Keyboard Driver
 cd ../usbkeyboard
 call ./compile
 
+echo Building FAT32 Driver
+cd ../fat32
+call ./compile
 
 cd ../../..
 
@@ -82,7 +85,7 @@ bedit drvadd 0 1 "NewOS\System\usbmouse.sys"
 bedit drvadd 0 1 "NewOS\System\usbkeyboard.sys"
 
 @REM File System Drivers run at preboot phase (to register themselves as fs drivers)
-
+bedit drvadd 1 3 "NewOS\System\fat32.sys"
 
 copy boot.nos diskimg\NewOS\System
 

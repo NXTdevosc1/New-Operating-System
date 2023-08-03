@@ -1,0 +1,2 @@
+cl *.c /O2 /GL /GS- /Fe:fat32.sys /Fo:obj/ /Iinc /I../../../inc "%DRVLIBS%\noskx64.lib" "%DRVLIBS%\sddk.lib" "%DRVLIBS%\syscruntime.lib" /link /DYNAMICBASE /SUBSYSTEM:native /ENTRY:DriverEntry
+copy fat32.sys "..\..\..\diskimg\NewOS\System"

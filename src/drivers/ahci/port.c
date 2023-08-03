@@ -18,24 +18,29 @@ void AhciInitPort(PAHCIPORT Port) {
 
     Port->AllocatedCmd = ~(((UINT32)-1) >> (31 - Port->Ahci->MaxSlotNumber));
 
-    KDebugPrint("AHCI Thread%u Allocating resources", KeGetCurrentThreadId());
+    // KDebugPrint("AHCI Thread%u Allocating resources", KeGetCurrentThreadId());
 
-    Port->CommandList = AhciAllocate(Port->Ahci, ConvertToPages(sizeof(AHCI_COMMAND_LIST_ENTRY) * (Port->Ahci->MaxSlotNumber + 1)), 0);
-    Port->CommandTable = AhciAllocate(Port->Ahci, ConvertToPages(sizeof(AHCI_COMMAND_TABLE) * (Port->Ahci->MaxSlotNumber + 1)), 0);
-    Port->ReceivedFis = AhciAllocate(Port->Ahci, 1, 0);
+    Port->CommandList = AhciAllocateMemory(Port, sizeof(AHCI_COMMAND_LIST_ENTRY) * (Port->Ahci->MaxSlotNumber + 1));
+    Port->CommandTable = AhciAllocateMemory(Port, sizeof(AHCI_COMMAND_TABLE) * (Port->Ahci->MaxSlotNumber + 1));
+    Port->ReceivedFis = AhciAllocateMemory(Port, sizeof(AHCI_RECEIVED_FIS));
 
     if(!Port->CommandList || !Port->CommandTable || !Port->ReceivedFis) {
         KDebugPrint("AHCI Thread#%u Failed to allocate resources", KeGetCurrentThreadId());
         return;
     }
 
-    KDebugPrint("AHCI Thread%u disabling port", KeGetCurrentThreadId());
+    ZeroMemory(Port->CommandList, sizeof(AHCI_COMMAND_LIST_ENTRY) * (Port->Ahci->MaxSlotNumber + 1));
+    ZeroMemory(Port->CommandTable, sizeof(AHCI_COMMAND_TABLE) * (Port->Ahci->MaxSlotNumber + 1));
+    ObjZeroMemory(Port->ReceivedFis);
+
+
+    // KDebugPrint("AHCI Thread%u disabling port", KeGetCurrentThreadId());
 
     // Stop the port
     AhciDisablePort(Port);
 
 
-    KDebugPrint("AHCI Thread%u port disabled successfully, setting bars", KeGetCurrentThreadId());
+    // KDebugPrint("AHCI Thread%u port disabled successfully, setting bars", KeGetCurrentThreadId());
 
     UINT64 rf = AhciPhysicalAddress(Port->ReceivedFis), cl = AhciPhysicalAddress(Port->CommandList), ct = AhciPhysicalAddress(Port->CommandTable);
 
@@ -49,7 +54,7 @@ void AhciInitPort(PAHCIPORT Port) {
     Port->HbaPort->CommandListBaseAddressLow = cl;
     Port->HbaPort->CommandListBaseAddressHigh = cl >> 32;
 
-    KDebugPrint("AHCI Thread #%u Init command list", KeGetCurrentThreadId());
+    // KDebugPrint("AHCI Thread #%u Init command list", KeGetCurrentThreadId());
     // Init command list
     for(int i = 0;i<=Port->Ahci->MaxSlotNumber;i++) {
         Port->CommandList[i].PrdtLength = 1;
@@ -59,8 +64,8 @@ void AhciInitPort(PAHCIPORT Port) {
     *(volatile UINT32*)&Port->HbaPort->SataError = -1;
     
     // Enable all interrupts
-    Port->HbaPort->InterruptEnable = -1;
-
+    // Port->HbaPort->InterruptEnable = -1;
+    // *(volatile UINT32*)&Port->HbaPort->InterruptStatus = *(volatile UINT32*)&Port->HbaPort->InterruptStatus;
     Port->HbaPort->CommandStatus |= PORTxCMDxFRE;
     while(!(Port->HbaPort->CommandStatus & PORTxCMDxFRR));
 
@@ -110,16 +115,17 @@ void AhciInitPort(PAHCIPORT Port) {
         Countdown--;
         Sleep(1);
     }
-
-    // Wait for the interrupt
-    Countdown = 25;
-    while(!Port->FirstD2H) {
-        if(!Countdown) {
-            DeviceDetected = 0;
-            break;
+    if(DeviceDetected) {
+        // Wait for the interrupt
+        Countdown = 50;
+        while(!Port->FirstD2H) {
+            if(!Countdown) {
+                DeviceDetected = 0;
+                break;
+            }
+            Countdown--;
+            Sleep(1);
         }
-        Countdown--;
-        Sleep(1);
     }
 
     *(volatile UINT32*)&Port->HbaPort->SataError = -1;
@@ -127,13 +133,16 @@ void AhciInitPort(PAHCIPORT Port) {
 
     if(!DeviceDetected) {
         KDebugPrint("No device detected on port %d", Port->PortIndex);
+        KDebugPrint("port IS %x IE %x AHCIGC %x AHCIIS %x", Port->HbaPort->InterruptStatus, Port->HbaPort->InterruptEnable, Port->Ahci->Hba->Ghc, Port->Ahci->Hba->InterruptStatus);
         if(Port->Ahci->Hba->HostCapabilities.SupportsStaggeredSpinup) {
             Port->HbaPort->CommandStatus &= ~PORTxCMDxSUD;
         }
         return;
     }
 
-    KDebugPrint("Port signature %x", Port->HbaPort->PortSignature.Signature);
+    KDebugPrint("Port signature %x IE %x IS %x", Port->HbaPort->PortSignature.Signature,
+    Port->HbaPort->InterruptEnable, Port->HbaPort->InterruptStatus
+    );
 
     if(Port->HbaPort->PortSignature.Signature == 0xEB140101) {
         Port->Atapi = TRUE;

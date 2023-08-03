@@ -12,9 +12,10 @@ NSTATUS PartEvt(
 PPARTITION KRNLAPI KeCreatePartition(
     IN PDEVICE Drive,
     IN GUID* PartitionGuid,
-    UINT FsId,
+    UINT64 PartitionAttributes,
+    UINT16* FileSystemLabel,
     UINT16* PartitionLabel
-) {
+){
     POBJECT Obj;
     PPARTITION Partition;
     if(NERROR(ObCreateObject(
@@ -32,12 +33,13 @@ PPARTITION KRNLAPI KeCreatePartition(
     // TODO : Generate random partition guid
     memcpy(&Partition->PartitionGuid, PartitionGuid, sizeof(GUID));
 
-    Partition->FsId = FsId;
+    Partition->LengthFsLabel = wcslen(FileSystemLabel);
+    if(Partition->LengthFsLabel > 32) Partition->LengthFsLabel = 32;
     Partition->LengthPartitionLabel = wcslen(PartitionLabel);
+
+    memcpy(Partition->FileSystemLabel, FileSystemLabel, Partition->LengthFsLabel << 1);
     memcpy(Partition->PartitionLabel, PartitionLabel, Partition->LengthPartitionLabel << 1);
     Partition->MountIndex = -1;
-
-    
 
     return Partition;
 }

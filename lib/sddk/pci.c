@@ -43,6 +43,11 @@ NSTATUS SYSAPI EnableMsiInterrupts(PCI_DRIVER_INTERFACE* Pci, PCI_DEVICE_LOCATIO
             if(NERROR((s = KeInstallInterruptHandler(&Iv, &ProcessorId, 0, Handler, Context)))) {
                 return s;
             }
+            // PROCESSOR* cpu = KeGetProcessorById(ProcessorId);
+            // PROCESSOR_IDENTIFICATION_DATA Id;
+            // KeProcessorReadIdentificationData(cpu, &Id);
+            // KDebugPrint("MSI APIC ID %x ACPI ID %x", ProcessorId, Id.AcpiId);
+            // ProcessorId = Id.AcpiId;
             UINT64 Address = (__readmsr(0x1B)/*APIC Base MSR*/ & ((UINT64)~0xFFF)) | (ProcessorId << 12);
             if((Pci->Read16(Location, Cptr + MSI_MESSAGE_CONTROL) & 0x80)) {
                 // Use MSI64

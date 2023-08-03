@@ -13,42 +13,43 @@ Attr : 0000000000000020 Name : syscruntime.dll Size : 4608 NL : 15 .dll
 Attr : 0000000000000020 Name : osusr.dll Size : 105472 NL : 9 .dll
 Attr : 0000000000000020 Name : acpisys.dll Size : 3584 NL : 11 .dll
 Attr : 0000000000000020 Name : cruntime.dll Size : 4608 NL : 12 .dll
-Kernel File Size : 454656
+Kernel File Size : 456192
 Test2 : test123
 System Heap:
 7CE00000
 OPT_HDR_SIZE : 240 FALIGN : 512
 Allocating System Pages : 000000007CE00000
 Image Physical Base : 000000007CE00000 , Image Base : 0000000000000000, Entry point : 00000000000011E0
-Copying section .tex VADDR : 0000000000001000 PTR : 0000000000000400, SZ : 0000000000021E00
-Copying section .rda VADDR : 0000000000023000 PTR : 0000000000022200, SZ : 0000000000003800
-Copying section .dat VADDR : 0000000000027000 PTR : 0000000000025A00, SZ : 00000000000FC5E0
-Copying section .pda VADDR : 0000000000124000 PTR : 000000000006E800, SZ : 0000000000000800
+Copying section .tex VADDR : 0000000000001000 PTR : 0000000000000400, SZ : 0000000000022200
+Copying section .rda VADDR : 0000000000024000 PTR : 0000000000022600, SZ : 0000000000003800
+Copying section .dat VADDR : 0000000000028000 PTR : 0000000000025E00, SZ : 000000000008D100
+Copying section .pda VADDR : 00000000000B6000 PTR : 000000000006EE00, SZ : 0000000000000800
 RELOC 0000000000000000  SZ 0000000000000000
 Loading DLL :
 syscruntime.dll
 OPT_HDR_SIZE : 240 FALIGN : 512
-Allocating System Pages : 000000007CF25000
-Image Physical Base : 000000007CF25000 , Image Base : 0000000000125000, Entry point : 0000000000000000
+Allocating System Pages : 000000007CEB7000
+Image Physical Base : 000000007CEB7000 , Image Base : 00000000000B7000, Entry point : 0000000000000000
 Copying section .tex VADDR : 0000000000001000 PTR : 0000000000000400, SZ : 0000000000000800
 Copying section .rda VADDR : 0000000000002000 PTR : 0000000000000C00, SZ : 0000000000000400
 Copying section .pda VADDR : 0000000000003000 PTR : 0000000000001000, SZ : 0000000000000200
 RELOC 0000000000000000  SZ 0000000000000000
 EXPORTS
-ETVA : 00000000000021B0, ET : 000000007CF271B0
+ETVA : 00000000000021B0, ET : 000000007CEB91B0
 NR : 000000000000226E, NPR : 0000000000002214, EATR : 00000000000021D8
 Test : test123
 Dll Name : sysc
 Searching Symbol : _ui64toa
-Symbol Found, base : 00000000001261F0, IAT_TARGET : 000000007CE23000, RVA : 00000000000011F0
+Symbol Found, base : 00000000000B81F0, IAT_TARGET : 000000007CE24000, RVA : 00000000000011F0
 Searching Symbol : sprintf_s
-Symbol Found, base : 0000000000126460, IAT_TARGET : 000000007CE23008, RVA : 0000000000001460
+Symbol Found, base : 00000000000B8460, IAT_TARGET : 000000007CE24008, RVA : 0000000000001460
 Searching Symbol : memcpy
-Symbol Found, base : 00000000001263D0, IAT_TARGET : 000000007CE23010, RVA : 00000000000013D0
+Symbol Found, base : 00000000000B83D0, IAT_TARGET : 000000007CE24010, RVA : 00000000000013D0
 Searching Symbol : memcmp
-Symbol Found, base : 00000000001263A0, IAT_TARGET : 000000007CE23018, RVA : 00000000000013A0
+Symbol Found, base : 00000000000B83A0, IAT_TARGET : 000000007CE24018, RVA : 00000000000013A0
 Searching Symbol : vsprintf_s
-Symbol Found, base : 0000000000126480, IAT_TARGET : 000000007CE23020, RVA : 0000000000001480
+Symbol Found, base : 00000000000B8480, IAT_TARGET : 000000007CE24020, RVA : 0000000000001480
+ loaded
  loaded
  loaded
  loaded
@@ -61,26 +62,27 @@ Symbol Found, base : 0000000000126480, IAT_TARGET : 000000007CE23020, RVA : 0000
  loaded
  loaded
 Memory Count:
-107
+103
 Mapping System Pages :
 7CE00000
 FFFF800000000000
 A
 Booted successfully.
 FFFF8000000011E0
-8000000F0000BC48
+800000081000BC48
 Boot Processor : Boot Processor : COM1 Initialized Successfully
 NOS_KERNEL : Kernel Booting...
-Boot Processor : Kernel boot memory : Used 32391168 bytes , free : -
+Boot Processor : Kernel boot memory : Used 32399360 bytes , free : -
 Boot Processor : Object Manager : Init
 Boot Processor : Object Manager : Init  2000 780000 300000
 Boot Processor : Object Manager : Allocate Table : 8192 Bytes, Object Array : 7864320 Bytes , Handle Array : 3145728 Bytes
 Boot Processor : KernelInternals : Init Boot CPU
 Boot Processor : GDT and TSS Loaded successfully
 Boot Processor : create thread 0
+Boot Processor : INIT THREAD ID 1
 Boot Processor : New Operating System
 Boot Processor : drivers
-Boot Processor : 11
+Boot Processor : 12
 Boot Processor : INIT_AP_TRAMPOLINE at 0x1000, SymbolStart : FFFF800000011000
 Boot Processor : Running PRE BOOT LAUNCH Drivers
 Boot Processor : Driver NewOS\System\acpi.sys
@@ -89,7 +91,7 @@ Boot Processor : Section:
 Boot Processor : .text
 Boot Processor : 1000
 Boot Processor : 400
-Boot Processor : 4F386
+Boot Processor : 4F396
 Boot Processor : Section:
 Boot Processor : .rdata
 Boot Processor : 51000
@@ -119,56 +121,53 @@ Boot Processor : Importing dll noskx64.exe
 Boot Processor : Linking NOSKX64.EXE System
 Boot Processor : 0
 Boot Processor : Preboot Launch
-Boot Processor : Running driver 0 EntryPoint FFFF800001671D20
+Boot Processor : Running driver 0 EntryPoint FFFF800001671D30
 Boot Processor : Driver Startup.
 Boot Processor : __AcpiInitTables__
 Boot Processor : ACPI: 
-Boot Processor : RSDP 0xFFFF8000000E7D68FFFF8000000234C8 FFFF8000000E7CD8 (v2142756884 Hãú$†)
+Boot Processor : RSDP 0xFFFF800000078D18FFFF8000000244E0 FFFF800000078C88 (v2142756884 Hãú$†)
 Boot Processor : 
 
 Boot Processor : ACPI: 
-Boot Processor : ¿} 0xFFFF8000000234C8FFFF8000000E7CD8 7FB7D0E8 (v23640454 %-4.4s 0x%8.8X%8.8X %06X (v%.2d %-6.6s %-8.8s %08X %-4.4s %08X) XSDTT 0 XSDTT 100000054)
+Boot Processor : pç 0xFFFF8000000244E0FFFF800000078C88 7FB7D0E8 (v23640470 %-4.4s 0x%8.8X%8.8X %06X (v%.2d %-6.6s %-8.8s %08X %-4.4s %08X) XSDTT 0 XSDTT FFFF800000000054)
 Boot Processor : 
 
 Boot Processor : ACPI: 
-Boot Processor :  } 0xFFFF8000000234C8FFFF8000000E7C38 7FB79000 (v23640454 %-4.4s 0x%8.8X%8.8X %06X (v%.2d %-6.6s %-8.8s %08X %-4.4s %08X) FACPÙ 0 FACPÙ FFFF8000000000F4)
+Boot Processor : –å 0xFFFF8000000244E0FFFF800000078BE8 7FB79000 (v23640470 %-4.4s 0x%8.8X%8.8X %06X (v%.2d %-6.6s %-8.8s %08X %-4.4s %08X) FACPÙ 0 FACPÙ FFFF8000000000F4)
 Boot Processor : 
 
 Boot Processor : ACPI: 
-Boot Processor : ‡| 0xFFFF8000000234C8FFFF8000000E7BF8 7FB7A000 (v23640454 %-4.4s 0x%8.8X%8.8X %06X (v%.2d %-6.6s %-8.8s %08X %-4.4s %08X) DSDTπ! 0 DSDTπ! FFFF8000000021B9)
+Boot Processor : êå 0xFFFF8000000244E0FFFF800000078BA8 7FB7A000 (v23640470 %-4.4s 0x%8.8X%8.8X %06X (v%.2d %-6.6s %-8.8s %08X %-4.4s %08X) DSDT∫  0 DSDT∫  FFFF8000000020BA)
 Boot Processor : 
 
 Boot Processor : ACPI: 
-Boot Processor :  0xFFFF8000000234C8FFFF8000000E7BF8 21B9
+Boot Processor :  0xFFFF8000000244E0FFFF800000078BA8 20BA
 Boot Processor : 
 
 Boot Processor : ACPI: 
-Boot Processor :  } 0xFFFF8000000234C8FFFF8000000E7C38 7FB78000 (v23640454 %-4.4s 0x%8.8X%8.8X %06X (v%.2d %-6.6s %-8.8s %08X %-4.4s %08X) APICê 0 APICê FFFF800000000090)
+Boot Processor : –å 0xFFFF8000000244E0FFFF800000078BE8 7FB78000 (v23640470 %-4.4s 0x%8.8X%8.8X %06X (v%.2d %-6.6s %-8.8s %08X %-4.4s %08X) APICx 0 APICx FFFF800000000078)
 Boot Processor : 
 
 Boot Processor : ACPI: 
-Boot Processor :  } 0xFFFF8000000234C8FFFF8000000E7C38 7FB77000 (v23640454 %-4.4s 0x%8.8X%8.8X %06X (v%.2d %-6.6s %-8.8s %08X %-4.4s %08X) HPET8 0 HPET8 38)
+Boot Processor : –å 0xFFFF8000000244E0FFFF800000078BE8 7FB77000 (v23640470 %-4.4s 0x%8.8X%8.8X %06X (v%.2d %-6.6s %-8.8s %08X %-4.4s %08X) HPET8 0 HPET8 38)
 Boot Processor : 
 
 Boot Processor : ACPI: 
-Boot Processor :  } 0xFFFF8000000234C8FFFF8000000E7C38 7FB76000 (v23640454 %-4.4s 0x%8.8X%8.8X %06X (v%.2d %-6.6s %-8.8s %08X %-4.4s %08X) MCFG< 0 MCFG< FFFF80000000003C)
+Boot Processor : –å 0xFFFF8000000244E0FFFF800000078BE8 7FB76000 (v23640470 %-4.4s 0x%8.8X%8.8X %06X (v%.2d %-6.6s %-8.8s %08X %-4.4s %08X) MCFG< 0 MCFG< FFFF80000000003C)
 Boot Processor : 
 
 Boot Processor : ACPI: 
-Boot Processor :  } 0xFFFF8000000234C8FFFF8000000E7C38 7FB75000 (v23640454 %-4.4s 0x%8.8X%8.8X %06X (v%.2d %-6.6s %-8.8s %08X %-4.4s %08X) WAET( 0 WAET( FFFF800000000028)
+Boot Processor : –å 0xFFFF8000000244E0FFFF800000078BE8 7FB75000 (v23640470 %-4.4s 0x%8.8X%8.8X %06X (v%.2d %-6.6s %-8.8s %08X %-4.4s %08X) WAET( 0 WAET( FFFF800000000028)
 Boot Processor : 
 
 Boot Processor : ACPI: 
-Boot Processor :  } 0xFFFF8000000234C8FFFF8000000E7C38 7FB74000 (v23640454 %-4.4s 0x%8.8X%8.8X %06X (v%.2d %-6.6s %-8.8s %08X %-4.4s %08X) BGRT8 0 BGRT8 FFFF800000000038)
+Boot Processor : –å 0xFFFF8000000244E0FFFF800000078BE8 7FB74000 (v23640470 %-4.4s 0x%8.8X%8.8X %06X (v%.2d %-6.6s %-8.8s %08X %-4.4s %08X) BGRT8 0 BGRT8 FFFF800000000038)
 Boot Processor : 
 
 Boot Processor : APIC Found
 Boot Processor : Boot Processor Id Assigned, ID=0
 Processor#0 : Registered System INT#220 for CPU#0
 Processor#0 : lapic id 0 flags 1 pid 0
-Processor#0 : lapic id 1 flags 1 pid 1
-Processor#0 : lapic id 2 flags 1 pid 2
-Processor#0 : lapic id 3 flags 1 pid 3
 Processor#0 : IO apic id 0 addr FEC00000 irq base 0
 Processor#0 : Max Redir Entry 23
 Processor#0 : ACPI_MADT_TYPE_INTERRUPT_OVERRIDE Bus : 0 GSI : 2 SOURCE : 0
@@ -181,7 +180,7 @@ Processor#0 : MCFG Found
 Processor#0 : Num Segments : 1
 Processor#0 : PCI seg#0 SB : 0 EB : 255 ADDR : B0000000
 Processor#0 : Test get seg: S0 : 1 S1 : 0
-Processor#0 : HPET Found Address : FED00000, HPET Mapped Address : FFFF8000017C4000
+Processor#0 : HPET Found Address : FED00000, HPET Mapped Address : FFFF800001734000
 Processor#0 : Hpet Frequency : 100000000 HZ
 Processor#0 : CPU#0 Selected for Interrupt 0
 Processor#0 : DELIVERY_MODE 0 POLARITY 0 TRIGGERMODE 0
@@ -199,53 +198,20 @@ Processor#0 : @¶l:  (Definition Block level)
 Processor#0 : 
 ACPI table initialization:
 
-Processor#0 : Table [: DsInitializeObjects] (id FFFF8000016CA698) - 1 Objects with 18446603336244870253 Devices, 0 Regions, 18446603336221196288 Methods (18446603340516163583/18446603336221196288/18446603336221196352 Serial/Non/Cvt)
+Processor#0 : Table [: DsInitializeObjects] (id FFFF8000016CA698) - 1 Objects with 18446603336244870269 Devices, 0 Regions, 18446603336221196288 Methods (18446603340516163583/18446603336221196288/18446603336221196352 Serial/Non/Cvt)
 
 Processor#0 : ACPI: 
-Processor#0 : 18446603336222146056 ACPI AML tables successfully acquired and loaded
+Processor#0 : 18446603336221691320 ACPI AML tables successfully acquired and loaded
 Processor#0 : 
 
 Processor#0 : Final data object initialization: 
-Processor#0 : Namespace contains 18446603336222146048 (0xFFFF8000016C64A0) objects
+Processor#0 : Namespace contains 18446603336221691312 (0xFFFF8000016C64A0) objects
 
 Processor#0 : Set Scheduler Data : LAPIC : FFFF800001731000
 Processor#0 : Object 100004000
 Processor#0 : Processor FFFF800001400020
 Processor#0 : Processor#0 Characteristics : 0
-Processor#0 : Object 100004258
-Processor#0 : Processor FFFF800001403520
-Processor#0 : Processor#1 Characteristics : 1
-Processor#0 : Booting Processor#1 , SYSTEM: APIC
-Processor#1 : GDT and TSS Loaded successfully
-Processor#0 : Object 1000042D0
-Processor#0 : Processor FFFF800001404770
-Processor#0 : Processor#2 Characteristics : 1
-Processor#0 : Booting Processor#2 , SYSTEM: APIC
-Processor#1 : Registered System INT#221 for CPU#0
-Processor#0 : Object 100004348
-Processor#0 : Processor FFFF8000014059C0
-Processor#0 : Processor#3 Characteristics : 1
-Processor#0 : Booting Processor#3 , SYSTEM: APIC
-Processor#2 : GDT and TSS Loaded successfully
-Processor#2 : Registered System INT#222 for CPU#0
-Processor#1 : KERNEL Final Initialization Step called, Initializing the scheduling system...
-Processor#2 : KERNEL Final Initialization Step called, Initializing the scheduling system...
-Processor#2 : Current processor #2 INTERNAL_DATA FFFFFFD000400000
-Processor#1 : Current processor #1 INTERNAL_DATA FFFFFFD000200000
-Processor#1 : Registered System INT#220 for CPU#1
-Processor#2 : Registered System INT#220 for CPU#2
-Processor#3 : GDT and TSS Loaded successfully
-Processor#2 : create thread 1
-Processor#3 : Registered System INT#223 for CPU#0
-Processor#3 : KERNEL Final Initialization Step called, Initializing the scheduling system...
 Processor#0 : Completing secondary ACPI Tables initialization
-Processor#3 : Current processor #3 INTERNAL_DATA FFFFFFD000600000
-Processor#3 : Registered System INT#220 for CPU#3
-Processor#2 : Enabling the apic timer, interrupt number : 220
-Processor#1 : create thread 1
-Processor#3 : create thread 1
-Processor#1 : Enabling the apic timer, interrupt number : 220
-Processor#3 : Enabling the apic timer, interrupt number : 220
 Processor#0 :  Vl:  NsEvaluate (nseval)
 
 Processor#0 : HWl:  NsEvaluate
@@ -253,21 +219,18 @@ Processor#0 : HWl:  NsEvaluate
 Processor#0 : Evaluate _PIC Status = 0
 Processor#0 : KERNEL Final Initialization Step called, Initializing the scheduling system...
 Processor#0 : Current processor #0 INTERNAL_DATA FFFFFFD000000000
-Processor#0 : Registered System INT#224 for CPU#0
+Processor#0 : Registered System INT#221 for CPU#0
 Processor#0 : create thread 1
-Processor#0 : Enabling the apic timer, interrupt number : 224
-Processor#2 : APIC Timer frequency : 1003512000 HZ
-Processor#2 : Processor#2 enabled.
-Processor#1 : APIC Timer frequency : 1000427840 HZ
-Processor#1 : Processor#1 enabled.
-Processor#3 : APIC Timer frequency : 1003496000 HZ
-Processor#3 : Processor#3 enabled.
-Processor#0 : APIC Timer frequency : 1000437760 HZ
+Processor#0 : Enabling the apic timer, interrupt number : 221
+Processor#0 : APIC Timer frequency : 1003357760 HZ
+Processor#0 : Processor#0 enabled. Current thread FFFF800001401320 id 1
+Processor#0 : IRQ 0
+Processor#0 : Hpet Interrupt
 Processor#0 : Tables:
 Processor#0 : SN : FACP Length : 244
-Processor#0 : SN : DSDT Length : 8633
+Processor#0 : SN : DSDT Length : 8378
 Processor#0 : SN : FACS Length : 64
-Processor#0 : SN : APIC Length : 144
+Processor#0 : SN : APIC Length : 120
 Processor#0 : SN : HPET Length : 56
 Processor#0 : SN : MCFG Length : 60
 Processor#0 : SN : WAET Length : 40
@@ -280,13 +243,13 @@ Processor#0 : System is already in ACPI mode
 
 Processor#0 : Initializing General Purpose Events (GPEs):
 
-Processor#0 :     Initialized GPE FFFF8000000E7D70 to FFFF8000016C8418 [evgpeblk] 9 regs on interrupt 0xFFFF80000168D6A3†.@
+Processor#0 :     Initialized GPE FFFF800000078D20 to FFFF8000016C8418 [evgpeblk] 9 regs on interrupt 0xFFFF80000168D6B3∞.@
 
-Processor#0 : AcpiOsInstallInt#9 ISR FFFF80000168FB60 CTX FFFF80000145EE40
-Processor#0 : CPU#1 Selected for Interrupt 9
+Processor#0 : AcpiOsInstallInt#9 ISR FFFF80000168FB70 CTX FFFF800001455130
+Processor#0 : CPU#0 Selected for Interrupt 9
 Processor#0 : DELIVERY_MODE 0 POLARITY 0 TRIGGERMODE 1
 Processor#0 : A
-Processor#0 : C FFFF800001403520 FFFF800001732000
+Processor#0 : C FFFF800001400020 FFFF800001600000
 Processor#0 : C
 Processor#0 : A
 Processor#0 : A
@@ -299,7 +262,7 @@ Processor#0 :  Vl:  NsEvaluate (nseval)
 
 Processor#0 : HWl:  NsEvaluate
 
-Processor#0 :     Executed 18446603336222146032 _INI methods requiring 18446603336245077176 _STA executions (examined 18446603336245077144 objects)
+Processor#0 :     Executed 18446603336221691296 _INI methods requiring 18446603336245077176 _STA executions (examined 18446603336245077144 objects)
 
 Processor#0 : Creating ACPI Device Object
 Processor#0 : RETURN_STATUS :
@@ -370,15 +333,15 @@ Processor#0 : EXPORTING...
 Processor#0 : Linking DLL...
 Processor#0 : 0
 Processor#0 : Preboot Launch
-Processor#0 : Running driver 1 EntryPoint FFFF80000189D000
-Processor#0 : Init LIBS: Calling DLL Entry Point FFFF8000019A30A0
+Processor#0 : Running driver 1 EntryPoint FFFF80000174D000
+Processor#0 : Init LIBS: Calling DLL Entry Point FFFF8000018530A0
 Processor#0 : ACPI Library entry.
 Processor#0 : ACPI Device name : Advanced Configuration And Power Interface 2.0+ 47
 Processor#0 : PCI Driver startup
 Processor#0 : ACPI IO Protocol 2
-Processor#0 : ACPI GET TABLE SIG : MCFG INST : 0 HDR : FFFF8000000E7F08
-Processor#0 : MCFG FFFF8000017C2000
-Processor#0 : MCFG : FFFF8000017C2000 NumSegments : 1
+Processor#0 : ACPI GET TABLE SIG : MCFG INST : 0 HDR : FFFF800000078EB8
+Processor#0 : MCFG FFFF800001732000
+Processor#0 : MCFG : FFFF800001732000 NumSegments : 1
 Processor#0 : Max PCI Segment : 0
 Processor#0 : KeOpenEVT
 Processor#0 : KeOpenEVT
@@ -508,7 +471,7 @@ Processor#0 : EXPORTING...
 Processor#0 : Linking DLL...
 Processor#0 : 0
 Processor#0 : Preboot Launch
-Processor#0 : Running driver 3 EntryPoint FFFF8000019B1140
+Processor#0 : Running driver 3 EntryPoint FFFF800001861140
 Processor#0 : EODX Driver Startup. DriverID 3
 Processor#0 : Software Frame Buffer at C0000000 1920x1080
 Processor#0 : EODX Software adapter created successfully
@@ -539,7 +502,7 @@ Processor#0 : Importing dll noskx64.exe
 Processor#0 : Linking NOSKX64.EXE System
 Processor#0 : 0
 Processor#0 : Preboot Launch
-Processor#0 : Running driver 4 EntryPoint FFFF8000019BA000
+Processor#0 : Running driver 4 EntryPoint FFFF80000186A000
 Processor#0 : Window Management Driver startup
 Processor#0 : RETURN_STATUS :
 Processor#0 : 0
@@ -549,12 +512,12 @@ Processor#0 : Section:
 Processor#0 : .text
 Processor#0 : 1000
 Processor#0 : 400
-Processor#0 : 170B
+Processor#0 : 168B
 Processor#0 : Section:
 Processor#0 : .rdata
 Processor#0 : 3000
 Processor#0 : 1C00
-Processor#0 : F6A
+Processor#0 : F92
 Processor#0 : Section:
 Processor#0 : .data
 Processor#0 : 4000
@@ -564,7 +527,7 @@ Processor#0 : Section:
 Processor#0 : .pdata
 Processor#0 : 5000
 Processor#0 : 2C00
-Processor#0 : 150
+Processor#0 : 15C
 Processor#0 : ADDR_SPACE_SIZE :
 Processor#0 : 6000
 Processor#0 : Sections copied.
@@ -577,12 +540,12 @@ Processor#0 : Section:
 Processor#0 : .text
 Processor#0 : 1000
 Processor#0 : 400
-Processor#0 : 318
+Processor#0 : 358
 Processor#0 : Section:
 Processor#0 : .rdata
 Processor#0 : 2000
 Processor#0 : 800
-Processor#0 : 474
+Processor#0 : 4EE
 Processor#0 : Section:
 Processor#0 : .pdata
 Processor#0 : 3000
@@ -620,146 +583,61 @@ Processor#0 : EXPORTING...
 Processor#0 : Linking DLL...
 Processor#0 : 0
 Processor#0 : Preboot Launch
-Processor#0 : Running driver 5 EntryPoint FFFF8000019BE450
-Processor#0 : Init LIBS: Calling DLL Entry Point FFFF8000019C4000
+Processor#0 : Running driver 5 EntryPoint FFFF80000186E430
+Processor#0 : Init LIBS: Calling DLL Entry Point FFFF800001874000
 Processor#0 : System Driver Developement Kit (SDDK) Entry Point.
 Processor#0 : AHCI Driver startup
-Processor#0 : PCI IO DRVIF FFFF8000019C1000
+Processor#0 : PCI IO DRVIF FFFF800001871000
 Processor#0 : KeRegEVT
 Processor#0 : create thread 0
 Processor#0 : create thread 0
-Processor#0 : Set static priority, remote execute thread id 7 processor 1
 Processor#0 : create thread 0
-Processor#0 : Set static priority, remote execute thread id 8 processor 2
 Processor#0 : create thread 0
-Processor#1 : SYSTEM_INTERRUPT !
-Processor#2 : SYSTEM_INTERRUPT !
-Processor#2 : Remote Execute on processor#2
-Processor#0 : Set static priority, remote execute thread id 9 processor 3
 Processor#0 : create thread 0
-Processor#2 : Remote sclink processorid 2
-Processor#1 : Remote Execute on processor#1
 Processor#0 : create thread 0
-Processor#3 : SYSTEM_INTERRUPT !
-Processor#0 : Set static priority, remote execute thread id 11 processor 1
-Processor#1 : Remote sclink processorid 1
-Processor#2 : Processor was not waiting
-Processor#3 : Remote Execute on processor#3
-Processor#3 : Remote sclink processorid 3
-Processor#2 : Hello thread
-Processor#1 : Processor was not waiting
-Processor#3 : Processor was not waiting
-ProcesProcesssor#1 : SYoSTEMr#1 : _INTRETURN_SERRUTATUS :PT !
-
-PProcessorocessorr#1 : Remote Execute on processor#1
-#1 : 0
+Processor#0 : RETURN_STATUS :
+Processor#0 : 0
 Processor#0 : Driver NewOS\System\ehci.sys
-ProcessoProcer#0 : loadessor#d0 : Remote sc
-linkProce processssor#orid 1
-0 : SectProcessor#1 : Processor was not waiting
-Prion:ocessor#2
-Pro ces: Kernel mosor#0de t hre: .tad#8 cext
-reated
-ProcesProcessor#0 : Hello thsor#read
-0 : 1000
-ProcessProcessor#0 : Kernel mode threador#0#9 c : 4reated00
-Pro
-cessorPro#3 : 4cessor#93 : AHCI Devi
-ce add (ClasPs 6 rocessorS#0 : Section:
-Proceubclasssor#0 : .rdata
-s 1 Progif 0)
+Processor#0 : loaded
+Processor#0 : Section:
+Processor#0 : .text
+Processor#0 : 1000
+Processor#0 : 400
+Processor#0 : 49
+Processor#0 : Section:
+Processor#0 : .rdata
 Processor#0 : 2000
-Processor#3 : Processor#3 : Exitting thread #9
-600
-Processor#1 : Hello Prothrcead
-essorProce#2 : 1DCsso
-r#Processor#0 : Section:
-Processor#00 :  A: .pdata
+Processor#0 : 600
+Processor#0 : 1DC
+Processor#0 : Section:
+Processor#0 : .pdata
 Processor#0 : 3000
 Processor#0 : 800
-Processor#0 : 18HC
-I PDervice add (Class 2 Subclass 0 Progif 0)
-ocessor#2 : ProADDcessor#R_SP2 :ACE_SIZE : Exit
-Procestinsor#g0  threa: 40d #00
-8
+Processor#0 : 18
+Processor#0 : ADDR_SPACE_SIZE :
+Processor#0 : 4000
 Processor#0 : Sections copied.
 Processor#0 : IMPORTING...
-Processor#2 : Thread #8 exited with code 0
 Processor#0 : Importing dll noskx64.exe
 Processor#0 : Linking NOSKX64.EXE System
-ProProcessor#0 : Hecllo threeads
-sProor#ces3 : 0sor#3
- : Thread #9 exited with code 0
-ProcessoPror#1ce : ssor#1 Pre: booKet Launch
-rnel mode thread#11 created
-Processor#1 : AHCI Device add (Class 12 Subclass 5 Progif 0)
-Processor#0 : Running driver 6 EntryPoint FFFF800001A2C020
-Processor#1 : Kernel mode thread#7 created
-Processor#1 : AHCI Device add (Class 3 Subclass 0 Progif 0)
-Processor#1 : Exitting thread #7
-Processor#1 : Thread #7 exited with code 0
+Processor#0 : Found AHCI Controller at location FFFF800001455FD8
+Processor#0 : Ahci supports long addresses
+Processor#0 : Resetting AHC FFFF8000018DF000
+Processor#0 : AHCI Resetted successfully
+Processor#0 : Enabling MSI Interrupts Device 31 Bus 0 Function 0
+Processor#0 : 0
+Processor#0 : Preboot Launch
+Processor#0 : Running driver 6 EntryPoint FFFF8000018DC020
 Processor#0 : EHCI Driver startup
 Processor#0 : KeRegEVT
-Processor#1 : Exitting thread #11
-Processor#1 : Thread #11 exited with code 0
 Processor#0 : create thread 0
-Processor#0 : Set static priority, remote execute thread id 12 processor 2
 Processor#0 : create thread 0
-Processor#2 : SYSTEM_INTERRUPT !
-Processor#2 : Remote Execute on processor#2
-Processor#2 : Remote sclink processorid 2
-Processor#2 : Processor was not waiting
-Processor#2 : Hello thread
-Processor#2 : Kernel mode thread#12 created
-Processor#0 : Set static priority, remote execute thread id 13 processor 3
-Processor#2 : EHCI Device add handler
 Processor#0 : create thread 0
-Processor#3 : SYSTEM_INTERRUPT !
-Processor#3 : Remote Execute on processor#3
-Processor#3 : Remote sclink processorid 3
-Processor#3 : Processor was not waiting
 Processor#0 : create thread 0
-Processor#2 : Exitting thread #12
-Processor#3 : Hello thread
-Processor#3 : Kernel mode thread#13 created
-Processor#2 : Thread #12 exited with code 0
-Processor#0 : Set static priority, remote execute thread id 15 processor 1
 Processor#0 : create thread 0
-Processor#1 : SYSTEM_INTERRUPT !
-Processor#1 : Remote Execute on processor#1
-Processor#3 : EHCI Device add handler
-Processor#1 : Remote sclink processorid 1
-Processor#1 : Processor was not waiting
-Processor#1 : Hello thread
-Processor#1 : Kernel mode thread#15 created
-Processor#1 : EHCI Device add handler
-Processor#1 : Exitting thread #15
-Processor#1 : Thread #15 exited with code 0
-Processor#3 : Exitting thread #13
-Processor#3 : Thread #13 exited with code 0
-Processor#0 : Set static priority, remote execute thread id 16 processor 2
 Processor#0 : create thread 0
-Processor#2 : SYSTEM_INTERRUPT !
-Processor#2 : Remote Execute on processor#2
-Processor#2 : Remote sclink processorid 2
-Processor#2 : Processor was not waiting
-Processor#2 : Hello thread
-Processor#2 : Kernel mode thread#16 created
-Processor#2 : EHCI Device add handler
-Processor#2 : Exitting thread #16
-Processor#2 : Thread #16 exited with code 0
-Processor#0 : Set static priority, remote execute thread id 17 processor 3
-Processor#3 : SYSTEM_INTERRUPT !
-Processor#3 : Remote Execute on processor#3
-Processor#3 : Remote sclink processorid 3
-Processor#3 : Processor was not waiting
-Processor#3 : Hello thread
-Processor#3 : Kernel modProe thread#c17 created
-Processor#3 : EHCI Device add handler
-Processor#3 : Exitting thread #17
-essor#3 : RETURN_STATUS :
+Processor#0 : RETURN_STATUS :
 Processor#0 : 0
-Processor#3 : Thread #17 exited with code 0
 Processor#0 : Driver NewOS\System\xhci.sys
 Processor#0 : loaded
 Processor#0 : Section:
@@ -768,7 +646,21 @@ Processor#0 : 1000
 Processor#0 : 400
 Processor#0 : 18
 Processor#0 : Section:
-Processor#0 : .rdata
+Processor#0 : .rdataProcessor#0 : cptr 80 capid 5
+Processor#0 : Found MSI Capability
+Processor#0 : CPU#0 Selected for Interrupt 4294967295
+Processor#0 : Allocating arbitrary irq
+Processor#0 : A
+Processor#0 : A
+Processor#0 : A
+Processor#0 : MSI APIC ID 0 ACPI ID 0
+Processor#0 : create thread 0
+Processor#0 : create thread 0
+Processor#0 : create thread 0
+Processor#0 : EHCI Device add handler
+Processor#0 : EHCI Device add handler
+Processor#0 : EHCI Device add handler
+
 Processor#0 : 2000
 Processor#0 : 600
 Processor#0 : 19A
@@ -783,9 +675,21 @@ Processor#0 : Sections copied.
 Processor#0 : IMPORTING...
 Processor#0 : Importing dll noskx64.exe
 Processor#0 : Linking NOSKX64.EXE System
-Processor#0 : 0
+Processor#0 Processor#0 : EHCI Device add handler
+Processor#0 : EHCI Device add handler
+Processor#0 : EHCI Device add handler
+Processor#0 : create thread 0
+Processor#0 : create thread 0
+Processor#0 : create thread 0
+Processor#0 : AHCI Thread#15 : Initializing port 0
+Processor#0 : IRQ 2
+Processor#0 : AHCI Interrupt GIS 1
+Processor#0 : AHCI : Interrupt on port 0 IS 1 64Bit 1
+Processor#0 : AHCI : D2H Reg FIS SA 0 CI 0
+Processor#0 : AHCI Interrupt handler exit.
+: 0
 Processor#0 : Preboot Launch
-Processor#0 : Running driver 7 EntryPoint FFFF800001A90000
+Processor#0 : Running driver 7 EntryPoint FFFF80000196B000
 Processor#0 : XHCI Driver startup
 Processor#0 : RETURN_STATUS :
 Processor#0 : 0
@@ -797,7 +701,37 @@ Processor#0 : 1000
 Processor#0 : 400
 Processor#0 : 18
 Processor#0 : Section:
-Processor#0 : .rdata
+PrProcessor#0 : AHCI Thread#17 : Initializing port 2
+Processor#0 : IRQ 2
+Processor#0 : AHCI Interrupt GIS 4
+Processor#0 : AHCI : Interrupt on port 2 IS 1 64Bit 1
+Processor#0 : AHCI : D2H Reg FIS SA 0 CI 0
+Processor#0 : AHCI Interrupt handler exit.
+Processor#0 : AHCI Thread#18 : Initializing port 3
+Processor#0 : IRQ 2
+Processor#0 : AHCI Interrupt GIS 8
+Processor#0 : AHCI : Interrupt on port 3 IS 1 64Bit 1
+Processor#0 : AHCI : D2H Reg FIS SA 0 CI 0
+Processor#0 : AHCI Interrupt handler exit.
+Processor#0 : AHCI Thread#19 : Initializing port 4
+Processor#0 : IRQ 2
+Processor#0 : AHCI Interrupt GIS 10
+Processor#0 : AHCI : Interrupt on port 4 IS 1 64Bit 1
+Processor#0 : AHCI : D2H Reg FIS SA 0 CI 0
+Processor#0 : AHCI Interrupt handler exit.
+Processor#0 : AHCI Thread#20 : Initializing port 5
+Processor#0 : IRQ 2
+Processor#0 : AHCI Interrupt GIS 20
+Processor#0 : AHCI : Interrupt on port 5 IS 1 64Bit 1
+Processor#0 : AHCI : D2H Reg FIS SA 0 CI 0
+Processor#0 : AHCI Interrupt handler exit.
+Processor#0 : AHCI Thread#16 : Initializing port 1
+Processor#0 : IRQ 2
+Processor#0 : AHCI Interrupt GIS 2
+Processor#0 : AHCI : Interrupt on port 1 IS 1 64Bit 1
+Processor#0 : AHCI : D2H Reg FIS SA 0 CI 0
+Processor#0 : AHCI Interrupt handler exit.
+ocessor#0 : .rdata
 Processor#0 : 2000
 Processor#0 : 600
 Processor#0 : 1A2
@@ -819,7 +753,12 @@ Processor#0 : Section:
 Processor#0 : .text
 Processor#0 : 1000
 Processor#0 : 400
-Processor#0 : 18
+Processor#0Processor#0 : IRQ 2
+Processor#0 : AHCI Interrupt GIS 1
+Processor#0 : AHCI : Interrupt on port 0 IS 1 64Bit 1
+Processor#0 : AHCI : D2H Reg FIS SA 0 CI 0
+Processor#0 : AHCI Interrupt handler exit.
+ : 18
 Processor#0 : Section:
 Processor#0 : .rdata
 Processor#0 : 2000
@@ -836,12 +775,33 @@ Processor#0 : Sections copied.
 Processor#0 : IMPORTING...
 Processor#0 : Importing dll noskx64.exe
 Processor#0 : Linking NOSKX64.EXE System
-Processor#0 : 0
+PProcessor#0 : IRQ 2
+Processor#0 : AHCI Interrupt GIS 4
+Processor#0 : AHCI : Interrupt on port 2 IS 1 64Bit 1
+Processor#0 : AHCI : D2H Reg FIS SA 0 CI 0
+Processor#0 : AHCI Interrupt handler exit.
+Processor#0 : Device detected on port 0
+Processor#0 : Port signature 101 IE FDC000FF IS 0
+rocessor#0 : 0
 Processor#0 : Driver NewOS\System\usbkeyboard.sys
 Processor#0 : loaded
 Processor#0 : Section:
 Processor#0 : .text
-Processor#0 : 1000
+ProcessorProcessor#0 : Device detected on port 2
+Processor#0 : Port signature EB140101 IE FDC000FF IS 0
+Processor#0 : AHCI Thread #15 : Initializing ATA Device on Port #0 IDENTIFY_CMD#0
+Processor#0 : Issuing command#0
+Processor#0 : Suspended thread#15
+Processor#0 : IRQ 2
+Processor#0 : AHCI Interrupt GIS 1
+Processor#0 : AHCI : Interrupt on port 0 IS 3 64Bit 1
+Processor#0 : AHCI : D2H Reg FIS SA 0 CI 0
+Processor#0 : Command #0 Compeleted.
+Processor#0 : Get th flags 2
+Processor#0 : Thread #15 Resumed
+Processor#0 : AHCI : PIO Setup FIS
+Processor#0 : AHCI Interrupt handler exit.
+#0 : 1000
 Processor#0 : 400
 Processor#0 : 18
 Processor#0 : Section:
@@ -853,6 +813,8 @@ Processor#0 : Section:
 Processor#0 : .pdata
 Processor#0 : 3000
 Processor#0 : 800
+Processor#0 : thread#15 back to work
+Processor#0 : AHCI Command#0 issued successfully SATA_ACTIVE 0 CI 0
 Processor#0 : C
 Processor#0 : ADDR_SPACE_SIZE :
 Processor#0 : 4000
@@ -860,21 +822,139 @@ Processor#0 : Sections copied.
 Processor#0 : IMPORTING...
 Processor#0 : Importing dll noskx64.exe
 Processor#0 : Linking NOSKX64.EXE System
+Processor#0 : Multiple logical sectors per physical sector, Sector size : 512
+Processor#0 : Model Number : QEMU HARDDISK Sector size : 512 Bytes, Disk Size : 45 MB
+Processor#0 : Testing read... BUFF FFFF800001493AE0
+Processor#0 : 0
+Processor#0 : Driver NewOS\System\fat32.sys
+Processor#0 : loaded
+Processor#0 : Section:
+Processor#0 : .text
+Processor#0 : 1000
+Processor#0 : 400
+Processor#0 : 5C7
+Processor#0 : Section:
+Processor#0 : .rdata
+Processor#0 : 2000
+Processor#0 : A00
+Processor#0 : 528
+Processor#0 : Section:
+Processor#0 : .pdata
+Processor#0 : 3000
+Processor#0 : 1000
+PProcessor#0 : IRQ 2
+Processor#0 : AHCI Interrupt GIS 1
+Processor#0 : AHCI : Interrupt on port 0 IS 1 64Bit 1
+Processor#0 : AHCI : D2H Reg FIS SA 0 CI 0
+Processor#0 : Command #0 Compeleted.
+Processor#0 : AHCI Interrupt handler exit.
+Processor#0 : Read status 0 Buffer: 5452415020494645
+Processor#0 : EFI PART
+Processor#0 : KeOpenEVT
+Processor#0 : KeOpenEVT
+rocessor#0 : 60
+Processor#0 : ADDR_SPACE_SIZE :
+Processor#0 : 4000
+Processor#0 : Sections copied.
+Processor#0 : IMPORTING...
+Processor#0 : Importing dll noskx64.exe
+Processor#0 : Reading partition table for drive : QEMU HARDDISK
+Processor#0 : Linking NOSKX64.EXE System
+Processor#0 : IRQ 2
+Processor#0 : AHCI Interrupt GIS 1
+Processor#0 : AHCI : Interrupt on port 0 IS 1 64Bit 1
+Processor#0 : AHCI : D2H Reg FIS SA 0 CI 0
+Processor#0 : Command #0 Compeleted.
+Processor#0 : AHCI Interrupt handler exit.
+Processor#0 : Buffer FFFF800001593D50 
+Processor#0 : MBR Sig AA55 Unique Sig 0 0 0 0
+Processor#0 : MBR Partition found, FSID EE
+Processor#0 : GPT Partition found
+Processor#0 : Importing dll syscruntime.dll
+Processor#0 : Found boot DLL syscruntime.dll
+Processor#0 : Section:
+Processor#0 : .text
+Processor#0 : 1000
+Processor#0 : 400
+Processor#0 : 800
+Processor#0 : Section:
+Processor#0 : .rdata
+Processor#0 : 2000
+Processor#0 : C00
+Processor#0 : 400
+Processor#0 : Section:
+Processor#0 : .pdata
+Processor#0 : 3000
+Processor#0 : 1000
+Processor#0 : 200
+Processor#0 : ADDR_SPACE_SIZE :
+Processor#0 : 4000
+Processor#0 : Sections copied.
+Processor#0 : EXPORTING...
+Processor#0 : Linking DLL...
+Processor#0 : 0
+Processor#0 : Preboot Launch
+Processor#0 : Running driver B EntryPoint FFFF8000019BB3F0
+Processor#0 : IRQ 2
+Processor#0 : AHCI Interrupt GIS 1
+Processor#0 : AHCI : Interrupt on port 0 IS 1 64Bit 1
+Processor#0 : AHCI : D2H Reg FIS SA 0 CI 0
+Processor#0 : Command #0 Compeleted.
+Processor#0 : AHCI Interrupt handler exit.
+Processor#0 : GPT Signature EFI PART EntrySize 80 PartitionsLba 2 NumEntries 80
+Processor#0 : IRQ 2
+Processor#0 : AHCI Interrupt GIS 1
+Processor#0 : AHCI : Interrupt on port 0 IS 1 64Bit 1
+Processor#0 : AHCI : D2H Reg FIS SA 0 CI 0
+Processor#0 : Command #0 Compeleted.
+Processor#0 : AHCI Interrupt handler exit.
+Processor#0 : Partition#0 FIRST_LBA 800 LAST_LBA 16E14 Name : EFI system partition
+Processor#0 : EFI System partition
+Processor#0 : KeSignalEVT
+Processor#0 : FAT32 Driver startup, driverid#11
+Processor#0 : KeRegEVT
+Processor#0 : create thread 0
+Processor#0 : RETURN_STATUS :
 Processor#0 : 0
 Processor#0 : Running AUTO BOOT LAUNCH Drivers
 Processor#0 : BOOT_LAUNCH Driver
-Processor#0 : Running Driver#2 EntryPoint FFFF8000019A8000
-Processor#0 : Init LIBS: Calling DLL Entry Point FFFF8000019AC0A0
+Processor#0 : Running Driver#2 EntryPoint FFFF800001858000
+Processor#0 : Init LIBS: Calling DLL Entry Point FFFF80000185C0A0
 Processor#0 : ACPI Library entry.
+Processor#0 : 0 Partitions were found.
 Processor#0 : ACPI Device name : Advanced Configuration And Power Interface 2.0+ 47
 Processor#0 : RTC Driver startup.
+Processor#0 : FAT32 : Partition add event, START 800 END 16E14
 Processor#0 : ACPI IO Protocol 0
-Processor#0 : ACPI_IO_GET_VER FFFF8000000E7EF8
+Processor#0 : IRQ 2
+Processor#0 : AHCI Interrupt GIS 1
+Processor#0 : AHCI : Interrupt on port 0 IS 1 64Bit 1
+Processor#0 : AHCI : D2H Reg FIS SA 0 CI 0
+Processor#0 : Command #0 Compeleted.
+Processor#0 : AHCI Interrupt handler exit.
+Processor#0 : Volume NO NAME    FAT32   æw|¨"¿tV¥ª FS : FAT32   æw|¨"¿tV¥ª
+Processor#0 : Found FAT32 Partition, Cluster size 1 RSV AREA 20 ROOT DIR 2 FAT Size 2C1
+Processor#0 : ACPI_IO_GET_VER FFFF800000078EA8
 Processor#0 : ACPI Version : 2.0
-Processor#0 : 0:19:33
-Processor#0 : Day 3 Of the week
-Processor#0 : 1/8/23
+Processor#0 : 16:4:45
+Processor#0 : Day 5 Of the week
+Processor#0 : 3/8/23
+Processor#0 : FAT32 : Num allocation tables 2 FAT_LBA 2080 ROOTDIR_LBA 3490
 Processor#0 : Return status : 0
+Processor#0 : IRQ 2
+Processor#0 : AHCI Interrupt GIS 1
+Processor#0 : AHCI : Interrupt on port 0 IS 1 64Bit 1
+Processor#0 : AHCI : D2H Reg FIS SA 0 CI 0
+Processor#0 : Command #0 Compeleted.
+Processor#0 : AHCI Interrupt handler exit.
+Processor#0 : IRQ 2
+Processor#0 : AHCI Interrupt GIS 1
+Processor#0 : AHCI : Interrupt on port 0 IS 1 64Bit 1
+Processor#0 : AHCI : D2H Reg FIS SA 0 CI 0
+Processor#0 : Command #0 Compeleted.
+Processor#0 : AHCI Interrupt handler exit.
+Processor#0 : File(10, 0 Bytes) : NewOS Last Modified 3/8/2023 at 16:4:34
+Processor#0 : File(10, 0 Bytes) : efi Last Modified 3/8/2023 at 16:4:38
 Processor#0 : LIB : s SZ : 1000
 Processor#0 : LIB : e SZ : 600
 Processor#0 : LIB : e SZ : 600
@@ -882,2103 +962,27 @@ Processor#0 : LIB : s SZ : 1200
 Processor#0 : LIB : o SZ : 19C00
 Processor#0 : LIB : a SZ : E00
 Processor#0 : LIB : c SZ : 1200
+Processor#0 : File(20, 13 Bytes) : Very long file name haha 3 dots.txt Last Modified 3/8/2023 at 16:4:38
 Processor#0 : drvend
 Processor#0 : create thread 0
 Processor#0 : create thread 0
-Processor#0 : Set static priority, remote execute thread id 19 processor 1
-Processor#1 : SYSTEM_INTERRUPT !
-Processor#1 : Remote Execute on processor#1
 Processor#0 : create thread 0
-Processor#1 : Remote sclink processorid 1
-Processor#1 : Processor was not waiting
-Processor#0 : Set static priority, remote execute thread id 20 processor 2
-Processor#2 : SYSTEM_INTERRUPT !
-Processor#2 : Remote Execute on processor#2
 Processor#0 : create thread 0
-Processor#2 : Remote sclink processorid 2
-Processor#2 : Processor was not waiting
-Processor#2 : Hello thread
-Processor#2 : Kernel mode thread#20 created
-Processor#1 : Hello thread
-Processor#2 : THREAD3 Created, testing thread exit functionnality
-Processor#0 : Set static priority, remote execute thread id 21 processor 3
-Processor#2 : Exitting thread #20
-Processor#1 : Kernel mode thread#19 created
 Processor#0 : create thread 0
-Processor#3 : SYSTEM_INTERRUPT !
-Processor#3 : Remote Execute on processor#3
-Processor#3 : Remote sclink processorid 3
-Processor#3 : Processor was not waiting
-Processor#3 : Hello thread
-Processor#3 : Kernel mode thread#21 created
-Processor#3 : THREAD3 Created, testing thread exit functionnality
 Processor#0 : Drivers runned successfully, physical devices:
-Processor#2 : Thread #20 exited with code 96
-Processor#3 : Exitting thread #21
-Processor#3 : Thread #21 exited with code 96
-Processor#0 : KTHREADS 8
-Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
-Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Virtual devices:
-Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
-Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
-Processor#0 : Hello thread
-Processor#0 : Kernel mode thread#6 created
-Processor#0 : AHCI Device add (Class 6 Subclass 0 Progif 0)
-Processor#0 : Exitting thread #6
-Processor#0 : Hello thread
-Processor#0 : Kernel mode thread#10 created
-Processor#0 : AHCI Device add (Class 1 Subclass 6 Progif 1)
-Processor#0 : Found AHCI Controller at location FFFF80000145FCE8
-Processor#0 : Hello thread
-Processor#0 : Kernel mode thread#14 created
-Processor#0 : EHCI Device add handler
-Processor#0 : Exitting thread #14
-Processor#0 : Thread #14 exited with code 0
-Processor#0 : Hello thread
-Processor#0 : Kernel mode thread#18 created
-Processor#0 : Hello thread
-Processor#0 : Kernel mode thread#22 created
 Processor#0 : THREAD3 Created, testing thread exit functionnality
-Processor#0 : Exitting thread #22
-Processor#0 : Thread #22 exited with code 96
-Processor#0 : Thread #6 exited with code 0
-Processor#0 : AHCI Base Address C1084000 BAR5 11001AF400000000
-Processor#0 : Resetting AHC FFFF800001AEF000
-Processor#0 : AHCI Resetted successfully
-Processor#0 : AHCI Enabled successfully MAX_SLOT 31
-Processor#0 : Enabling MSI Interrupts Device 31 Bus 0 Function 0
-Processor#0 : cptr 80 capid 5
-Processor#0 : Found MSI Capability
-Processor#0 : CPU#2 Selected for Interrupt 4294967295
-Processor#0 : Allocating arbitrary irq
-Processor#0 : A
-Processor#0 : A
-Processor#0 : A
-Processor#0 : create thread 0
-Processor#0 : Set static priority, remote execute thread id 23 processor 1
-Processor#1 : SYSTEM_INTERRUPT !
-Processor#1 : Remote Execute on processor#1
-Processor#1 : Remote sclink processorid 1
-Processor#1 : Processor was not waiting
-Processor#1 : Hello thread
-Processor#1 : Kernel mode thread#23 created
-Processor#1 : AHCI Thread#23 : Initializing port 0
-Processor#1 : AHCI Thread23 Allocating resources
-Processor#0 : create thread 0
-Processor#0 : Set static priority, remote execute thread id 24 processor 2
-Processor#0 : create thread 0
-Processor#2 : SYSTEM_INTERRUPT !
-Processor#2 : Remote Execute on processor#2
-Processor#2 : Remote sclink processorid 2
-Processor#2 : Processor was not waiting
-Processor#2 : Hello thread
-Processor#2 : Kernel mode thread#24 created
-Processor#2 : AHCI Thread#24 : Initializing port 1
-Processor#2 : AHCI Thread24 Allocating resources
-Processor#0 : Set static priority, remote execute thread id 25 processor 3
-Processor#3 : SYSTEM_INTERRUPT !
-Processor#3 : Remote Execute on processor#3
-Processor#3 : Remote sclink processorid 3
-Processor#3 : Processor was not waiting
-Processor#3 : Hello thread
-Processor#3 : Kernel mode thread#25 created
-Processor#3 : AHCI Thread#25 : Initializing port 2
-Processor#3 : AHCI Thread25 Allocating resources
-Processor#0 : create thread 0
-Processor#0 : create thread 0
-Processor#0 : Set static priority, remote execute thread id 27 processor 1
-Processor#0 : create thread 0
-Processor#1 : SYSTEM_INTERRUPT !
-Processor#1 : Remote Execute on processor#1
-Processor#1 : Remote sclink processorid 1
-Processor#1 : Processor was not waiting
-Processor#0 : Set static priority, remote execute thread id 28 processor 2
-Processor#1 : Hello thread
-Processor#1 : Kernel mode thread#27 created
-Processor#1 : AHCI Thread#27 : Initializing port 4
-Processor#1 : AHCI Thread27 Allocating resources
-Processor#0 : Hello thread
-Processor#0 : Kernel mode thread#26 created
-Processor#2 : SYSTEM_INTERRUPT !
-Processor#2 : Remote Execute on processor#2
-Processor#2 : Remote sclink processorid 2
-Processor#2 : Processor was not waiting
-Processor#0 : Exitting thread #10
-Processor#0 : Thread #10 exited with code 0
-Processor#0 : AHCI Thread#26 : Initializing port 3
-Processor#0 : AHCI Thread26 Allocating resources
-Processor#2 : Hello thread
-Processor#2 : Kernel mode thread#28 created
-Processor#2 : AHCI Thread#28 : Initializing port 5
-Processor#2 : AHCI Thread28 Allocating resources
-Processor#3 : AHCI Thread25 disabling port
-Processor#3 : AHCI Thread25 port disabled successfully, setting bars
-Processor#3 : AHCI Thread #25 Init command list
-Processor#2 : IRQ 0
-Processor#2 : Hpet Interrupt
-Processor#2 : IRQ 0
-Processor#2 : Hpet Interrupt
-Processor#2 : IRQ 0
-Processor#2 : Hpet Interrupt
-Processor#3 : Device detected on port 2
-Processor#0 : AHCI Thread26 disabling port
-Processor#0 : AHCI Thread26 port disabled successfully, setting bars
-Processor#0 : AHCI Thread #26 Init command list
-Processor#2 : IRQ 0
-Processor#2 : Hpet Interrupt
-Processor#1 : AHCI Thread23 disabling port
-Processor#1 : AHCI Thread23 port disabled successfully, setting bars
-Processor#1 : AHCI Thread #23 Init command list
-Processor#3 : No device detected on port 2
-Processor#2 : IRQ 0
-Processor#3 : Exitting thread #25
-Processor#3 : Thread #25 exited with code -list
-Processor#2 : Hpet Interrupt
-Processor#1 : Device detected on port 0
-Processor#2 : IRQ 0
-Processor#2 : Hpet Interrupt
-Processor#0 : KTHREADS 8
-Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
-Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
-Processor#0 : Virtual devices:
-Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
-Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
-Processor#2 : AHCI Thread24 disabling port
-Processor#2 : AHCI Thread24 port disabled successfully, setting bars
-Processor#2 : AHCI Thread #24 Init command list
-Processor#2 : IRQ 0
-Processor#2 : Hpet Interrupt
-Processor#2 : IRQ 0
-Processor#2 : Hpet Interrupt
-Processor#1 : AHCI Thread27 disabling port
-Processor#1 : AHCI Thread27 port disabled successfully, setting bars
-Processor#1 : AHCI Thread #27 Init command list
-Processor#2 : IRQ 0
-Processor#2 : Hpet Interrupt
-Processor#2 : IRQ 0
-Processor#2 : Hpet Interrupt
-Processor#2 : AHCI Thread28 disabling port
-Processor#2 : AHCI Thread28 port disabled successfully, setting bars
-Processor#2 : AHCI Thread #28 Init command list
-Processor#2 : IRQ 0
-Processor#2 : Hpet Interrupt
-Processor#2 : IRQ 0
-Processor#2 : Hpet Interrupt
-Processor#1 : No device detected on port 0
-Processor#1 : Exitting thread #23
-Processor#1 : Thread #23 exited with code -list
+Processor#0 : THREAD3 Created, testing thread exit functionnality
+Processor#0 : THREAD3 Created, testing thread exit functionnality
+Processor#0 : No device detected on port 4
+Processor#0 : port IS 0 IE FDC000FF AHCIGC 80000002 AHCIIS 0
+Processor#0 : No device detected on port 5
+Processor#0 : port IS 0 IE FDC000FF AHCIGC 80000002 AHCIIS 0
 Processor#0 : No device detected on port 3
-Processor#0 : Exitting thread #26
-Processor#0 : Thread #26 exited with code -list
-Processor#2 : No device detected on port 1
-Processor#2 : Exitting thread #24
-Processor#2 : Thread #24 exited with code -list
-Processor#1 : No device detected on port 4
-Processor#1 : Exitting thread #27
-Processor#1 : Thread #27 exited with code -list
-Processor#2 : No device detected on port 5
-Processor#2 : Exitting thread #28
-Processor#2 : Thread #28 exited with code -list
+Processor#0 : port IS 0 IE FDC000FF AHCIGC 80000002 AHCIIS 0
+Processor#0 : No device detected on port 1
+Processor#0 : port IS 0 IE FDC000FF AHCIGC 80000002 AHCIIS 0
 Processor#0 : IRQ 0
 Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
-Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
-Processor#0 : Virtual devices:
-Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
-Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
-Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
-Processor#0 : Virtual devices:
-Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
-Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
-Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
-Processor#0 : Virtual devices:
-Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
-Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
-Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
-Processor#0 : Virtual devices:
-Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
-Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
-Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
-Processor#0 : Virtual devices:
-Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
-Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
-Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
-Processor#0 : Virtual devices:
-Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
-Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
-Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
-Processor#0 : Virtual devices:
-Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
-Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
-Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
-Processor#0 : Virtual devices:
-Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
-Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
-Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
-Processor#0 : Virtual devices:
-Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
-Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
-Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
-Processor#0 : Virtual devices:
-Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
-Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
-Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
-Processor#0 : Virtual devices:
-Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
-Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
-Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
-Processor#0 : Virtual devices:
-Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
-Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
-Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
-Processor#0 : Virtual devices:
-Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
-Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
-Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
-Processor#0 : Virtual devices:
-Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
-Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
-Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
-Processor#0 : Virtual devices:
-Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
-Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
-Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
-Processor#0 : Virtual devices:
-Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
-Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
-Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
-Processor#0 : Virtual devices:
-Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
-Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
-Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
-Processor#0 : Virtual devices:
-Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
-Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
-Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
-Processor#0 : Virtual devices:
-Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
-Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
-Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
-Processor#0 : Virtual devices:
-Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
-Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
-Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
-Processor#0 : Virtual devices:
-Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
-Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
-Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
-Processor#0 : Virtual devices:
-Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
-Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
-Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
-Processor#0 : Virtual devices:
-Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
-Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
-Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
-Processor#0 : Virtual devices:
-Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
-Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
-Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
-Processor#0 : Virtual devices:
-Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
-Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
-Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
-Processor#0 : Virtual devices:
-Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
-Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
-Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
-Processor#0 : Virtual devices:
-Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
-Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
-Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
-Processor#0 : Virtual devices:
-Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
-Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
-Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
-Processor#0 : Virtual devices:
-Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
-Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
-Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
-Processor#0 : Virtual devices:
-Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
-Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
-Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
-Processor#0 : Virtual devices:
-Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
-Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
-Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
-Processor#0 : Virtual devices:
-Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
-Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
-Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
-Processor#0 : Virtual devices:
-Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
-Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
-Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
-Processor#0 : Virtual devices:
-Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
-Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
-Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
-Processor#0 : Virtual devices:
-Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
-Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
-Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
-Processor#0 : Virtual devices:
-Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
-Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
-Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
-Processor#0 : Virtual devices:
-Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
-Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
-Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
-Processor#0 : Virtual devices:
-Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
-Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
-Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
-Processor#0 : Virtual devices:
-Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
-Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
-Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
-Processor#0 : Virtual devices:
-Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
-Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
-Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
-Processor#0 : Virtual devices:
-Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
-Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
-Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
-Processor#0 : Virtual devices:
-Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
-Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
-Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
-Processor#0 : Virtual devices:
-Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
-Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
-Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
-Processor#0 : Virtual devices:
-Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
-Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
-Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
-Processor#0 : Virtual devices:
-Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
-Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
-Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
-Processor#0 : Virtual devices:
-Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
-Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
-Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
-Processor#0 : Virtual devices:
-Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
-Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
-Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
-Processor#0 : Virtual devices:
-Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
-Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
-Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
-Processor#0 : Virtual devices:
-Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
-Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
-Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
-Processor#0 : Virtual devices:
-Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
-Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
-Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
-Processor#0 : Virtual devices:
-Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
-Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
-Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
-Processor#0 : Virtual devices:
-Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
-Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
-Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
-Processor#0 : Virtual devices:
-Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
-Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
-Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
-Processor#0 : Virtual devices:
-Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
-Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
-Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
-Processor#0 : Virtual devices:
-Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
-Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
-Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
-Processor#0 : Virtual devices:
-Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
-Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
-Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
-Processor#0 : Virtual devices:
-Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
-Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
-Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
-Processor#0 : Virtual devices:
-Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
-Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
-Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
-Processor#0 : Virtual devices:
-Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
-Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
-Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
-Processor#0 : Virtual devices:
-Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
-Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
-Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
-Processor#0 : Virtual devices:
-Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
-Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
-Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
-Processor#0 : Virtual devices:
-Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
-Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
-Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
-Processor#0 : Virtual devices:
-Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
-Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
-Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
-Processor#0 : Virtual devices:
-Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
-Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
-Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
-Processor#0 : Virtual devices:
-Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
-Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
-Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
-Processor#0 : Virtual devices:
-Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
-Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
-Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
-Processor#0 : Virtual devices:
-Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
-Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
-Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
-Processor#0 : Virtual devices:
-Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
-Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
-Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
-Processor#0 : Virtual devices:
-Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
-Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
-Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
-Processor#0 : Virtual devices:
-Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
-Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
-Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
-Processor#0 : Virtual devices:
-Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
-Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
-Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
-Processor#0 : Virtual devices:
-Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
-Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
-Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
-Processor#0 : Virtual devices:
-Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
-Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
-Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
-Processor#0 : Virtual devices:
-Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
-Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
-Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
-Processor#0 : Virtual devices:
-Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
-Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
-Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
-Processor#0 : Virtual devices:
-Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
-Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
-Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
-Processor#0 : Virtual devices:
-Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
-Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
-Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
-Processor#0 : Virtual devices:
-Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
-Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
-Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
-Processor#0 : Virtual devices:
-Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
-Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
-Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
-Processor#0 : Virtual devices:
-Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
-Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
-Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
-Processor#0 : Virtual devices:
-Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
-Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
-Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
-Processor#0 : Virtual devices:
-Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
-Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
-Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
-Processor#0 : Virtual devices:
-Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
-Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
-Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
-Processor#0 : Virtual devices:
-Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
-Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
-Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
-Processor#0 : Virtual devices:
-Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
-Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
-Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
-Processor#0 : Virtual devices:
-Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
-Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
-Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
-Processor#0 : Virtual devices:
-Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
-Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
-Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
-Processor#0 : Virtual devices:
-Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
-Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
-Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
-Processor#0 : Virtual devices:
-Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
-Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
-Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
-Processor#0 : Virtual devices:
-Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
-Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
-Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
-Processor#0 : Virtual devices:
-Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
-Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
-Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
-Processor#0 : Virtual devices:
-Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
-Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
-Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
-Processor#0 : Virtual devices:
-Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
-Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
-Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
-Processor#0 : Virtual devices:
-Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
-Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
-Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
-Processor#0 : Virtual devices:
-Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
-Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
-Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
-Processor#0 : Virtual devices:
-Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
-Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
-Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
-Processor#0 : Virtual devices:
-Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
-Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
-Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
-Processor#0 : Virtual devices:
-Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
-Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
-Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
-Processor#0 : Virtual devices:
-Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
-Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
-Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
-Processor#0 : Virtual devices:
-Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
-Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
-Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
-Processor#0 : Virtual devices:
-Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
-Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
-Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
-Processor#0 : Virtual devices:
-Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
-Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
-Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
-Processor#0 : Virtual devices:
-Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
-Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
-Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
-Processor#0 : Virtual devices:
-Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
-Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
-Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
-Processor#0 : Virtual devices:
-Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
-Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
-Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
-Processor#0 : Virtual devices:
-Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
-Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
-Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
-Processor#0 : Virtual devices:
-Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
-Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
-Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
-Processor#0 : Virtual devices:
-Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
-Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
-Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
-Processor#0 : Virtual devices:
-Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
-Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
-Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
-Processor#0 : Virtual devices:
-Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
-Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
-Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
-Processor#0 : Virtual devices:
-Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
-Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
-Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
-Processor#0 : Virtual devices:
-Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
-Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
-Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
-Processor#0 : Virtual devices:
-Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
-Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
-Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
-Processor#0 : Virtual devices:
-Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
-Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
-Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
-Processor#0 : Virtual devices:
-Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
-Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
-Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
-Processor#0 : Virtual devices:
-Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
-Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
-Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
-Processor#0 : Virtual devices:
-Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
-Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
-Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
-Processor#0 : Virtual devices:
-Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
-Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
-Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
-Processor#0 : Virtual devices:
-Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
-Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
-Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
-Processor#0 : Virtual devices:
-Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
-Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
-Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
-Processor#0 : Virtual devices:
-Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
-Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
-Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
-Processor#0 : Virtual devices:
-Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
-Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
-Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
-Processor#0 : Virtual devices:
-Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
-Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
-Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
-Processor#0 : Virtual devices:
-Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
-Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
-Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
-Processor#0 : Virtual devices:
-Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
-Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
-Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
-Processor#0 : Virtual devices:
-Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
-Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
-Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
-Processor#0 : Virtual devices:
-Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
-Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
-Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
-Processor#0 : Virtual devices:
-Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
-Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
-Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
-Processor#0 : Virtual devices:
-Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
-Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
-Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
-Processor#0 : Virtual devices:
-Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
-Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
-Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
-Processor#0 : Virtual devices:
-Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
-Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
-Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
-Processor#0 : Virtual devices:
-Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
-Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
-Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
-Processor#0 : Virtual devices:
-Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
-Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
-Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
-Processor#0 : Virtual devices:
-Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
-Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
-Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
-Processor#0 : Virtual devices:
-Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
-Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
-Processor#0 : IRQ 0
-Processor#0 : Hpet Interrupt
 Processor#0 : IRQ 0
 Processor#0 : Hpet Interrupt
 Processor#0 : IRQ 0
@@ -2986,8 +990,9 @@ Processor#0 : Hpet Interrupt
 Processor#0 : KTHREADS 3
 Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
 Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
+Processor#0 : Physical Device#4 Type 4 : Advanced Host Controller Interface (AHCI)
+Processor#0 : Physical Device#5 Type 1 : QEMU HARDDISK
+Processor#0 : Physical Device#6 Type 7 : Real Time Clock (RTC)
 Processor#0 : Virtual devices:
 Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
 Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
@@ -2997,14 +1002,6 @@ Processor#0 : IRQ 0
 Processor#0 : Hpet Interrupt
 Processor#0 : IRQ 0
 Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
-Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
-Processor#0 : Virtual devices:
-Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
-Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0
 Processor#0 : IRQ 0
 Processor#0 : Hpet Interrupt
 Processor#0 : IRQ 0
@@ -3013,11 +1010,3 @@ Processor#0 : IRQ 0
 Processor#0 : Hpet Interrupt
 Processor#0 : IRQ 0
 Processor#0 : Hpet Interrupt
-Processor#0 : KTHREADS 3
-Processor#0 : Physical Device#0 Type 7 : High Performance Event Timer
-Processor#0 : Physical Device#1 Type 5 : Advanced Configuration And Power Interface 2.0+
-Processor#0 : Physical Device#4 Type 7 : Real Time Clock (RTC)
-Processor#0 : Physical Device#5 Type 4 : Advanced Host Controller Interface (AHCI)
-Processor#0 : Virtual devices:
-Processor#0 : Virtual Device#2 Type 8 : Peripheral Component Interconnect (PCI)
-Processor#0 : Virtual Device#3 Type 8 : Enhanced And Optimized Direct Graphics (EODX) 1.0

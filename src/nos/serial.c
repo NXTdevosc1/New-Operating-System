@@ -32,15 +32,17 @@ void SerialWait() {
 static char format[0x100];
 
 void SerialWrite(char* Msg) {
-    RFPROCESSOR p = KeGetCurrentProcessor();
     UINT64 pid = 0;
     char* hdr;
-    if(p && p->ProcessorEnabled) {
-        hdr = "Processor#%d : ";
-        pid = p->Id.ProcessorId;
-    } else {
-        hdr = "Boot Processor : ";
-    }
+    if(BootProcessor) {
+        RFPROCESSOR p = KeGetCurrentProcessor();
+        if(p && p->ProcessorEnabled) {
+            hdr = "Processor#%d : ";
+            pid = p->Id.ProcessorId;
+        } else {
+            hdr = "Boot Processor : ";
+        }
+    } else hdr = "Boot Processor : ";
     sprintf_s(format, 0x100, hdr, pid);
     char* s = format;
     while(*s) {

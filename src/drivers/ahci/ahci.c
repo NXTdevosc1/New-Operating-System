@@ -3,24 +3,25 @@
 NSTATUS AhciInitDevice(PCI_DEVICE_LOCATION* ploc) {
     KDebugPrint("Found AHCI Controller at location %x", ploc);
 
-    PAHCI Ahc = MmAllocateMemory(NULL, ConvertToPages(sizeof(AHCI)), PAGE_WRITE_ACCESS, PAGE_CACHE_DISABLE);
+    // Disable cache for synchronous operations
+    PAHCI Ahc = MmAllocateMemory(NULL, ConvertToPages(sizeof(AHCI)), PAGE_WRITE_ACCESS, 0);
     if(!Ahc) return STATUS_OUT_OF_MEMORY;
     ObjZeroMemory(Ahc);
 
     Ahc->Hba = PciGetBaseAddress(&Pci, ploc, 5);
     KeMapVirtualMemory(NULL, (void*)Ahc->Hba, (void*)Ahc->Hba, 3, PAGE_WRITE_ACCESS, PAGE_CACHE_DISABLE);
 
-    KDebugPrint("AHCI Base Address %x BAR5 %x", Ahc->Hba, Pci.Read64(ploc, 4 + PCI_BAR + 5 * 4));
+    // KDebugPrint("AHCI Base Address %x BAR5 %x", Ahc->Hba, Pci.Read64(ploc, 4 + PCI_BAR + 5 * 4));
 
     // Reset the AHC
     // Fill the rest of the structure
     Ahc->HbaPorts = (void*)(((char*)Ahc->Hba) + AHCI_PORTS_OFFSET);
-
     Ahc->Device = KeCreateDevice(DEVICE_CONTROLLER, 0, L"Advanced Host Controller Interface (AHCI)", Ahc);
     if(!Ahc->Device) {
         AhciAbort(Ahc, STATUS_UNSUPPORTED);
     }
     if(Ahc->Hba->HostCapabilities.x64AddressingCapability) {
+        KDebugPrint("Ahci supports long addresses");
         Ahc->LongAddresses = TRUE;
     }
 
@@ -46,7 +47,7 @@ NSTATUS AhciInitDevice(PCI_DEVICE_LOCATION* ploc) {
     AhciReset(Ahc);
     Ahc->MaxSlotNumber = Ahc->Hba->HostCapabilities.NumCommandSlots;
 
-    KDebugPrint("AHCI Enabled successfully MAX_SLOT %d", Ahc->MaxSlotNumber);
+    // KDebugPrint("AHCI Enabled successfully MAX_SLOT %d", Ahc->MaxSlotNumber);
     
     // Enable MSI Interrupts
     EnableMsiInterrupts(&Pci, ploc, AhciInterruptHandler, Ahc);
