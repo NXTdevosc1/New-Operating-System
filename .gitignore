@@ -1,6 +1,6 @@
 edk2
-inc
+# inc
 .vscode
 build
-diskimg
+# diskimg
 src/drivers/acpi/

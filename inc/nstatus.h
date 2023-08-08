@@ -1,0 +1,20 @@
+#pragma once
+typedef long long NSTATUS;
+#define STATUS_SUCCESS 0
+#define STATUS_INVALID_PARAMETER 1
+#define STATUS_OUT_OF_MEMORY 2
+#define STATUS_ALREADY_REGISTRED 3
+#define STATUS_SUBSYSTEM_NOT_PRESENT 4
+#define STATUS_NO_FREE_SLOTS 5
+#define STATUS_NOT_FOUND 6
+#define STATUS_WRONG_PAGE_ALIGNMENT 7
+#define STATUS_OUT_OF_BOUNDS 8
+#define STATUS_INVALID_FORMAT 9
+#define STATUS_HANDLE_ALREADY_OPEN 10
+#define STATUS_UNSUPPORTED 11
+#define STATUS_INVALID_PCI_ACCESS 12 // Raised by the pci driver when trying to execute an operation on a segment which is not present
+#define STATUS_OUT_OF_INTERRUPTS 13
+#define STATUS_UNSUFFICIENT_PRIVILEGE 14
+#define STATUS_EVENT_OPEN_FAILED 15
+#define NSUCCESS(x) ((NSTATUS)x == STATUS_SUCCESS)
+#define NERROR(x) ((NSTATUS)x != 0)
