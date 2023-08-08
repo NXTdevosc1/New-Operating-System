@@ -160,6 +160,7 @@ BOOLEAN KRNLAPI MmFreePhysicalMemory(
     IN void* PhysicalMemory,
     IN UINT64 NumPages
 ) {
+    
     // UNIMPLEMENTED
     return TRUE;
     NOS_MEMORY_LINKED_LIST* mem = NosInitData->NosMemoryMap;

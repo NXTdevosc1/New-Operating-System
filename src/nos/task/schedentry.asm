@@ -72,7 +72,7 @@ sub rsp, 8
 ; Set timer frequency, and EOI
     mov rbx, [rel LocalApicAddress]
     mov rdx, [rcx + 0x30] ; Timer freq
-    shr rdx, 10 ; 1024 Task switches / s
+    shr rdx, SCHEDSHIFT ; 1024 Task switches / s
     mov [rbx + 0x380], edx ; Initial Count
     mov dword [rbx + 0xB0], 0 ; Eoi
 ; Restore remaining registers
@@ -92,7 +92,7 @@ __idle:
     ; Set timer frequency, and EOI
     mov rbx, [rel LocalApicAddress]
     mov rdx, [rax + 0x30] ; Timer freq
-    shr rdx, 10 ; 1024 Task switches / s
+    shr rdx, SCHEDSHIFT ; 1024 Task switches / s
     mov [rbx + 0x380], edx ; Initial Count
     ;mov dword [rbx + 0xB0], 0 ; Eoi
     mov rax, 0xcafebabecabeface ; HALT

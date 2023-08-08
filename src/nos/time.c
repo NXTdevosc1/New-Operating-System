@@ -54,9 +54,15 @@ NSTATUS KRNLAPI KeCreateTimer(
     return STATUS_SUCCESS;
 }
 
+UINT64 KRNLAPI KeGetTimerFrequency(PKTIMER Timer) {
+    if(!Timer) Timer = BestCounter;
+    return Timer->Frequency;
+}
+
 UINT64 KRNLAPI KeReadCounter(
     IN PKTIMER Timer
 ) {
+    if(!Timer) Timer = BestCounter;
     if(!(Timer->Usage & TIMER_USAGE_COUNTER)) return (UINT64)-1;
 
     return (UINT64)Timer->Device->Io.IoCallback(NULL, TIMER_IO_READ_COUNTER, 0, NULL);
@@ -111,9 +117,5 @@ void KRNLAPI Sleep(UINT64 Milliseconds) {
 
 // returns time since boot in micro seconds
 UINT64 KRNLAPI KeGetTimeSinceBoot() {
-    if(!BestCounter) {
-        KDebugPrint("KeGetTimeSinceBoot BUG0 HALT");
-        while(1) __halt();
-    }
-    return (BestCounter->TickCounter * MICROSCALE) + (((double)KeReadCounter(BestCounter) / (double)BestCounter->Frequency) * MICROSCALE);
+    return BestCounter->TickCounter * MICROSCALE + KeReadCounter(BestCounter) / BestCounter->Frequency * MICROSCALE;
 }

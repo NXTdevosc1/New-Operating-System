@@ -13,7 +13,6 @@ void CpuInitApicTimer();
 void CpuEnableFeatures();
 
 void KiInitBootCpu() {
-    CpuEnableFeatures();
     // Enable NMI
     __outbyte(0x70, __inbyte(0x70) & 0x7F);
     __inbyte(0x71);
@@ -108,6 +107,8 @@ CPUID_DATA Cpuid;
     __writecr0((__readcr0() & ~(1 << 2)) | 2);
     // Enable OSFXCSR, OSXMMEXCPT, GLOBAL Pages
     __writecr4(__readcr4() | (3 << 9) | (1 << 7));
+    _mm_setcsr(0x1F80);
+
     // NX (Required)
     __cpuid(&Cpuid, 0x80000001);
     if(!(Cpuid.edx & (1 << 20))) {
@@ -117,4 +118,31 @@ CPUID_DATA Cpuid;
     __writemsr(0xC0000080, __readmsr(0xC0000080) | (1 << 11));
     // Page Attribute Table (Required)
     __writemsr(PAT_MSR, _Amd64PageAttributeTable.PageAttrTable);
+
+    __cpuid(&Cpuid, 1);
+
+    // XSAVE
+    if((Cpuid.ecx & (1 << 26))) {
+        // Enable OSXSAVE
+        __writecr4(__readcr4() | (1 << 18));
+
+
+        // AVX
+        if(!(Cpuid.ecx & (1 << 28))) {
+            KDebugPrint("Required AVX Feature not present");
+            while(1) __halt();
+        }
+        KDebugPrint("AVX Supported XCR0=%x", _xgetbv(0));
+        // Enable AVX
+        _xsetbv(_XCR_XFEATURE_ENABLED_MASK, 7);
+
+        // AVX2
+        __cpuid(&Cpuid, 7);
+        if((Cpuid.ebx & (1 << 5))) {
+            KDebugPrint("AVX2 Supported");
+        }
+    } else {
+        KDebugPrint("Required XSAVE Feature not present.");
+        while(1) __halt();
+    }
 }

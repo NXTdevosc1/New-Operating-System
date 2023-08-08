@@ -21,7 +21,7 @@ This is usually in case the user thinks a malware entered the computer.
 
 - [Whole Operating System] Abnormally impressive optimization, all the software is highly optimized and way faster than any other product operating system on earth!
 
-- Lower Memory Usage (The OS is very compact and does not usage so much memory)
+- Lower Memory Usage (The OS is very compact and does not use much memory)
 - Faster Loading (Only required drivers are initilized and the OS is getting rid of old devices such as PIT, MP Tables...)
 - Security (Subsystems use a secure object manager which makes them immune against all types of attacks) {
 	- Password mode, a user application can declare that a user is writing a password into an input. This will prevent other applications from reading keyboard input while in background.

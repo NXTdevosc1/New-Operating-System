@@ -8,6 +8,8 @@ extern __InternalPreemptionIrq
 ; Does not execute EOI
 extern __InternalPreemptionCpuInt
 
+SCHEDSHIFT equ 8
+
 %macro SaveTask 0
      push rcx
     push rbx

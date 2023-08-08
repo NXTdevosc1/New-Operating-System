@@ -69,7 +69,7 @@ NSTATUS KRNLAPI HwMapVirtualMemory(
     {
         RFPTENTRY __m = (RFPTENTRY)&ModelEntry;
         if(PageFlags & PAGE_WRITE_ACCESS) __m->ReadWrite = 1;
-        // if(!(PageFlags & PAGE_EXECUTE)) __m->ExecuteDisable = 1;
+        if(!(PageFlags & PAGE_EXECUTE)) __m->ExecuteDisable = 1;
         if(PageFlags & PAGE_GLOBAL) __m->Global = 1;
         if(PageFlags & PAGE_USER) __m->UserSupervisor = 1;
 
@@ -96,7 +96,9 @@ NSTATUS KRNLAPI HwMapVirtualMemory(
                 while(1) __halt();
             }
             Pdp = *(void**)&Pml4[Pml4i];
-            ZeroMemory(Pdp + Pdpi, 0x1000 - (Pdpi << 3));
+            // ZeroMemory(Pdp + Pdpi, 0x1000 - (Pdpi << 3));
+            // _Memset128A_32(Pdp, 0, 0x100);
+            memset(Pdp, 0, 0x1000);
         } else {
             Pdp = (void*)(Pml4[Pml4i].PhysicalAddr << 12);
         }
@@ -107,7 +109,10 @@ NSTATUS KRNLAPI HwMapVirtualMemory(
                 while(1) __halt();
             }
             Pd = *(void**)&Pdp[Pdpi];
-            ZeroMemory(Pd + Pdi, 0x1000 - (Pdi << 3));
+            // ZeroMemory(Pd + Pdi, 0x1000 - (Pdi << 3));
+            // _Memset128A_32(Pd, 0, 0x100);
+            memset(Pd, 0, 0x1000);
+
         } else {
             Pd = (void*)(Pdp[Pdpi].PhysicalAddr << 12);
         }
@@ -125,7 +130,10 @@ NSTATUS KRNLAPI HwMapVirtualMemory(
                     while(1) __halt();
                 }
                 Pt = *(void**)&Pd[Pdi];
-                ZeroMemory(Pt + Pti, 0x1000 - (Pti << 3));
+                // ZeroMemory(Pt + Pti, 0x1000 - (Pti << 3));
+                // _Memset128A_32(Pt, 0, 0x100);
+                memset(Pt, 0, 0x1000);
+
             } else {
                 Pt = (void*)(Pd[Pdi].PhysicalAddr << 12);
             }

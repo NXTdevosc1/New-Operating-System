@@ -137,5 +137,5 @@ NSTATUS KRNLAPI KeRemoteExecute(PROCESSOR* Processor, REMOTE_EXECUTE_ROUTINE Rou
 }
 
 void KRNLAPI KeProcessorReadIdentificationData(RFPROCESSOR Processor, PROCESSOR_IDENTIFICATION_DATA* Identification) {
-    memcpy(Identification, &Processor->Id, sizeof Processor->Id);
+    memcpy(Identification, &Processor->Id, sizeof(PROCESSOR_IDENTIFICATION_DATA));
 }

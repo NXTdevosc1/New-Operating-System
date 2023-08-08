@@ -56,6 +56,10 @@ echo Building FAT32 Driver
 cd ../fat32
 call ./compile
 
+echo Building VMSVGA Driver
+cd ../vmsvga
+call ./compile
+
 cd ../../..
 
 
@@ -74,6 +78,7 @@ bedit drvadd 2 3 "NewOS\System\eodx.sys"
 bedit drvadd 2 3 "NewOS\System\oswm.sys"
 
 @REM PCI Device Drivers run at boot (trying to find root partition and drive)
+bedit drvadd 0 5 "NewOS\System\vmsvga.sys" @REM Prior to initialize graphics first so we can have text display
 bedit drvadd 0 3 "NewOS\System\ahci.sys"
 bedit drvadd 0 3 "NewOS\System\ehci.sys"
 bedit drvadd 0 3 "NewOS\System\xhci.sys"

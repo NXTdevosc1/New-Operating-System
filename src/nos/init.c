@@ -5,6 +5,7 @@
 #include <nos/nos.h>
 #include <nos/loader/loader.h>
 #include <nos/processor/hw.h>
+#include <hm.h>
 
 /*
  * The initialization entry point of the NOS Kernel
@@ -75,11 +76,42 @@ __declspec(dllexport) NOS_INITDATA* __fastcall KiGetInitData() {
     return NosInitData;
 }
     
+
+extern void CpuEnableFeatures();
+
 void NOSENTRY NosSystemInit() {
     SerialLog("NOS_KERNEL : Kernel Booting...");
+    CpuEnableFeatures();
     KiPhysicalMemoryManagerInit();
     ObInitialize();
     KiInitBootCpu();
+    
+    KDebugPrint("HM Testing...");
+    
+    char img[HM_IMAGE_SIZE];
+    
+    HmCreateImage(
+        img, img,
+        0x10,
+        (void*)0x1000,
+        (void*)0x10000,
+        (void*)0x2000,
+        100,
+        NULL
+    );
+
+    HmCreateImage(
+        img,
+        img,
+        0x10,
+        NULL,
+        (void*)((UINT64)32 * 0x40000000),
+        (void*)0x5000,
+        0x80000,
+        NULL
+    );
+
+    while(1) __halt();
     KiInitStandardSubsystems();
     
     UINT64 _EnumValue = 0;

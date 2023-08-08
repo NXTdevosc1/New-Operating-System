@@ -1,7 +1,11 @@
 #include <nos/nos.h>
 #include <nos/serial.h>
+
+void SerialWait();
+
 static inline void SerialSend(char value) {
     __outbyte(SERIAL_COM1, value);
+    SerialWait();
 }
 
 BOOLEAN SerialInitialized = FALSE;
@@ -45,12 +49,12 @@ void SerialWrite(char* Msg) {
     } else hdr = "Boot Processor : ";
     sprintf_s(format, 0x100, hdr, pid);
     char* s = format;
+    if(!SerialInitialized) {
+        SerialInitCom1();
+    }
     while(*s) {
         SerialSend(*s);
         s++;
-    }
-    if(!SerialInitialized) {
-        SerialInitCom1();
     }
     while(*Msg) {
         SerialSend(*Msg);
