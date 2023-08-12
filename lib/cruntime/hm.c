@@ -95,4 +95,10 @@ void HMAPI HmMapHeap(
     *(__m128*)SubBmp = _mm_and_ps(*(__m128*)Lvl, *(__m128*)&SubBmpMask);
 
 
+    Log("LVL %x %x %x %x BMP %x %x %x %x SBMP %x %x %x %x",
+    Lvl[0], Lvl[1], Lvl[2], Lvl[3],
+    Bmp[0], Bmp[1], Bmp[2], Bmp[3],
+    SubBmp[0], SubBmp[1], SubBmp[2], SubBmp[3]
+    );
+
 }
