@@ -1,13 +1,12 @@
 #pragma once
 #include <ddk.h>
-#include <intrin.h>
-#include <immintrin.h>
-#include <zmmintrin.h>
+#include <simdopt.h>
 
 #define HMAPI __declspec(dllexport) __fastcall
 #include <hm.h>
 #include <crt.h>
 
+#define HM_LAST_TREE_LENGTH 130 
 
 typedef struct _HMIMAGE HMIMAGE;
 typedef struct _HMHEAP HMHEAP;
@@ -25,65 +24,69 @@ typedef struct _HMHEAP {
     // HMHEAP* ThirdPtr;
 } HMHEAP;
 
+#pragma pack(push, 1)
+
+typedef struct {
+    UINT16 Least;
+    UINT64 Bitmap[];
+} HMMAP, *PHMMAP;
+
+#pragma pack(pop)
+
 typedef struct _HMIMAGE {
-    __m256i Xlvlbitshift;
-    __m256d Xlvlbitmask;
+// Used to sort a key to an index in the Heap Address space
+    UINT32 FirstLvlBitmask, SubLvlBitmask, slb1, slb2;
+    UINT32 FirstLvlBitshift, SecondLvlBitshift, ThirdLvlBitshift, ignore0;
+
+    
 
 // Keeping track of units
     UINT64 TotalUnits;
     UINT64 UsedUnits;
+    ULONG UnitLength;
+    ULONG UnitLengthShift;
 
     // In this way we get rid of division which is over 100 times slower than multiplication
-    ULONG UnitLength;
-    ULONG LengthShift;
 
 // Image settings
-    /* AllocateFrom:
-     * Typically a pointer to the image used by AllocatePool() function for the current processor
-     * if NULL then the descriptor will be allocated within the heap
-    */
-    HMIMAGE* AllocateFrom;
-    UINT64 DescriptorSize; // In units
-    UINT64 StartAddress;
-    UINT64 EndAddress;
-    UINT64 AddressSpaceLength;
+    HMIMAGE* AllocateFrom; // Used to allocate heap descriptor
+    UINT uDescriptorSize; // In units
+    
+    BOOLEAN InsertBlockHeader; // if FALSE then free can be used on whatever address, and it might be dangerous
+    UINT BlockHeaderSize;
 
-// Debugging
-    UINT64 CurrentMemoryUsage; // Used memory by the heap manager
 
-// Optimization bitshifts & masks
-    ULONG FirstLvlBitmask, SubLvlBitmask;
-    ULONG FirstLvlBitshift, SecondLvlBitshift, ThirdLvlBitshift;
+    UINT64 MaxLength; // Max size of a heap in units, max is 2^40
+    ULONG LastBit;
 
 
 // Heaps
     UINT SubLevelEntries;
     UINT FirstLevelEntries; // Number of entries (or bits) represented in the first level of the tree
+    
 
-    UINT64 FirstLevelLength;
-    UINT64 SubLevelLength;
-
-
-    void* AddressMap; // if AllocateFrom != NULL then this is a HMTREEHEAD* Otherwise it is a list of heaps
-    void* SizeMap; // Dynamic size bitmap, followed by pointers
+    UINT FirstLevelLength;
+    UINT SubLevelLength;
 
 
-    void* AllocatedEnd; // Unusable if AllocateFrom != NULL
+
+    PHMMAP SizeMapStart; // Dynamic size bitmap, followed by pointers
+    UINT SizeMapLength;
+
+    HMHEAP* BlockHeaderStart;
+    HMHEAP* BlockHeaderEnd;
 
     HMHEAP* RecentHeap;
 
 
     HMHEAP InitialHeap;
 
-    HEAP_MANAGER_CALLBACK HeapEventCallback;
+    UINT64 CallbackMask;
+    HEAP_MANAGER_CALLBACK Callback;
 
 } HMIMAGE;
 
-typedef struct {
-    UINT16 Least;
-    UINT16 Last;
-    UINT64 Bitmap[];
-} HMTREEHEADER;
+
 
 #define HMINTERNAL static inline
 #define HMDECL __fastcall
@@ -103,16 +106,18 @@ static inline void Log(char* fmt, ...) {
 }
 
 HMINTERNAL void* HMDECL _HmTakeSpace(HMIMAGE* Image, UINT64 Units);
-HMINTERNAL void* HMDECL _HmAllocateMap(
-    HMIMAGE* Image,
-    ULONG NumEntries
+
+
+HMINTERNAL void* HMDECL _HmAllocateSubMap(
+    HMIMAGE* Image
 );
 
 HMINTERNAL void HMDECL _HmClearMem(void* Mem, UINT64 LengthInBytes);
 
-HMINTERNAL void HMDECL _HmPutHeap(
+extern inline __declspec(dllexport) void HMDECL _HmPutHeap(
     HMIMAGE* Image,
     HMHEAP* Heap,
     void* Map,
     UINT64 Key
 );
+

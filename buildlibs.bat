@@ -13,3 +13,5 @@ cd ../sddk
 call ./compile.bat
 
 cd ../..
+
+wsl sudo make createfs

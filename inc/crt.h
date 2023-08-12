@@ -18,6 +18,13 @@ typedef unsigned short wchar_t;
 
 EXPORT char * _itoa( int value, char *buffer, int radix );
 EXPORT char * _ui64toa( unsigned long long value, char *buffer, int radix );
+
+
+#pragma function(memset)
+#pragma function(memcpy)
+#pragma function(memcmp)
+#pragma function(strlen)
+
 #else
 
 int vsprintf_s(

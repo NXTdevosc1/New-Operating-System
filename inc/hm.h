@@ -33,26 +33,29 @@ typedef struct _HMIMAGE HMIMAGE;
 
 #endif
 
-/*
- Called when an initial heap is free at all length again
- or when current length is set to a target length mask, typically 0x1000
+typedef enum {
+    HmCallbackFreeMemory,
+    HmCallbackRequestMemory
+} HmCallbackBitmask;
 
-   returns TRUE if released
-*/
+typedef BOOLEAN (__fastcall *HEAP_MANAGER_CALLBACK)(HMIMAGE* Image, UINT64 Command, UINT64 Param0, UINT64 Param1);
 
-#define HM_RELEASE_MEMORY 0
-#define HM_REQUEST_MEMORY 1
+// Returns size of address space
+UINT64 HMAPI HmCreateImage(
+    HMIMAGE* Image,
+    UINT64 UnitLength,
+    UINT64 MaxLength, // Max heap length in units
+    HMIMAGE* AllocateFrom,
+    BOOLEAN InsertBlockHeader
+);
 
-typedef BOOLEAN (__fastcall *HEAP_MANAGER_CALLBACK)(HMIMAGE* Image, UINT Cmd, UINT64 Param);
-BOOLEAN HMAPI HmCreateImage(
-    IN HMIMAGE* Image,
-    IN HMIMAGE* AllocateFrom, // if Set to NULL, descriptors will be allocated within the heap
-    IN ULONG UnitLength,
-    IN void* StartAddress, // In Bytes, aligned with unit length
-    IN void* EndAddress, // In Bytes, aligned with unit length
-    IN void* InitialHeapAddress, // In Bytes, aligned with units
-    IN UINT64 InitialHeapLength, // In Units
-    IN OPT HEAP_MANAGER_CALLBACK Callback
+void HMAPI HmInitImage(
+    HMIMAGE* Image,
+    void* AddressSpace, // No need to be mapped
+    void* InitialHeapAddress,
+    UINT64 uInitialHeapLength,
+    UINT64 CallbackMask,
+    HEAP_MANAGER_CALLBACK Callback
 );
 
 /*

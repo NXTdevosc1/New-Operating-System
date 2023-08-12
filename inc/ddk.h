@@ -95,6 +95,8 @@ PVOID KRNLAPI KeFindAvailableAddressSpace(
     IN UINT64 PageAttributes
 );
 
+
+
 NSTATUS KRNLAPI KeAcquireControlFlag(IN PEPROCESS Process, IN UINT64 ControlBit);
 NSTATUS KRNLAPI KeReleaseControlFlag(IN PEPROCESS Process, IN UINT64 ControlBit);
 

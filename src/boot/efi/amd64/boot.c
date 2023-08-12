@@ -35,6 +35,8 @@ char __finf[0x2000] = {0}; // Used to request file info
  * - ExitBootServices
  * - Jump to the kernel
 */
+
+
 char* tst2 = "test123";
 EFI_STATUS EFIAPI UefiEntry(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TABLE* SystemTable) {
 	// Initialize Global Variables
@@ -193,11 +195,19 @@ EFI_STATUS EFIAPI UefiEntry(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TABLE* Syst
 
 	Print(L"Kernel File Size : %d\n", BufferSize);
 
-	if(EFI_ERROR(gBS->AllocatePool(EfiLoaderData, BufferSize, &KernelBuffer))) {
+	if(EFI_ERROR(gBS->AllocatePool(EfiLoaderData, BufferSize + sizeof(NOS_LIBRARY_FILE), &KernelBuffer))) {
 		Print(L"Failed to allocate memory\n");
 		return EFI_UNSUPPORTED;
 	}
+	NOS_LIBRARY_FILE* KernelLib = KernelBuffer;
+	KernelBuffer = (void*)(KernelLib + 1);
 	Kernel->Read(Kernel, &BufferSize, KernelBuffer);
+
+	StrCpyS(KernelLib->FileName, 255, L"noskx64.exe");
+	KernelLib->FileSize = BufferSize;
+	KernelLib->Next = NULL;
+	*Set = KernelLib;
+
 
 	char* tst = "test123";
 	Print(L"Test2 : %a\n", tst);
@@ -210,7 +220,7 @@ EFI_STATUS EFIAPI UefiEntry(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TABLE* Syst
 	void* Vas;
 	UINT64 VasSize;
 	void* KernelBaseAddress = NULL;
-	if(!BlLoadImage(KernelBuffer, &ImageHeader, &Vas, &VasSize, &KernelBaseAddress, NULL, NULL)) {
+	if(!BlLoadImage(KernelBuffer, &ImageHeader, &Vas, &VasSize, &KernelBaseAddress, (void*)0x1010, NULL)) {
 		Print(L"Failed to load noskx64.exe, File maybe corrupt.\n");
 		return EFI_UNSUPPORTED;
 	}

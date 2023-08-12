@@ -1,7 +1,8 @@
 #define __CRT_SRC
 #include <crt.h>
 
-EXPORT void *memset(
+
+void *memset(
    void *dest,
    char c,
    unsigned long long count
@@ -11,7 +12,7 @@ EXPORT void *memset(
     else __stosb(dest, c, count);
     return dest;
 }
-EXPORT void *memcpy(
+void *memcpy(
    void *dest,
    const void *src,
    unsigned long long count
@@ -22,7 +23,7 @@ EXPORT void *memcpy(
     return dest;
 }
 
-EXPORT int memcmp(
+int memcmp(
    const void *buffer1,
    const void *buffer2,
    unsigned long long count
@@ -40,3 +41,5 @@ EXPORT int memcmp(
     }
     return 0;
 }
+
+

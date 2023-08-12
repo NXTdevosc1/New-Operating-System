@@ -96,3 +96,7 @@ NSTATUS KRNLAPI MmShareMemory(
     IN UINT64 PageAttributes,
     IN UINT CachePolicy
 );
+
+void* KeReserveExtendedSpace(
+    UINT64 NumPages
+);

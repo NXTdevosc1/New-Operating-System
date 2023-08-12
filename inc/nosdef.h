@@ -24,7 +24,7 @@
 
 #define ZeroMemory(__ptr, __NumBytes) memset((void*)(__ptr), 0, __NumBytes) 
 #define ObjZeroMemory(__ptr) memset((void*)__ptr, 0, sizeof(*__ptr))
-#define ConvertToPages(NumBytes) ((NumBytes & 0xFFF) ? ((NumBytes >> 12) + 1) : (NumBytes))
+#define ConvertToPages(NumBytes) ((NumBytes & 0xFFF) ? ((NumBytes >> 12) + 1) : (NumBytes >> 12))
 #define AlignForward(_val, _align) (((UINT64)(_val) & ((_align) - 1)) ? ((UINT64)(_val) + (_align) - ((UINT64)(_val) & ((_align) - 1))) : ((UINT64)(_val)))
 #define AlignBackward(_val, _align) ((UINT64)(_val) & ~((_align) - 1))
 #define ExcessBytes(Value, Align) (((UINT64)Value & (Align - 1)) ? (Align - ((UINT64)Value & (Align - 1))) : (0))

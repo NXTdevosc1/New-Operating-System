@@ -1,5 +1,5 @@
-cl /O2i- /GL /GS- *.c /Iinc /I../../inc /LD /Fe:syscruntime.dll /Fo:obj/ /link /DYNAMICBASE /FIXED:no /MACHINE:x64 /subsystem:native /dll /nodefaultlib
-cl /O2i- /GL /GS- *.c /Iinc /I../../inc /LD /Fe:cruntime.dll /Fo:obj/ /link /DYNAMICBASE /FIXED:no /MACHINE:x64 /subsystem:windows /entry:DllMain /dll /nodefaultlib
+cl /O2 /GL /GS- "../noskx64.lib" *.c /Iinc /I../../inc /LD /Fe:syscruntime.dll /Fo:obj/ /link /LTCG /DYNAMICBASE /MACHINE:x64 /subsystem:native /dll /nodefaultlib /EXPORT:memset /EXPORT:memcpy /EXPORT:memcmp /EXPORT:strlen
+cl /O2 /GL /GS- "../noskx64.lib" *.c /Iinc /I../../inc /LD /Fe:cruntime.dll /Fo:obj/ /link /LTCG /DYNAMICBASE /MACHINE:x64 /subsystem:windows /entry:DllMain /dll /nodefaultlib /EXPORT:memset /EXPORT:memcpy /EXPORT:memcmp /EXPORT:strlen
 
 copy cruntime.lib ..\
 copy syscruntime.lib ..\

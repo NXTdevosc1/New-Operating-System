@@ -16,6 +16,10 @@ BOOLEAN Pe64LoadImports(
 int BlGetPeHeaderOffset(void* hdr);
 BOOLEAN BlCheckImageHeader(PE_IMAGE_HDR* hdr);
 
+PE_IMAGE_HDR* KernelImage = NULL;
+void* KernelVas = NULL;
+void* KernelVirtualStart = NULL;
+
 /*
  * BlLoadImage : Loads an executable image in the PE format located in the Buffer
  * Buffer : Executable image file buffer
@@ -86,7 +90,13 @@ BOOLEAN BlLoadImage(
 	Print(L"RELOC %.16X  SZ %.16X\n", Header->OptionnalDataDirectories.BaseRelocationTable.VirtualAddress, Header->OptionnalDataDirectories.BaseRelocationTable.Size);
 
 
-
+	if(ImportingImageVas == (void*)0x1010) {
+		// This is the kernel
+		ImportingImageVas = NULL;
+		KernelImage = Header;
+		KernelVas = VasBuffer;
+		KernelVirtualStart = *ImageVirtualBaseAddress;
+	}
 
 
 
@@ -283,12 +293,16 @@ BOOLEAN Pe64LoadImports(
 		if(!FileBuffer) return FALSE;
 		PE_IMAGE_HDR* HdrStart;
 		void* a, *b, *c; // We will not use those
-		// Load the DLL
-		if(!BlLoadImage(
-			FileBuffer, &HdrStart, &a, (UINT64*)&b, &c, VirtualBuffer, ImportDirectory
-		)) {
-			Print(L"Failed to import %ls , the DLL may be corrupt\n", ConvertedDllName);
-			return FALSE;
+		if(StrCmp(Lib->FileName, L"noskx64.exe") == 0) {
+			Pe64LinkDllExports(KernelImage, KernelVas, VirtualBuffer, ImportDirectory, KernelVirtualStart);
+		} else {
+			// Load the DLL
+			if(!BlLoadImage(
+				FileBuffer, &HdrStart, &a, (UINT64*)&b, &c, VirtualBuffer, ImportDirectory
+			)) {
+				Print(L"Failed to import %ls , the DLL may be corrupt\n", ConvertedDllName);
+				return FALSE;
+			}
 		}
 		ImportDirectory++;
 	}
