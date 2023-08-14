@@ -98,8 +98,28 @@ void NOSENTRY NosSystemInit() {
     
     char img[HM_IMAGE_SIZE];
     
-    HmCreateImage(img, 0x10, 0x1000000000, img, TRUE);
+    void* BestRegionAddress = NULL;
+    UINT64 MaxAddress = 0;
+    UINT64 BestRegionLength = 0; // In pages
+    for(UINT i = 0;i<NosInitData->MemoryCount;i++) {
+        EFI_MEMORY_DESCRIPTOR* Mem = (void*)((char*)NosInitData->MemoryMap + i * NosInitData->MemoryDescriptorSize);
+        if(Mem->Type != 7) continue; // Efi Conventional memory
+        if(Mem->NumberOfPages > BestRegionLength) {
+            BestRegionAddress = Mem->PhysicalStart;
+            BestRegionLength = Mem->NumberOfPages;
+        }
+        if(((UINT64)Mem->PhysicalStart + (Mem->NumberOfPages << 12)) > MaxAddress) {
+            MaxAddress = ((UINT64)Mem->PhysicalStart + (Mem->NumberOfPages << 12));
+        }
+    }
+    KDebugPrint("MAX Address %x", MaxAddress);
+    void* Space = KeReserveExtendedSpace(HmCreateImage(img, 0x1000, MaxAddress, NULL, FALSE));
+    KDebugPrint("HM Address space %x", Space);
 
+    KDebugPrint("Best region address %x Length %u bytes", BestRegionAddress, BestRegionLength << 12);
+
+    HmInitImage(img, Space, BestRegionAddress, BestRegionLength, 0, NULL);
+    __KiClearScreen(0xFF);
     while(1) __halt();
     
     UINT64 _EnumValue = 0;
@@ -332,5 +352,5 @@ void NOSENTRY NosSystemInit() {
 }
 
 void KRNLAPI __KiClearScreen(UINT Color) {
-    _Memset128A_32((UINT32*)NosInitData->FrameBuffer.BaseAddress, Color, (NosInitData->FrameBuffer.Pitch * NosInitData->FrameBuffer.VerticalResolution) / 0x20);
+    _Memset128A_32((UINT32*)NosInitData->FrameBuffer.BaseAddress, Color, (NosInitData->FrameBuffer.Pitch * NosInitData->FrameBuffer.VerticalResolution) / 0x10);
 }

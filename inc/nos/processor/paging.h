@@ -35,6 +35,24 @@ typedef enum _PageCachePolicy{
     PAGE_CACHE_WRITE_THROUGH
 } PageCachePolicy;
 
+typedef struct _PAGE_TABLE_ENTRY {
+    UINT64 Present : 1;
+    UINT64 ReadWrite : 1;
+    UINT64 UserSupervisor : 1;
+    UINT64 PWT : 1; // PWT
+    UINT64 PCD : 1; // PCD
+    UINT64 Accessed : 1;
+    UINT64 Dirty : 1;
+    UINT64 SizePAT : 1; // PAT for 4KB Pages
+    UINT64 Global : 1;
+    UINT64 Ignored0 : 3;
+    UINT64 PhysicalAddr : 36; // In 2-MB Pages BIT 0 Set to PAT
+    UINT64 Ignored1 : 15;
+    UINT64 ExecuteDisable : 1; // XD Bit
+} PTENTRY, *RFPTENTRY;
+
+#define DEFAULT_PAGE_VALUE (3)
+
 // Processor Memory Management Utilities
 
 NSTATUS KRNLAPI HwMapVirtualMemory(
@@ -89,3 +107,9 @@ PVOID KRNLAPI HwFindAvailableAddressSpace(
     IN void* VirtualEnd,
     IN UINT64 PageAttributes
 );
+
+// PML4 + 512^2 PDP + 512^3 PD + 512^4 PT
+// PML5 + 512^2 PML4 + 512^3 PDP + 512^4 PD + 512^5 PT
+UINT64* VPageTable;
+
+UINT64 TotalVPageTableLength;

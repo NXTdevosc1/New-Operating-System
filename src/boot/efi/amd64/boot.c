@@ -53,7 +53,6 @@ EFI_STATUS EFIAPI UefiEntry(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TABLE* Syst
 	// BlZeroAlignedMemory(&NosInitData, sizeof(NOS_INITDATA));
 	// Initialize Boot Graphics
 	BlInitBootGraphics();
-	
 	// Find a place to put init trampoline
 	for(int i = 1;i<245 /*max page number + 8 + padding for SIPI*/;i++) {
 		NosInitData.InitTrampoline = (void*)((UINT64)i << 12);

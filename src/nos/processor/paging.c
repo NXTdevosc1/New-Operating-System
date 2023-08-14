@@ -1,21 +1,7 @@
 #include <nos/nos.h>
 #include <nos/processor/processor.h>
 
-typedef struct _PAGE_TABLE_ENTRY {
-    UINT64 Present : 1;
-    UINT64 ReadWrite : 1;
-    UINT64 UserSupervisor : 1;
-    UINT64 PWT : 1; // PWT
-    UINT64 PCD : 1; // PCD
-    UINT64 Accessed : 1;
-    UINT64 Dirty : 1;
-    UINT64 SizePAT : 1; // PAT for 4KB Pages
-    UINT64 Global : 1;
-    UINT64 Ignored0 : 3;
-    UINT64 PhysicalAddr : 36; // In 2-MB Pages BIT 0 Set to PAT
-    UINT64 Ignored1 : 15;
-    UINT64 ExecuteDisable : 1; // XD Bit
-}  PTENTRY, *RFPTENTRY;
+
 
 #define SetPageEntry(_pentry, _entry) {*(UINT64*)(&_pentry) = _entry;}
 #define OrPageEntry(_pentry, _entry) {*(UINT64*)(&_pentry) |= _entry;}
@@ -28,17 +14,70 @@ typedef struct _PAGE_TABLE_ENTRY {
 #define ClearPageEntry(_pentry) {*(UINT64*)(&_pentry) = 0;}
 UINT64 StandardPageEntry = ((UINT64)0b111);
 
+
 NSTATUS KRNLAPI KeMapVirtualMemory(
-    PEPROCESS Process,
     IN void* _PhysicalAddress,
     IN void* _VirtualAddress,
     IN UINT64 NumPages,
     IN UINT64 PageFlags,
     IN UINT CachePolicy
 ) {
-    if(!Process) Process = KernelProcess;
+    if(!VPageTable) {
+        KDebugPrint("MAP_VMEM : BUG0");
+        while(1) __halt();
+    }
+    if((((UINT64)_VirtualAddress) & 0xFFFF800000000000) == 0xFFFF800000000000) {
+        ((UINT64)_VirtualAddress) &= ~0xFFFF000000000000;
+        ((UINT64)_VirtualAddress) |= ((UINT64)1 << 48);
+    }
 
-    return HwMapVirtualMemory(Process->PageTable, _PhysicalAddress, _VirtualAddress, NumPages, PageFlags, CachePolicy);
+    UINT64 ModelEntry = 1;
+    // Setup Model Entry
+    UINT64 ModelEntry = ((UINT64)1 /*Present Flag*/);
+    {
+        RFPTENTRY __m = (RFPTENTRY)&ModelEntry;
+        if(PageFlags & PAGE_WRITE_ACCESS) __m->ReadWrite = 1;
+        if(!(PageFlags & PAGE_EXECUTE)) __m->ExecuteDisable = 1;
+        if(PageFlags & PAGE_GLOBAL) __m->Global = 1;
+        if(PageFlags & PAGE_USER) __m->UserSupervisor = 1;
+
+        __m->PWT = CachePolicy;
+        __m->PCD = CachePolicy >> 1;
+        if((PageFlags & PAGE_2MB)) {
+            KDebugPrint("MMAP 2MB WAIT");
+            while(1);
+            // Bit 0 of PageDir->Addr is PAT bit
+            __m->PhysicalAddr = (CachePolicy >> 2) & 1;
+        } else {
+            __m->SizePAT = CachePolicy >> 2;
+        }
+    }
+
+    UINT64 Start = (UINT64)_VirtualAddress >> 12;
+    UINT64 End = ((UINT64)_VirtualAddress >> 12) + ((PageFlags & PAGE_2MB) ? (NumPages << 9) : (NumPages));
+
+    UINT16 NumPml4 = ((End >> 27)) - ((Start >> 27));
+    UINT16 NumPdp = (((End >> 18) & 0x1FF) - ((Start >> 18) & 0x1FF)) * NumPml4;
+    UINT16 NumPd = ((End >> 9) & 0x1FF) - ((Start >> 9) & 0x1FF);
+    UINT16 NumPt = ((End) & 0x1FF) - ((Start) & 0x1FF);
+
+    UINT16 Pt = Start & 0x1FF, Pml4 = (Start >> 27) & 0x1FF;
+    UINT16 Pd = (Start >> 9) & 0x1FF, Pdp = (Start >> 18) & 0x1FF;
+
+    void* Mem;
+
+    for(UINT16 i = 0;i<NumPml4;i++, Pml4++) {
+        if(!(VPageTable[Pml4] & 1)) {
+            if(NERROR(MmAllocatePhysicalMemory(0, 1, &Mem))) {
+                KDebugPrint("kemapmem out of memory.");
+                while(1) __halt();
+            }
+            VPageTable[Pml4] = DEFAULT_PAGE_VALUE | (UINT64)Mem;
+        }
+    }
+
+    UINT64* Pdp
+
 }
 
 NSTATUS KRNLAPI HwMapVirtualMemory(
@@ -96,9 +135,7 @@ NSTATUS KRNLAPI HwMapVirtualMemory(
                 while(1) __halt();
             }
             Pdp = *(void**)&Pml4[Pml4i];
-            // ZeroMemory(Pdp + Pdpi, 0x1000 - (Pdpi << 3));
-            // _Memset128A_32(Pdp, 0, 0x100);
-            memset(Pdp, 0, 0x1000);
+            _Memset128A_32(Pdp, 0, 0x100);
         } else {
             Pdp = (void*)(Pml4[Pml4i].PhysicalAddr << 12);
         }
@@ -109,10 +146,7 @@ NSTATUS KRNLAPI HwMapVirtualMemory(
                 while(1) __halt();
             }
             Pd = *(void**)&Pdp[Pdpi];
-            // ZeroMemory(Pd + Pdi, 0x1000 - (Pdi << 3));
-            // _Memset128A_32(Pd, 0, 0x100);
-            memset(Pd, 0, 0x1000);
-
+            _Memset128A_32(Pd, 0, 0x100);
         } else {
             Pd = (void*)(Pdp[Pdpi].PhysicalAddr << 12);
         }
@@ -130,10 +164,11 @@ NSTATUS KRNLAPI HwMapVirtualMemory(
                     while(1) __halt();
                 }
                 Pt = *(void**)&Pd[Pdi];
-                // ZeroMemory(Pt + Pti, 0x1000 - (Pti << 3));
-                // _Memset128A_32(Pt, 0, 0x100);
-                memset(Pt, 0, 0x1000);
-
+                if(NumPages < 0x200 - Pti){
+                    _Memset128A_32(Pt, 0, 0x100);
+                } else {
+                    _Memset128A_32(Pt, 0, (Pti << 1) + 1);
+                }
             } else {
                 Pt = (void*)(Pd[Pdi].PhysicalAddr << 12);
             }

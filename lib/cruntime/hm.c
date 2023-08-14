@@ -77,19 +77,21 @@ void HMAPI HmInitImage(
     Image->Callback;
 }
 
-static __declspec(align(0x10)) UINT32 BmpShift[4] = {6, 6, 6, 6};
-static __declspec(align(0x10)) UINT32 SubBmpMask[4] = {0x3F, 0x3F, 0x3F, 0x3F};
+#define _DEFALIGN __declspec(align(0x10))
+
+static _DEFALIGN BmpShift[4] = {6, 6, 6, 6};
+static _DEFALIGN UINT32 SubBmpMask[4] = {0x3F, 0x3F, 0x3F, 0x3F};
 void HMAPI HmMapHeap(
     HMIMAGE* Image,
     void* Space,
     UINT64 Key
 ) {
-    __declspec(align(0x10)) UINT32 Lvl[4];
+    _DEFALIGN UINT32 Lvl[4];
     Lvl[0] = (Key >> Image->FirstLvlBitshift) & Image->FirstLvlBitmask;
     Lvl[1] = (Key >> Image->SecondLvlBitshift) & Image->SubLvlBitmask;
     Lvl[2] = (Key >> Image->ThirdLvlBitshift) & Image->SubLvlBitmask;
     Lvl[3] = (Key) & 0x3F;
-    __declspec(align(0x10)) UINT32 Bmp[4];
+    _DEFALIGN UINT32 Bmp[4];
     *(__m128i*)Bmp = _mm_srl_epi32(*(__m128i*)Lvl, *(__m128i*)&BmpShift);
     UINT32 SubBmp[4] = {Lvl[0] & 0x3F, Lvl[1] & 0x3F, };
     *(__m128*)SubBmp = _mm_and_ps(*(__m128*)Lvl, *(__m128*)&SubBmpMask);
