@@ -113,3 +113,7 @@ PVOID KRNLAPI HwFindAvailableAddressSpace(
 UINT64* VPageTable;
 
 UINT64 TotalVPageTableLength;
+
+#define VPdp(Pdp) (VPageTable + 0x200 + (Pdp << 9))
+#define VPd(Pdp, Pd) (VPageTable + 0x40200 + (Pdp << 18) + (Pd << 9))
+#define VPt(Pdp, Pd, Pt) (VPageTable + 0x8040200 + (Pdp << 27) + (Pd << 18) + (Pt << 9))

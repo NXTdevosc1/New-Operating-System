@@ -16,12 +16,15 @@ UINT64 StandardPageEntry = ((UINT64)0b111);
 
 
 NSTATUS KRNLAPI KeMapVirtualMemory(
+    PEPROCESS _Process,
     IN void* _PhysicalAddress,
     IN void* _VirtualAddress,
     IN UINT64 NumPages,
     IN UINT64 PageFlags,
     IN UINT CachePolicy
 ) {
+    PEPROCESS Process = KeGetCurrentProcess();
+    ProcessAcquireControlLock(Process, PROCESS_CONTROL_MANAGE_ADDRESS_SPACE);
     if(!VPageTable) {
         KDebugPrint("MAP_VMEM : BUG0");
         while(1) __halt();
@@ -31,7 +34,6 @@ NSTATUS KRNLAPI KeMapVirtualMemory(
         ((UINT64)_VirtualAddress) |= ((UINT64)1 << 48);
     }
 
-    UINT64 ModelEntry = 1;
     // Setup Model Entry
     UINT64 ModelEntry = ((UINT64)1 /*Present Flag*/);
     {
@@ -57,12 +59,19 @@ NSTATUS KRNLAPI KeMapVirtualMemory(
     UINT64 End = ((UINT64)_VirtualAddress >> 12) + ((PageFlags & PAGE_2MB) ? (NumPages << 9) : (NumPages));
 
     UINT16 NumPml4 = ((End >> 27)) - ((Start >> 27));
-    UINT16 NumPdp = (((End >> 18) & 0x1FF) - ((Start >> 18) & 0x1FF)) * NumPml4;
-    UINT16 NumPd = ((End >> 9) & 0x1FF) - ((Start >> 9) & 0x1FF);
-    UINT16 NumPt = ((End) & 0x1FF) - ((Start) & 0x1FF);
+    UINT16 NumPdp = (((End >> 18) & 0x1FF) - ((Start >> 18) & 0x1FF)) + NumPml4 * 512;
+    UINT16 NumPd = ((End >> 9) & 0x1FF) - ((Start >> 9) & 0x1FF) + NumPml4 * 512 * 512 + NumPdp * 512;
+    UINT16 NumPt = ((End) & 0x1FF) - ((Start) & 0x1FF) + NumPml4 * 512 * 512 * 512 + NumPdp * 512 * 512 + NumPd * 512;
 
-    UINT16 Pt = Start & 0x1FF, Pml4 = (Start >> 27) & 0x1FF;
-    UINT16 Pd = (Start >> 9) & 0x1FF, Pdp = (Start >> 18) & 0x1FF;
+    NumPml4++;
+    NumPdp++;
+    NumPd++;
+    NumPt++;
+
+    UINT64 Pt = Start & 0x1FF, Pml4 = (Start >> 27) & 0x1FF;
+    UINT64 Pd = (Start >> 9) & 0x1FF, Pdp = (Start >> 18) & 0x1FF;
+
+    UINT64 _Pd = Pd, _Pdp = Pdp;
 
     void* Mem;
 
@@ -76,8 +85,49 @@ NSTATUS KRNLAPI KeMapVirtualMemory(
         }
     }
 
-    UINT64* Pdp
+    UINT64* vp = VPdp(Pdp);
+    for(UINT16  i = 0;i<NumPdp;i++, Pdp++) {
+        if(!vp[Pdp] & 1) {
+            if(NERROR(MmAllocatePhysicalMemory(0, 1, &Mem))) {
+                KDebugPrint("kemapmem out of memory.");
+                while(1) __halt();
+            }
+            vp[Pdp] = DEFAULT_PAGE_VALUE | (UINT64)Mem;
+        }
+    }
 
+    vp = VPd(_Pdp, Pd);
+    UINT64 pa = (UINT64)_PhysicalAddress & ~0xFFF;
+    if(PageFlags & PAGE_2MB) {
+        for(UINT16  i = 0;i<NumPd;i++, Pd++, pa+=0x1000) {
+            if(vp[Pd] & 0x81) {
+                KeRaiseException(STATUS_PAGE_ALREADY_MAPPED);
+            }
+            vp[Pd] = ModelEntry | pa; 
+        }
+    } else {
+        for(UINT16  i = 0;i<NumPd;i++, Pd++) {
+            if(!vp[Pd] & 1) {
+                if(NERROR(MmAllocatePhysicalMemory(0, 1, &Mem))) {
+                    KDebugPrint("kemapmem out of memory.");
+                    while(1) __halt();
+                }
+                HwMapVirtualMemory(Process->PageTable, Mem,)
+                vp[Pd] = DEFAULT_PAGE_VALUE | (UINT64)Mem;
+            }
+        }
+        vp = VPt(_Pdp, _Pd, Pt);
+        for(UINT16  i = 0;i<NumPt;i++, Pt++, pa+=0x1000) {
+            if(vp[Pt] & 1) {
+                KeRaiseException(STATUS_PAGE_ALREADY_MAPPED);
+            }
+            vp[Pt] = ModelEntry | pa; 
+        }
+    }
+ 
+    ProcessReleaseControlLock(Process, PROCESS_CONTROL_MANAGE_ADDRESS_SPACE);
+
+    return STATUS_SUCCESS;
 }
 
 NSTATUS KRNLAPI HwMapVirtualMemory(

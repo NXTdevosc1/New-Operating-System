@@ -2,7 +2,7 @@
 #include <nos/processor/internal.h>
 
 // Page table in the top of virtual address space
-RFPTENTRY VPageTable;
+UINT64* VPageTable = NULL;
 UINT64 TotalVPageTableLength = 0;
 void NOSINTERNAL KiPhysicalMemoryManagerInit() {
     
@@ -40,7 +40,7 @@ void NOSINTERNAL KiPhysicalMemoryManagerInit() {
     }
     TotalVPageTableLength >>= 12;
 
-    VPageTable = (UINT64)KeReserveExtendedSpace(TotalVPageTableLength);
+    VPageTable = KeReserveExtendedSpace(TotalVPageTableLength);
     KDebugPrint("Total Page Structure %u Pages or 0x%x . VP_ADDRESS %x", TotalVPageTableLength, TotalVPageTableLength, VPageTable);
 
     // Now map all the pages into the address space
