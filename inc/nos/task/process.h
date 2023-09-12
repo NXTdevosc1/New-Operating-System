@@ -7,21 +7,22 @@
 #define SUBSYSTEM_NATIVE 1
 #define SUBSYSTEM_USERMODE_CONSOLE 3
 
-
-
-typedef enum _OPERATING_MODE {
+typedef enum _OPERATING_MODE
+{
     KERNEL_MODE,
     USER_MODE
 } OPERATING_MODE;
 
-typedef struct _SUBSYSTEM_DESCRIPTOR {
+typedef struct _SUBSYSTEM_DESCRIPTOR
+{
     volatile UINT64 Flags;
     BOOLEAN OperatingMode;
     SUBSYSTEM_ENTRY_POINT EntryPoint;
     UINT64 NumPages; // If user mode, then the caller should specify number of pages in the entry point
 } SUBSYSTEM_DESCRIPTOR;
 SUBSYSTEM_DESCRIPTOR Subsystems[];
-typedef struct _REGISTER_BLOCK {
+typedef struct _REGISTER_BLOCK
+{
     char XsaveRegion[0x1008]; // additionnal 8 bytes for alignment
     // Interrupt stack registers
     UINT64 rip, cs, rflags, rsp, ss;
@@ -31,26 +32,26 @@ typedef struct _REGISTER_BLOCK {
     UINT64 Cr3;
     // other segments (Packed in one 64 Bit value)
     UINT16 ds, es, fs, gs;
-    
+
 } REGISTER_BLOCK;
 
 // Current MAX is 4096 Thread per CPU
-typedef volatile struct _THREAD_QUEUE_ENTRY {
+typedef volatile struct _THREAD_QUEUE_ENTRY
+{
     PETHREAD Thread;
-    volatile struct _THREAD_QUEUE_ENTRY* Previous;
-    volatile struct _THREAD_QUEUE_ENTRY* Next;
-    
+    volatile struct _THREAD_QUEUE_ENTRY *Previous;
+    volatile struct _THREAD_QUEUE_ENTRY *Next;
+
 } THREAD_QUEUE_ENTRY, *PTHREAD_QUEUE_ENTRY;
 
 typedef struct _PROCESSOR PROCESSOR, *RFPROCESSOR;
-
-
 
 #define GetThreadFlag(Thread, Flag) (_bittest64(&Thread->Flags, Flag))
 #define SetThreadFlag(Thread, Flag) (_bittestandset64(&Thread->Flags, Flag))
 #define ResetThreadFlag(Thread, Flag) (_bittestandreset64(&Thread->Flags, Flag))
 
-typedef volatile struct _ETHREAD {
+typedef volatile struct _ETHREAD
+{
     // Those are basic data used by scheduler
     REGISTER_BLOCK Registers;
     PEPROCESS Process;
@@ -67,20 +68,22 @@ typedef volatile struct _ETHREAD {
 
     THREAD_QUEUE_ENTRY QueueEntry;
 
-    struct {
+    struct
+    {
         UINT64 TicksSinceBoot; // How many seconds
-        UINT64 CounterValue; // depends on the frequency of the counter
+        UINT64 CounterValue;   // depends on the frequency of the counter
     } SleepUntil;
 
     RFPROCESSOR Processor;
 
-    void* ParentList;
+    void *ParentList;
     UINT ParentListIndex;
 
     UINT64 CallbackStatus;
     UINT64 IoParameters[0x100];
     PDRIVER RunningDriver; // Driver occupying this threads cpu time (Set for example when performing Synchronous IO or running driver's entry point on the thread)
-    struct {
+    struct
+    {
         PDEVICE IoDevice;
         UINT Function;
     } RunningIo;
@@ -88,55 +91,56 @@ typedef volatile struct _ETHREAD {
     UINT64 StackPages;
 } ETHREAD, *PETHREAD;
 
-typedef enum {
+typedef enum
+{
     PROCESS_CONTROL_LINK_THREAD = 0,
     PROCESS_CONTROL_MANAGE_ADDRESS_SPACE,
 } PROCESS_CONTROL_BITMASK;
 
 // TODO : SpinLock (disable Interrupts)
-#define ProcessAcquireControlLock(_Process, _ControlBit) { \
-    while(_interlockedbittestandset64(&_Process->ControlBitmask, _ControlBit)) {_mm_pause();} \
+#define ProcessAcquireControlLock(_Process, _ControlBit)                            \
+    {                                                                               \
+        KDebugPrint("Acquire CTRL BIT %u PROCESS %x", _ControlBit, _Process);       \
+        while (_interlockedbittestandset64(&_Process->ControlBitmask, _ControlBit)) \
+        {                                                                           \
+            _mm_pause();                                                            \
+        }                                                                           \
     }
 
-    
-#define ProcessReleaseControlLock(_Process, _ControlBit) _bittestandreset64(&_Process->ControlBitmask, _ControlBit)
+#define ProcessReleaseControlLock(_Process, _ControlBit)                  \
+    KDebugPrint("Release CTRL BIT %d PROCESS %x", _ControlBit, _Process); \
+    _interlockedbittestandreset64(&_Process->ControlBitmask, _ControlBit)
 
 #define ProcessOperatingMode(_Process) (Subsystems[_Process->Subsystem].OperatingMode)
 
 // PROCESS Flags
 #define PROCESS_FLAG_STARTEDUP 0x100 // If not set then load DLLs first
 
-typedef volatile struct _EPROCESS {
+typedef volatile struct _EPROCESS
+{
     PEPROCESS Parent;
     UINT64 ProcessId;
     UINT Priority;
     UINT64 Flags;
     UINT64 ControlBitmask; // Mutexes to modify the process
-    UINT16* ProcessDisplayName;
-    UINT16* Path;
-    UINT16* ProcessDescription;
-    void* PageTable;
+    UINT16 *ProcessDisplayName;
+    UINT16 *Path;
+    UINT16 *ProcessDescription;
+    void *PageTable;
     UINT8 Subsystem;
 
     volatile UINT64 NumberOfThreads;
     volatile UINT64 NumberOfChildProcesses;
 
     PEPROCESS NextChild; // continuation of the child array for this child process
-    
+
     POBJECT ProcessObject;
 
     // Memory Management
-    void* VmSearchStart;
-    void* VmSearchEnd;
+    void *VmSearchStart;
+    void *VmSearchEnd;
 
 } EPROCESS, *PEPROCESS;
-
-
-
-
-
-
-
 
 /*
 - Multi-Operating-Mode Function
@@ -145,13 +149,12 @@ typedef volatile struct _EPROCESS {
 */
 NSTATUS NSYSAPI NosCreateProcess(
     IN OPT HANDLE Parent,
-    OUT OPT UINT64* ProcessId,
+    OUT OPT UINT64 *ProcessId,
     IN UINT64 Flags,
     IN UINT8 Subsystem,
-    IN UINT16* DisplayName,
-    IN UINT16* Path,
-    IN void* EntryPoint
-);
+    IN UINT16 *DisplayName,
+    IN UINT16 *Path,
+    IN void *EntryPoint);
 
 /*
 - Multi-Operating-Mode Function
@@ -160,14 +163,7 @@ NSTATUS NSYSAPI NosCreateProcess(
 */
 NSTATUS NSYSAPI NosCreateThread(
     IN UINT64 Flags,
-    IN void* EntryPoint,
-    OUT OPT HANDLE* Thread
-);
-
-
-
-
-
-
+    IN void *EntryPoint,
+    OUT OPT HANDLE *Thread);
 
 void KiInitMultitaskingSubsystem();

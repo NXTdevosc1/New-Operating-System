@@ -1,47 +1,26 @@
-TODO : AddressMap, SizeMap
-TODO : Create bytecode instead of recursive tree searching
 
+Basically the algorithm consists of 3 Data structures :
 
-This is the kernel mode version of optimized the heap manager
+- The Heap Image : Main Structure
 
-Features :
-
--
-
-Algorithm :
-Init(Image, AddressSpaceSize, UnitSize, AllocateSource, {InitialHeap}) -> HM Will initialize the required values in the Image
-
-- Free/allocated memory are in different sorted bitmap trees with indexed access
-- So instead of using an array of pointers to different tree, we use bitmaps and the location of the tree is determined via indexes
-
-_AllocateVaSpace(Index) -> Allocates a page and maps it
-
-
-HmCalculateAddressSpace(AdressSpaceSize, UINT64 UnitSize) -> {
-    {AdressSpaceSize is in 1 byte units, and doesn't follow unitsize}
-    {AddressSpaceSize should be aligned with unitsize}
-    - Calculates required address space for the whole HMIMAGE to work
-    - the address space consists of the first page + array of bitmaps
-    - The caller should only allocate the first page in the address space and leave the rest for the heap manager
+- The Address Map : A multi level tree consisting of bi-bitmaps, UINT64[0] for StartAddress and UINT64[1] for EndAddress
+- The Size Map : {
+    Consists of a multi level tree of single bitmaps, representing 8 bits of size and pointing to the next bitmap
+    at the end a chain of unmapped heap descriptors pointed to by the bitmap
 }
 
-_HmAllocateWithoutHeap(INT64 Units) -> {
-    - (Independent feature) (HM Does not use spinlocks often)
-    - Find first heap
-    - exchange add (Special atomic instruction)
-    - if heap size < 0 then the size is unsufficient, re-increment size and return NULL
-    - else return the address;
-}
 
-HmAllocate(INT64 Units){
-    - addr = _HmAllocateWithoutHeap(Image, Units)
-    - Heap = _HmAllocateWithoutHeap(Image->AllocateSource, sizeof Heap)
-    - Put heap in the allocated memory bitmap
-}
+Easily, This is the allocation routine :
 
-HmFree(Address) {
-    Very easy, look if the entry corresponding to the bitmap is present the allocated memory bitmap tree
-    - then link it to last heap, so that heaps keep sorting themselves
-    - Until we get the initial heap reformed again, then we will call a special InitialHeapFreed Handler
-    - Probably, the handler will unmap the heap from the process
+RecentHeap.Length >= RequestedLength ? Take from RecentHeap : Search in the Size map for a larger Heap
+
+This is the freeing routine :
+
+Heap = Find(HeapAddress)
+if(HeapAddress.Initial) {
+    Image.Callback(RELEASE); // call the release function
+} else {
+    OriginalHeap = FindEndAddr(HeapAddress + Heap.Length)
+    OriginalHeap.Length += Heap.Length;
+    Remove(Heap)
 }

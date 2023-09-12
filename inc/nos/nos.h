@@ -1,6 +1,6 @@
 /*
  * NOS Kernel Header
-*/
+ */
 
 #pragma once
 
@@ -17,8 +17,7 @@
 
 #endif
 
-
-
+#define __TRACECALLS 1
 
 #include <nosdef.h>
 #include <nosefi.h>
@@ -39,15 +38,14 @@
 
 #define DEBUG 1
 
-
-
 #ifdef DEBUG
-#define SerialLog(Msg) {SerialWrite(Msg);} 
+#define SerialLog(Msg)    \
+    {                     \
+        SerialWrite(Msg); \
+    }
 #else
 #define SerialLog(Msg)
 #endif
-
-
 
 PKTIMER BestCounter;
 PKTIMER BestTimeAndDateSource;
@@ -56,7 +54,8 @@ typedef NSTATUS(__cdecl *DRIVER_ENTRY)(PDRIVER Driver);
 
 // Driver structure
 
-typedef struct _DRIVER {
+typedef struct _DRIVER
+{
     UINT64 DriverId;
     POBJECT ObjectHeader;
     HANDLE DriverHandle;
@@ -64,7 +63,7 @@ typedef struct _DRIVER {
     UINT NumIoPorts;
     PEPROCESS SystemProcess;
     DRIVER_ENTRY EntryPoint;
-    void* ImageFile;
+    void *ImageFile;
 } DRIVER, *PDRIVER;
 
 // Memory Manager Attributes
@@ -76,26 +75,31 @@ typedef struct _DRIVER {
 
 PEPROCESS KernelProcess;
 
-extern NOS_INITDATA* NosInitData;
+extern NOS_INITDATA *NosInitData;
 
-void KRNLAPI KDebugPrint(IN char* Message, ...);
+void KRNLAPI KDebugPrint(IN char *Message, ...);
 
-
-static inline char* KiMakeSystemNameA(char* Name, UINT16 len) {
-    char* n = MmAllocatePool(len + 1, 0);
-    if(!n) {
+static inline char *KiMakeSystemNameA(char *Name, UINT16 len)
+{
+    char *n = MmAllocatePool(len + 1, 0);
+    if (!n)
+    {
         KDebugPrint("MakeSysName Failed!");
-        while(1) __halt();
+        while (1)
+            __halt();
     }
     memcpy(n, Name, len + 1);
     return n;
 }
 
-static inline UINT16* KiMakeSystemNameW(UINT16* Name, UINT16 len) {
-    UINT16* n = MmAllocatePool((len + 1) << 1, 0);
-    if(!n) {
+static inline UINT16 *KiMakeSystemNameW(UINT16 *Name, UINT16 len)
+{
+    UINT16 *n = MmAllocatePool((len + 1) << 1, 0);
+    if (!n)
+    {
         KDebugPrint("MakeSysName Failed!");
-        while(1) __halt();
+        while (1)
+            __halt();
     }
     memcpy(n, Name, (len + 1) << 1);
     return n;
@@ -103,15 +107,20 @@ static inline UINT16* KiMakeSystemNameW(UINT16* Name, UINT16 len) {
 
 void KiInitStandardSubsystems();
 
-static char* InitErrors[] = {
-    "Process management initialization failed."
-};
+static char *InitErrors[] = {
+    "Process management initialization failed."};
 
-#define RaiseInitError(ErrNum) {SerialLog(InitErrors[ErrNum]); while(1) __halt();}
+#define RaiseInitError(ErrNum)         \
+    {                                  \
+        SerialLog(InitErrors[ErrNum]); \
+        while (1)                      \
+            __halt();                  \
+    }
 
 NSTATUS __resevt(PEPROCESS Process, UINT Event, HANDLE Handle, UINT64 DesiredAccess);
 
-typedef volatile struct _KTIMER {
+typedef volatile struct _KTIMER
+{
     PDEVICE Device;
     POBJECT TimerObject;
     UINT Usage;

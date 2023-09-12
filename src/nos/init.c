@@ -1,7 +1,7 @@
 /*
  * init.c
  * This file contains the initialization function of the Operating System Kernel
-*/
+ */
 #include <nos/nos.h>
 #include <nos/loader/loader.h>
 #include <nos/processor/hw.h>
@@ -9,7 +9,7 @@
 
 /*
  * The initialization entry point of the NOS Kernel
-*/
+ */
 
 char bf[100];
 
@@ -22,38 +22,41 @@ void KRNLAPI __KiClearScreen(UINT Color);
 PEPROCESS KernelProcess = NULL;
 extern void NOSINTERNAL KiDumpPhysicalMemoryEntries();
 
-
-int  testh() {
+int testh()
+{
     return 0;
 }
 
 extern void HwInitTrampoline();
 
-extern inline void DrawRect(UINT x, UINT y, UINT Width, UINT Height, UINT Color) {
-    for(UINT a = y; a<y+Height;a++) {
-        _Memset128U_32((char*)NosInitData->FrameBuffer.BaseAddress + x * 4 + a * NosInitData->FrameBuffer.Pitch, Color, Width >> 2);
+extern inline void DrawRect(UINT x, UINT y, UINT Width, UINT Height, UINT Color)
+{
+    for (UINT a = y; a < y + Height; a++)
+    {
+        _Memset128U_32((char *)NosInitData->FrameBuffer.BaseAddress + x * 4 + a * NosInitData->FrameBuffer.Pitch, Color, Width >> 2);
     }
 }
 
-void thread1() {
-    for(;;)
-        {
-            DrawRect(20, 20, 100, 100, 0xFFFFFF);
-            Sleep(100);
-        }
-
+void thread1()
+{
+    for (;;)
+    {
+        DrawRect(20, 20, 100, 100, 0xFFFFFF);
+        Sleep(100);
+    }
 }
 
-void thread2() {
-    for(;;)
-        {
-            DrawRect(20, 20, 100, 100, 0xFF);
-            Sleep(40);
-        }
-
+void thread2()
+{
+    for (;;)
+    {
+        DrawRect(20, 20, 100, 100, 0xFF);
+        Sleep(40);
+    }
 }
 
-void thread3() {
+void thread3()
+{
     // Testing thread exit functionnality
     KDebugPrint("THREAD3 Created, testing thread exit functionnality");
 }
@@ -65,63 +68,60 @@ UINT32 errcolors[] = {
     0xFF00,
     0xFF0000,
     0xFFFF,
-    0xFFFF00  
-};
+    0xFFFF00};
 
-NSTATUS DrvEvt(PEPROCESS Process, UINT Event, HANDLE Handle, UINT64 Access) {
+NSTATUS DrvEvt(PEPROCESS Process, UINT Event, HANDLE Handle, UINT64 Access)
+{
     return STATUS_SUCCESS;
 }
 
-__declspec(dllexport) NOS_INITDATA* __fastcall KiGetInitData() {
+__declspec(dllexport) NOS_INITDATA *__fastcall KiGetInitData()
+{
     return NosInitData;
 }
-    
 
 extern void CpuEnableFeatures();
 
-__declspec(dllexport) void __fastcall _HmPutHeap(
-    HMIMAGE* Image,
-    void* Heap,
-    void* Map,
-    UINT64 Key
-);
-
-void NOSENTRY NosSystemInit() {
+void NOSENTRY NosSystemInit()
+{
     SerialLog("NOS_KERNEL : Kernel Booting...");
     CpuEnableFeatures();
     KiPhysicalMemoryManagerInit();
     ObInitialize();
     KiInitBootCpu();
     KiInitStandardSubsystems();
-    
-    KDebugPrint("HM Testing...");
-    
-    char img[HM_IMAGE_SIZE];
-    
-    void* BestRegionAddress = NULL;
-    UINT64 MaxAddress = 0;
-    UINT64 BestRegionLength = 0; // In pages
-    for(UINT i = 0;i<NosInitData->MemoryCount;i++) {
-        EFI_MEMORY_DESCRIPTOR* Mem = (void*)((char*)NosInitData->MemoryMap + i * NosInitData->MemoryDescriptorSize);
-        if(Mem->Type != 7) continue; // Efi Conventional memory
-        if(Mem->NumberOfPages > BestRegionLength) {
-            BestRegionAddress = Mem->PhysicalStart;
-            BestRegionLength = Mem->NumberOfPages;
-        }
-        if(((UINT64)Mem->PhysicalStart + (Mem->NumberOfPages << 12)) > MaxAddress) {
-            MaxAddress = ((UINT64)Mem->PhysicalStart + (Mem->NumberOfPages << 12));
-        }
-    }
-    KDebugPrint("MAX Address %x", MaxAddress);
-    void* Space = KeReserveExtendedSpace(HmCreateImage(img, 0x1000, MaxAddress, NULL, FALSE));
-    KDebugPrint("HM Address space %x", Space);
 
-    KDebugPrint("Best region address %x Length %u bytes", BestRegionAddress, BestRegionLength << 12);
+    // KDebugPrint("HM Testing...");
 
-    HmInitImage(img, Space, BestRegionAddress, BestRegionLength, 0, NULL);
-    __KiClearScreen(0xFF);
-    while(1) __halt();
-    
+    // char img[HM_IMAGE_SIZE];
+
+    // void *BestRegionAddress = NULL;
+    // UINT64 MaxAddress = 0;
+    // UINT64 BestRegionLength = 0; // In pages
+    // for (UINT i = 0; i < NosInitData->MemoryCount; i++)
+    // {
+    //     EFI_MEMORY_DESCRIPTOR *Mem = (void *)((char *)NosInitData->MemoryMap + i * NosInitData->MemoryDescriptorSize);
+    //     if (Mem->Type != 7)
+    //         continue; // Efi Conventional memory
+    //     if (Mem->NumberOfPages > BestRegionLength)
+    //     {
+    //         BestRegionAddress = Mem->PhysicalStart;
+    //         BestRegionLength = Mem->NumberOfPages;
+    //     }
+    //     if (((UINT64)Mem->PhysicalStart + (Mem->NumberOfPages << 12)) > MaxAddress)
+    //     {
+    //         MaxAddress = ((UINT64)Mem->PhysicalStart + (Mem->NumberOfPages << 12));
+    //     }
+    // }
+    // KDebugPrint("MAX Address %x", MaxAddress);
+    // KDebugPrint("Best region address %x Length %u bytes", BestRegionAddress, BestRegionLength << 12);
+    // void *Space = KeReserveExtendedSpace(HmCreateImage(img, 0x1000, MaxAddress, NULL, FALSE));
+    // KDebugPrint("HM Address space %x", Space);
+
+    // HmInitImage(img, Space, BestRegionAddress, BestRegionLength, 0, NULL);
+    // __KiClearScreen(0xFF);
+    // while(1) __halt();
+
     UINT64 _EnumValue = 0;
     PETHREAD kInitThread = KeWalkThreads(KernelProcess, &_EnumValue);
 
@@ -143,41 +143,46 @@ void NOSENTRY NosSystemInit() {
         // Rebase trampolie
         UINT64 base = (UINT64)NosInitData->InitTrampoline;
         // page table
-        *(UINT64*)(base + 0x1000) += base;
-        *(UINT64*)(base + 0x2000) += base;
+        *(UINT64 *)(base + 0x1000) += base;
+        *(UINT64 *)(base + 0x2000) += base;
         // gdtr
-        *(UINT64*)(base + 0x4002) += base;
+        *(UINT64 *)(base + 0x4002) += base;
         // page table
-        *(UINT64*)(base + 0x6000) = (UINT64)KernelProcess->PageTable;
+        *(UINT64 *)(base + 0x6000) = (UINT64)KernelProcess->PageTable;
         __wbinvd();
-
     }
 
     // ConClear();
     KDebugPrint("Running PRE BOOT LAUNCH Drivers");
 
-    for(int i=0;i<NosInitData->BootHeader->NumDrivers;i++) {
-        NOS_BOOT_DRIVER* Driver = NosInitData->BootHeader->Drivers + i;
+    for (int i = 0; i < NosInitData->BootHeader->NumDrivers; i++)
+    {
+        NOS_BOOT_DRIVER *Driver = NosInitData->BootHeader->Drivers + i;
         KDebugPrint("Driver %s", Driver->DriverPath);
         // Enabled flag discarded as it is already checked by bootloader
-        if(!(Driver->Flags & DRIVER_LOADED)) {
+        if (!(Driver->Flags & DRIVER_LOADED))
+        {
             SerialLog("not loaded");
             continue;
-        } else SerialLog("loaded");
+        }
+        else
+            SerialLog("loaded");
 
         // Load the driver into memory
         Driver->Flags &= ~DRIVER_LOADED;
 
-        NSTATUS (__cdecl* EntryPoint)(PDRIVER Driver) = NULL;
+        NSTATUS(__cdecl * EntryPoint)
+        (PDRIVER Driver) = NULL;
 
-// Constructing driver object
+        // Constructing driver object
         POBJECT ObjectHeader;
 
-        if(NERROR(ObCreateObject(
-            NULL, &ObjectHeader, OBJECT_PERMANENT, OBJECT_DRIVER, Driver->DriverPath, sizeof(DRIVER), DrvEvt
-        ))) {
+        if (NERROR(ObCreateObject(
+                NULL, &ObjectHeader, OBJECT_PERMANENT, OBJECT_DRIVER, Driver->DriverPath, sizeof(DRIVER), DrvEvt)))
+        {
             KDebugPrint("Failed to create driver object.");
-            while(1) __halt();
+            while (1)
+                __halt();
         }
 
         PDRIVER DriverObject = ObjectHeader->Address;
@@ -189,38 +194,43 @@ void NOSENTRY NosSystemInit() {
             Driver->ImageSize,
             KERNEL_MODE,
             ObjectHeader,
-            (void**)&EntryPoint // Drivers reside on system process
+            (void **)&EntryPoint // Drivers reside on system process
         );
         _ui64toa(Status, bf, 0x10);
         SerialLog(bf);
 
-        if(NERROR(Status)) {
+        if (NERROR(Status))
+        {
             KDebugPrint("Failed to load driver image.");
-            KeRaiseException(Status);   
+            KeRaiseException(Status);
         }
         Driver->Flags |= DRIVER_LOADED;
 
         DriverObject->ImageFile = Driver->ImageBuffer;
-        Driver->ImageBuffer = (void*)DriverObject; // The ib is now the object itself
+        Driver->ImageBuffer = (void *)DriverObject; // The ib is now the object itself
 
         DriverObject->EntryPoint = EntryPoint;
 
-        if(NERROR(ObOpenHandle(ObjectHeader, KernelProcess, HANDLE_ALL_ACCESS, &DriverObject->DriverHandle))) {
+        if (NERROR(ObOpenHandle(ObjectHeader, KernelProcess, HANDLE_ALL_ACCESS, &DriverObject->DriverHandle)))
+        {
             KDebugPrint("Failed to open driver handle.");
-            while(1) __halt();
+            while (1)
+                __halt();
         }
 
         DriverObject->SystemProcess = KernelProcess;
 
-
         // Check if the driver can start in the preboot phase
-        if(Driver->Flags & DRIVER_PREBOOT_LAUNCH) {
+        if (Driver->Flags & DRIVER_PREBOOT_LAUNCH)
+        {
             SerialLog("Preboot Launch");
             KDebugPrint("Running driver %x EntryPoint %x", DriverObject->DriverId, EntryPoint);
             Status = KiInitLibraries(DriverObject);
-            if(NERROR(Status)) {
+            if (NERROR(Status))
+            {
                 KDebugPrint("RUN DRIVER LIBS FAILED.");
-                while(1) __halt();
+                while (1)
+                    __halt();
             }
             kInitThread->RunningDriver = DriverObject;
             Status = EntryPoint(DriverObject);
@@ -235,67 +245,72 @@ void NOSENTRY NosSystemInit() {
             // while(1) {
             // }
 
-            if(NERROR(Status)) {
-                if(Status > 6) Status = 6;
+            if (NERROR(Status))
+            {
+                if (Status > 6)
+                    Status = 6;
                 _disable();
                 DrawRect(0, 0, 500, 500, errcolors[Status]);
                 DrawRect(0, 0, 100, 100, 0xFFFFFF);
 
-                while(1) __halt();
+                while (1)
+                    __halt();
             }
         }
-
     }
 
     // Now Run AUTO BOOT LAUNCH Drivers
     KDebugPrint("Running AUTO BOOT LAUNCH Drivers");
-    for(int i=0;i<NosInitData->BootHeader->NumDrivers;i++) {
-        NOS_BOOT_DRIVER* Driver = NosInitData->BootHeader->Drivers + i;
+    for (int i = 0; i < NosInitData->BootHeader->NumDrivers; i++)
+    {
+        NOS_BOOT_DRIVER *Driver = NosInitData->BootHeader->Drivers + i;
         // Enabled flag discarded as it is already checked by bootloader
-        if(!(Driver->Flags & DRIVER_LOADED)) {
+        if (!(Driver->Flags & DRIVER_LOADED))
+        {
             continue;
         }
         PDRIVER DriverObject = (PDRIVER)Driver->ImageBuffer;
-        if(Driver->Flags & DRIVER_BOOT_LAUNCH) {
+        if (Driver->Flags & DRIVER_BOOT_LAUNCH)
+        {
             KDebugPrint("BOOT_LAUNCH Driver");
             KDebugPrint("Running Driver#%d EntryPoint %x", DriverObject->DriverId, DriverObject->EntryPoint);
-            
+
             NSTATUS Status = KiInitLibraries(DriverObject);
-            if(NERROR(Status)) {
+            if (NERROR(Status))
+            {
                 KDebugPrint("RUN DRIVER LIBS FAILED.");
-                while(1) __halt();
+                while (1)
+                    __halt();
             }
             kInitThread->RunningDriver = DriverObject;
-            
+
             Status = DriverObject->EntryPoint(DriverObject);
             kInitThread->RunningDriver = NULL;
 
             KDebugPrint("Return status : %d", Status);
-            if(NERROR(Status)) {
+            if (NERROR(Status))
+            {
                 _disable();
                 KDebugPrint("Driver startup failed");
-                while(1) __halt();
+                while (1)
+                    __halt();
             }
         }
     }
 
-    NOS_LIBRARY_FILE* Lib = NosInitData->Dlls;
-    while(Lib) {
+    NOS_LIBRARY_FILE *Lib = NosInitData->Dlls;
+    while (Lib)
+    {
         KDebugPrint("LIB : %s SZ : %x", Lib->FileName, Lib->FileSize);
         Lib = Lib->Next;
     }
 
     SerialLog("drvend");
-    
-    // INTERRUPTS ARE ENABLED BY THE ACPI SUBSYSTEM IN THE FIRST CALL TO CREATE TIMER
 
+    // INTERRUPTS ARE ENABLED BY THE ACPI SUBSYSTEM IN THE FIRST CALL TO CREATE TIMER
 
     // Stall function requires the timer to receive interrupts
 
-    
-    
-
-    
     PETHREAD t1, t2;
     KeCreateThread(KernelProcess, &t1, 0, thread1, NULL);
     KeCreateThread(KernelProcess, &t2, 0, thread2, NULL);
@@ -316,41 +331,47 @@ void NOSENTRY NosSystemInit() {
 
     KDebugPrint("KTHREADS %u", KernelProcess->NumberOfThreads);
     UINT64 _ev = 0;
-    while(KeEnumerateDevices(NULL, &dev, NULL, FALSE, &_ev)) {
-        if(dev->DeviceType != VIRTUAL_DEVICE) {
+    while (KeEnumerateDevices(NULL, &dev, NULL, FALSE, &_ev))
+    {
+        if (dev->DeviceType != VIRTUAL_DEVICE)
+        {
             KDebugPrint("Physical Device#%u Type %u : %ls", dev->ObjectDescriptor->ObjectId, dev->DeviceType, dev->DisplayName);
         }
     }
     KDebugPrint("Virtual devices:");
     _ev = 0;
-    while(KeEnumerateDevices(NULL, &dev, NULL, FALSE, &_ev)) {
-        if(dev->DeviceType == VIRTUAL_DEVICE) {
+    while (KeEnumerateDevices(NULL, &dev, NULL, FALSE, &_ev))
+    {
+        if (dev->DeviceType == VIRTUAL_DEVICE)
+        {
             KDebugPrint("Virtual Device#%u Type %u : %ls", dev->ObjectDescriptor->ObjectId, dev->DeviceType, dev->DisplayName);
         }
     }
-    for(;;) {
+    for (;;)
+    {
         // for(UINT32 i = 0;i<0xff;i++) {
-            UINT32 i = 0xFF;
-            _Memset128A_32((UINT32*)NosInitData->FrameBuffer.BaseAddress + 0x3000, i, (NosInitData->FrameBuffer.Pitch * NosInitData->FrameBuffer.VerticalResolution) / 0x20);
+        UINT32 i = 0xFF;
+        _Memset128A_32((UINT32 *)NosInitData->FrameBuffer.BaseAddress + 0x3000, i, (NosInitData->FrameBuffer.Pitch * NosInitData->FrameBuffer.VerticalResolution) / 0x20);
         // }
         Sleep(1000);
         // for(UINT32 i = 0;i<0xff;i++) {
-            _Memset128A_32((UINT32*)NosInitData->FrameBuffer.BaseAddress + 0x3000, i << 8, (NosInitData->FrameBuffer.Pitch * NosInitData->FrameBuffer.VerticalResolution) / 0x20);
+        _Memset128A_32((UINT32 *)NosInitData->FrameBuffer.BaseAddress + 0x3000, i << 8, (NosInitData->FrameBuffer.Pitch * NosInitData->FrameBuffer.VerticalResolution) / 0x20);
         // }
         Sleep(1000);
         // Stall(1000000);
 
         // for(UINT32 i = 0;i<0xff;i++) {
-            _Memset128A_32((UINT32*)NosInitData->FrameBuffer.BaseAddress + 0x3000, i << 16, (NosInitData->FrameBuffer.Pitch * NosInitData->FrameBuffer.VerticalResolution) / 0x20);
+        _Memset128A_32((UINT32 *)NosInitData->FrameBuffer.BaseAddress + 0x3000, i << 16, (NosInitData->FrameBuffer.Pitch * NosInitData->FrameBuffer.VerticalResolution) / 0x20);
         // }
         Sleep(1000);
 
         // Stall(1000000);
-
     }
-    for(;;) __halt();
+    for (;;)
+        __halt();
 }
 
-void KRNLAPI __KiClearScreen(UINT Color) {
-    _Memset128A_32((UINT32*)NosInitData->FrameBuffer.BaseAddress, Color, (NosInitData->FrameBuffer.Pitch * NosInitData->FrameBuffer.VerticalResolution) / 0x10);
+void KRNLAPI __KiClearScreen(UINT Color)
+{
+    _Memset128A_32((UINT32 *)NosInitData->FrameBuffer.BaseAddress, Color, (NosInitData->FrameBuffer.Pitch * NosInitData->FrameBuffer.VerticalResolution) / 0x10);
 }
