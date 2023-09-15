@@ -22,15 +22,45 @@
 #pragma once
 #include <nosdef.h>
 
-#define HM_IMAGE_SIZE 0x100
+#define HM_IMAGE_SIZE 0x1000
+typedef struct _HMIMAGE HMIMAGE;
+
+typedef struct _HMHEAP
+{
+    /*Everything is in units*/
+    ULONG Exponent;
+    UINT64 Address;
+    UINT FullLength; // if > 0 then this is an initial heap
+    UINT CurrentLength;
+    struct _HMHEAP *Next;
+    struct _HMHEAP *Previous;
+} HMHEAP;
+typedef BOOLEAN(__fastcall *HEAP_MANAGER_CALLBACK)(HMIMAGE *Image, UINT64 Command, UINT64 Param0, UINT64 Param1);
 
 #ifndef HMAPI
 #define HMAPI __declspec(dllimport) __fastcall
-typedef char HMIMAGE;
-__declspec(dllimport) void *HmiAllocateSpace(IN HMIMAGE *Image, IN UINT64 Size, OUT void **OutHeap);
-#else
-typedef struct _HMIMAGE HMIMAGE;
+typedef struct _HMIMAGE
+{
+    UINT Flags;
 
+    UINT64 UnitLength;
+    UINT64 TotalUnits;
+    UINT64 UsedUnits;
+
+    UINT64 TotalSpace;
+
+    UINT64 BaseAddress; // In units
+    UINT64 EndAddress;
+
+    // Size bitmap (for free memory)
+    UINT64 *ReservedArea;
+    UINT64 ReservedAreaLength;
+
+    HMHEAP *RecentHeap;
+    UINT CallbackMask;
+    HEAP_MANAGER_CALLBACK Callback;
+    UINT64 Rsv[0x200];
+} HMIMAGE;
 #endif
 
 typedef enum
@@ -39,24 +69,26 @@ typedef enum
     HmCallbackRequestMemory
 } HmCallbackBitmask;
 
-typedef BOOLEAN(__fastcall *HEAP_MANAGER_CALLBACK)(HMIMAGE *Image, UINT64 Command, UINT64 Param0, UINT64 Param1);
+#define HIMAGE_NO_BLOCKHEADER 1
+#define HIMAGE_SELF_ALLOCATE 2     // use the current image to allocate heaps
+#define HIMAGE_COMMIT_ADDRESSMAP 4 // don't use directories for efficiency
 
 // Returns reserved memory length
 UINT64 HMAPI HmCreateImage(
-    OUT HMIMAGE *Image,
-    UINT64 BaseAddress,
-    UINT64 EndAddress,
-    UINT64 UnitLength,         // Should be in powers of 2
-    BOOLEAN EnableBlockHeader, // Unit length is ignored abd set to 32 bytes
-    UINT64 CallbackMask,
-    HEAP_MANAGER_CALLBACK Callback);
+    IN OUT HMIMAGE *Image,
+    IN UINT Flags,
+    OUT UINT64 *Commit,     // Preallocate memory
+    IN UINT64 BaseUAddress, // in units
+    IN UINT64 EndUAddress,  // in units
+    IN UINT64 UnitLength,   // Should be in powers of 2
+    IN OPT UINT CallbackMask,
+    IN OPT HEAP_MANAGER_CALLBACK Callback);
 
 void HMAPI HmInitImage(
+    HMIMAGE *Image,
     void *ReservedArea,
-    UINT64 HeapAddress, // In units
-    UINT64 HeapLength   // TODO : Support lengths > 4gb
-);
-
+    UINT64 InitialHeapUAddress,
+    UINT InitialHeapULength);
 /*
  * Local functions, avoiding synchronization, faster
  * Either use them in a single thread
@@ -67,11 +99,26 @@ void HMAPI HmLocalCreateHeap(
     IN HMIMAGE *Image,
     IN void *Address,
     IN UINT64 Length);
-
+void HMAPI HmRecentHeapEmpty(IN HMIMAGE *Image);
+PVOID HMAPI HmLocalHeapUnsufficientAlloc(IN HMIMAGE *Image, IN UINT64 Size);
 // 10 Lines of code
-PVOID HMAPI HmLocalAllocate(
-    IN HMIMAGE *Image,
-    IN UINT64 Size);
+
+#define HmLocalAlloc(Image, Length, Ptr)                                                          \
+    {                                                                                             \
+        if (Image->RecentHeap->CurrentLength < Length)                                            \
+        {                                                                                         \
+            Ptr = HmLocalHeapUnsufficientAlloc(Image, Length);                                    \
+        }                                                                                         \
+        else                                                                                      \
+        {                                                                                         \
+            Ptr = (PVOID)((Image->RecentHeap->Address + Image->BaseAddress) * Image->UnitLength); \
+            Image->RecentHeap->Address += Length;                                                 \
+            Image->RecentHeap->CurrentLength -= Length;                                           \
+            Image->UsedUnits += Length;                                                           \
+            if (!Image->RecentHeap->CurrentLength)                                                \
+                HmRecentHeapEmpty(Image);                                                         \
+        }                                                                                         \
+    }
 
 // 4 Lines of code
 BOOLEAN HMAPI HmLocalFree(

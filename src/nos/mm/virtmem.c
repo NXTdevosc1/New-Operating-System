@@ -150,5 +150,5 @@ void *KeReserveExtendedSpace(
     UINT64 NumPages)
 {
     UINT64 exspace = _interlockedadd64(&ExtendedSpaceLength, NumPages << 12) - (NumPages << 12);
-    return (void *)(((UINT64)-1) - (NumPages << 12) - (exspace));
+    return (void *)((((UINT64)-1) - 0xFFF) - (NumPages << 12) - (exspace));
 }
