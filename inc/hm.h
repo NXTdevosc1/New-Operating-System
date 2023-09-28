@@ -25,23 +25,16 @@
 #define HM_IMAGE_SIZE 0x1000
 typedef struct _HMIMAGE HMIMAGE;
 
-typedef struct _HMHEAP
-{
-    /*Everything is in units*/
-    ULONG Exponent;
-    UINT64 Address;
-    UINT FullLength; // if > 0 then this is an initial heap
-    UINT CurrentLength;
-    struct _HMHEAP *Next;
-    struct _HMHEAP *Previous;
-} HMHEAP;
 typedef BOOLEAN(__fastcall *HEAP_MANAGER_CALLBACK)(HMIMAGE *Image, UINT64 Command, UINT64 Param0, UINT64 Param1);
 
 #ifndef HMAPI
 #define HMAPI __declspec(dllimport) __fastcall
 typedef struct _HMIMAGE
 {
-    UINT Flags;
+    HMIMAGE *Parent;               // Request memory from this image if not available
+    HMIMAGE *DataAllocationSource; // Image from where heaps should be allocated
+
+    UINT HeapMapping;
 
     UINT64 UnitLength;
     UINT64 TotalUnits;
@@ -56,10 +49,11 @@ typedef struct _HMIMAGE
     UINT64 *ReservedArea;
     UINT64 ReservedAreaLength;
 
-    HMHEAP *RecentHeap;
+    void *RecentHeap;
     UINT CallbackMask;
     HEAP_MANAGER_CALLBACK Callback;
     UINT64 Rsv[0x200];
+
 } HMIMAGE;
 #endif
 
@@ -69,14 +63,16 @@ typedef enum
     HmCallbackRequestMemory
 } HmCallbackBitmask;
 
-#define HIMAGE_NO_BLOCKHEADER 1
-#define HIMAGE_SELF_ALLOCATE 2     // use the current image to allocate heaps
-#define HIMAGE_COMMIT_ADDRESSMAP 4 // don't use directories for efficiency
-
+typedef enum
+{
+    HmNoMap,
+    HmPageMap, // preallocates a continuous mapping (usable for page mapping)
+    HmBlockMap
+} HmAccessWay;
 // Returns reserved memory length
-UINT64 HMAPI HmCreateImage(
+UINT64 HMAPI HeapImageCreate(
     IN OUT HMIMAGE *Image,
-    IN UINT Flags,
+    IN UINT HeapMapping,
     OUT UINT64 *Commit,     // Preallocate memory
     IN UINT64 BaseUAddress, // in units
     IN UINT64 EndUAddress,  // in units
@@ -84,7 +80,7 @@ UINT64 HMAPI HmCreateImage(
     IN OPT UINT CallbackMask,
     IN OPT HEAP_MANAGER_CALLBACK Callback);
 
-void HMAPI HmInitImage(
+void HMAPI HeapImageInit(
     HMIMAGE *Image,
     void *ReservedArea,
     UINT64 InitialHeapUAddress,
@@ -102,23 +98,9 @@ void HMAPI HmLocalCreateHeap(
 void HMAPI HmRecentHeapEmpty(IN HMIMAGE *Image);
 PVOID HMAPI HmLocalHeapUnsufficientAlloc(IN HMIMAGE *Image, IN UINT64 Size);
 // 10 Lines of code
-
-#define HmLocalAlloc(Image, Length, Ptr)                                                          \
-    {                                                                                             \
-        if (Image->RecentHeap->CurrentLength < Length)                                            \
-        {                                                                                         \
-            Ptr = HmLocalHeapUnsufficientAlloc(Image, Length);                                    \
-        }                                                                                         \
-        else                                                                                      \
-        {                                                                                         \
-            Ptr = (PVOID)((Image->RecentHeap->Address + Image->BaseAddress) * Image->UnitLength); \
-            Image->RecentHeap->Address += Length;                                                 \
-            Image->RecentHeap->CurrentLength -= Length;                                           \
-            Image->UsedUnits += Length;                                                           \
-            if (!Image->RecentHeap->CurrentLength)                                                \
-                HmRecentHeapEmpty(Image);                                                         \
-        }                                                                                         \
-    }
+PVOID HMAPI HmLocalAllocate(
+    IN HMIMAGE *Image,
+    IN UINT64 Count);
 
 // 4 Lines of code
 BOOLEAN HMAPI HmLocalFree(

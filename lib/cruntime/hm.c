@@ -8,9 +8,10 @@
 #include <crt.h>
 #include <intrin.h>
 
-UINT64 HMAPI HmCreateImage(
+// Returns reserved memory length
+UINT64 HMAPI HeapImageCreate(
     IN OUT HMIMAGE *Image,
-    IN UINT Flags,
+    IN UINT HeapMapping,
     OUT UINT64 *Commit,     // Preallocate memory
     IN UINT64 BaseUAddress, // in units
     IN UINT64 EndUAddress,  // in units
@@ -18,185 +19,97 @@ UINT64 HMAPI HmCreateImage(
     IN OPT UINT CallbackMask,
     IN OPT HEAP_MANAGER_CALLBACK Callback)
 {
-
     ObjZeroMemory(Image);
-
+    Image->HeapMapping = HeapMapping;
     Image->BaseAddress = BaseUAddress;
     Image->EndAddress = EndUAddress;
-
     Image->UnitLength = UnitLength;
-    Image->CallbackMask = CallbackMask;
-    Image->Callback = Callback;
-    Image->Flags = Flags;
-
+    _BitScanReverse64((ULONG *)&Image->UnitShift, UnitLength);
     Image->TotalSpace = EndUAddress - BaseUAddress;
+    *Commit = 0;
 
-    UINT64 TotalLength = AlignForward(Image->TotalSpace >> 3, 0x1000);
-    if (Flags & HIMAGE_COMMIT_ADDRESSMAP)
+    if (HeapMapping == HmPageMap || HeapMapping == HmBlockMap)
     {
-        *Commit = TotalLength >> 12;
-    }
-    else
-    {
-        Image->LenAddrDir = AlignForward(Image->TotalSpace >> 15, 0x1000);
-        *Commit = Image->LenAddrDir >> 12;
-        TotalLength += Image->LenAddrDir;
-    }
+        // Use 1 Page bitmap directory + chain of page size entries
 
-    Image->ReservedAreaLength = TotalLength;
+        // Page directory length
+        *Commit = ((Image->TotalSpace / 0x200000) + 0x1000) >> 12;
 
-    return TotalLength >> 12;
-}
-
-static inline void HMDECL HmUnlink(HMIMAGE *Image, HMHEAP *Heap)
-{
-    if (Heap->Previous)
-    {
-        Heap->Previous->Next = Heap->Next;
-    }
-    if (Heap->Next)
-    {
-        Heap->Next->Previous = Heap->Previous;
-    }
-    if (Image->Mem[Heap->Exponent] == Heap)
-    {
-        Image->Mem[Heap->Exponent] = Heap->Next;
-        if (!Heap->Next)
+        if (HeapMapping == HmBlockMap)
         {
-            _bittestandreset64(&Image->PresentMem, Heap->Exponent);
+            Image->ReservedAreaLength = (*Commit) + (AlignForward((Image->TotalSpace / 0x8000), 0x1000) >> 12);
+        }
+        else
+        {
+            Image->ReservedAreaLength = *Commit + (AlignForward((Image->TotalSpace / 0x200), 0x1000) >> 12);
         }
     }
-    Heap->Next = NULL;
-    Heap->Previous = NULL;
+
+    Image->CommitLength = *Commit;
+
+    Image->RecentHeap = &Image->InitialHeap;
+
+    return Image->ReservedAreaLength;
 }
 
-static inline void HMDECL HmPlace(HMIMAGE *Image, HMHEAP *Heap)
-{
-    _BitScanReverse(&Heap->Exponent, Heap->CurrentLength);
-    KDebugPrint("Place %x EXP %x", Heap->CurrentLength, Heap->Exponent);
-    if (_bittestandset64(&Image->PresentMem, Heap->Exponent))
-    {
-        Image->MemEnd[Heap->Exponent]->Next = Heap;
-        Heap->Previous = Image->MemEnd[Heap->Exponent];
-        Image->MemEnd[Heap->Exponent] = Heap;
-    }
-    else
-    {
-        Image->Mem[Heap->Exponent] = Heap;
-        Image->MemEnd[Heap->Exponent] = Heap;
-    }
-}
-
-// Sets recent heap
-static inline void HMDECL HmLookup(HMIMAGE *Image)
-{
-    ULONG Index;
-    if (!_BitScanReverse(&Index, Image->PresentMem))
-    {
-        KDebugPrint("BUG 0");
-        while (1)
-            __halt();
-    }
-    HMHEAP *Largest = Image->Mem[Index];
-
-    HMHEAP *hp = Largest;
-    // TODO : Use more efficient method instead of looping lookup
-    while (hp)
-    {
-        if (hp->CurrentLength > Largest->CurrentLength)
-            Largest = hp;
-
-        hp = hp->Next;
-    }
-    Image->RecentHeap = Largest;
-}
-
-void HMAPI HmInitImage(
+void HMAPI HeapImageInit(
     HMIMAGE *Image,
     void *ReservedArea,
     UINT64 InitialHeapUAddress,
     UINT InitialHeapULength)
 {
     Image->ReservedArea = ReservedArea;
-    if (Image->Flags & HIMAGE_COMMIT_ADDRESSMAP)
-    {
-        Image->AddressMap = Image->ReservedArea;
-        XmemsetAligned(Image->AddressMap, 0, Image->ReservedAreaLength >> 7);
-    }
-    else
-    {
-        Image->AddressDirectory = Image->ReservedArea;
-        Image->AddressMap = (UINT64 *)((char *)Image->ReservedArea + Image->LenAddrDir);
-        XmemsetAligned(Image->AddressDirectory, 0, Image->LenAddrDir >> 7);
-    }
-    Image->InitialHeap.Address = InitialHeapUAddress;
-    Image->InitialHeap.FullLength = InitialHeapULength;
-    Image->InitialHeap.CurrentLength = InitialHeapULength;
-    KDebugPrint("I %x %x", InitialHeapULength, Image->InitialHeap.CurrentLength);
-    // Find exponent
-    HmPlace(Image, &Image->InitialHeap);
-    while (1)
-        ;
-    HmLookup(Image);
+    XmemsetAligned(ReservedArea, 0, Image->CommitLength * 32);
+    Image->InitialHeap.def.addr = InitialHeapUAddress;
+    Image->InitialHeap.def.baseheap = 1;
+    Image->InitialHeap.def.len = InitialHeapULength;
+    Image->InitialHeap.maxlen = InitialHeapULength;
 
-    Image->TotalUnits = InitialHeapULength;
-    Image->RecentHeap = &Image->InitialHeap;
+    _BaseHeapPlace(Image, &Image->InitialHeap);
 }
 
-PVOID HMAPI HmLocalHeapUnsufficientAlloc(IN HMIMAGE *Image, IN UINT64 Size)
+void *HMAPI HeapBasicAllocate(
+    HMIMAGE *Image,
+    UINT64 UnitCount)
 {
-    HMHEAP *Heap = Image->RecentHeap;
-    if (Image->TotalUnits - Image->UsedUnits < Size)
-        goto clb;
-    // move the heap, find a larger heap
-    HmUnlink(Image, Heap);
-    HmPlace(Image, Heap);
-    HmLookup(Image);
-    Heap = Image->RecentHeap;
-    if (Heap->CurrentLength < Size)
+    if (!Image->RecentHeap)
+        return NULL;
+    if (Image->RecentHeap->def.len < UnitCount)
     {
-    clb:
-        if (_bittest(&Image->CallbackMask, HmCallbackRequestMemory))
-        {
-            if (Image->Callback(Image, HmCallbackRequestMemory, Size, (UINT64)&Heap))
-            {
-                Image->RecentHeap = Heap;
-                PVOID p;
-                HmLocalAlloc(Image, Size, p);
-                return p;
-            }
-            else
-                return NULL;
-        }
-        else
-            return NULL;
+        _HeapRecentRelease(Image);
+        return _HeapResortAllocate(Image, UnitCount);
     }
-    PVOID p;
-    HmLocalAlloc(Image, Size, p);
+    Image->RecentHeap->def.len -= UnitCount;
+    char *p = Image->RecentHeap->def.addr << Image->UnitShift;
+    Image->RecentHeap->def.addr += UnitCount;
     return p;
 }
 
-void HMAPI HmRecentHeapEmpty(IN HMIMAGE *Image)
+void *HMAPI HeapAllocate(
+    HMIMAGE *Image,
+    UINT64 UnitCount)
 {
-    HMHEAP *Heap = Image->RecentHeap;
-    // Exclude
-    HmLookup(Image);
-    if (Image->RecentHeap != Heap)
-    {
-        HmUnlink(Image, Heap);
-    }
-
-    if (!Heap->FullLength)
-    {
-        // Unlink subheap
-        KDebugPrint("Handle CASE 0");
-        while (1)
-            __halt();
-    }
+    void *p = HeapBasicAllocate(Image, UnitCount);
+    return p;
 }
 
-// PVOID HMAPI HmLocalAllocate(
-//     IN HMIMAGE *Image,
-//     IN UINT64 Size)
-// {
-// }
+BOOLEAN HMAPI HeapFree(HMIMAGE *Image, void *Ptr)
+{
+}
+
+BOOLEAN HMAPI BaseHeapCreate(
+    HMIMAGE *Image,
+    UINT64 UnitAddress,
+    UINT64 UnitCount)
+{
+    BASEHEAP *h = HeapBasicAllocate(Image->DataAllocationSource, Image->DataAllocationLength);
+    if (!h)
+        return FALSE;
+    h->def.addr = UnitAddress;
+    h->def.len = UnitCount;
+    h->def.baseheap = 1;
+    h->maxlen = h->def.len;
+
+    _BaseHeapPlace(Image, h);
+    return TRUE;
+}

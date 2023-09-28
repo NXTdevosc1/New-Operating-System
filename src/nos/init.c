@@ -121,11 +121,9 @@ void NOSENTRY NosSystemInit()
     KDebugPrint("MAX Address %x MIN ADDRESS %x", MaxAddress, MinAddress);
     KDebugPrint("Best region address %x Length %u bytes", BestRegionAddress, BestRegionLength << 12);
     UINT64 Commit;
-    UINT64 Reserve = HmCreateImage(
-        img, 0, &Commit, 0x1000, 0x80000000000,
-        0x10, 0, NULL);
+    UINT64 Reserve = HeapImageCreate(img, HmPageMap, &Commit, 0, 0x10000, 0x1000, 0, NULL);
     void *Space = KeReserveExtendedSpace(Reserve);
-    KDebugPrint("HM Address space %x RESERVE %u Bytes COMMIT %u Bytes", Space, Reserve, Commit);
+    KDebugPrint("HM Address space %x RESERVE %u Pages COMMIT %u Pages", Space, Reserve, Commit);
 
     void *p;
     if (NERROR(MmAllocatePhysicalMemory(0, Commit, &p)))
@@ -137,17 +135,16 @@ void NOSENTRY NosSystemInit()
 
     KeMapVirtualMemory(NULL, p, Space, Commit, PAGE_WRITE_ACCESS, 0);
 
-    HmInitImage(img, Space, 0, 0x60000000);
+    HeapImageInit(img, Space, 0, 0x60000);
+    __KiClearScreen(0xFF);
     while (1)
         ;
-
-    __KiClearScreen(0xFF);
 
     PVOID pt;
     // Calculate time for 1 billion allocations
     for (UINT64 i = 0; i < 1000000000; i++)
     {
-        HmLocalAlloc(img, 1, pt);
+        // HmLocalAlloc(img, 1, pt);
     }
     KDebugPrint("Last alloc %x", pt);
     __KiClearScreen(0xFFFF);

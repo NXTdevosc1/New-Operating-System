@@ -7,13 +7,34 @@
 #include <crt.h>
 
 #define HM_LAST_TREE_LENGTH 130
+typedef struct _hmbheap BASEHEAP;
+typedef struct _hmheap
+{
+    UINT64 addr : 63;
+    UINT64 baseheap : 1;
+    UINT64 len;
+} HEAPDEF;
+typedef struct _hmbheap
+{
+    HEAPDEF def;
+    UINT64 maxlen;
+    struct _hmbheap *next, *prev;
+} BASEHEAP;
 
 typedef struct _HMIMAGE
 {
 
-    UINT Flags;
+    HMIMAGE *Parent;               // Request memory from this image if not available
+    HMIMAGE *DataAllocationSource; // Image from where heaps should be allocated
+    UINT8 DataAllocationLength;
+
+    UINT HeapMapping; // eather Block headers or Address maps
 
     UINT64 UnitLength;
+
+    UINT8 UnitShift;
+    UINT8 UnitParentShift;
+
     UINT64 TotalUnits;
     UINT64 UsedUnits;
 
@@ -26,35 +47,125 @@ typedef struct _HMIMAGE
     UINT64 *ReservedArea;
     UINT64 ReservedAreaLength;
 
-    HMHEAP *RecentHeap;
+    BASEHEAP *RecentHeap;
     UINT CallbackMask;
     HEAP_MANAGER_CALLBACK Callback;
+
+    UINT64 CommitLength;
 
     UINT64 *AddressDirectory;
     UINT64 LenAddrDir;
     UINT64 *AddressMap;
 
     // Free memory (2 Exponent based sizes)
-    UINT PresentMem;
-    HMHEAP *Mem[32];
-    HMHEAP *MemEnd[32];
+    UINT64 BaseMemoryMask;
+    struct
+    {
+        BASEHEAP *Start;
+        BASEHEAP *End;
+    } BaseMemory[64];
 
-    HMHEAP InitialHeap;
+    BASEHEAP InitialHeap;
 
 } HMIMAGE;
 
 #define HMINTERNAL static inline
 #define HMDECL __fastcall
 
-HMINTERNAL void *HMDECL _HmTakeSpace(HMIMAGE *Image, UINT64 Units);
+HMINTERNAL void HMDECL _BaseHeapPlace(HMIMAGE *Img, BASEHEAP *Heap)
+{
+    ULONG i;
+    _BitScanReverse64(&i, Heap->def.len);
+    if (_bittestandset64(&Img->BaseMemoryMask, i))
+    {
+        Img->BaseMemory[i].End->next = Heap;
+        Heap->prev = Img->BaseMemory[i].End;
+        Img->BaseMemory[i].End = Heap;
+    }
+    else
+    {
+        Img->BaseMemory[i].Start = Heap;
+        Img->BaseMemory[i].End = Heap;
+        Heap->prev = NULL;
+    }
+    Heap->next = NULL;
+}
 
-HMINTERNAL void *HMDECL _HmAllocateSubMap(
-    HMIMAGE *Image);
+// Sorts a larger heap and allocates from it
+HMINTERNAL void *HMDECL _HeapResortAllocate(HMIMAGE *Image, UINT64 UnitCount)
+{
+    ULONG exp;
+    _BitScanReverse64(&exp, Image->BaseMemoryMask);
+    BASEHEAP *h = Image->BaseMemory[exp].Start;
+    while (h)
+    {
+        if (h->def.len >= UnitCount)
+        {
+            Image->RecentHeap = h;
+            h->def.len -= UnitCount;
+            char *p = h->def.addr << Image->UnitShift;
+            h->def.addr += UnitCount;
+            return p;
+        }
+    }
+    UINT64 Len = UnitCount >> Image->UnitParentShift;
+    if (UnitCount & ((1 << Image->UnitParentShift) - 1))
+        Len++;
+    if (HeapAllocate(Image->Parent, Len))
+    {
+        }
+    else
+    {
+        // User-defined implementation
+        return Image->Callback(Image, HmCallbackNoMem, UnitCount, 0);
+    }
+}
 
-HMINTERNAL void HMDECL _HmClearMem(void *Mem, UINT64 LengthInBytes);
+HMINTERNAL void HMDECL _HeapRecentRelease(HMIMAGE *Image)
+{
+    ULONG expmax, expcrt;
+    BASEHEAP *h = Image->RecentHeap;
 
-extern inline __declspec(dllexport) void HMDECL _HmPutHeap(
-    HMIMAGE *Image,
-    HMHEAP *Heap,
-    void *Map,
-    UINT64 Key);
+    _BitScanReverse64(&expmax, h->maxlen);
+    _BitScanReverse64(&expcrt, h->def.len);
+    if (expmax != expcrt)
+    {
+        if (Image->BaseMemory[expmax].Start == h && Image->BaseMemory[expmax].End == h)
+        {
+            _bittestandreset64(&Image->BaseMemoryMask, expmax);
+        }
+        else
+        {
+            if (Image->BaseMemory[expmax].Start == h)
+            {
+                Image->BaseMemory[expmax].Start = h->next;
+                Image->BaseMemory[expmax].Start->prev = NULL;
+            }
+            else if (Image->BaseMemory[expmax].End == h)
+            {
+                Image->BaseMemory[expmax].End = h->prev;
+                Image->BaseMemory[expmax].End->next = NULL;
+            }
+            else
+            {
+                h->next->prev = h->prev;
+                h->prev->next = h->next;
+            }
+        }
+        if (!h->def.len)
+        {
+            if (h->def.baseheap)
+            {
+                h->def.len = -1; // Remap indicator
+            }
+            else
+            {
+                // Free the subheap
+                HeapFree(Image->DataAllocationSource, h);
+            }
+        }
+        else
+            _BaseHeapPlace(Image, h);
+    }
+    Image->RecentHeap = NULL;
+}
