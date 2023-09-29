@@ -113,7 +113,7 @@ HMINTERNAL void *HMDECL _HeapResortAllocate(HMIMAGE *Image, UINT64 UnitCount)
         Len++;
     if (HeapAllocate(Image->Parent, Len))
     {
-        }
+    }
     else
     {
         // User-defined implementation
@@ -168,4 +168,25 @@ HMINTERNAL void HMDECL _HeapRecentRelease(HMIMAGE *Image)
             _BaseHeapPlace(Image, h);
     }
     Image->RecentHeap = NULL;
+}
+
+HMINTERNAL void HMDECL _HeapSetPageEntry(HMIMAGE *Image, UINT64 Address, UINT64 Length)
+{
+    UINT64 DirIndex = Address >> 15, BitOff = (Address >> 9) & 0x3F;
+    if (_bittestandset64(Image->AddressDirectory + DirIndex, BitOff))
+    {
+        PAGEHEAPDEF *Pg = (void *)(Image->AddressMap + (Address & ~0x1FF));
+        Pg += Address & 0x1FF;
+        Pg->Length = Length;
+        Pg->Present = 1;
+    }
+    else
+    {
+        // Create and map a page
+        PAGEHEAPDEF *Pg = (void *)(Image->AddressMap + (Address & ~0x1FF));
+        Image->Callback(Image, HmCallbackMapPage, Pg, 0);
+        Pg += Address & 0x1FF;
+        Pg->Length = Length;
+        Pg->Present = 1;
+    }
 }

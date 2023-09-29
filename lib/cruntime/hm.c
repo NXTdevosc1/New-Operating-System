@@ -93,7 +93,17 @@ void *HMAPI HeapAllocate(
     return p;
 }
 
-BOOLEAN HMAPI HeapFree(HMIMAGE *Image, void *Ptr)
+void HMAPI HeapMapPageEntry(HMIMAGE *Image, UINT64 Address, UINT64 Length)
+{
+    // Mark page start
+    _HeapSetPageEntry(Image, Address, Length);
+    // Mark page end
+    _HeapSetPageEntry(Image, Address + Length, 0);
+}
+
+void HMAPI HeapSetBlockAddress(HMIMAGE *Image, HEAPDEF *Def)
+
+    BOOLEAN HMAPI HeapFree(HMIMAGE *Image, void *Ptr)
 {
 }
 

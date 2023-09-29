@@ -27,6 +27,12 @@ typedef struct _HMIMAGE HMIMAGE;
 
 typedef BOOLEAN(__fastcall *HEAP_MANAGER_CALLBACK)(HMIMAGE *Image, UINT64 Command, UINT64 Param0, UINT64 Param1);
 
+typedef struct _PAGEHEAPDEF
+{
+    UINT64 Present : 1;
+    UINT64 Length : 63; // 0 if end of heap
+} PAGEHEAPDEF;
+
 #ifndef HMAPI
 #define HMAPI __declspec(dllimport) __fastcall
 typedef struct _HMIMAGE
@@ -59,8 +65,8 @@ typedef struct _HMIMAGE
 
 typedef enum
 {
-    HmCallbackFreeMemory,
-    HmCallbackRequestMemory
+    HmCallbackNoMem,
+    HmCallbackMapPage, // allocates and maps a zero-initialized page at specified address in param0, forced to return TRUE or crash
 } HmCallbackBitmask;
 
 typedef enum
