@@ -175,18 +175,58 @@ HMINTERNAL void HMDECL _HeapSetPageEntry(HMIMAGE *Image, UINT64 Address, UINT64 
     UINT64 DirIndex = Address >> 15, BitOff = (Address >> 9) & 0x3F;
     if (_bittestandset64(Image->AddressDirectory + DirIndex, BitOff))
     {
-        PAGEHEAPDEF *Pg = (void *)(Image->AddressMap + (Address & ~0x1FF));
-        Pg += Address & 0x1FF;
+        PAGEHEAPDEF *Pg = (void *)(Image->AddressMap + Address);
         Pg->Length = Length;
         Pg->Present = 1;
     }
     else
     {
         // Create and map a page
-        PAGEHEAPDEF *Pg = (void *)(Image->AddressMap + (Address & ~0x1FF));
+        PAGEHEAPDEF *Pg = (void *)(Image->AddressMap + Address);
         Image->Callback(Image, HmCallbackMapPage, Pg, 0);
-        Pg += Address & 0x1FF;
         Pg->Length = Length;
         Pg->Present = 1;
     }
+}
+
+HMINTERNAL PAGEHEAPDEF *HMDECL _HeapGetPageEntry(HMIMAGE *Image, UINT64 Address)
+{
+    UINT64 di = Address >> 15, bit = (Address >> 9) & 0x3F;
+    if (_bittest64(Image->AddressDirectory + di, bit))
+    {
+        PAGEHEAPDEF *Pg = (void *)(Image->AddressMap + Address);
+        if (!Pg->Present)
+            return NULL;
+        return Pg;
+    }
+    else
+        return NULL;
+}
+
+HMINTERNAL void HMDECL HeapSetPageEntry(HMIMAGE *Image, UINT64 Address, UINT64 Length)
+{
+    // Mark page start
+    _HeapSetPageEntry(Image, Address, Length);
+    // Mark page end
+    _HeapSetPageEntry(Image, Address + Length, 0);
+}
+
+#define BLOCK_MAGIC 0x96 // 0x80 | 0x16 Heap manager done when I'm 16
+
+typedef struct _HBLOCK
+{
+    UINT64 Magic : 8;
+    UINT64 Length : 56;
+    UINT64 Free : 1;
+    UINT64 BaseBlock : 1;
+    UINT64 MaxLength : 62; // Free area offset for non base heaps
+} HBLOCK;
+
+HMINTERNAL void HMDECL HeapSetBlock(HMIMAGE *Image, char *Mem, UINT64 bLength)
+{
+    *(UINT64 *)(Mem + bLength) = bLength;
+    HBLOCK *Def = Mem;
+    Def->Magic = BLOCK_MAGIC;
+    Def->Length = bLength;
+    Def->MaxLength = 0;
 }

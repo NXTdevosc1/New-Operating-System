@@ -90,21 +90,25 @@ void *HMAPI HeapAllocate(
     UINT64 UnitCount)
 {
     void *p = HeapBasicAllocate(Image, UnitCount);
+    HeapSetBlock(Image, p, UnitCount << Image->UnitShift);
     return p;
 }
 
-void HMAPI HeapMapPageEntry(HMIMAGE *Image, UINT64 Address, UINT64 Length)
+BOOLEAN HMAPI HeapFree(HMIMAGE *Image, void *Ptr)
 {
-    // Mark page start
-    _HeapSetPageEntry(Image, Address, Length);
-    // Mark page end
-    _HeapSetPageEntry(Image, Address + Length, 0);
-}
+    HBLOCK *Block = ((HBLOCK *)Ptr - 1);
+    if (Block->Magic != BLOCK_MAGIC)
+        return FALSE;
 
-void HMAPI HeapSetBlockAddress(HMIMAGE *Image, HEAPDEF *Def)
-
-    BOOLEAN HMAPI HeapFree(HMIMAGE *Image, void *Ptr)
-{
+    if (Block->MaxLength)
+    {
+        // Base block
+    }
+    else
+    {
+        // Sub block
+        HBLOCK *Prev
+    }
 }
 
 BOOLEAN HMAPI BaseHeapCreate(
