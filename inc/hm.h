@@ -25,7 +25,7 @@
 #define HM_IMAGE_SIZE 0x1000
 typedef struct _HMIMAGE HMIMAGE;
 
-typedef BOOLEAN(__fastcall *HEAP_MANAGER_CALLBACK)(HMIMAGE *Image, UINT64 Command, UINT64 Param0, UINT64 Param1);
+typedef void *(__fastcall *HEAP_MANAGER_CALLBACK)(HMIMAGE *Image, UINT64 Command, UINT64 Param0, UINT64 Param1);
 
 typedef struct _PAGEHEAPDEF
 {
@@ -79,11 +79,10 @@ typedef enum
 UINT64 HMAPI HeapImageCreate(
     IN OUT HMIMAGE *Image,
     IN UINT HeapMapping,
-    OUT UINT64 *Commit,     // Preallocate memory
-    IN UINT64 BaseUAddress, // in units
-    IN UINT64 EndUAddress,  // in units
-    IN UINT64 UnitLength,   // Should be in powers of 2
-    IN OPT UINT CallbackMask,
+    OUT UINT64 *Commit,         // Preallocate memory
+    IN UINT64 BaseUAddress,     // in units
+    IN UINT64 UAddrSpaceLength, // in units
+    IN UINT8 UnitLengthPw2,     // Should be in powers of 2
     IN OPT HEAP_MANAGER_CALLBACK Callback);
 
 void HMAPI HeapImageInit(
@@ -97,18 +96,13 @@ void HMAPI HeapImageInit(
  * Or use them in multiple threads with only 1 processor, and disable interrupts before calling each function
  */
 
-void HMAPI HmLocalCreateHeap(
-    IN HMIMAGE *Image,
-    IN void *Address,
-    IN UINT64 Length);
-void HMAPI HmRecentHeapEmpty(IN HMIMAGE *Image);
-PVOID HMAPI HmLocalHeapUnsufficientAlloc(IN HMIMAGE *Image, IN UINT64 Size);
-// 10 Lines of code
-PVOID HMAPI HmLocalAllocate(
-    IN HMIMAGE *Image,
-    IN UINT64 Count);
+PVOID HMAPI HeapAllocate(
+    HMIMAGE *Image,
+    UINT64 UnitCount);
 
-// 4 Lines of code
-BOOLEAN HMAPI HmLocalFree(
-    IN HMIMAGE *Image,
-    IN void *Address);
+BOOLEAN HMAPI HeapFree(HMIMAGE *Image, void *Ptr);
+
+BOOLEAN HMAPI BaseHeapCreate(
+    HMIMAGE *Image,
+    UINT64 UnitAddress,
+    UINT64 UnitCount);

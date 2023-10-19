@@ -44,18 +44,17 @@ typedef struct _HMIMAGE
     UINT64 EndAddress;
 
     // Size bitmap (for free memory)
-    UINT64 *ReservedArea;
+    void *ReservedArea;
     UINT64 ReservedAreaLength;
 
     BASEHEAP *RecentHeap;
-    UINT CallbackMask;
     HEAP_MANAGER_CALLBACK Callback;
 
     UINT64 CommitLength;
 
-    UINT64 *AddressDirectory;
+    UINT8 *AddressDirectory;
     UINT64 LenAddrDir;
-    UINT64 *AddressMap;
+    UINT8 *AddressMap;
 
     // Free memory (2 Exponent based sizes)
     UINT64 BaseMemoryMask;
@@ -71,6 +70,26 @@ typedef struct _HMIMAGE
 
 #define HMINTERNAL static inline
 #define HMDECL __fastcall
+
+#define _MapAddress(Image, Address) Image->AddressMap[Address >> 3] |= (1 << (Address & 7))
+#define _UnmapAddress(Image, Address) Image->AddressMap[Address >> 3] &= ~(1 << (Address & 7))
+
+HMINTERNAL void HMDECL _MapBilvlAddress(
+    HMIMAGE *Image,
+    UINT64 Address)
+{
+    if (!_bittestandset((long *)(Image->AddressMap + (Address >> 18)), Address & 7))
+    {
+        Image->Callback(Image, HmCallbackMapPage, Address >> 3, 0);
+    }
+    _MapAddress(Image, Address);
+}
+
+HMINTERNAL void HMDECL _UnmapBiLvlAddress(
+    HMIMAGE *Image,
+    UINT64 Address)
+{
+}
 
 HMINTERNAL void HMDECL _BaseHeapPlace(HMIMAGE *Img, BASEHEAP *Heap)
 {
@@ -103,7 +122,7 @@ HMINTERNAL void *HMDECL _HeapResortAllocate(HMIMAGE *Image, UINT64 UnitCount)
         {
             Image->RecentHeap = h;
             h->def.len -= UnitCount;
-            char *p = h->def.addr << Image->UnitShift;
+            char *p = (char *)(h->def.addr << Image->UnitShift);
             h->def.addr += UnitCount;
             return p;
         }
@@ -183,7 +202,7 @@ HMINTERNAL void HMDECL _HeapSetPageEntry(HMIMAGE *Image, UINT64 Address, UINT64 
     {
         // Create and map a page
         PAGEHEAPDEF *Pg = (void *)(Image->AddressMap + Address);
-        Image->Callback(Image, HmCallbackMapPage, Pg, 0);
+        Image->Callback(Image, HmCallbackMapPage, (UINT64)Pg, 0);
         Pg->Length = Length;
         Pg->Present = 1;
     }
@@ -203,6 +222,9 @@ HMINTERNAL PAGEHEAPDEF *HMDECL _HeapGetPageEntry(HMIMAGE *Image, UINT64 Address)
         return NULL;
 }
 
+// // Address directory + Address block (2 bits, BIT0 : )
+// HMINTERNAL void HMDECL _HeapSetBlockAddress()
+
 HMINTERNAL void HMDECL HeapSetPageEntry(HMIMAGE *Image, UINT64 Address, UINT64 Length)
 {
     // Mark page start
@@ -212,6 +234,7 @@ HMINTERNAL void HMDECL HeapSetPageEntry(HMIMAGE *Image, UINT64 Address, UINT64 L
 }
 
 #define BLOCK_MAGIC 0x96 // 0x80 | 0x16 Heap manager done when I'm 16
+#define ENDBLOCK_MAGIC 0xEE
 
 typedef struct _HBLOCK
 {
@@ -222,11 +245,24 @@ typedef struct _HBLOCK
     UINT64 MaxLength : 62; // Free area offset for non base heaps
 } HBLOCK;
 
+HMINTERNAL void HMDECL HeapMapAddress(HMIMAGE *Image, UINT64 Address)
+{
+    UINT32 *Dir = Image->AddressDirectory + (Address >> 17);
+    ULONG Index = (Address >> 15) & 0x1F;
+    if (!_bittestandset(Dir, Index))
+    {
+        // Map directory
+    }
+}
+
 HMINTERNAL void HMDECL HeapSetBlock(HMIMAGE *Image, char *Mem, UINT64 bLength)
 {
     *(UINT64 *)(Mem + bLength) = bLength;
-    HBLOCK *Def = Mem;
+    HBLOCK *Def = (void *)Mem;
     Def->Magic = BLOCK_MAGIC;
     Def->Length = bLength;
     Def->MaxLength = 0;
+
+    // Uses (00 = Available, 01 = BlockStart, 10 = BlockEnd) 2 bits per entry
+    UINT64 bsi = (UINT64)Mem >> 2, bssi = (UINT64)Mem & 0xFF;
 }

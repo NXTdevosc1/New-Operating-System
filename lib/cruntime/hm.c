@@ -16,7 +16,6 @@ UINT64 HMAPI HeapImageCreate(
     IN UINT64 BaseUAddress, // in units
     IN UINT64 EndUAddress,  // in units
     IN UINT64 UnitLength,   // Should be in powers of 2
-    IN OPT UINT CallbackMask,
     IN OPT HEAP_MANAGER_CALLBACK Callback)
 {
     ObjZeroMemory(Image);
@@ -24,6 +23,7 @@ UINT64 HMAPI HeapImageCreate(
     Image->BaseAddress = BaseUAddress;
     Image->EndAddress = EndUAddress;
     Image->UnitLength = UnitLength;
+    Image->Callback = Callback;
     _BitScanReverse64((ULONG *)&Image->UnitShift, UnitLength);
     Image->TotalSpace = EndUAddress - BaseUAddress;
     *Commit = 0;
@@ -68,7 +68,7 @@ void HMAPI HeapImageInit(
     _BaseHeapPlace(Image, &Image->InitialHeap);
 }
 
-void *HMAPI HeapBasicAllocate(
+HMINTERNAL PVOID HMDECL HeapBasicAllocate(
     HMIMAGE *Image,
     UINT64 UnitCount)
 {
@@ -80,12 +80,12 @@ void *HMAPI HeapBasicAllocate(
         return _HeapResortAllocate(Image, UnitCount);
     }
     Image->RecentHeap->def.len -= UnitCount;
-    char *p = Image->RecentHeap->def.addr << Image->UnitShift;
+    char *p = (char *)(Image->RecentHeap->def.addr << Image->UnitShift);
     Image->RecentHeap->def.addr += UnitCount;
     return p;
 }
 
-void *HMAPI HeapAllocate(
+PVOID HMAPI HeapAllocate(
     HMIMAGE *Image,
     UINT64 UnitCount)
 {
@@ -107,8 +107,10 @@ BOOLEAN HMAPI HeapFree(HMIMAGE *Image, void *Ptr)
     else
     {
         // Sub block
-        HBLOCK *Prev
+        // HBLOCK *Prev
     }
+
+    return FALSE;
 }
 
 BOOLEAN HMAPI BaseHeapCreate(
