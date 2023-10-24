@@ -33,76 +33,53 @@ typedef struct _PAGEHEAPDEF
     UINT64 Length : 63; // 0 if end of heap
 } PAGEHEAPDEF;
 
+typedef struct _HMHEADER
+{
+    UINT64 Address : 63;
+    UINT64 FirstBlock : 1;
+    struct _HMHEADER *NextBlock;
+    struct _HMHEADER *PrevOrLastBlock;
+} HMHEADER, *PHMHEADER;
+typedef struct _HMUSERHEADER
+{
+    struct
+    {
+        PHMHEADER Block;
+        UINT64 RemainingLength;
+    } BestHeap;
+
+    UINT64 TotalMemory; // in units
+    UINT64 AllocatedMemory;
+    HMIMAGE *AllocateFrom;
+} HMUSERHEADER;
 #ifndef HMAPI
 #define HMAPI __declspec(dllimport) __fastcall
 typedef struct _HMIMAGE
 {
-    HMIMAGE *Parent;               // Request memory from this image if not available
-    HMIMAGE *DataAllocationSource; // Image from where heaps should be allocated
-
-    UINT HeapMapping;
-
-    UINT64 UnitLength;
-    UINT64 TotalUnits;
-    UINT64 UsedUnits;
-
-    UINT64 TotalSpace;
-
-    UINT64 BaseAddress; // In units
-    UINT64 EndAddress;
-
-    // Size bitmap (for free memory)
-    UINT64 *ReservedArea;
-    UINT64 ReservedAreaLength;
-
-    void *RecentHeap;
-    UINT CallbackMask;
-    HEAP_MANAGER_CALLBACK Callback;
-    UINT64 Rsv[0x200];
+    HMUSERHEADER User;
+    UINT64 Rsv[0x300];
 
 } HMIMAGE;
 #endif
 
-typedef enum
-{
-    HmCallbackNoMem,
-    HmCallbackMapPage, // allocates and maps a zero-initialized page at specified address in param0, forced to return TRUE or crash
-} HmCallbackBitmask;
-
-typedef enum
-{
-    HmNoMap,
-    HmPageMap, // preallocates a continuous mapping (usable for page mapping)
-    HmBlockMap
-} HmAccessWay;
-// Returns reserved memory length
-UINT64 HMAPI HeapImageCreate(
-    IN OUT HMIMAGE *Image,
-    IN UINT HeapMapping,
-    OUT UINT64 *Commit,         // Preallocate memory
-    IN UINT64 BaseUAddress,     // in units
-    IN UINT64 UAddrSpaceLength, // in units
-    IN UINT8 UnitLengthPw2,     // Should be in powers of 2
-    IN OPT HEAP_MANAGER_CALLBACK Callback);
-
-void HMAPI HeapImageInit(
-    HMIMAGE *Image,
-    void *ReservedArea,
-    UINT64 InitialHeapUAddress,
-    UINT InitialHeapULength);
 /*
- * Local functions, avoiding synchronization, faster
- * Either use them in a single thread
- * Or use them in multiple threads with only 1 processor, and disable interrupts before calling each function
+ * HM Optimized Page interface
  */
 
-PVOID HMAPI HeapAllocate(
-    HMIMAGE *Image,
-    UINT64 UnitCount);
+// Image setup required
+UINT64 HMAPI oHmpCreateImage(
+    HMIMAGE *as,
+    UINT64 Alignment,
+    UINT64 MaxLengthInAlignedUnits);
+void HMAPI oHmpInitImage(
+    HMIMAGE *as, // address space
+    char *Mem);
 
-BOOLEAN HMAPI HeapFree(HMIMAGE *Image, void *Ptr);
-
-BOOLEAN HMAPI BaseHeapCreate(
-    HMIMAGE *Image,
-    UINT64 UnitAddress,
-    UINT64 UnitCount);
+// Request heap by specific length
+PHMHEADER HMAPI oHmpGet(HMIMAGE *as, UINT64 TheoriticalLength);
+// Set heap and specify it's length
+void HMAPI oHmpSet(HMIMAGE *as, HMHEADER *Mem, UINT64 TheoriticalLength);
+// Delete heap and specify it's length
+void HMAPI oHmpDelete(HMIMAGE *as, HMHEADER *Mem, UINT64 TheoriticalLength);
+// Search for the largest heap possible
+PHMHEADER HMAPI oHmpLookup(HMIMAGE *as);

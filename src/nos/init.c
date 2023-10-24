@@ -93,61 +93,7 @@ void NOSENTRY NosSystemInit()
     KiInitBootCpu();
     KiInitStandardSubsystems();
 
-    KDebugPrint("HM Testing...");
-
-    void *BestRegionAddress = NULL;
-    UINT64 MaxAddress = 0;
-    UINT64 MinAddress = (UINT64)-1;
-    UINT64 BestRegionLength = 0; // In pages
-    for (UINT i = 0; i < NosInitData->MemoryCount; i++)
-    {
-        EFI_MEMORY_DESCRIPTOR *Mem = (void *)((char *)NosInitData->MemoryMap + i * NosInitData->MemoryDescriptorSize);
-        if (Mem->Type != 7)
-            continue; // Efi Conventional memory
-        if (Mem->NumberOfPages > BestRegionLength)
-        {
-            BestRegionAddress = Mem->PhysicalStart;
-            BestRegionLength = Mem->NumberOfPages;
-        }
-        if (((UINT64)Mem->PhysicalStart + (Mem->NumberOfPages << 12)) > MaxAddress)
-        {
-            MaxAddress = ((UINT64)Mem->PhysicalStart + (Mem->NumberOfPages << 12));
-        }
-        if ((UINT64)Mem->PhysicalStart < MinAddress)
-        {
-            MinAddress = (UINT64)Mem->PhysicalStart;
-        }
-    }
-    KDebugPrint("MAX Address %x MIN ADDRESS %x", MaxAddress, MinAddress);
-    KDebugPrint("Best region address %x Length %u bytes", BestRegionAddress, BestRegionLength << 12);
-    UINT64 Commit;
-    UINT64 Reserve = HeapImageCreate(img, HmPageMap, &Commit, 0, 0x10000, 0x1000, 0, NULL);
-    void *Space = KeReserveExtendedSpace(Reserve);
-    KDebugPrint("HM Address space %x RESERVE %u Pages COMMIT %u Pages", Space, Reserve, Commit);
-
-    void *p;
-    if (NERROR(MmAllocatePhysicalMemory(0, Commit, &p)))
-    {
-        KDebugPrint("err");
-        while (1)
-            __halt();
-    }
-
-    KeMapVirtualMemory(NULL, p, Space, Commit, PAGE_WRITE_ACCESS, 0);
-
-    HeapImageInit(img, Space, 0, 0x60000);
-    __KiClearScreen(0xFF);
-    while (1)
-        ;
-
-    PVOID pt;
-    // Calculate time for 1 billion allocations
-    for (UINT64 i = 0; i < 1000000000; i++)
-    {
-        // HmLocalAlloc(img, 1, pt);
-    }
-    KDebugPrint("Last alloc %x", pt);
-    __KiClearScreen(0xFFFF);
+    __KiClearScreen(0xFFFFF);
 
     while (1)
         __halt();

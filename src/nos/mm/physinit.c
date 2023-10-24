@@ -1,11 +1,18 @@
 #include <nos/nos.h>
 #include <nos/processor/internal.h>
+#include <hm.h>
 
-// Page table in the top of virtual address space
-UINT64 *VPageTable = NULL;
-UINT64 TotalVPageTableLength = 0;
+HMIMAGE _NosHeapImages[4];
+
+HMIMAGE *_NosPhysical1GBImage = _NosHeapImages;     // huge page allocations
+HMIMAGE *_NosPhysical2MBImage = _NosHeapImages + 1; // large page allocations
+HMIMAGE *_NosPhysical4KBImage = _NosHeapImages + 2; // page allocations
+void KRNLAPI __KiClearScreen(UINT Color);
+
 void NOSINTERNAL KiPhysicalMemoryManagerInit()
 {
+
+    NOS_MEMORY_DESCRIPTOR *BestMem = NULL; // In pages
 
     NOS_MEMORY_LINKED_LIST *PhysicalMem = NosInitData->NosMemoryMap;
     unsigned long Index = 0;
@@ -27,6 +34,10 @@ void NOSINTERNAL KiPhysicalMemoryManagerInit()
                     }
                     else
                     {
+                        if (!BestMem || Mem->NumPages > BestMem->NumPages)
+                        {
+                            BestMem = Mem;
+                        }
                         FreeMemory += Mem->NumPages * 0x1000;
                     }
                 }
@@ -34,47 +45,57 @@ void NOSINTERNAL KiPhysicalMemoryManagerInit()
         }
         PhysicalMem = PhysicalMem->Next;
     } while (PhysicalMem);
-    KDebugPrint("Kernel boot memory : Used %d bytes , free : %d bytes, total %d bytes", AllocatedMemory, FreeMemory, AllocatedMemory + FreeMemory);
 
     NosInitData->AllocatedPagesCount = AllocatedMemory >> 12;
     NosInitData->TotalPagesCount = (AllocatedMemory + FreeMemory) >> 12;
 
-    int NumPageLevels = 4;
-    for (int i = 0; i < NumPageLevels; i++)
+    KDebugPrint("Best region address %x Length %u bytes", BestMem->PhysicalAddress, BestMem->NumPages << 12);
+
+    KDebugPrint("Kernel boot memory : Used %d bytes , free : %d bytes, total %d bytes", AllocatedMemory, FreeMemory, AllocatedMemory + FreeMemory);
+
+    if (BestMem->NumPages < (1 << 18))
     {
-        UINT64 val = 0x1000;
-        for (int c = 0; c < i; c++)
-            val = val * 0x200;
-        TotalVPageTableLength += val;
+        KDebugPrint("Failed to startup the kernel, must atleast have 1GB of continuous memory.");
+        while (1)
+            __halt();
     }
-    TotalVPageTableLength >>= 12;
+    // Prepare heap manager
+    UINT64 T1G = CreateMemorySpace(_NosPhysical1GBImage, (1 << 30), BestMem->NumPages >> 18);
+    UINT64 T2M = CreateMemorySpace(_NosPhysical2MBImage, (1 << 21), BestMem->NumPages >> 9);
+    UINT64 T4K = CreateMemorySpace(_NosPhysical4KBImage, 0x1000, BestMem->NumPages);
 
-    // VPageTable = KeReserveExtendedSpace(TotalVPageTableLength);
-    // KDebugPrint("Total Page Structure %u Pages or 0x%x . VP_ADDRESS %x", TotalVPageTableLength, TotalVPageTableLength, VPageTable);
+    // Can contain upto (4KB-1) of splitted chunk, otherwise use page frame allocations to allocate chunks
 
-    // // Now map all the pages into the address space
-    // RFPTENTRY Pml4 = (RFPTENTRY)(__readcr3() & ~0xFFF);
+    UINT64 Total = T1G + T2M + T4K;
 
-    // HwMapVirtualMemory(Pml4, Pml4, VPageTable, 1, PAGE_WRITE_ACCESS, 0);
+    KDebugPrint("T4G %x T2M %x T4K %x", T1G, T2M, T4K);
+    char *imgs;
+    if ((NERROR(MmAllocatePhysicalMemory(ALLOCATE_2MB_ALIGNED_MEMORY, AlignForward(Total, 0x200000) >> 21, &imgs))))
+    {
+        KDebugPrint("Failed to startup the kernel, no enough memory to initialize the heap manager.");
+        while (1)
+            __halt();
+    }
 
-    // char* PdpOff = (char*)VPageTable + 0x1000;
-    // for(UINT64 pdp = 0;pdp<0x200;pdp++,PdpOff+=0x1000) {
-    //     if(!Pml4[pdp].Present) continue;
+    KDebugPrint("IMGS %x", imgs);
 
-    //     RFPTENTRY Pdp = (RFPTENTRY)(Pml4[pdp].PhysicalAddr << 12);
-    //     HwMapVirtualMemory(Pml4, Pdp, PdpOff, 1, PAGE_WRITE_ACCESS, 0);
-    //     char* PdOff = (char*)VPageTable + 0x1000 + 0x1000 * 512;
-    //     for(UINT64 pd = 0;pd<0x200;pd++,PdOff+=0x1000) {
-    //         if(!Pdp[pd].Present) continue;
-    //         RFPTENTRY Pd = (RFPTENTRY)(Pdp[pd].PhysicalAddr << 12);
-    //         HwMapVirtualMemory(Pml4, Pd, PdOff, 1, PAGE_WRITE_ACCESS, 0);
-    //         char* PtOff = (char*)VPageTable + 0x1000 + 0x1000 * 512 + 0x1000 * 512 * 512;
-    //         for(UINT64 pt = 0;pt<0x200;pt++,PtOff+=0x1000) {
-    //             if(!Pd[pt].Present || Pd[pt].SizePAT) continue;
+    InitMemorySpace(_NosPhysical1GBImage, imgs);
+    InitMemorySpace(_NosPhysical2MBImage, imgs + T1G);
+    InitMemorySpace(_NosPhysical4KBImage, imgs + T1G + T2M);
 
-    //             RFPTENTRY Pt = (RFPTENTRY)(Pd[pt].PhysicalAddr << 12);
-    //             HwMapVirtualMemory(Pml4, Pt, PtOff, 1, PAGE_WRITE_ACCESS, 0);
-    //         }
-    //     }
-    // }
+    HMHEADER hr[4] = {0};
+
+    HmPlaceBlock(_NosPhysical4KBImage, hr, 0x10);
+    HmPlaceBlock(_NosPhysical4KBImage, hr + 1, 0x12);
+
+    KDebugPrint("Q %x", HmQueryBlock(_NosPhysical4KBImage, 0x12));
+    KDebugPrint("Q %x", HmQueryBlock(_NosPhysical4KBImage, 0x10));
+    KDebugPrint("Q %x", HmQueryBlock(_NosPhysical4KBImage, 0x13));
+
+    __KiClearScreen(0xFF);
+    for (UINT64 i = 0; i < 150000000; i++)
+    {
+        HmInstantSearch(_NosPhysical4KBImage);
+    }
+    __KiClearScreen(0xFF00);
 }

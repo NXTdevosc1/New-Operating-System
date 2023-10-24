@@ -8,124 +8,123 @@
 #include <crt.h>
 #include <intrin.h>
 
-// Returns reserved memory length
-UINT64 HMAPI HeapImageCreate(
-    IN OUT HMIMAGE *Image,
-    IN UINT HeapMapping,
-    OUT UINT64 *Commit,     // Preallocate memory
-    IN UINT64 BaseUAddress, // in units
-    IN UINT64 EndUAddress,  // in units
-    IN UINT64 UnitLength,   // Should be in powers of 2
-    IN OPT HEAP_MANAGER_CALLBACK Callback)
-{
-    ObjZeroMemory(Image);
-    Image->HeapMapping = HeapMapping;
-    Image->BaseAddress = BaseUAddress;
-    Image->EndAddress = EndUAddress;
-    Image->UnitLength = UnitLength;
-    Image->Callback = Callback;
-    _BitScanReverse64((ULONG *)&Image->UnitShift, UnitLength);
-    Image->TotalSpace = EndUAddress - BaseUAddress;
-    *Commit = 0;
+// // Returns reserved memory length
+// UINT64 HMAPI HeapImageCreate(
+//     IN OUT HMIMAGE *Image,
+//     IN UINT HeapMapping,
+//     OUT UINT64 *Commit,     // Preallocate memory
+//     IN UINT64 BaseUAddress, // in units
+//     IN UINT64 EndUAddress,  // in units
+//     IN UINT64 UnitLength,   // Should be in powers of 2
+//     IN OPT HEAP_MANAGER_CALLBACK Callback)
+// {
+//     ObjZeroMemory(Image);
+//     Image->HeapMapping = HeapMapping;
+//     Image->BaseAddress = BaseUAddress;
+//     Image->EndAddress = EndUAddress;
+//     Image->UnitLength = UnitLength;
+//     Image->Callback = Callback;
+//     _BitScanReverse64((ULONG *)&Image->UnitShift, UnitLength);
+//     Image->TotalSpace = EndUAddress - BaseUAddress;
+//     *Commit = 0;
 
-    if (HeapMapping == HmPageMap || HeapMapping == HmBlockMap)
-    {
-        // Use 1 Page bitmap directory + chain of page size entries
+//     if (HeapMapping == HmPageMap || HeapMapping == HmBlockMap)
+//     {
+//         // Use 1 Page bitmap directory + chain of page size entries
 
-        // Page directory length
-        *Commit = ((Image->TotalSpace / 0x200000) + 0x1000) >> 12;
+//         // Page directory length
+//         *Commit = ((Image->TotalSpace / 0x200000) + 0x1000) >> 12;
 
-        if (HeapMapping == HmBlockMap)
-        {
-            Image->ReservedAreaLength = (*Commit) + (AlignForward((Image->TotalSpace / 0x8000), 0x1000) >> 12);
-        }
-        else
-        {
-            Image->ReservedAreaLength = *Commit + (AlignForward((Image->TotalSpace / 0x200), 0x1000) >> 12);
-        }
-    }
+//         if (HeapMapping == HmBlockMap)
+//         {
+//             Image->ReservedAreaLength = (*Commit) + (AlignForward((Image->TotalSpace / 0x8000), 0x1000) >> 12);
+//         }
+//         else
+//         {
+//             Image->ReservedAreaLength = *Commit + (AlignForward((Image->TotalSpace / 0x200), 0x1000) >> 12);
+//         }
+//     }
 
-    Image->CommitLength = *Commit;
+//     Image->CommitLength = *Commit;
 
-    Image->RecentHeap = &Image->InitialHeap;
+//     Image->RecentHeap = &Image->InitialHeap;
 
-    return Image->ReservedAreaLength;
-}
+//     return Image->ReservedAreaLength;
+// }
 
-void HMAPI HeapImageInit(
-    HMIMAGE *Image,
-    void *ReservedArea,
-    UINT64 InitialHeapUAddress,
-    UINT InitialHeapULength)
-{
-    Image->ReservedArea = ReservedArea;
-    XmemsetAligned(ReservedArea, 0, Image->CommitLength * 32);
-    Image->InitialHeap.def.addr = InitialHeapUAddress;
-    Image->InitialHeap.def.baseheap = 1;
-    Image->InitialHeap.def.len = InitialHeapULength;
-    Image->InitialHeap.maxlen = InitialHeapULength;
+// void HMAPI HeapImageInit(
+//     HMIMAGE *Image,
+//     void *ReservedArea,
+//     UINT64 InitialHeapUAddress,
+//     UINT InitialHeapULength)
+// {
+//     Image->ReservedArea = ReservedArea;
+//     XmemsetAligned(ReservedArea, 0, Image->CommitLength * 32);
+//     Image->InitialHeap.def.addr = InitialHeapUAddress;
+//     Image->InitialHeap.def.baseheap = 1;
+//     Image->InitialHeap.def.len = InitialHeapULength;
+//     Image->InitialHeap.maxlen = InitialHeapULength;
 
-    _BaseHeapPlace(Image, &Image->InitialHeap);
-}
+//     _BaseHeapPlace(Image, &Image->InitialHeap);
+// }
 
-HMINTERNAL PVOID HMDECL HeapBasicAllocate(
-    HMIMAGE *Image,
-    UINT64 UnitCount)
-{
-    if (!Image->RecentHeap)
-        return NULL;
-    if (Image->RecentHeap->def.len < UnitCount)
-    {
-        _HeapRecentRelease(Image);
-        return _HeapResortAllocate(Image, UnitCount);
-    }
-    Image->RecentHeap->def.len -= UnitCount;
-    char *p = (char *)(Image->RecentHeap->def.addr << Image->UnitShift);
-    Image->RecentHeap->def.addr += UnitCount;
-    return p;
-}
+// HMINTERNAL PVOID HMDECL HeapBasicAllocate(
+//     HMIMAGE *Image,
+//     UINT64 UnitCount)
+// {
+//     if (!Image->RecentHeap)
+//         return NULL;
+//     if (Image->RecentHeap->def.len < UnitCount)
+//     {
+//         _HeapRecentRelease(Image);
+//         return _HeapResortAllocate(Image, UnitCount);
+//     }
+//     Image->RecentHeap->def.len -= UnitCount;
+//     char *p = (char *)(Image->RecentHeap->def.addr << Image->UnitShift);
+//     Image->RecentHeap->def.addr += UnitCount;
+//     return p;
+// }
 
-PVOID HMAPI HeapAllocate(
-    HMIMAGE *Image,
-    UINT64 UnitCount)
-{
-    void *p = HeapBasicAllocate(Image, UnitCount);
-    HeapSetBlock(Image, p, UnitCount << Image->UnitShift);
-    return p;
-}
+// PVOID HMAPI HeapAllocate(
+//     HMIMAGE *Image,
+//     UINT64 UnitCount)
+// {
+//     void *p = HeapBasicAllocate(Image, UnitCount);
+//     HeapSetBlock(Image, p, UnitCount << Image->UnitShift);
+//     return p;
+// }
 
-BOOLEAN HMAPI HeapFree(HMIMAGE *Image, void *Ptr)
-{
-    HBLOCK *Block = ((HBLOCK *)Ptr - 1);
-    if (Block->Magic != BLOCK_MAGIC)
-        return FALSE;
+// BOOLEAN HMAPI HeapFree(HMIMAGE *Image, void *Ptr)
+// {
+//     HBLOCK *Block = ((HBLOCK *)Ptr - 1);
+//     if (Block->Magic != BLOCK_MAGIC)
+//         return FALSE;
 
-    if (Block->MaxLength)
-    {
-        // Base block
-    }
-    else
-    {
-        // Sub block
-        // HBLOCK *Prev
-    }
+//     if (Block->MaxLength)
+//     {
+//         // Base block
+//     }
+//     else
+//     {
+//         // Sub block
+//         // HBLOCK *Prev
+//     }
 
-    return FALSE;
-}
+//     return FALSE;
+// }
 
-BOOLEAN HMAPI BaseHeapCreate(
-    HMIMAGE *Image,
-    UINT64 UnitAddress,
-    UINT64 UnitCount)
-{
-    BASEHEAP *h = HeapBasicAllocate(Image->DataAllocationSource, Image->DataAllocationLength);
-    if (!h)
-        return FALSE;
-    h->def.addr = UnitAddress;
-    h->def.len = UnitCount;
-    h->def.baseheap = 1;
-    h->maxlen = h->def.len;
-
-    _BaseHeapPlace(Image, h);
-    return TRUE;
-}
+// BOOLEAN HMAPI BaseHeapCreate(
+//     HMIMAGE *Image,
+//     UINT64 UnitAddress,
+//     UINT64 UnitCount)
+// {
+//     BASEHEAP *h = HeapBasicAllocate(Image->DataAllocationSource, Image->DataAllocationLength);
+//     if (!h)
+//         return FALSE;
+//     h->def.addr = UnitAddress;
+//     h->def.len = UnitCount;
+//     h->def.baseheap = 1;
+//     h->maxlen = h->def.len;
+//     _BaseHeapPlace(Image, h);
+//     return TRUE;
+// }

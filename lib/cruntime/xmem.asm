@@ -16,7 +16,7 @@ mov rax, 0xcaca2
     jmp $
     ret
 
-; RCX = Addr, RDX = Val, R8 = Count
+; RCX = Addr, RDX = Val, R8 = Count (128 Byte blocks)
 _AVXMemsetA:
     push rdx
     vbroadcastsd ymm0, [rsp]
