@@ -5,7 +5,7 @@
 #include <nos/nos.h>
 #include <nos/loader/loader.h>
 #include <nos/processor/hw.h>
-#include <hm.h>
+#include <hmapi.h>
 
 /*
  * The initialization entry point of the NOS Kernel

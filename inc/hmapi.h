@@ -83,3 +83,20 @@ void HMAPI oHmpSet(HMIMAGE *as, HMHEADER *Mem, UINT64 TheoriticalLength);
 void HMAPI oHmpDelete(HMIMAGE *as, HMHEADER *Mem, UINT64 TheoriticalLength);
 // Search for the largest heap possible
 PHMHEADER HMAPI oHmpLookup(HMIMAGE *as);
+
+/*
+ * HM Optimized heap blocks interface
+ * Doesn't require initialization
+ */
+
+/*
+ * Set Image.User.AllocateFrom to request pages when there is no memory
+ */
+
+void HMAPI oHmbSet(HMIMAGE *Image, PHMBLK Block, UINT8 Length /*in 16 Byte blocks*/);
+void HMAPI oHmbRemove(HMIMAGE *Image, PHMBLK Block, UINT8 Length);
+PHMBLK HMAPI oHmbLookup(HMIMAGE *Image);
+PVOID HMAPI oHmbAllocate(
+    HMIMAGE *Image,
+    UINT64 Length);
+BOOLEAN HMAPI oHmbFree(HMIMAGE *Image, void *Ptr);

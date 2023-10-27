@@ -28,38 +28,36 @@ typedef struct _HMIMAGE
     PHMBLK HeapArray[256];
 } HMIMAGE;
 
-void *oHmpAllocate(
+PVOID HMAPI oHmbAllocate(
     HMIMAGE *Image,
     UINT64 Length)
 {
     if (Image->BestHeap->Length >= Length)
     {
     }
-    else if (Length > 0xFFF)
-    {
-        UINT64 NumPages = Length >> 12;
-        UINT64 Remaining = 0;
-        if (Length & 0xFFF)
-        {
-            NumPages++;
-            Remaining =
-        }
-    }
     else
     {
+        PHMBLK Blk = oHmbLookup(Image);
+        if (Blk->Length >= Length)
+        {
+        }
     }
 }
 
-PHMBLK oHmbLookup(HMIMAGE *Image)
+BOOLEAN HMAPI oHmbFree(HMIMAGE *Image, void *Ptr)
+{
+}
+
+PHMBLK HMAPI oHmbLookup(HMIMAGE *Image)
 {
     UINT64 Index, Index2;
-    if (!_BitScanReverse64(&Index, Image->BaseBitmap))
+    if (!_BitScanReverse(&Index, Image->BaseBitmap))
         return NULL;
     _BitScanReverse64(&Index2, Image->SubBmp);
     return Image->HeapArray[Index2 + (Index << 6)];
 }
 
-void OhmbSet(HMIMAGE *Image, PHMBLK Block, UINT8 Length /*in 16 Byte blocks*/)
+void HMAPI oHmbSet(HMIMAGE *Image, PHMBLK Block, UINT8 Length /*in 16 Byte blocks*/)
 {
     _bittestandset(&Image->BaseBitmap, Length & 3);
     baseblk->Next = NULL;
@@ -78,7 +76,7 @@ void OhmbSet(HMIMAGE *Image, PHMBLK Block, UINT8 Length /*in 16 Byte blocks*/)
     }
 }
 
-void OhmbRemove(HMIMAGE *Image, PHMBLK Block, UINT8 Length)
+void HMAPI oHmbRemove(HMIMAGE *Image, PHMBLK Block, UINT8 Length)
 {
     if (Block->PrevOrLast == Block)
     {

@@ -3,7 +3,7 @@
 #include <simdopt.h>
 
 #define HMAPI __declspec(dllexport) __fastcall
-#include <hm.h>
+#include <hmapi.h>
 #include <crt.h>
 
 #define HM_LAST_TREE_LENGTH 130

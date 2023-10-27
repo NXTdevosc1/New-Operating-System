@@ -7,6 +7,8 @@ HMIMAGE _NosHeapImages[4];
 HMIMAGE *_NosPhysical1GBImage = _NosHeapImages;     // huge page allocations
 HMIMAGE *_NosPhysical2MBImage = _NosHeapImages + 1; // large page allocations
 HMIMAGE *_NosPhysical4KBImage = _NosHeapImages + 2; // page allocations
+HMIMAGE *_NosKernelHeap = _NosHeapImages + 3;
+
 void KRNLAPI __KiClearScreen(UINT Color);
 
 void NOSINTERNAL KiPhysicalMemoryManagerInit()
@@ -82,20 +84,4 @@ void NOSINTERNAL KiPhysicalMemoryManagerInit()
     InitMemorySpace(_NosPhysical1GBImage, imgs);
     InitMemorySpace(_NosPhysical2MBImage, imgs + T1G);
     InitMemorySpace(_NosPhysical4KBImage, imgs + T1G + T2M);
-
-    HMHEADER hr[4] = {0};
-
-    HmPlaceBlock(_NosPhysical4KBImage, hr, 0x10);
-    HmPlaceBlock(_NosPhysical4KBImage, hr + 1, 0x12);
-
-    KDebugPrint("Q %x", HmQueryBlock(_NosPhysical4KBImage, 0x12));
-    KDebugPrint("Q %x", HmQueryBlock(_NosPhysical4KBImage, 0x10));
-    KDebugPrint("Q %x", HmQueryBlock(_NosPhysical4KBImage, 0x13));
-
-    __KiClearScreen(0xFF);
-    for (UINT64 i = 0; i < 150000000; i++)
-    {
-        HmInstantSearch(_NosPhysical4KBImage);
-    }
-    __KiClearScreen(0xFF00);
 }

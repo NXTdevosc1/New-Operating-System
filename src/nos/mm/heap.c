@@ -3,29 +3,16 @@
 
 #include <nos/nos.h>
 #include <nos/mm/mm.h>
-
-/*
- * Used for sized allocations
- */
-static UINT64 SizeTree0 = 0;
-static UINT64 SizeTree1[64] = {0};
-
-typedef struct
-{
-    UINT64 Address;
-    UINT64 Length;
-} HEAPBLK, *PHEAPBLK;
-
+#include <hmapi.h>
 static PHEAPBLK Recent = NULL;
+HMIMAGE *_NosKernelHeap; // from physinit.c
 
-void *KeoAllocateBlock(UINT64 Length)
+PVOID KRNLAPI MmAllocatePool(
+    UINT64 Size,
+    UINT Flags)
 {
-    if (Length > 0x1000)
-    {
-        // allocate in pages
-    }
-    if (Recent->Length < Length)
-    {
-        //
-    }
+    return oHmbAllocate(_NosKernelHeap, Size);
 }
+
+BOOLEAN KRNLAPI MmFreePool(
+    void *Address);
