@@ -4,7 +4,6 @@
 #include <nos/nos.h>
 #include <nos/mm/mm.h>
 #include <hmapi.h>
-static PHEAPBLK Recent = NULL;
 HMIMAGE *_NosKernelHeap; // from physinit.c
 
 PVOID KRNLAPI MmAllocatePool(
@@ -15,4 +14,7 @@ PVOID KRNLAPI MmAllocatePool(
 }
 
 BOOLEAN KRNLAPI MmFreePool(
-    void *Address);
+    void *Address)
+{
+    return FALSE;
+}

@@ -1,21 +1,4 @@
-#include <hm.h>
 #include <hmdef.h>
-
-#pragma pack(push, 0x10)
-
-typedef struct _HMBLK
-{
-    UINT64 Addr : 63;
-    UINT64 MainBlk : 1;
-
-    UINT64 Length;
-
-    struct _HMBLK *Next;
-
-    struct _HMBLK *PrevOrLast;
-} HMBLK, *PHMBLK;
-
-#pragma pack(pop)
 
 typedef struct _HMIMAGE
 {
@@ -42,10 +25,12 @@ PVOID HMAPI oHmbAllocate(
         {
         }
     }
+    return NULL;
 }
 
 BOOLEAN HMAPI oHmbFree(HMIMAGE *Image, void *Ptr)
 {
+    return FALSE;
 }
 
 PHMBLK HMAPI oHmbLookup(HMIMAGE *Image)
@@ -60,7 +45,7 @@ PHMBLK HMAPI oHmbLookup(HMIMAGE *Image)
 void HMAPI oHmbSet(HMIMAGE *Image, PHMBLK Block, UINT8 Length /*in 16 Byte blocks*/)
 {
     _bittestandset(&Image->BaseBitmap, Length & 3);
-    baseblk->Next = NULL;
+    Block->Next = NULL;
 
     if (_bittestandset64(Image->SubBmp + (Length & 3), Length >> 2))
     {

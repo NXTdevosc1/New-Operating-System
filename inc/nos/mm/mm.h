@@ -11,12 +11,6 @@ typedef enum
     MM_ALLOCATE_WITHOUT_DESCRIPTOR = 8 // Allocates without creating a descriptor
 } ALLOCATE_PHYSICAL_MEMORY_FLAGS;
 
-typedef struct
-{
-    HMHEADER HeapHeader;
-    UINT64 Attributes;
-} PAGE_DESCRIPTOR;
-
 typedef struct _NOS_HEAP_TREE NOS_HEAP_TREE;
 typedef struct _NOS_VIRTUAL_MEMORY_LIST NOS_VIRTUAL_MEMORY_LIST;
 

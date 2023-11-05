@@ -27,12 +27,6 @@ typedef struct _HMIMAGE HMIMAGE;
 
 typedef void *(__fastcall *HEAP_MANAGER_CALLBACK)(HMIMAGE *Image, UINT64 Command, UINT64 Param0, UINT64 Param1);
 
-typedef struct _PAGEHEAPDEF
-{
-    UINT64 Present : 1;
-    UINT64 Length : 63; // 0 if end of heap
-} PAGEHEAPDEF;
-
 typedef struct _HMHEADER
 {
     UINT64 Address : 63;
@@ -92,6 +86,22 @@ PHMHEADER HMAPI oHmpLookup(HMIMAGE *as);
 /*
  * Set Image.User.AllocateFrom to request pages when there is no memory
  */
+
+#pragma pack(push, 0x10)
+
+typedef struct _HMBLK
+{
+    UINT64 Addr : 63;
+    UINT64 MainBlk : 1;
+
+    UINT64 Length;
+
+    struct _HMBLK *Next;
+
+    struct _HMBLK *PrevOrLast;
+} HMBLK, *PHMBLK;
+
+#pragma pack(pop)
 
 void HMAPI oHmbSet(HMIMAGE *Image, PHMBLK Block, UINT8 Length /*in 16 Byte blocks*/);
 void HMAPI oHmbRemove(HMIMAGE *Image, PHMBLK Block, UINT8 Length);
