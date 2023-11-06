@@ -40,6 +40,7 @@ typedef struct _HMUSERHEADER
     {
         PHMHEADER Block;
         UINT64 RemainingLength;
+        UINT64 StartupLength;
     } BestHeap;
 
     UINT64 TotalMemory; // in units
@@ -76,8 +77,8 @@ void HMAPI oHmpSet(HMIMAGE *as, HMHEADER *Mem, UINT64 TheoriticalLength);
 // Delete heap and specify it's length
 void HMAPI oHmpDelete(HMIMAGE *as, HMHEADER *Mem, UINT64 TheoriticalLength);
 // Search for the largest heap possible
-PHMHEADER HMAPI oHmpLookup(HMIMAGE *as);
-
+// if a larger heap is found, then TRUE is returned
+BOOLEAN HMAPI oHmpLookup(HMIMAGE *as);
 /*
  * HM Optimized heap blocks interface
  * Doesn't require initialization

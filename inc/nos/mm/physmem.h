@@ -7,6 +7,11 @@ typedef struct
     HMHEADER Header;
 } KPAGEHEADER;
 
+HMIMAGE *_NosPhysical1GBImage; // huge page allocations
+HMIMAGE *_NosPhysical2MBImage; // large page allocations
+HMIMAGE *_NosPhysical4KBImage; // page allocations
+HMIMAGE *_NosKernelHeap;
+
 // Allocates memory below 4gb
 NSTATUS KRNLAPI MmAllocateLowMemory(
     UINT64 Flags, UINT64 NumPages, void **Ptr);

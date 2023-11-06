@@ -35,6 +35,7 @@
 #include <ktime.h>
 #include <nos/console/console.h>
 #include <nos/pnp/pnp.h>
+#include <mm.h>
 
 #define DEBUG 1
 

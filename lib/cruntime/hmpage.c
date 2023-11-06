@@ -182,51 +182,75 @@ void HMAPI oHmpDelete(HMIMAGE *as, HMHEADER *Mem, UINT64 TheoriticalLength)
     }
 }
 
-PHMHEADER HMAPI oHmpLookup(HMIMAGE *as)
+BOOLEAN HMAPI oHmpLookup(HMIMAGE *as)
 {
     ULONG i0, i1, i2, i3;
     // LVL0
-    for (ULONG i = as->NumQwords - 1; i != 0; i--)
+    for (ULONG i = as->NumQwords - 1;; i--)
     {
         if (_BitScanReverse64(&i0, as->Bases[0]->Available[i]))
         {
             i0 = (i << 6) | i0;
             goto lvl1;
         }
+        if (i == 0)
+            break;
     }
 
-    return NULL;
+    return FALSE;
     // LVL1
 lvl1:
 
     SIZETREE *s1 = ((SIZETREE *)((char *)as->Bases[1] + i0 * as->sbl));
-    for (ULONG i = as->NumQwords - 1; i != 0; i--)
+    for (ULONG i = as->NumQwords - 1;; i--)
     {
         if (_BitScanReverse64(&i1, s1->Available[i]))
         {
             i1 = (i << 6) | i1;
             break;
         }
+        if (i == 0)
+            break;
     }
     // LVL2
     SIZETREE *s2 = ((SIZETREE *)((char *)as->Bases[2] + i0 * as->sbl * as->epb + i1 * as->sbl));
 
-    for (ULONG i = as->NumQwords - 1; i != 0; i--)
+    for (ULONG i = as->NumQwords - 1;; i--)
     {
         if (_BitScanReverse64(&i2, s2->Available[i]))
         {
             i2 = (i << 6) | i2;
             break;
         }
+        if (i == 0)
+            break;
     }
     // LVL3
     SIZETREE *s3 = ((SIZETREE *)((char *)as->Bases[3] + i0 * as->sel * as->epb * as->epb + i1 * as->sel * as->epb + i2 * as->sel));
-    for (ULONG i = as->llNumQwords - 1; i != 0; i--)
+    for (ULONG i = as->llNumQwords - 1;; i--)
     {
         if (_BitScanReverse64(&i3, s3->Available[i]))
         {
-            return (PHMHEADER)s3->Available[as->llNumQwords + (i << 6) + i3];
+            PHMHEADER Block = (PHMHEADER)s3->Available[as->llNumQwords + (i << 6) + i3];
+            BOOLEAN Ret = TRUE;
+            KDebugPrint("found");
+            if (Block == as->User.BestHeap.Block)
+                Ret = FALSE;
+            else
+            {
+                if (as->User.BestHeap.Block)
+                {
+                    oHmpDelete(as, as->User.BestHeap.Block, as->User.BestHeap.StartupLength);
+                    oHmpSet(as, as->User.BestHeap.Block, as->User.BestHeap.RemainingLength);
+                }
+                as->User.BestHeap.Block = Block;
+                as->User.BestHeap.StartupLength = i0 * as->sel * as->epb * as->epb + i1 * as->sel * as->epb + i2 * as->sel + i3;
+                as->User.BestHeap.RemainingLength = as->User.BestHeap.StartupLength;
+            }
+            return Ret;
         }
+        if (i == 0)
+            break;
     }
 
     KDebugPrint("Heap Manager : HM_ERR");
