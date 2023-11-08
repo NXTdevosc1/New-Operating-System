@@ -56,6 +56,8 @@ UINT64 HMAPI oHmpCreateImage(
 
     _BitScanReverse64(&as->MaxBit, MaxLengthInAlignedUnits);
     _BitScanReverse64(&as->ubs, Alignment);
+    as->User.AlignShift = as->ubs;
+    as->User.Alignment = Alignment;
 
     as->NumEntries = 1 << (as->MaxBit % 3);
     as->epb = 1 << (as->MaxBit / 3);
@@ -184,6 +186,11 @@ void HMAPI oHmpDelete(HMIMAGE *as, HMHEADER *Mem, UINT64 TheoriticalLength)
 
 BOOLEAN HMAPI oHmpLookup(HMIMAGE *as)
 {
+    if (as->User.BestHeap.Block)
+    {
+        oHmpDelete(as, as->User.BestHeap.Block, as->User.BestHeap.StartupLength);
+        oHmpSet(as, as->User.BestHeap.Block, as->User.BestHeap.RemainingLength);
+    }
     ULONG i0, i1, i2, i3;
     // LVL0
     for (ULONG i = as->NumQwords - 1;; i--)
@@ -238,13 +245,9 @@ lvl1:
                 Ret = FALSE;
             else
             {
-                if (as->User.BestHeap.Block)
-                {
-                    oHmpDelete(as, as->User.BestHeap.Block, as->User.BestHeap.StartupLength);
-                    oHmpSet(as, as->User.BestHeap.Block, as->User.BestHeap.RemainingLength);
-                }
                 as->User.BestHeap.Block = Block;
-                as->User.BestHeap.StartupLength = i0 * as->sel * as->epb * as->epb + i1 * as->sel * as->epb + i2 * as->sel + i3;
+                as->User.BestHeap.StartupLength = i3 + i2 * as->NumEntries + i1 * as->epb * as->NumEntries + i0 * as->epb * as->epb * as->NumEntries;
+                KDebugPrint("length %d blocks - addr : 0x%x", as->User.BestHeap.StartupLength, as->User.BestHeap.Block->Address);
                 as->User.BestHeap.RemainingLength = as->User.BestHeap.StartupLength;
             }
             return Ret;

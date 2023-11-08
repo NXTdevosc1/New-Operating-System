@@ -7,6 +7,16 @@
 #define MEM_EXECUTE 0x10
 #define MEM_4KB 0x20
 
-PVOID KRNLAPI KeRequestContiguousPages(
+#define LARGEPAGE (0x200)
+#define HUGEPAGE (0x200 * 0x200)
+typedef enum
+{
+    NormalPageSize = 0,
+    LargePageSize,
+    HugePageSize,
+    MaxPageSize
+} KPageSize;
+
+PVOID KRNLAPI MmRequestContiguousPages(
     UINT PageSize,
     UINT64 Length);

@@ -13,17 +13,17 @@ Attr : 0000000000000020 Name : syscruntime.dll Size : 9216 NL : 15 .dll
 Attr : 0000000000000020 Name : osusr.dll Size : 105472 NL : 9 .dll
 Attr : 0000000000000020 Name : acpisys.dll Size : 3584 NL : 11 .dll
 Attr : 0000000000000020 Name : cruntime.dll Size : 9216 NL : 12 .dll
-Kernel File Size : 454656
+Kernel File Size : 455168
 Test2 : test123
 System Heap:
 7CE00000
 OPT_HDR_SIZE : 240 FALIGN : 512
 Allocating System Pages : 000000007CE00000
 Image Physical Base : 000000007CE00000 , Image Base : 0000000000000000, Entry point : 00000000000011E0
-Copying section .tex VADDR : 0000000000001000 PTR : 0000000000000400, SZ : 0000000000021A00
-Copying section .rda VADDR : 0000000000023000 PTR : 0000000000021E00, SZ : 0000000000003A00
-Copying section .dat VADDR : 0000000000027000 PTR : 0000000000025800, SZ : 00000000000AC160
-Copying section .pda VADDR : 00000000000D4000 PTR : 000000000006E800, SZ : 0000000000000800
+Copying section .tex VADDR : 0000000000001000 PTR : 0000000000000400, SZ : 0000000000021C00
+Copying section .rda VADDR : 0000000000023000 PTR : 0000000000022000, SZ : 0000000000003A00
+Copying section .dat VADDR : 0000000000027000 PTR : 0000000000025A00, SZ : 00000000000AC1A0
+Copying section .pda VADDR : 00000000000D4000 PTR : 000000000006EA00, SZ : 0000000000000800
 RELOC 0000000000000000  SZ 0000000000000000
 Loading DLL :
 syscruntime.dll
@@ -39,39 +39,39 @@ RELOC 0000000000006000  SZ 0000000000000010
 RELOCATING to 00000000000D5000...
 Loading DLL :
 noskx64.exe
-ETVA : 0000000000025A60, ET : 000000007CE25A60
-NR : 0000000000025EFC, NPR : 0000000000025C50, EATR : 0000000000025A88
+ETVA : 0000000000025A50, ET : 000000007CE25A50
+NR : 0000000000025EF6, NPR : 0000000000025C44, EATR : 0000000000025A78
 Test : test123
 Dll Name : nosk
 Searching Symbol : KDebugPrint
 Symbol Found, base : 0000000000019000, IAT_TARGET : 000000007CED8000, RVA : 0000000000019000
 Searching Symbol : KeRaiseException
-Symbol Found, base : 0000000000021C10, IAT_TARGET : 000000007CED8008, RVA : 0000000000021C10
+Symbol Found, base : 0000000000021D90, IAT_TARGET : 000000007CED8008, RVA : 0000000000021D90
 EXPORTS
-ETVA : 0000000000003400, ET : 000000007CED8400
-NR : 000000000000354A, NPR : 000000000000349C, EATR : 0000000000003428
+ETVA : 0000000000003420, ET : 000000007CED8420
+NR : 000000000000356A, NPR : 00000000000034BC, EATR : 0000000000003448
 Test : test123
 Dll Name : sysc
 Searching Symbol : vsprintf_s
-Symbol Found, base : 00000000000D6D90, IAT_TARGET : 000000007CE23000, RVA : 0000000000001D90
+Symbol Found, base : 00000000000D6DF0, IAT_TARGET : 000000007CE23000, RVA : 0000000000001DF0
 Searching Symbol : _ui64toa
-Symbol Found, base : 00000000000D6A80, IAT_TARGET : 000000007CE23008, RVA : 0000000000001A80
+Symbol Found, base : 00000000000D6AE0, IAT_TARGET : 000000007CE23008, RVA : 0000000000001AE0
 Searching Symbol : sprintf_s
-Symbol Found, base : 00000000000D7050, IAT_TARGET : 000000007CE23010, RVA : 0000000000002050
+Symbol Found, base : 00000000000D70B0, IAT_TARGET : 000000007CE23010, RVA : 00000000000020B0
 Searching Symbol : oHmbAllocate
 Symbol Found, base : 00000000000D6050, IAT_TARGET : 000000007CE23018, RVA : 0000000000001050
 Searching Symbol : oHmpInitImage
-Symbol Found, base : 00000000000D62F0, IAT_TARGET : 000000007CE23020, RVA : 00000000000012F0
+Symbol Found, base : 00000000000D6300, IAT_TARGET : 000000007CE23020, RVA : 0000000000001300
 Searching Symbol : oHmpCreateImage
 Symbol Found, base : 00000000000D6170, IAT_TARGET : 000000007CE23028, RVA : 0000000000001170
 Searching Symbol : oHmpSet
-Symbol Found, base : 00000000000D6380, IAT_TARGET : 000000007CE23030, RVA : 0000000000001380
+Symbol Found, base : 00000000000D6390, IAT_TARGET : 000000007CE23030, RVA : 0000000000001390
 Searching Symbol : oHmpLookup
-Symbol Found, base : 00000000000D6680, IAT_TARGET : 000000007CE23038, RVA : 0000000000001680
+Symbol Found, base : 00000000000D66B0, IAT_TARGET : 000000007CE23038, RVA : 00000000000016B0
 Searching Symbol : memcmp
-Symbol Found, base : 00000000000D6CC0, IAT_TARGET : 000000007CE23040, RVA : 0000000000001CC0
+Symbol Found, base : 00000000000D6D20, IAT_TARGET : 000000007CE23040, RVA : 0000000000001D20
 Searching Symbol : memcpy
-Symbol Found, base : 00000000000D6C90, IAT_TARGET : 000000007CE23048, RVA : 0000000000001C90
+Symbol Found, base : 00000000000D6CF0, IAT_TARGET : 000000007CE23048, RVA : 0000000000001CF0
  loaded
  loaded
  loaded
@@ -101,11 +101,11 @@ Boot Processor : AVX2 Supported
 Boot Processor : Best region address 100000000 Length 4294967296 bytes
 Boot Processor : BADDR 2 BBMP 0 ENTRIESPERBMP 1 NUMADDRENTRIES 4 QWORDSPERBMP 1 ADDRTREELEN 42 BMPTREELEN 10
 Boot Processor : Bit mem 1E val mem 2A Covered mem in bytes 100000000
-Boot Processor : BADDR 2 BBMP 3 ENTRIESPERBMP 8 NUMADDRENTRIES 4 QWORDSPERBMP 1 ADDRTREELEN 42 BMPTREELEN 10
-Boot Processor : Bit mem 2DA val mem 5400 Covered mem in bytes 100000000
-Boot Processor : BADDR 2 BBMP 6 ENTRIESPERBMP 64 NUMADDRENTRIES 4 QWORDSPERBMP 1 ADDRTREELEN 42 BMPTREELEN 10
-Boot Processor : Bit mem A28A val mem A80000 Covered mem in bytes 100000000
-Boot Processor : T4G 1000 T2M 6000 T4K A8B000
+Boot Processor : BADDR 0 BBMP 3 ENTRIESPERBMP 8 NUMADDRENTRIES 1 QWORDSPERBMP 1 ADDRTREELEN 18 BMPTREELEN 10
+Boot Processor : Bit mem 2DA val mem 2400 Covered mem in bytes 40000000
+Boot Processor : BADDR 0 BBMP 3 ENTRIESPERBMP 8 NUMADDRENTRIES 1 QWORDSPERBMP 1 ADDRTREELEN 18 BMPTREELEN 10
+Boot Processor : Bit mem 2DA val mem 2400 Covered mem in bytes 200000
+Boot Processor : T4G 1000 T2M 3000 T4K 3000
 Boot Processor : IMGS 100000000
 Boot Processor : Kernel boot memory : Used 36618240 bytes , free : 2067017728 bytes, total 2103635968 bytes
 Boot Processor : ADDR 19F1000-7BF1E000 NUMPG 7A52D VADDR 38
@@ -121,37 +121,70 @@ Boot Processor : _________________
 Boot Processor : ADDR 7FE00000-7FE4E000 NUMPG 4E VADDR 7BF3E000
 Boot Processor : 78 Individual 4KB pages at 0x7FE00000-0x7FE4E000
 Boot Processor : _________________
-Boot Processor : ADDR 100C00000-200000000 NUMPG FF400 VADDR 7BF3E000
-Boot Processor : 3 HUGE PAGES at 140000000 REML 259072 at 100C00000 REMR 0 at 200000000
-Boot Processor : 506 LARGE PAGES at 100C00000 REML 0 at 100C00000 REMR 0 at 140000000
+Boot Processor : ADDR 100200000-200000000 NUMPG FFE00 VADDR 7BF3E000
+Boot Processor : 3 HUGE PAGES at 140000000 REML 261632 at 100200000 REMR 0 at 200000000
+Boot Processor : 511 LARGE PAGES at 100200000 REML 0 at 100200000 REMR 0 at 140000000
 Boot Processor : _________________
 Boot Processor : NOS Optimized memory system initialized successfully.
-Boot Processor : Looking up
 Boot Processor : found
-Boot Processor : Lookup done TRUE
-Boot Processor : Length : BA8 ADDR 7BE00000
-Boot Processor : Returned 1 page 0
-Boot Processor : Looking up
+Boot Processor : length 286 blocks - addr : 0x7BE00000
+Boot Processor : Returned 1 page 7BE00000
+Boot Processor : Returned 1 page 7BE10000
+Boot Processor : Returned 1 page 7BE20000
+Boot Processor : Returned 1 page 7BE30000
+Boot Processor : Returned 1 page 7BE40000
+Boot Processor : Returned 1 page 7BE50000
+Boot Processor : Returned 1 page 7BE60000
+Boot Processor : Returned 1 page 7BE70000
+Boot Processor : Returned 1 page 7BE80000
+Boot Processor : Returned 1 page 7BE90000
+Boot Processor : Returned 1 page 7BEA0000
+Boot Processor : Returned 1 page 7BEB0000
+Boot Processor : Returned 1 page 7BEC0000
+Boot Processor : Returned 1 page 7BED0000
+Boot Processor : Returned 1 page 7BEE0000
+Boot Processor : Returned 1 page 7BEF0000
+Boot Processor : Returned 1 page 7BF00000
 Boot Processor : found
-Boot Processor : Lookup done FALSE
-Boot Processor : Length : BA8 ADDR 7BE00000
-Boot Processor : Returned 1 page 0
-Boot Processor : Looking up
+Boot Processor : length 262 blocks - addr : 0x7CC00000
+Boot Processor : Returned 1 page 7CC00000
+Boot Processor : Returned 1 page 7CC10000
+Boot Processor : Returned 1 page 7CC20000
+Boot Processor : Returned 1 page 7CC30000
+Boot Processor : Returned 1 page 7CC40000
+Boot Processor : Returned 1 page 7CC50000
+Boot Processor : Returned 1 page 7CC60000
+Boot Processor : Returned 1 page 7CC70000
+Boot Processor : Returned 1 page 7CC80000
+Boot Processor : Returned 1 page 7CC90000
+Boot Processor : Returned 1 page 7CCA0000
+Boot Processor : Returned 1 page 7CCB0000
+Boot Processor : Returned 1 page 7CCC0000
+Boot Processor : Returned 1 page 7CCD0000
+Boot Processor : Returned 1 page 7CCE0000
+Boot Processor : Returned 1 page 7CCF0000
 Boot Processor : found
-Boot Processor : Lookup done FALSE
-Boot Processor : Length : BA8 ADDR 7BE00000
-Boot Processor : Returned 1 page 0
-Boot Processor : Looking up
+Boot Processor : length 194 blocks - addr : 0x7BF3E000
+Boot Processor : Returned 1 page 7BF3E000
+Boot Processor : Returned 1 page 7BF4E000
+Boot Processor : Returned 1 page 7BF5E000
+Boot Processor : Returned 1 page 7BF6E000
+Boot Processor : Returned 1 page 7BF7E000
+Boot Processor : Returned 1 page 7BF8E000
+Boot Processor : Returned 1 page 7BF9E000
+Boot Processor : Returned 1 page 7BFAE000
+Boot Processor : Returned 1 page 7BFBE000
+Boot Processor : Returned 1 page 7BFCE000
+Boot Processor : Returned 1 page 7BFDE000
+Boot Processor : Returned 1 page 7BFEE000
 Boot Processor : found
-Boot Processor : Lookup done FALSE
-Boot Processor : Length : BA8 ADDR 7BE00000
-Boot Processor : Returned 1 page 0
-Boot Processor : Looking up
+Boot Processor : length 78 blocks - addr : 0x7FE00000
+Boot Processor : Returned 1 page 7FE00000
+Boot Processor : Returned 1 page 7FE10000
+Boot Processor : Returned 1 page 7FE20000
+Boot Processor : Returned 1 page 7FE30000
 Boot Processor : found
-Boot Processor : Lookup done FALSE
-Boot Processor : Length : BA8 ADDR 7BE00000
-Boot Processor : Returned 1 page 0
-Boot Processor : Object Manager : Init
-Boot Processor : Object Manager : Init  2000 780000 300000
-Boot Processor : Object Manager : Allocate Table : 8192 Bytes, Object Array : 7864320 Bytes , Handle Array : 3145728 Bytes
-Boot Processor : KernelInternals : Init Boot CPU
+Boot Processor : length 15 blocks - addr : 0x19F1000
+Boot Processor : found
+Boot Processor : length 511 blocks - addr : 0x100200000
+Boot Processor : Higher portion : 100200000 Remaining 100210000 Pages 1F0

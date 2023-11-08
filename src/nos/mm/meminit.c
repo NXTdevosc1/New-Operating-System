@@ -15,9 +15,6 @@ void *MemBase;
 
 void KRNLAPI __KiClearScreen(UINT Color);
 
-#define LARGEPAGE 0x200
-#define HUGEPAGE (0x200 * 0x200)
-
 void NOSINTERNAL KiPhysicalMemoryManagerInit()
 {
 
@@ -72,8 +69,8 @@ void NOSINTERNAL KiPhysicalMemoryManagerInit()
     }
     // Prepare heap manager
     UINT64 T1G = oHmpCreateImage(_NosPhysical1GBImage, (1 << 30), BestMem->NumPages >> 18);
-    UINT64 T2M = oHmpCreateImage(_NosPhysical2MBImage, (1 << 21), BestMem->NumPages >> 9);
-    UINT64 T4K = oHmpCreateImage(_NosPhysical4KBImage, 0x1000, BestMem->NumPages);
+    UINT64 T2M = oHmpCreateImage(_NosPhysical2MBImage, (1 << 21), 0x200);
+    UINT64 T4K = oHmpCreateImage(_NosPhysical4KBImage, 0x1000, 0x200);
 
     // Can contain upto (4KB-1) of splitted chunk, otherwise use page frame allocations to allocate chunks
 
@@ -96,6 +93,9 @@ void NOSINTERNAL KiPhysicalMemoryManagerInit()
     oHmpInitImage(_NosPhysical1GBImage, imgs);
     oHmpInitImage(_NosPhysical2MBImage, imgs + T1G);
     oHmpInitImage(_NosPhysical4KBImage, imgs + T1G + T2M);
+
+    _NosPhysical4KBImage->User.HigherImage = _NosPhysical2MBImage;
+    _NosPhysical2MBImage->User.HigherImage = _NosPhysical1GBImage;
 
     PhysicalMem = NosInitData->NosMemoryMap;
 
@@ -214,9 +214,9 @@ void NOSINTERNAL KiPhysicalMemoryManagerInit()
 
     KDebugPrint("NOS Optimized memory system initialized successfully.");
 
-    for (int i = 0; i < 5; i++)
+    for (;;)
     {
-        PVOID p = KeRequestContiguousPages(0, 1);
+        PVOID p = MmRequestContiguousPages(0, 0x10);
         KDebugPrint("Returned 1 page %x", p);
     }
 }

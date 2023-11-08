@@ -45,7 +45,9 @@ typedef struct _HMUSERHEADER
 
     UINT64 TotalMemory; // in units
     UINT64 AllocatedMemory;
-    HMIMAGE *AllocateFrom;
+    HMIMAGE *HigherImage;
+    UINT64 Alignment;
+    UINT64 AlignShift;
 } HMUSERHEADER;
 #ifndef HMAPI
 #define HMAPI __declspec(dllimport) __fastcall
