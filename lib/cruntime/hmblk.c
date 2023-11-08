@@ -1,10 +1,13 @@
 #include <hmdef.h>
+#include <mm.h>
 
 typedef struct _HMIMAGE
 {
     HMUSERHEADER User;
     // UINT64 UnitLength;  Always 0x10
     PHMBLK BestHeap;
+    UINT64 InitialLength;
+    UINT64 CurrentLength;
 
     UINT32 BaseBitmap;
     UINT64 SubBmp[4];
@@ -15,17 +18,17 @@ PVOID HMAPI oHmbAllocate(
     HMIMAGE *Image,
     UINT64 Length)
 {
-    if (Image->BestHeap->Length >= Length)
+    Length += 2; // add 32 byte header
+    if (Image->CurrentLength < Length && (!oHmbLookup(Image) || Image->CurrentLength < Length))
     {
+        KDebugPrint("OHMB : case 0");
+        while (1)
+            __halt();
     }
-    else
-    {
-        PHMBLK Blk = oHmbLookup(Image);
-        if (Blk->Length >= Length)
-        {
-        }
-    }
-    return NULL;
+    PVOID ret = (PVOID)(Image->BestHeap->Addr << 4);
+    Image->BestHeap->Addr += Length;
+    Image->CurrentLength -= Length;
+    return ret;
 }
 
 BOOLEAN HMAPI oHmbFree(HMIMAGE *Image, void *Ptr)
@@ -33,13 +36,25 @@ BOOLEAN HMAPI oHmbFree(HMIMAGE *Image, void *Ptr)
     return FALSE;
 }
 
-PHMBLK HMAPI oHmbLookup(HMIMAGE *Image)
+BOOLEAN HMAPI oHmbLookup(HMIMAGE *Image)
 {
     UINT64 Index, Index2;
     if (!_BitScanReverse(&Index, Image->BaseBitmap))
-        return NULL;
+        return FALSE;
     _BitScanReverse64(&Index2, Image->SubBmp);
-    return Image->HeapArray[Index2 + (Index << 6)];
+    PHMBLK Blk = Image->HeapArray[Index2 + (Index << 6)];
+    if (Image->BestHeap == Blk)
+        return FALSE;
+
+    if (Image->BestHeap)
+    {
+        oHmbRemove(Image, Image->BestHeap, Image->InitialLength);
+        oHmbSet(Image, Image->BestHeap, Image->CurrentLength);
+    }
+    Image->BestHeap = Blk;
+    Image->InitialLength = Index2 + (Index << 6);
+    Image->CurrentLength = Image->InitialLength;
+    return TRUE;
 }
 
 void HMAPI oHmbSet(HMIMAGE *Image, PHMBLK Block, UINT8 Length /*in 16 Byte blocks*/)

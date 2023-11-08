@@ -94,10 +94,11 @@ BOOLEAN HMAPI oHmpLookup(HMIMAGE *as);
 
 typedef struct _HMBLK
 {
-    UINT64 Addr : 63;
+    UINT64 Addr : 58; // in 16 byte aligned blocks
     UINT64 MainBlk : 1;
+    UINT64 Rsv : 5;
 
-    UINT64 Length;
+    UINT64 Reserved;
 
     struct _HMBLK *Next;
 
@@ -108,7 +109,7 @@ typedef struct _HMBLK
 
 void HMAPI oHmbSet(HMIMAGE *Image, PHMBLK Block, UINT8 Length /*in 16 Byte blocks*/);
 void HMAPI oHmbRemove(HMIMAGE *Image, PHMBLK Block, UINT8 Length);
-PHMBLK HMAPI oHmbLookup(HMIMAGE *Image);
+BOOLEAN HMAPI oHmbLookup(HMIMAGE *Image);
 PVOID HMAPI oHmbAllocate(
     HMIMAGE *Image,
     UINT64 Length);
