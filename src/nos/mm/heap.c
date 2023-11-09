@@ -10,7 +10,9 @@ PVOID KRNLAPI MmAllocatePool(
     UINT64 Size,
     UINT Flags)
 {
-    return oHmbAllocate(_NosKernelHeap, Size);
+    if (!Size)
+        return NULL;
+    return oHmbAllocate(_NosKernelHeap, AlignForward(Size, 0x10) >> 4);
 }
 
 BOOLEAN KRNLAPI MmFreePool(

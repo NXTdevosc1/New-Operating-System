@@ -15,9 +15,27 @@ void *MemBase;
 
 void KRNLAPI __KiClearScreen(UINT Color);
 
+PVOID __fastcall _KHeapAllocatePages(UINT64 Count)
+{
+    KDebugPrint("Src alloc");
+    HMIMAGE *Image;
+    PVOID p = MmRequestContiguousPagesNoDesc(0, &Count, (PVOID *)&Image);
+    if (!p)
+        return NULL;
+    if (Count)
+    {
+        KDebugPrint("WARNING : KHEAPALLOC Wasted %d pages", Count);
+    }
+    return p;
+}
+
+void __fastcall _KHeapFreePages(PVOID Mem, UINT64 Count)
+{
+    KDebugPrint("WARNING : _KHeapFreePages Not Implemented");
+}
+
 void NOSINTERNAL KiPhysicalMemoryManagerInit()
 {
-
     NOS_MEMORY_DESCRIPTOR *BestMem = NULL; // In pages
 
     NOS_MEMORY_LINKED_LIST *PhysicalMem = NosInitData->NosMemoryMap;
@@ -211,6 +229,8 @@ void NOSINTERNAL KiPhysicalMemoryManagerInit()
         }
         PhysicalMem = PhysicalMem->Next;
     } while (PhysicalMem);
+
+    oHmbInitImage(_NosKernelHeap, _KHeapAllocatePages, _KHeapFreePages);
 
     KDebugPrint("NOS Optimized memory system initialized successfully.");
 

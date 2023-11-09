@@ -20,3 +20,8 @@ typedef enum
 PVOID KRNLAPI MmRequestContiguousPages(
     UINT PageSize,
     UINT64 Length);
+
+PVOID KRNLAPI MmRequestContiguousPagesNoDesc(
+    IN UINT PageSize,
+    IN OUT UINT64 *LengthRemaining,
+    PVOID *SystemReserved);

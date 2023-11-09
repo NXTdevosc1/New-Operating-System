@@ -5,6 +5,8 @@ typedef struct _HMIMAGE
 {
     HMUSERHEADER User;
     // UINT64 UnitLength;  Always 0x10
+    HMALLOCATE_ROUTINE SrcAlloc;
+    HMFREE_ROUTINE SrcFree;
     PHMBLK BestHeap;
     UINT64 InitialLength;
     UINT64 CurrentLength;
@@ -14,21 +16,72 @@ typedef struct _HMIMAGE
     PHMBLK HeapArray[256];
 } HMIMAGE;
 
+void HMAPI oHmbInitImage(
+    HMIMAGE *Image,
+    HMALLOCATE_ROUTINE AllocateRoutine,
+    HMFREE_ROUTINE FreeRoutine)
+{
+    ObjZeroMemory(Image);
+    Image->SrcAlloc = AllocateRoutine;
+    Image->SrcFree = FreeRoutine;
+}
+
 PVOID HMAPI oHmbAllocate(
     HMIMAGE *Image,
     UINT64 Length)
 {
+    KDebugPrint("alloc");
     Length += 2; // add 32 byte header
-    if (Image->CurrentLength < Length && (!oHmbLookup(Image) || Image->CurrentLength < Length))
-    {
-        KDebugPrint("OHMB : case 0");
-        while (1)
-            __halt();
+    UINT64 NumPages = Length >> 8;
+    if (NumPages)
+    { // exceeds 1 page
+        if (Length & 0xFF)
+        {
+        NewBlockAlloc:
+            KDebugPrint("case2");
+            NumPages++;
+            Length += 2; // another descriptor
+            if (Length > (NumPages << 8))
+            {
+                KDebugPrint("test case 1");
+                NumPages++;
+            }
+            UINT64 RemainingSize = (NumPages << 8) - Length;
+            PVOID Mem = Image->SrcAlloc(NumPages);
+            KDebugPrint("Remaining size %d bytes", RemainingSize << 4);
+            if (!Mem)
+                return NULL;
+
+            PHMBLK Desc0 = Mem, Desc1 = (PHMBLK)((char *)Mem + ((Length - 2) << 4));
+            KDebugPrint("Desc0 %x Desc1 %x Max %x", Desc0, Desc1, (char *)Mem + (NumPages << 12));
+            Desc0->Addr = (UINT64)(Desc0 + 1);
+            Desc0->MainBlk = 1;
+            Desc1->Addr = (UINT64)(Desc1 + 1);
+            oHmbSet(Image, Desc1, RemainingSize);
+            return Desc0 + 1;
+        }
+        PHMBLK Desc = Image->SrcAlloc(NumPages);
+        Desc->Addr = (UINT64)(Desc + 1);
+        Desc->MainBlk = 1;
+        return Desc + 1;
     }
-    PVOID ret = (PVOID)(Image->BestHeap->Addr << 4);
-    Image->BestHeap->Addr += Length;
-    Image->CurrentLength -= Length;
-    return ret;
+    else
+    {
+        KDebugPrint("alloc2");
+
+        if (Image->CurrentLength < Length && (!oHmbLookup(Image) || Image->CurrentLength < Length))
+        {
+            KDebugPrint("alloc3");
+
+            goto NewBlockAlloc;
+        }
+        KDebugPrint("alloc4");
+
+        PVOID Mem = (PVOID)(Image->BestHeap->Addr << 4);
+        Image->BestHeap->Addr += Length;
+        Image->CurrentLength -= Length;
+        return Mem;
+    }
 }
 
 BOOLEAN HMAPI oHmbFree(HMIMAGE *Image, void *Ptr)
@@ -38,19 +91,24 @@ BOOLEAN HMAPI oHmbFree(HMIMAGE *Image, void *Ptr)
 
 BOOLEAN HMAPI oHmbLookup(HMIMAGE *Image)
 {
-    UINT64 Index, Index2;
-    if (!_BitScanReverse(&Index, Image->BaseBitmap))
-        return FALSE;
-    _BitScanReverse64(&Index2, Image->SubBmp);
-    PHMBLK Blk = Image->HeapArray[Index2 + (Index << 6)];
-    if (Image->BestHeap == Blk)
-        return FALSE;
-
+    ULONG Index, Index2;
     if (Image->BestHeap)
     {
         oHmbRemove(Image, Image->BestHeap, Image->InitialLength);
         oHmbSet(Image, Image->BestHeap, Image->CurrentLength);
     }
+    if (!_BitScanReverse(&Index, Image->BaseBitmap))
+        return FALSE;
+
+    _BitScanReverse64(&Index2, Image->SubBmp + Index);
+    PHMBLK Blk = Image->HeapArray[Index2 + (Index << 6)];
+
+    if (Image->BestHeap == Blk)
+    {
+        KDebugPrint("ret false");
+        return FALSE;
+    }
+    KDebugPrint("ret true");
     Image->BestHeap = Blk;
     Image->InitialLength = Index2 + (Index << 6);
     Image->CurrentLength = Image->InitialLength;

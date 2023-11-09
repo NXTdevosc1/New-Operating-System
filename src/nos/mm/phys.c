@@ -2,10 +2,12 @@
 #include <mm.h>
 #include <nos/mm/physmem.h>
 
-PVOID KRNLAPI MmRequestContiguousPages(
-    UINT PageSize,
-    UINT64 Length)
+PVOID KRNLAPI MmRequestContiguousPagesNoDesc(
+    IN UINT PageSize,
+    IN OUT UINT64 *LengthRemaining,
+    PVOID *SystemReserved)
 {
+    UINT64 Length = *LengthRemaining;
     HMIMAGE *Image = _NosPhysical4KBImage;
     // TODO : In case length > Max pages to request (511)
     if (PageSize == LargePageSize)
@@ -26,24 +28,39 @@ PVOID KRNLAPI MmRequestContiguousPages(
         if (!p)
             return NULL;
 
-        KDebugPrint("Higher portion : %x Remaining %x Pages %x", p, (char *)p + (Length << Image->User.AlignShift), ((PortionLength << 9) - (Length)));
-
-        KPAGEHEADER *Header = MmAllocatePool(sizeof(KPAGEHEADER), 0);
-        if (!Header)
-        {
-            KeRaiseException(STATUS_OUT_OF_MEMORY);
-        }
-
-        KDebugPrint("MM_RQCP : Case0");
-        while (1)
-            __halt();
+        *LengthRemaining = (PortionLength << 9) - Length;
+        *SystemReserved = Image;
+        KDebugPrint("Higher portion : %x Remaining %x Pages %x", p, (char *)p + (Length << Image->User.AlignShift), *LengthRemaining);
+        return p;
     }
 
     PVOID ptr = (PVOID)Image->User.BestHeap.Block->Address;
     Image->User.BestHeap.Block->Address += Length << Image->User.AlignShift;
     Image->User.BestHeap.RemainingLength -= Length;
-
+    *LengthRemaining = 0;
     return ptr;
+}
+
+PVOID KRNLAPI MmRequestContiguousPages(
+    UINT PageSize,
+    UINT64 Length)
+{
+    HMIMAGE *Image;
+    PVOID p = MmRequestContiguousPagesNoDesc(PageSize, &Length, (void **)&Image);
+    if (!p)
+        return NULL;
+    if (Length)
+    {
+        // Memory remaining
+        KPAGEHEADER *Header = MmAllocatePool(sizeof(KPAGEHEADER), 0);
+        if (!Header)
+        {
+            KeRaiseException(STATUS_OUT_OF_MEMORY);
+        }
+        Header->Header.Address = (UINT64)p + (Length << Image->User.AlignShift);
+        oHmpSet(Image, &Header->Header, Length);
+    }
+    return p;
 }
 
 void KRNLAPI MmFreePages(

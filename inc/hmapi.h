@@ -54,7 +54,7 @@ typedef struct _HMUSERHEADER
 typedef struct _HMIMAGE
 {
     HMUSERHEADER User;
-    UINT64 Rsv[0x300];
+    UINT64 Rsv[0x200];
 
 } HMIMAGE;
 #endif
@@ -106,6 +106,14 @@ typedef struct _HMBLK
 } HMBLK, *PHMBLK;
 
 #pragma pack(pop)
+
+typedef PVOID(__fastcall *HMALLOCATE_ROUTINE)(UINT64 PageCount);
+typedef void(__fastcall *HMFREE_ROUTINE)(PVOID PageStart, UINT64 PageCount);
+
+void HMAPI oHmbInitImage(
+    HMIMAGE *Image,
+    HMALLOCATE_ROUTINE AllocateRoutine,
+    HMFREE_ROUTINE FreeRoutine);
 
 void HMAPI oHmbSet(HMIMAGE *Image, PHMBLK Block, UINT8 Length /*in 16 Byte blocks*/);
 void HMAPI oHmbRemove(HMIMAGE *Image, PHMBLK Block, UINT8 Length);
