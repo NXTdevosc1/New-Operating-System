@@ -2,11 +2,11 @@
 #include <nos/processor/internal.h>
 #include <nos/mm/physmem.h>
 
-HMIMAGE _NosHeapImages[4];
+HMIMAGE _NosHeapImages[4] = {0};
 
-HMIMAGE *_NosPhysical1GBImage = _NosHeapImages;     // huge page allocations
-HMIMAGE *_NosPhysical2MBImage = _NosHeapImages + 1; // large page allocations
-HMIMAGE *_NosPhysical4KBImage = _NosHeapImages + 2; // page allocations
+HMIMAGE *_NosPhysical1GBImage = _NosHeapImages + HugePageSize;   // huge page allocations
+HMIMAGE *_NosPhysical2MBImage = _NosHeapImages + LargePageSize;  // large page allocations
+HMIMAGE *_NosPhysical4KBImage = _NosHeapImages + NormalPageSize; // page allocations
 HMIMAGE *_NosKernelHeap = _NosHeapImages + 3;
 
 KPAGEHEADER StaticPageHeaders[0x1000];
@@ -15,21 +15,79 @@ void *MemBase;
 
 void KRNLAPI __KiClearScreen(UINT Color);
 
-PVOID __fastcall _KHeapAllocatePages(UINT64 Count)
+PVOID __fastcall _KHeapAllocatePages(HMIMAGE *Image, UINT64 Count)
 {
     KDebugPrint("Src alloc");
-    HMIMAGE *Image;
-    PVOID p = MmRequestContiguousPagesNoDesc(0, &Count, (PVOID *)&Image);
+    PVOID p = MmRequestContiguousPagesNoDesc(_NosPhysical4KBImage, Count);
     if (!p)
-        return NULL;
-    if (Count)
     {
-        KDebugPrint("WARNING : KHEAPALLOC Wasted %d pages", Count);
+        Count++; // First page used as heap descriptor
+        KDebugPrint("Allocating additional pages");
+        UINT64 bigpages = AlignForward(Count, 0x200) >> 9;
+
+        p = MmRequestContiguousPagesNoDesc(_NosPhysical2MBImage, bigpages);
+        if (!p)
+        {
+            KDebugPrint("Allocating 1GB additional pages");
+
+            bigpages = AlignForward(bigpages, 0x200) >> 9;
+            p = MmRequestContiguousPagesNoDesc(_NosPhysical1GBImage, bigpages);
+            if (!p)
+                return NULL;
+
+            UINT64 Rempages = (bigpages << 18) - Count;
+            UINT64 RemLpages = Rempages >> 9;
+            Rempages = ((RemLpages << 9) - Rempages);
+
+            HMBLK *Blk = p;
+            KPAGEHEADER *Hdr = (void *)(Blk + 1);
+            Blk->Addr = (UINT64)Hdr >> 4;
+            PVOID NewP = (char *)p + 0x1000;
+            if (RemLpages)
+            {
+                Hdr->Header.Address = (UINT64)p + ((Count + Rempages) << 12);
+                KDebugPrint("2MB ADDR %x REM %x", Hdr->Header.Address, RemLpages);
+                oHmpSet(_NosPhysical2MBImage, &Hdr->Header, RemLpages);
+                Hdr++;
+            }
+            if (Rempages)
+            {
+                Hdr->Header.Address = (UINT64)p + (Count << 12);
+                KDebugPrint("4KB ADDR %x REM %x", Hdr->Header.Address, Rempages);
+                oHmpSet(_NosPhysical4KBImage, &Hdr->Header, Rempages);
+            }
+            else if (!RemLpages)
+                NewP = p; // 4KB will be wasted (TODO : Decrease allocation amount)
+
+            if (Rempages || RemLpages)
+            {
+                HMBLK *BlkFree = (void *)(Hdr + 1);
+                BlkFree->Addr = (UINT64)(BlkFree + 1);
+                oHmbSet(Image, BlkFree, 0x1000 - (BlkFree->Addr - (UINT64)Blk));
+                BlkFree->Addr >>= 4;
+            }
+
+            return NewP;
+        }
+        else
+        {
+            HMBLK *Blk = p;
+            ((char *)p) += 0x1000;
+            KPAGEHEADER *Hdr = (void *)(Blk + 1);
+            Blk->Addr = (UINT64)Hdr >> 4;
+            Hdr->Header.Address = (UINT64)p;
+            HMBLK *BlkFree = (void *)(Hdr + 1);
+            BlkFree->Addr = (UINT64)(BlkFree + 1);
+            oHmbSet(Image, BlkFree, 0x1000 - (BlkFree->Addr - (UINT64)Blk));
+            BlkFree->Addr >>= 4;
+        }
     }
+
+    // TODO : May return more than requested
     return p;
 }
 
-void __fastcall _KHeapFreePages(PVOID Mem, UINT64 Count)
+void __fastcall _KHeapFreePages(HMIMAGE *Image, PVOID Mem, UINT64 Count)
 {
     KDebugPrint("WARNING : _KHeapFreePages Not Implemented");
 }
@@ -234,9 +292,22 @@ void NOSINTERNAL KiPhysicalMemoryManagerInit()
 
     KDebugPrint("NOS Optimized memory system initialized successfully.");
 
-    for (;;)
+    __KiClearScreen(0xFF);
+
+    for (UINT64 i = 0;; i++)
     {
-        PVOID p = MmRequestContiguousPages(0, 0x10);
-        KDebugPrint("Returned 1 page %x", p);
+        PVOID p = MmRequestContiguousPages(0, 1);
+        if (!p)
+        {
+            KDebugPrint("%u pages have been allocated, efficiency (total clean allocations): %u bytes, total free memory at startup : %u bytes",
+                        i, i << 12, (NosInitData->TotalPagesCount - NosInitData->AllocatedPagesCount) << 12);
+            break;
+        }
+        // KDebugPrint("Returned 1 page %x", p);
     }
+
+    __KiClearScreen(0xFFFF);
+
+    while (1)
+        __halt();
 }

@@ -3,63 +3,61 @@
 #include <nos/mm/physmem.h>
 
 PVOID KRNLAPI MmRequestContiguousPagesNoDesc(
-    IN UINT PageSize,
-    IN OUT UINT64 *LengthRemaining,
-    PVOID *SystemReserved)
+    IN HMIMAGE *Image,
+    IN UINT64 Length)
 {
-    UINT64 Length = *LengthRemaining;
-    HMIMAGE *Image = _NosPhysical4KBImage;
     // TODO : In case length > Max pages to request (511)
-    if (PageSize == LargePageSize)
-        Image = _NosPhysical2MBImage;
-    else if (PageSize == HugePageSize)
-        Image = _NosPhysical1GBImage;
-    else if (PageSize >= MaxPageSize)
-        KeRaiseException(STATUS_INVALID_PARAMETER);
 
     if (Image->User.BestHeap.RemainingLength < Length && (!oHmpLookup(Image) || Image->User.BestHeap.RemainingLength < Length))
     {
-
-        if (!Image->User.HigherImage)
-            return NULL;
-
-        UINT PortionLength = Length > 0x1FF ? (Length >> 9) : 1;
-        PVOID p = MmRequestContiguousPages(PageSize + 1, PortionLength);
-        if (!p)
-            return NULL;
-
-        *LengthRemaining = (PortionLength << 9) - Length;
-        *SystemReserved = Image;
-        KDebugPrint("Higher portion : %x Remaining %x Pages %x", p, (char *)p + (Length << Image->User.AlignShift), *LengthRemaining);
-        return p;
+        return NULL;
     }
 
     PVOID ptr = (PVOID)Image->User.BestHeap.Block->Address;
     Image->User.BestHeap.Block->Address += Length << Image->User.AlignShift;
     Image->User.BestHeap.RemainingLength -= Length;
-    *LengthRemaining = 0;
     return ptr;
+}
+
+static inline PVOID MmiIncludeAdditionalPages(
+    HMIMAGE *Image,
+    UINT64 Length)
+{
+    if (!Image->User.HigherImage)
+        return NULL;
+
+    UINT64 Rem = ExcessBytes(Length, 0x200);
+    UINT64 NLength = AlignForward(Length, 0x200) >> 9;
+    PVOID p = MmRequestContiguousPagesNoDesc(Image->User.HigherImage, NLength);
+    if (!p)
+        return MmiIncludeAdditionalPages(Image->User.HigherImage, NLength);
+    else if (Rem)
+    {
+        // set free block
+        KPAGEHEADER *Hdr = MmAllocatePool(sizeof(KPAGEHEADER), 0);
+        if (!Hdr)
+        {
+            KDebugPrint("HDR Alloc pool failed, freeing memory...");
+            MmFreePages(p);
+            return NULL;
+        }
+
+        Hdr->Header.Address = (UINT64)p + ((Length) << Image->User.AlignShift);
+        // KDebugPrint("Rem addr %x calculated rem %x Rem %x", Hdr->Header.Address, (NLength << 9) - Length, Rem);
+        oHmpSet(Image, &Hdr->Header, Rem);
+    }
+    return p;
 }
 
 PVOID KRNLAPI MmRequestContiguousPages(
     UINT PageSize,
     UINT64 Length)
 {
-    HMIMAGE *Image;
-    PVOID p = MmRequestContiguousPagesNoDesc(PageSize, &Length, (void **)&Image);
+    HMIMAGE *Image = _NosHeapImages + PageSize;
+    PVOID p = MmRequestContiguousPagesNoDesc(Image, Length);
     if (!p)
-        return NULL;
-    if (Length)
-    {
-        // Memory remaining
-        KPAGEHEADER *Header = MmAllocatePool(sizeof(KPAGEHEADER), 0);
-        if (!Header)
-        {
-            KeRaiseException(STATUS_OUT_OF_MEMORY);
-        }
-        Header->Header.Address = (UINT64)p + (Length << Image->User.AlignShift);
-        oHmpSet(Image, &Header->Header, Length);
-    }
+        return MmiIncludeAdditionalPages(Image, Length);
+
     return p;
 }
 

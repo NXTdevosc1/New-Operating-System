@@ -94,21 +94,17 @@ BOOLEAN HMAPI oHmpLookup(HMIMAGE *as);
 
 typedef struct _HMBLK
 {
-    UINT64 Addr : 58; // in 16 byte aligned blocks
-    UINT64 MainBlk : 1;
-    UINT64 Rsv : 5;
-
-    UINT64 Reserved;
-
-    struct _HMBLK *Next;
 
     struct _HMBLK *PrevOrLast;
+    struct _HMBLK *Next : 56;
+    UINT8 Length : 8;
+
 } HMBLK, *PHMBLK;
 
 #pragma pack(pop)
 
-typedef PVOID(__fastcall *HMALLOCATE_ROUTINE)(UINT64 PageCount);
-typedef void(__fastcall *HMFREE_ROUTINE)(PVOID PageStart, UINT64 PageCount);
+typedef PVOID(__fastcall *HMALLOCATE_ROUTINE)(HMIMAGE *Image, UINT64 PageCount);
+typedef void(__fastcall *HMFREE_ROUTINE)(HMIMAGE *Image, PVOID PageStart, UINT64 PageCount);
 
 void HMAPI oHmbInitImage(
     HMIMAGE *Image,

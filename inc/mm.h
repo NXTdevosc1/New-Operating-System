@@ -1,6 +1,6 @@
 #pragma once
 #include <nosdef.h>
-
+#include <hmapi.h>
 #define MEM_2MB 2
 #define MEM_1GB 4
 #define MEM_READ_ONLY 8
@@ -14,14 +14,16 @@ typedef enum
     NormalPageSize = 0,
     LargePageSize,
     HugePageSize,
-    MaxPageSize
+    MaxPageSize = HugePageSize
 } KPageSize;
+
+PVOID KRNLAPI MmRequestContiguousPagesNoDesc(
+    IN HMIMAGE *Image,
+    IN UINT64 Length);
 
 PVOID KRNLAPI MmRequestContiguousPages(
     UINT PageSize,
     UINT64 Length);
 
-PVOID KRNLAPI MmRequestContiguousPagesNoDesc(
-    IN UINT PageSize,
-    IN OUT UINT64 *LengthRemaining,
-    PVOID *SystemReserved);
+void KRNLAPI MmFreePages(
+    PVOID Address);

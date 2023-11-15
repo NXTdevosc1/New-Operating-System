@@ -240,14 +240,14 @@ lvl1:
         {
             PHMHEADER Block = (PHMHEADER)s3->Available[as->llNumQwords + (i << 6) + i3];
             BOOLEAN Ret = TRUE;
-            KDebugPrint("found");
+            // KDebugPrint("found");
             if (Block == as->User.BestHeap.Block)
                 Ret = FALSE;
             else
             {
                 as->User.BestHeap.Block = Block;
                 as->User.BestHeap.StartupLength = i3 + i2 * as->NumEntries + i1 * as->epb * as->NumEntries + i0 * as->epb * as->epb * as->NumEntries;
-                KDebugPrint("length %d blocks - addr : 0x%x", as->User.BestHeap.StartupLength, as->User.BestHeap.Block->Address);
+                // KDebugPrint("length %d blocks - addr : 0x%x", as->User.BestHeap.StartupLength, as->User.BestHeap.Block->Address);
                 as->User.BestHeap.RemainingLength = as->User.BestHeap.StartupLength;
             }
             return Ret;

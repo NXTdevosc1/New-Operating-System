@@ -6,7 +6,7 @@ typedef struct
 {
     HMHEADER Header;
 } KPAGEHEADER;
-
+HMIMAGE _NosHeapImages[4];
 HMIMAGE *_NosPhysical1GBImage; // huge page allocations
 HMIMAGE *_NosPhysical2MBImage; // large page allocations
 HMIMAGE *_NosPhysical4KBImage; // page allocations

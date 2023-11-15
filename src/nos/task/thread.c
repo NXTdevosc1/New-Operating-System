@@ -226,10 +226,10 @@ NSTATUS KRNLAPI KeGetThreadStatus()
 
 void __declspec(noreturn) KRNLAPI KeRaiseException(NSTATUS ExceptionCode)
 {
+    KDebugPrint("System Raise Exception : ExceptionCode %d", ExceptionCode);
     PETHREAD Thread = KeGetCurrentThread();
     KeSetThreadStatus(ExceptionCode);
-    KDebugPrint("KE_RAISE_EXCEPTION : ExceptionCode %d", ExceptionCode);
-
+    KDebugPrint("System Raise Exception : ThreadID %d ProcessId %d ProcessorId %d", Thread->ThreadId, Thread->Process->ProcessId, Thread->Processor->Id.ProcessorId);
     while (1)
         __halt();
 }
