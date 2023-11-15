@@ -34,40 +34,41 @@ PVOID HMAPI oHmbAllocate(
     HMIMAGE *Image,
     UINT64 Length)
 {
+    Length++;
+    PHMBLK Mem;
     if (Image->CurrentLength < Length &&
         (Length > 0xFF || !oHmbLookup(Image) || Image->CurrentLength < Length))
     {
-        char *Mem = Image->SrcAlloc(Image, AlignForward(Length, 0x100) >> 8);
+        Mem = Image->SrcAlloc(Image, AlignForward(Length, 0x100) >> 8);
+        if (!Mem)
+            return NULL;
         if (Length & 0xFF)
         {
-            PHMBLK Blk = (PVOID)(Mem + (Length << 12));
+            PHMBLK Blk = Mem + Length;
             oHmbSet(Image, Blk, 0x100 - (Length & 0xFF));
         }
-
-        return Mem;
-    }
-    __m128i *NextHeap = (__m128i *)Image->CurrentBlock + Length;
-
-    *NextHeap = *(__m128i *)Image->CurrentBlock;
-    PVOID Mem = Image->CurrentBlock;
-    Image->CurrentBlock = NextHeap;
-    Image->CurrentLength -= Length;
-
-    return Mem;
-}
-
-BOOLEAN HMAPI oHmbFree(HMIMAGE *Image, void *Ptr, UINT64 Length)
-{
-    PHMBLK Mem = Ptr;
-    if ((UINT64)Ptr & 0xFF0)
-    {
     }
     else
     {
-        // Start of page
+        __m128i *NextHeap = (__m128i *)Image->CurrentBlock + Length;
+
+        *NextHeap = *(__m128i *)Image->CurrentBlock;
+        Mem = Image->CurrentBlock;
+        Image->CurrentBlock = NextHeap;
+        Image->CurrentLength -= Length;
     }
-    oHmbSet(Image, Ptr, Length);
-    return TRUE;
+    Mem->Length = Length; // full block length
+    return Mem + 1;
+}
+
+BOOLEAN HMAPI oHmbFree(HMIMAGE *Image, void *Ptr)
+{
+    PHMBLK Blk = ((PHMBLK)Ptr) - 1;
+    PHMBLK Prev = Blk - Blk->Length, Next = Blk + Blk->Length;
+    if (((UINT64)Blk & 0xFF0) && !Prev->Used)
+    {
+        Prev->Length += Blk->Length;
+    }
 }
 // PVOID HMAPI oHmbAllocate(
 //     HMIMAGE *Image,
