@@ -95,9 +95,11 @@ BOOLEAN HMAPI oHmpLookup(HMIMAGE *as);
 typedef struct _HMBLK
 {
 
-    UINT64 PrevOrLast : 63;
+    UINT64 PrevOrLast : 55;
+    UINT64 PrevLength : 8;
     UINT64 Used : 1;
-    UINT64 Next : 56;
+    UINT64 Next : 55;
+    UINT64 EndingBlock : 1;
     UINT64 Length : 8;
 } HMBLK, *PHMBLK;
 
