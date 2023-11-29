@@ -43,7 +43,7 @@ typedef struct _HMIMAGE
     UINT DescSize;
 } HMIMAGE;
 
-void HmPageImageCreate(HMIMAGE *Image, UINT8 NumLevels, UINT64 *Mem, UINT DescriptorSize)
+void VmmCreate(HMIMAGE *Image, UINT8 NumLevels, UINT64 *Mem, UINT DescriptorSize)
 {
     ObjZeroMemory(Image);
     Image->DescSize = sizeof(PAGEHEADER) + AlignForward(DescriptorSize, 0x10);
@@ -51,7 +51,7 @@ void HmPageImageCreate(HMIMAGE *Image, UINT8 NumLevels, UINT64 *Mem, UINT Descri
     Image->Mem = Mem;
 }
 
-void HmPageImageInsert(HMIMAGE *Image, PVOID Descriptor, UINT Level, UINT16 Length)
+static inline void _VmmInsert(HMIMAGE *Image, PVOID Descriptor, UINT Level, UINT16 Length)
 {
 
     PAGEHEADER *Desc = Descriptor;
@@ -73,7 +73,7 @@ void HmPageImageInsert(HMIMAGE *Image, PVOID Descriptor, UINT Level, UINT16 Leng
     Image->bLevels |= 1 << Level;
 }
 
-void HmPageImageRemove(HMIMAGE *Image, PVOID Descriptor, UINT Level, UINT64 Length)
+static inline void _VmmRemove(HMIMAGE *Image, PVOID Descriptor, UINT Level, UINT64 Length)
 {
     PAGEHEADER *Desc = Descriptor;
     PAGELEVEL_LENGTHCHAIN *Chain = Image->Mem + Level;
@@ -109,13 +109,13 @@ void HmPageImageRemove(HMIMAGE *Image, PVOID Descriptor, UINT Level, UINT64 Leng
         Image->bLevels &= ~(1 << Level);
 }
 
-static inline BOOLEAN _HmiInstantLookup(HMIMAGE *Image)
+static inline BOOLEAN _VmmInstantLookup(HMIMAGE *Image)
 {
 
     if (Image->Cl.Header)
     {
-        HmPageImageRemove(Image, Image->Cl.Header, Image->Cl.Level, Image->Cl.LenStart);
-        HmPageImageInsert(Image, Image->Cl.Header, Image->Cl.Level, Image->Cl.LenCurrent);
+        _VmmRemove(Image, Image->Cl.Header, Image->Cl.Level, Image->Cl.LenStart);
+        _VmmInsert(Image, Image->Cl.Header, Image->Cl.Level, Image->Cl.LenCurrent);
     }
     ULONG Level, Index, Index2;
     if (!_BitScanReverse64(&Level, Image->bLevels))
@@ -136,24 +136,25 @@ static inline BOOLEAN _HmiInstantLookup(HMIMAGE *Image)
     return TRUE;
 }
 
-PVOID HmPageImageAllocateContiguous(HMIMAGE *Image, UINT64 Length)
+PVOID VmmAllocateContiguous(HMIMAGE *Image, UINT64 Length)
 {
-    if (Image->Cl.LenCurrent >= Length || (_HmiInstantLookup(Image) && Image->Cl.LenCurrent >= Length))
+    if (Image->Cl.LenCurrent >= Length || (_VmmInstantLookup(Image) && Image->Cl.LenCurrent >= Length))
     {
         PVOID Ret = (Image->Cl.Header->Address << 12);
+        Image->Cl.Header->Address += (Length << 12);
+        Image->Cl.LenCurrent -= Length;
+        return Ret;
     }
     else
         return NULL;
 }
 
-PVOID HmPageImageAllocateFragmented(HMIMAGE *Image, UINT64 Length)
+UINT64 VmmAllocateFragmented(HMIMAGE *Image, UINT64 Min, UINT64 Max, PAGEHEADER *HeaderChain)
 {
+    // TODO : Implement
 }
 
-BOOLEAN HmPageImageFreeFull(HMIMAGE *Image, PVOID Ptr)
+void VmmFree(HMIMAGE *Image, PVOID Ptr, UINT64 Length)
 {
-}
-
-BOOLEAN HmPageImageFreePartial(HMIMAGE *Image, PVOID Ptr, UINT64 Length)
-{
+    // TODO : Resolve ptr into levels and set correct value
 }
