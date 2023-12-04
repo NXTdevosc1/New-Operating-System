@@ -84,10 +84,15 @@ extern void CpuEnableFeatures();
 
 HMIMAGE _img = {0};
 HMIMAGE *img = &_img;
+
+char testingmem[0x5000] = {0};
+
 void NOSENTRY NosSystemInit()
 {
     SerialLog("NOS_KERNEL : Kernel Booting...");
     CpuEnableFeatures();
+    KDebugPrint("VMM Testing...");
+
     KiPhysicalMemoryManagerInit();
     ObInitialize();
     KiInitBootCpu();

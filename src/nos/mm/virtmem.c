@@ -150,5 +150,7 @@ void *KeReserveExtendedSpace(
     UINT64 NumPages)
 {
     UINT64 exspace = _interlockedadd64(&ExtendedSpaceLength, NumPages << 12) - (NumPages << 12);
-    return (void *)((((UINT64)-1) - 0xFFF) - (NumPages << 12) - (exspace));
+    PVOID p = (void *)((((UINT64)-1) - 0xFFF) - (NumPages << 12) - (exspace));
+    KDebugPrint("KERNEL : Reserve Extended Space %x-%x", p, (UINT64)p + (NumPages << 12));
+    return p;
 }

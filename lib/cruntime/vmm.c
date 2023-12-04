@@ -5,24 +5,23 @@
  Performs optimized sorting to process a heap request in the fastest way possible
 */
 
+#define __VMMSRC
 #include <nosdef.h>
 #include <intrin.h>
 #include <hmdef.h>
 
-typedef struct _hmphdr
+typedef struct _hmpll
 {
-    UINT64 LastDescriptor : 1;
-    UINT64 Attributes : 11;
-    UINT64 Address : 52;
-    struct _hmphdr *Next;
-    struct _hmphdr *LastOrPrev;
-} PAGEHEADER;
-
-typedef struct
-{
-    UINT Bitmap67;      // bits 6-7
-    UINT64 Bitmap05[4]; // bits 0-5
-    PAGEHEADER Headers[512];
+    UINT Level;
+    UINT Bitmap68;      // bits 6-8
+    UINT64 Bitmap05[8]; // bits 0-5
+    VMMHEADER *Headers[512];
+    struct
+    {
+        VMMHEADER *Header;
+        UINT16 LenStart;
+        UINT16 LenCurrent;
+    } Cl; // Current largest
 } PAGELEVEL_LENGTHCHAIN;
 
 typedef struct _HMIMAGE
@@ -32,51 +31,47 @@ typedef struct _HMIMAGE
     UINT64 bLevels;
     PAGELEVEL_LENGTHCHAIN *Mem;
 
-    struct
-    {
-        PAGEHEADER *Header;
-        UINT64 LenStart;
-        UINT64 LenCurrent;
-        UINT Level;
-    } Cl; // Current largest
-
     UINT DescSize;
 } HMIMAGE;
 
-void VmmCreate(HMIMAGE *Image, UINT8 NumLevels, UINT64 *Mem, UINT DescriptorSize)
+void HMAPI VmmCreate(HMIMAGE *Image, UINT8 NumLevels, void *Mem, UINT DescriptorSize)
 {
     ObjZeroMemory(Image);
-    Image->DescSize = sizeof(PAGEHEADER) + AlignForward(DescriptorSize, 0x10);
+    Image->DescSize = sizeof(VMMHEADER) + AlignForward(DescriptorSize, 0x10);
     Image->NumLevels = NumLevels;
     Image->Mem = Mem;
+    Image->User.Buffer = Mem;
+    for (int i = 0; i < NumLevels; i++)
+    {
+        ObjZeroMemory(Image->Mem + i);
+        Image->Mem[i].Level = i;
+    }
 }
 
-static inline void _VmmInsert(HMIMAGE *Image, PVOID Descriptor, UINT Level, UINT16 Length)
+inline void HMAPI VmmInsert(PAGELEVEL_LENGTHCHAIN *Chain,
+                            VMMHEADER *Desc,
+                            UINT16 Length)
 {
 
-    PAGEHEADER *Desc = Descriptor;
     Desc->Next = NULL;
-    PAGELEVEL_LENGTHCHAIN *Chain = Image->Mem + Level;
-    Chain->Bitmap67 |= (1 << (Length >> 6));
+    Chain->Bitmap68 |= (1 << (Length >> 6));
     if (_bittestandset64(Chain->Bitmap05 + (Length >> 6), Length & 0x3F))
     {
-        Chain->Headers[Length].LastOrPrev->Next = Desc;
-        Desc->LastOrPrev = Chain->Headers[Length].LastOrPrev;
-        Chain->Headers[Length].LastOrPrev = Desc;
+        Chain->Headers[Length]->LastOrPrev->Next = Desc;
+        Desc->LastOrPrev = Chain->Headers[Length]->LastOrPrev;
+        Chain->Headers[Length]->LastOrPrev = Desc;
     }
     else
     {
         Chain->Headers[Length] = Desc;
-        Desc.LastOrPrev = Desc;
+        Desc->LastOrPrev = Desc;
     }
-
-    Image->bLevels |= 1 << Level;
 }
 
-static inline void _VmmRemove(HMIMAGE *Image, PVOID Descriptor, UINT Level, UINT64 Length)
+inline void HMAPI VmmRemove(PAGELEVEL_LENGTHCHAIN *Chain,
+                            VMMHEADER *Desc,
+                            UINT16 Length)
 {
-    PAGEHEADER *Desc = Descriptor;
-    PAGELEVEL_LENGTHCHAIN *Chain = Image->Mem + Level;
 
     if (Desc->LastOrPrev == Desc)
     {
@@ -84,7 +79,7 @@ static inline void _VmmRemove(HMIMAGE *Image, PVOID Descriptor, UINT Level, UINT
         _bittestandreset64(Chain->Bitmap05 + (Length >> 6), Length & 0x3F);
         if (!Chain->Bitmap05[Length >> 6])
         {
-            Chain->Bitmap67 &= ~(1 << (Length >> 6));
+            Chain->Bitmap68 &= ~(1 << (Length >> 6));
         }
         Chain->Headers[Length] = NULL;
     }
@@ -101,60 +96,54 @@ static inline void _VmmRemove(HMIMAGE *Image, PVOID Descriptor, UINT Level, UINT
         if (Desc->Next == NULL)
         {
             // ending descriptor
-            Chain->Headers[Length].LastOrPrev = Desc->LastOrPrev;
+            Chain->Headers[Length]->LastOrPrev = Desc->LastOrPrev;
         }
     }
-
-    if (!Chain->Bitmap67)
-        Image->bLevels &= ~(1 << Level);
 }
 
-static inline BOOLEAN _VmmInstantLookup(HMIMAGE *Image)
+static inline BOOLEAN _VmmInstantLookup(PAGELEVEL_LENGTHCHAIN *Chain)
 {
-
-    if (Image->Cl.Header)
+    if (Chain->Cl.Header)
     {
-        _VmmRemove(Image, Image->Cl.Header, Image->Cl.Level, Image->Cl.LenStart);
-        _VmmInsert(Image, Image->Cl.Header, Image->Cl.Level, Image->Cl.LenCurrent);
+        VmmRemove(Chain, Chain->Cl.Header, Chain->Cl.LenStart);
+        VmmInsert(Chain, Chain->Cl.Header, Chain->Cl.LenCurrent);
     }
-    ULONG Level, Index, Index2;
-    if (!_BitScanReverse64(&Level, Image->bLevels))
+
+    ULONG Index, Index2;
+
+    if (!_BitScanReverse(&Index, Chain->Bitmap68))
     {
-        Image->Cl.LenStart = Image->Cl.LenCurrent;
+        Chain->Cl.LenStart = Chain->Cl.LenCurrent;
         return FALSE;
     }
 
-    PAGELEVEL_LENGTHCHAIN *Chain = Image->Mem + Level;
-    _BitScanReverse(&Index, Chain->Bitmap67);
     _BitScanReverse64(&Index2, Chain->Bitmap05[Index]);
 
-    Image->Cl.LenStart = Index << 6 | (Index2);
-    Image->Cl.LenCurrent = Image->Cl.LenStart << (Level * 9);
-    Image->Cl.Header = Chain->Headers[Image->Cl.LenStart];
-    Image->Cl.Level = Level;
+    Chain->Cl.LenStart = Index << 6 | (Index2);
+    Chain->Cl.LenCurrent = Chain->Cl.LenStart;
+    Chain->Cl.Header = Chain->Headers[Chain->Cl.LenStart];
 
     return TRUE;
 }
 
-PVOID VmmAllocateContiguous(HMIMAGE *Image, UINT64 Length)
+// Each higher memory allocation maps a bitmap (2bit based bitmap)
+
+PVOID HMAPI VmmAllocate(HMIMAGE *Image, UINT Level, UINT16 Count)
 {
-    if (Image->Cl.LenCurrent >= Length || (_VmmInstantLookup(Image) && Image->Cl.LenCurrent >= Length))
+    PAGELEVEL_LENGTHCHAIN *Ch = Image->Mem + Level;
+    if (Ch->Cl.LenCurrent >= Count || (_VmmInstantLookup(Ch) && Ch->Cl.LenCurrent >= Count))
     {
-        PVOID Ret = (Image->Cl.Header->Address << 12);
-        Image->Cl.Header->Address += (Length << 12);
-        Image->Cl.LenCurrent -= Length;
+        PVOID Ret = (PVOID)(Ch->Cl.Header->Address << 12);
+        Ch->Cl.Header->Address += (Count << (9 * Level));
+        Ch->Cl.LenCurrent -= Count;
         return Ret;
     }
     else
         return NULL;
 }
 
-UINT64 VmmAllocateFragmented(HMIMAGE *Image, UINT64 Min, UINT64 Max, PAGEHEADER *HeaderChain)
-{
-    // TODO : Implement
-}
-
-void VmmFree(HMIMAGE *Image, PVOID Ptr, UINT64 Length)
-{
-    // TODO : Resolve ptr into levels and set correct value
-}
+// MANAGED BY the parent allocator (depends wheter physical allocator, or virtual address allocator)
+// void VmmFree(HMIMAGE *Image, PVOID Ptr, UINT64 Length)
+// {
+//     // TODO : Resolve ptr into levels and set correct value
+// }

@@ -2,15 +2,13 @@
 #include <nos/processor/internal.h>
 #include <nos/mm/physmem.h>
 
-HMIMAGE _NosHeapImages[4] = {0};
+HMIMAGE _NosHeapImages[2] = {0};
+HMIMAGE *_NosPhysicalMemoryImage = _NosHeapImages;
+HMIMAGE *_NosKernelHeap = _NosHeapImages + 1;
 
-HMIMAGE *_NosPhysical1GBImage = _NosHeapImages + HugePageSize;   // huge page allocations
-HMIMAGE *_NosPhysical2MBImage = _NosHeapImages + LargePageSize;  // large page allocations
-HMIMAGE *_NosPhysical4KBImage = _NosHeapImages + NormalPageSize; // page allocations
-HMIMAGE *_NosKernelHeap = _NosHeapImages + 3;
-
-KPAGEHEADER StaticPageHeaders[0x1000];
-
+KPAGEHEADER *PageBase;
+KPAGEHEADER *PageHeaders;
+UINT64 MaxAddress;
 void *MemBase;
 
 void KRNLAPI __KiClearScreen(UINT Color);
@@ -18,78 +16,34 @@ void KRNLAPI __KiClearScreen(UINT Color);
 PVOID __fastcall _KHeapAllocatePages(HMIMAGE *Image, UINT64 Count)
 {
     KDebugPrint("Src alloc");
-    PVOID p = MmRequestContiguousPagesNoDesc(_NosPhysical4KBImage, Count);
-    if (!p)
-    {
-        Count++; // First page used as heap descriptor
-        KDebugPrint("Allocating additional pages");
-        UINT64 bigpages = AlignForward(Count, 0x200) >> 9;
-
-        p = MmRequestContiguousPagesNoDesc(_NosPhysical2MBImage, bigpages);
-        if (!p)
-        {
-            KDebugPrint("Allocating 1GB additional pages");
-
-            bigpages = AlignForward(bigpages, 0x200) >> 9;
-            p = MmRequestContiguousPagesNoDesc(_NosPhysical1GBImage, bigpages);
-            if (!p)
-                return NULL;
-
-            UINT64 Rempages = (bigpages << 18) - Count;
-            UINT64 RemLpages = Rempages >> 9;
-            Rempages = ((RemLpages << 9) - Rempages);
-
-            HMBLK *Blk = p;
-            KPAGEHEADER *Hdr = (void *)(Blk + 1);
-            Blk->Addr = (UINT64)Hdr >> 4;
-            PVOID NewP = (char *)p + 0x1000;
-            if (RemLpages)
-            {
-                Hdr->Header.Address = (UINT64)p + ((Count + Rempages) << 12);
-                KDebugPrint("2MB ADDR %x REM %x", Hdr->Header.Address, RemLpages);
-                oHmpSet(_NosPhysical2MBImage, &Hdr->Header, RemLpages);
-                Hdr++;
-            }
-            if (Rempages)
-            {
-                Hdr->Header.Address = (UINT64)p + (Count << 12);
-                KDebugPrint("4KB ADDR %x REM %x", Hdr->Header.Address, Rempages);
-                oHmpSet(_NosPhysical4KBImage, &Hdr->Header, Rempages);
-            }
-            else if (!RemLpages)
-                NewP = p; // 4KB will be wasted (TODO : Decrease allocation amount)
-
-            if (Rempages || RemLpages)
-            {
-                HMBLK *BlkFree = (void *)(Hdr + 1);
-                BlkFree->Addr = (UINT64)(BlkFree + 1);
-                oHmbSet(Image, BlkFree, 0x1000 - (BlkFree->Addr - (UINT64)Blk));
-                BlkFree->Addr >>= 4;
-            }
-
-            return NewP;
-        }
-        else
-        {
-            HMBLK *Blk = p;
-            ((char *)p) += 0x1000;
-            KPAGEHEADER *Hdr = (void *)(Blk + 1);
-            Blk->Addr = (UINT64)Hdr >> 4;
-            Hdr->Header.Address = (UINT64)p;
-            HMBLK *BlkFree = (void *)(Hdr + 1);
-            BlkFree->Addr = (UINT64)(BlkFree + 1);
-            oHmbSet(Image, BlkFree, 0x1000 - (BlkFree->Addr - (UINT64)Blk));
-            BlkFree->Addr >>= 4;
-        }
-    }
+    // PVOID p = MmRequestContiguousPagesNoDesc(_NosPhysical4KBImage, Count);
 
     // TODO : May return more than requested
-    return p;
+    return NULL;
 }
 
 void __fastcall _KHeapFreePages(HMIMAGE *Image, PVOID Mem, UINT64 Count)
 {
     KDebugPrint("WARNING : _KHeapFreePages Not Implemented");
+}
+
+static inline void KiMapPageDescriptors(KPAGEHEADER *PhysicalPageHeader, PVOID PhysicalAddress, UINT64 PageCount)
+{
+    KPAGEHEADER *Hdr = ResolvePageHeader(PhysicalAddress);
+    KPAGEHEADER *EndHdr = ResolvePageHeader((UINT64)PhysicalAddress + (PageCount << 12));
+    UINT64 LastMap = 0;
+    while (Hdr <= EndHdr)
+    {
+        if (LastMap != ((UINT64)Hdr & ~0xFFF))
+        {
+            LastMap = (UINT64)Hdr & ~0xFFF;
+            // KDebugPrint("KPAGEMAP : HDR %x MAP %x", Hdr, LastMap);
+            HwMapVirtualMemory(GetCurrentPageTable(), PhysicalPageHeader, Hdr, 1, PAGE_WRITE_ACCESS, 0);
+        }
+
+        Hdr++;
+        PhysicalPageHeader++;
+    }
 }
 
 void NOSINTERNAL KiPhysicalMemoryManagerInit()
@@ -99,6 +53,7 @@ void NOSINTERNAL KiPhysicalMemoryManagerInit()
     NOS_MEMORY_LINKED_LIST *PhysicalMem = NosInitData->NosMemoryMap;
     unsigned long Index = 0;
     UINT64 AllocatedMemory = 0, FreeMemory = 0;
+    MaxAddress = 0;
     do
     {
         for (int c = 0; c < 0x40; c++)
@@ -122,6 +77,8 @@ void NOSINTERNAL KiPhysicalMemoryManagerInit()
                         }
                         FreeMemory += Mem->NumPages * 0x1000;
                     }
+                    if ((UINT64)Mem->PhysicalAddress + (Mem->NumPages << 12) > MaxAddress)
+                        MaxAddress = ((UINT64)Mem->PhysicalAddress + (Mem->NumPages << 12));
                 }
             }
         }
@@ -131,9 +88,8 @@ void NOSINTERNAL KiPhysicalMemoryManagerInit()
     NosInitData->AllocatedPagesCount = AllocatedMemory >> 12;
     NosInitData->TotalPagesCount = (AllocatedMemory + FreeMemory) >> 12;
 
-    MemBase = KeReserveExtendedSpace(NosInitData->TotalPagesCount);
-
-    // UINT64 LenPageHeaders = sizeof(KPAGEHEADER) * NosInitData->TotalPagesCount;
+    // Those headers will be mapped as a shadow physical address copy : VirtualBase + PhysicalAddress
+    UINT64 LenPageHeaders = sizeof(KPAGEHEADER) * NosInitData->TotalPagesCount;
 
     KDebugPrint("Best region address %x Length %u bytes", BestMem->PhysicalAddress, BestMem->NumPages << 12);
 
@@ -144,50 +100,42 @@ void NOSINTERNAL KiPhysicalMemoryManagerInit()
             __halt();
     }
     // Prepare heap manager
-    UINT64 T1G = oHmpCreateImage(_NosPhysical1GBImage, (1 << 30), BestMem->NumPages >> 18);
-    UINT64 T2M = oHmpCreateImage(_NosPhysical2MBImage, (1 << 21), 0x200);
-    UINT64 T4K = oHmpCreateImage(_NosPhysical4KBImage, 0x1000, 0x200);
 
-    // Can contain upto (4KB-1) of splitted chunk, otherwise use page frame allocations to allocate chunks
-
-    UINT64 Total = T1G + T2M + T4K;
-
-    KDebugPrint("T4G %x T2M %x T4K %x", T1G, T2M, T4K);
-    char *imgs;
-    if ((NERROR(MmAllocatePhysicalMemory(ALLOCATE_2MB_ALIGNED_MEMORY, AlignForward(Total, 0x200000) >> 21, &imgs))))
+    char *VmmBuffer;
+    // TODO : Support 4/5 Level physical memory
+    UINT64 MemLen = ConvertToPages(AlignForward(VmmLevelLength(4), 0x1000) + LenPageHeaders);
+    if ((NERROR(MmAllocatePhysicalMemory(0, MemLen, &VmmBuffer))))
     {
-        KDebugPrint("Failed to startup the kernel, no enough memory to initialize the heap manager.");
+        KDebugPrint("Failed to startup the kernel, no enough memory to initialize the memory manager.");
         while (1)
             __halt();
     }
-    // _PageHeaders = (void *)(imgs + T1G + T2M + T4K);
-    // _Memset128A_32(_PageHeaders, 0, LenPageHeaders >> 4);
+    ZeroMemory(VmmBuffer, MemLen);
 
-    KDebugPrint("IMGS %x", imgs);
-    KDebugPrint("Kernel boot memory : Used %d bytes , free : %d bytes, total %d bytes", AllocatedMemory, FreeMemory, AllocatedMemory + FreeMemory);
+    KDebugPrint("Allocated %x bytes, MAX_ADDR %x, TOTAL_PAGES %x", MemLen << 12, MaxAddress, NosInitData->TotalPagesCount);
 
-    oHmpInitImage(_NosPhysical1GBImage, imgs);
-    oHmpInitImage(_NosPhysical2MBImage, imgs + T1G);
-    oHmpInitImage(_NosPhysical4KBImage, imgs + T1G + T2M);
-
-    _NosPhysical4KBImage->User.HigherImage = _NosPhysical2MBImage;
-    _NosPhysical2MBImage->User.HigherImage = _NosPhysical1GBImage;
+    // Prepare page descriptors
+    PageBase = KeReserveExtendedSpace(ConvertToPages(((MaxAddress) >> 12) * sizeof(KPAGEHEADER)));
+    PageHeaders = (KPAGEHEADER *)(VmmBuffer + AlignForward(VmmLevelLength(4), 0x1000));
 
     PhysicalMem = NosInitData->NosMemoryMap;
 
+    // Init Physical Allocator
+    // TODO : Currently 3 Levels, supports only allocations < 512GB
+    VmmCreate(_NosPhysicalMemoryImage, 3, VmmBuffer, sizeof(KPAGEHEADER) - sizeof(VMMHEADER));
     NOS_MEMORY_DESCRIPTOR cmem = {0}; // copy mem
     BOOLEAN usecmem2 = FALSE;
     NOS_MEMORY_DESCRIPTOR cmem2 = {0}; // copy mem
 
-    UINT16 StaticIndex = 0;
+    KPAGEHEADER *CurrentHeader = PageHeaders;
+
+    UINT64 PageNum = 0;
 
     // Calculate and rearrange
     do
     {
         for (int c = 0; c < 0x40; c++)
         {
-            if (StaticIndex > 0xFF0) // limit of static memory entries
-                break;
             if (PhysicalMem->Groups[c].Present)
             {
                 UINT64 Mask = PhysicalMem->Groups[c].Present;
@@ -195,6 +143,9 @@ void NOSINTERNAL KiPhysicalMemoryManagerInit()
                 {
                     _bittestandreset64(&Mask, Index);
                     NOS_MEMORY_DESCRIPTOR *Mem = &PhysicalMem->Groups[c].MemoryDescriptors[Index];
+                    // Map the descriptors
+                    KiMapPageDescriptors(CurrentHeader, Mem->PhysicalAddress, Mem->NumPages);
+                    CurrentHeader += Mem->NumPages;
                     if (!(Mem->Attributes & MM_DESCRIPTOR_ALLOCATED))
                     {
                         memcpy(&cmem, Mem, sizeof *Mem);
@@ -207,13 +158,18 @@ void NOSINTERNAL KiPhysicalMemoryManagerInit()
                             UINT64 RemainingLeft = (HugeStart - (char *)cmem.PhysicalAddress) >> 12;
                             UINT64 RemainingRight = cmem.NumPages - (RemainingLeft + (NumHugePages << 18));
 
-                            KPAGEHEADER *hdr = StaticPageHeaders + StaticIndex;
-                            hdr->Header.Address = (UINT64)HugeStart;
-                            hdr->Header.FirstBlock = 1;
-                            hdr->Header.NextBlock = NULL;
+                            if (NumHugePages > 0x1FF)
+                            {
+                                // ____________ TODO ___________________
+                                KDebugPrint("HALTPOINT : KERNEL TODO! MAP PAGES HIGHER THAN 512 GB");
+                                while (1)
+                                    __halt();
+                            }
 
-                            oHmpSet(_NosPhysical1GBImage, &hdr->Header, NumHugePages);
-                            StaticIndex++;
+                            KPAGEHEADER *hdr = ResolvePageHeader(HugeStart);
+                            hdr->Header.Address = (UINT64)HugeStart;
+
+                            VmmInsert(VmmPageLevel(_NosPhysicalMemoryImage, 2), hdr, NumHugePages);
 
                             KDebugPrint("%d HUGE PAGES at %x REML %d at %x REMR %d at %x", NumHugePages, HugeStart, RemainingLeft, cmem.PhysicalAddress, RemainingRight, (UINT64)cmem.PhysicalAddress + ((RemainingLeft + (NumHugePages << 18) << 12)));
 
@@ -239,13 +195,10 @@ void NOSINTERNAL KiPhysicalMemoryManagerInit()
                             UINT64 RemainingLeft = (LargeStart - (char *)cmem.PhysicalAddress) >> 12;
                             UINT64 RemainingRight = cmem.NumPages - (RemainingLeft + (NumLargePages << 9));
 
-                            KPAGEHEADER *hdr = StaticPageHeaders + StaticIndex;
+                            KPAGEHEADER *hdr = ResolvePageHeader(LargeStart);
                             hdr->Header.Address = (UINT64)LargeStart;
-                            hdr->Header.FirstBlock = 1;
-                            hdr->Header.NextBlock = NULL;
 
-                            oHmpSet(_NosPhysical2MBImage, &hdr->Header, NumLargePages);
-                            StaticIndex++;
+                            VmmInsert(VmmPageLevel(_NosPhysicalMemoryImage, 1), hdr, NumLargePages);
 
                             KDebugPrint("%d LARGE PAGES at %x REML %d at %x REMR %d at %x", NumLargePages, LargeStart, RemainingLeft, cmem.PhysicalAddress, RemainingRight, (UINT64)cmem.PhysicalAddress + ((RemainingLeft + (NumLargePages << 9) << 12)));
                             if (RemainingRight)
@@ -263,13 +216,10 @@ void NOSINTERNAL KiPhysicalMemoryManagerInit()
                         }
                         if (cmem.NumPages)
                         {
-                            KPAGEHEADER *hdr = StaticPageHeaders + StaticIndex;
+                            KPAGEHEADER *hdr = ResolvePageHeader(cmem.PhysicalAddress);
                             hdr->Header.Address = (UINT64)cmem.PhysicalAddress;
-                            hdr->Header.FirstBlock = 1;
-                            hdr->Header.NextBlock = NULL;
 
-                            oHmpSet(_NosPhysical4KBImage, &hdr->Header, cmem.NumPages);
-                            StaticIndex++;
+                            VmmInsert(VmmPageLevel(_NosPhysicalMemoryImage, 0), hdr, cmem.NumPages);
                             KDebugPrint("%d Individual 4KB pages at 0x%x-0x%x", cmem.NumPages, cmem.PhysicalAddress, ((UINT64)cmem.PhysicalAddress + (cmem.NumPages << 12)));
                         }
 
@@ -288,19 +238,36 @@ void NOSINTERNAL KiPhysicalMemoryManagerInit()
         PhysicalMem = PhysicalMem->Next;
     } while (PhysicalMem);
 
-    oHmbInitImage(_NosKernelHeap, _KHeapAllocatePages, _KHeapFreePages);
-
     KDebugPrint("NOS Optimized memory system initialized successfully.");
 
     __KiClearScreen(0xFF);
 
     for (UINT64 i = 0;; i++)
     {
-        PVOID p = MmRequestContiguousPages(0, 1);
+        PVOID p = VmmAllocate(_NosPhysicalMemoryImage, 0, 1);
         if (!p)
         {
-            KDebugPrint("%u pages have been allocated, efficiency (total clean allocations): %u bytes, total free memory at startup : %u bytes",
-                        i, i << 12, (NosInitData->TotalPagesCount - NosInitData->AllocatedPagesCount) << 12);
+            KDebugPrint("LVL0 : %u pages have been allocated", i);
+            break;
+        }
+        // KDebugPrint("Returned 1 page %x", p);
+    }
+    for (UINT64 i = 0;; i++)
+    {
+        PVOID p = VmmAllocate(_NosPhysicalMemoryImage, 1, 1);
+        if (!p)
+        {
+            KDebugPrint("LVL1 : %u pages have been allocated", i);
+            break;
+        }
+        // KDebugPrint("Returned 1 page %x", p);
+    }
+    for (UINT64 i = 0;; i++)
+    {
+        PVOID p = VmmAllocate(_NosPhysicalMemoryImage, 2, 1);
+        if (!p)
+        {
+            KDebugPrint("LVL2 : %u pages have been allocated", i);
             break;
         }
         // KDebugPrint("Returned 1 page %x", p);

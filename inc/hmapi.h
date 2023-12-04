@@ -48,6 +48,7 @@ typedef struct _HMUSERHEADER
     HMIMAGE *HigherImage;
     UINT64 Alignment;
     UINT64 AlignShift;
+    PVOID Buffer;
 } HMUSERHEADER;
 #ifndef HMAPI
 #define HMAPI __declspec(dllimport) __fastcall
@@ -62,33 +63,29 @@ typedef struct _HMIMAGE
 /*
  * HM Optimized Page interface
  */
-
+typedef struct _vmmpagehdr
+{
+    UINT64 Attributes : 12; // User-defined
+    UINT64 Address : 52;
+    struct _vmmpagehdr *Next;
+    struct _vmmpagehdr *LastOrPrev;
+} VMMHEADER;
 // Image setup required
-UINT64 HMAPI oHmpCreateImage(
-    HMIMAGE *as,
-    UINT64 Alignment,
-    UINT64 MaxLengthInAlignedUnits);
-void HMAPI oHmpInitImage(
-    HMIMAGE *as, // address space
-    char *Mem);
+void HMAPI VmmCreate(HMIMAGE *Image, UINT8 NumLevels, void *Mem, UINT DescriptorSize);
 
-// Request heap by specific length
-PHMHEADER HMAPI oHmpGet(HMIMAGE *as, UINT64 TheoriticalLength);
-// Set heap and specify it's length
-void HMAPI oHmpSet(HMIMAGE *as, HMHEADER *Mem, UINT64 TheoriticalLength);
-// Delete heap and specify it's length
-void HMAPI oHmpDelete(HMIMAGE *as, HMHEADER *Mem, UINT64 TheoriticalLength);
-// Search for the largest heap possible
-// if a larger heap is found, then TRUE is returned
-BOOLEAN HMAPI oHmpLookup(HMIMAGE *as);
-/*
- * HM Optimized heap blocks interface
- * Doesn't require initialization
- */
+PVOID HMAPI VmmAllocate(HMIMAGE *Image, UINT Level, UINT16 Count);
 
-/*
- * Set Image.User.AllocateFrom to request pages when there is no memory
- */
+#ifndef __VMMSRC
+void HMAPI VmmInsert(PVOID Level,
+                     PVOID Desc,
+                     UINT16 Length);
+void HMAPI VmmRemove(PVOID *Level,
+                     PVOID Desc,
+                     UINT16 Length);
+
+#define VmmLevelLength(Lvl) ((Lvl) * 4184)
+#define VmmPageLevel(Image, NumLvls) ((char *)Image->User.Buffer + VmmLevelLength(NumLvls))
+#endif
 
 #pragma pack(push, 0x10)
 
