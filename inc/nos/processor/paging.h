@@ -1,7 +1,7 @@
 #pragma once
 #include <nosdef.h>
 
-#define GetCurrentPageTable() ((void*)(__readcr3() & ~0xFFF))
+#define GetCurrentPageTable() ((void *)(__readcr3() & ~0xFFF))
 
 /*
 
@@ -27,7 +27,8 @@ PAT_WRITE_BACK 111
 #define PAGE_2MB ((UINT64)1 << 7)
 
 // Default is write back
-typedef enum _PageCachePolicy{
+typedef enum _PageCachePolicy
+{
     PAGE_CACHE_WRITE_BACK,
     PAGE_CACHE_WRITE_COMBINE,
     PAGE_CACHE_DISABLE,
@@ -35,7 +36,8 @@ typedef enum _PageCachePolicy{
     PAGE_CACHE_WRITE_THROUGH
 } PageCachePolicy;
 
-typedef struct _PAGE_TABLE_ENTRY {
+typedef struct _PAGE_TABLE_ENTRY
+{
     UINT64 Present : 1;
     UINT64 ReadWrite : 1;
     UINT64 UserSupervisor : 1;
@@ -56,64 +58,61 @@ typedef struct _PAGE_TABLE_ENTRY {
 // Processor Memory Management Utilities
 
 NSTATUS KRNLAPI HwMapVirtualMemory(
-    IN void* PageTable,
-    IN void* _PhysicalAddress,
-    IN void* _VirtualAddress,
+    IN void *PageTable,
+    IN void *_PhysicalAddress,
+    IN void *_VirtualAddress,
     IN UINT64 NumPages,
     IN UINT64 PageFlags,
-    IN UINT CachePolicy
-);
+    IN UINT CachePolicy);
 
 NSTATUS KRNLAPI KeMapVirtualMemory(
     IN PEPROCESS Process,
-    IN void* _PhysicalAddress,
-    IN void* _VirtualAddress,
+    IN void *_PhysicalAddress,
+    IN void *_VirtualAddress,
     IN UINT64 NumPages,
     IN UINT64 PageFlags,
-    IN UINT CachePolicy
-);
+    IN UINT CachePolicy);
 
 NSTATUS KRNLAPI KeUnmapVirtualMemory(
     IN PEPROCESS Process,
-    IN void* _VirtualAddress,
-    IN OUT UINT64* _NumPages // Returns num pages left
+    IN void *_VirtualAddress,
+    IN OUT UINT64 *_NumPages // Returns num pages left
 );
 
 BOOLEAN KRNLAPI KeCheckMemoryAccess(
     IN PEPROCESS Process,
-    IN void* _VirtualAddress,
+    IN void *_VirtualAddress,
     IN UINT64 NumBytes,
-    IN OPT UINT64* _Flags
-);
+    IN OPT UINT64 *_Flags);
 
 PVOID KRNLAPI KeConvertPointer(
     IN PEPROCESS Process,
-    IN void* VirtualAddress
-);
+    IN void *VirtualAddress);
 
 PVOID KRNLAPI KeFindAvailableAddressSpace(
     IN PEPROCESS Process,
     IN UINT64 NumPages,
-    IN void* VirtualStart,
-    IN void* VirtualEnd,
-    IN UINT64 PageAttributes
-);
-
+    IN void *VirtualStart,
+    IN void *VirtualEnd,
+    IN UINT64 PageAttributes);
 
 PVOID KRNLAPI HwFindAvailableAddressSpace(
-    IN void* AddressSpace,
+    IN void *AddressSpace,
     IN UINT64 NumPages,
-    IN void* VirtualStart,
-    IN void* VirtualEnd,
-    IN UINT64 PageAttributes
-);
+    IN void *VirtualStart,
+    IN void *VirtualEnd,
+    IN UINT64 PageAttributes);
 
 // PML4 + 512^2 PDP + 512^3 PD + 512^4 PT
 // PML5 + 512^2 PML4 + 512^3 PDP + 512^4 PD + 512^5 PT
-UINT64* VPageTable;
+UINT64 *VPageTable;
 
 UINT64 TotalVPageTableLength;
 
 #define VPdp(Pdp) (VPageTable + 0x200 + (Pdp << 9))
 #define VPd(Pdp, Pd) (VPageTable + 0x40200 + (Pdp << 18) + (Pd << 9))
 #define VPt(Pdp, Pd, Pt) (VPageTable + 0x8040200 + (Pdp << 27) + (Pd << 18) + (Pt << 9))
+
+PVOID KRNLAPI HwConvertPointer(
+    IN PVOID PageTable,
+    IN PVOID VirtualAddress);

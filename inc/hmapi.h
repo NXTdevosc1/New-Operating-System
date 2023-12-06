@@ -73,17 +73,17 @@ typedef struct _vmmpagehdr
 // Image setup required
 void HMAPI VmmCreate(HMIMAGE *Image, UINT8 NumLevels, void *Mem, UINT DescriptorSize);
 
-PVOID HMAPI VmmAllocate(HMIMAGE *Image, UINT Level, UINT16 Count);
+PVOID HMAPI VmmAllocate(HMIMAGE *Image, UINT Level, UINT64 Count);
 
 #ifndef __VMMSRC
 void HMAPI VmmInsert(PVOID Level,
                      PVOID Desc,
-                     UINT16 Length);
+                     UINT64 Length);
 void HMAPI VmmRemove(PVOID *Level,
                      PVOID Desc,
-                     UINT16 Length);
-
-#define VmmLevelLength(Lvl) ((Lvl) * 4184)
+                     UINT64 Length);
+BOOLEAN HMAPI VmmInstantLookup(PVOID *Level);
+#define VmmLevelLength(Lvl) ((Lvl) * 4704)
 #define VmmPageLevel(Image, NumLvls) ((char *)Image->User.Buffer + VmmLevelLength(NumLvls))
 #endif
 

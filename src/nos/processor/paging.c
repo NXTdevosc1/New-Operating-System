@@ -405,19 +405,15 @@ BOOLEAN KRNLAPI KeCheckMemoryAccess(
     }
 }
 
-PVOID KRNLAPI KeConvertPointer(
-    IN PEPROCESS Process,
-    IN void *VirtualAddress)
+PVOID KRNLAPI HwConvertPointer(
+    IN PVOID PageTable,
+    IN PVOID VirtualAddress)
 {
-
-    if (!Process)
-        Process = KernelProcess;
-
     UINT64 Pti = ((UINT64)VirtualAddress >> 12) & 0x1FF;
     UINT64 Pdi = ((UINT64)VirtualAddress >> 21) & 0x1FF;
     UINT64 Pdpi = ((UINT64)VirtualAddress >> 30) & 0x1FF;
     UINT64 Pml4i = ((UINT64)VirtualAddress >> 39) & 0x1FF;
-    RFPTENTRY Pml4 = Process->PageTable, Pdp, Pd, Pt;
+    RFPTENTRY Pml4 = PageTable, Pdp, Pd, Pt;
 
     if (!Pml4[Pml4i].Present)
         return NULL;
@@ -435,6 +431,17 @@ PVOID KRNLAPI KeConvertPointer(
     if (!Pt[Pti].Present)
         return NULL;
     return (void *)((Pt[Pti].PhysicalAddr << 12) | ((UINT64)VirtualAddress & 0xFFF));
+}
+
+PVOID KRNLAPI KeConvertPointer(
+    IN PEPROCESS Process,
+    IN void *VirtualAddress)
+{
+
+    if (!Process)
+        Process = KernelProcess;
+
+    return HwConvertPointer(Process->PageTable, VirtualAddress);
 }
 
 // Page Size in 4KB PAGES
