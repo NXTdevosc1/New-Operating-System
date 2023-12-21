@@ -18,6 +18,7 @@ typedef struct _hmpll
     VMMHEADER *Headers[512];
     struct
     {
+        VMMHEADER *StartHeader;
         VMMHEADER *Header;
         UINT64 LenStart;
         UINT64 LenCurrent;
@@ -38,7 +39,7 @@ typedef struct _HMIMAGE
 void HMAPI VmmCreate(HMIMAGE *Image, UINT8 NumLevels, void *Mem, UINT DescriptorSize)
 {
     ObjZeroMemory(Image);
-    Image->DescSize = sizeof(VMMHEADER) + AlignForward(DescriptorSize, 0x10);
+    Image->DescSize = DescriptorSize;
     Image->NumLevels = NumLevels;
     Image->Mem = Mem;
     Image->User.Buffer = Mem;
@@ -56,11 +57,13 @@ inline void HMAPI VmmInsert(PAGELEVEL_LENGTHCHAIN *Chain,
 
     if (Desc->Address == 0)
         KDebugPrint("NULL ADDRESS");
-    KDebugPrint("--- Insert desc %x len %x", Desc, Length);
+
+    KDebugPrint("--- Insert desc %x len %x lvl %x addr %x", Desc, Length, Chain->Level, Desc->Address);
     Desc->Next = NULL;
-    Chain->Bitmap68 |= (1 << (Length >> 6));
+    Chain->Bitmap68 |= (1ULL << (Length >> 6));
     if (_bittestandset64(Chain->Bitmap05 + (Length >> 6), Length & 0x3F))
     {
+
         Chain->Headers[Length]->LastOrPrev->Next = Desc;
         Desc->LastOrPrev = Chain->Headers[Length]->LastOrPrev;
         Chain->Headers[Length]->LastOrPrev = Desc;
@@ -76,15 +79,13 @@ inline void HMAPI VmmRemove(PAGELEVEL_LENGTHCHAIN *Chain,
                             VMMHEADER *Desc,
                             UINT64 Length)
 {
-    KDebugPrint("--- Remove desc %x len %x", Desc, Length);
-
     if (Desc->LastOrPrev == Desc)
     {
         // Only descriptor
         _bittestandreset64(Chain->Bitmap05 + (Length >> 6), Length & 0x3F);
         if (!Chain->Bitmap05[Length >> 6])
         {
-            Chain->Bitmap68 &= ~(1 << (Length >> 6));
+            Chain->Bitmap68 &= ~(1ULL << (Length >> 6));
         }
         Chain->Headers[Length] = NULL;
     }
@@ -108,21 +109,15 @@ inline void HMAPI VmmRemove(PAGELEVEL_LENGTHCHAIN *Chain,
 
 inline BOOLEAN HMAPI VmmInstantLookup(PAGELEVEL_LENGTHCHAIN *Chain)
 {
-    KDebugPrint("lookup lenst %x lencr %x", Chain->Cl.LenStart, Chain->Cl.LenCurrent);
     if (Chain->Cl.LenCurrent != Chain->Cl.LenStart)
     {
-        KDebugPrint("vrem %x", Chain->Cl.Header);
-        VmmRemove(Chain, Chain->Cl.Header, Chain->Cl.LenStart);
-        KDebugPrint("visrt");
+        VmmRemove(Chain, Chain->Cl.StartHeader, Chain->Cl.LenStart);
         VmmInsert(Chain, Chain->Cl.Header, Chain->Cl.LenCurrent);
-        KDebugPrint("visrtfin");
     }
-    KDebugPrint("lk2");
     ULONG Index, Index2;
 
     if (!_BitScanReverse(&Index, Chain->Bitmap68))
     {
-        KDebugPrint("Lookup failed");
         Chain->Cl.LenStart = Chain->Cl.LenCurrent;
         return FALSE;
     }
@@ -134,8 +129,7 @@ inline BOOLEAN HMAPI VmmInstantLookup(PAGELEVEL_LENGTHCHAIN *Chain)
     if (!Chain->Cl.LenStart)
         return FALSE;
     Chain->Cl.Header = Chain->Headers[Chain->Cl.LenStart];
-    KDebugPrint("lookup end HDR %x Len %x", Chain->Cl.Header, Chain->Cl.LenStart);
-
+    Chain->Cl.StartHeader = Chain->Cl.Header;
     return TRUE;
 }
 
@@ -155,7 +149,7 @@ PVOID HMAPI VmmAllocate(HMIMAGE *Image, UINT Level, UINT64 Count)
     {
     foundblock:
         PVOID Ret = (PVOID)(Ch->Cl.Header->Address << 12);
-        Ch->Cl.Header->Address += (Count << (9 * Level));
+        ((char *)Ch->Cl.Header) += (Count << (9 * Level)) * Image->DescSize;
         Ch->Cl.LenCurrent -= Count;
         if (!Ret)
         {

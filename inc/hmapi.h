@@ -83,7 +83,7 @@ void HMAPI VmmRemove(PVOID *Level,
                      PVOID Desc,
                      UINT64 Length);
 BOOLEAN HMAPI VmmInstantLookup(PVOID *Level);
-#define VmmLevelLength(Lvl) ((Lvl) * 4704)
+#define VmmLevelLength(Lvl) ((Lvl) * 4712)
 #define VmmPageLevel(Image, NumLvls) ((char *)Image->User.Buffer + VmmLevelLength(NumLvls))
 #endif
 

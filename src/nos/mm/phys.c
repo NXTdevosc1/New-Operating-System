@@ -2,50 +2,39 @@
 #include <mm.h>
 #include <nos/mm/physmem.h>
 
+static void __forceinline __fastcall __MmFillRemainingPages(UINT64 Addr, UINT Level, UINT64 Length)
+{
+    UINT Count = Length & 0x1FF;
+    KDebugPrint("Fill %x lvl %x count %x", Addr << 12, Level, Count);
+    // VmmInsert()
+    Length -= Count;
+    if (Length)
+        __MmFillRemainingPages(Addr + (Count << (9 * Level)), Level + 1, Length >> 9);
+}
+
 PVOID KRNLAPI MmRequestContiguousPages(
     UINT PageSize,
     UINT64 Length)
 {
 
-    UINT64 cl = Length;
-    PVOID ret;
-    for (int i = PageSize; i < 4; i++, cl = ((cl & 0x1FF) ? ((cl >> 9) + 1) : (cl >> 9)))
+    UINT64 Count = Length;
+    PVOID ret = NULL;
+
+    for (UINT i = PageSize; i < 4; i++, Count = AlignForward(Count, 0x200) >> 9)
     {
-        if (cl > 0x1FF)
-            continue;
-
-        KDebugPrint("i %d CL %x", i, cl);
-        if ((ret = VmmAllocate(_NosPhysicalMemoryImage, i, cl)))
+        KDebugPrint("lvl %d cnt %d", i, Count);
+        if ((ret = VmmAllocate(_NosPhysicalMemoryImage, i, Count)))
         {
-            // Free extra memory
-            char *freemem = (char *)ret + (Length << (12 + (PageSize * 9)));
-            if (PageSize != i)
-            {
-                KDebugPrint("TOTAL MEM %x-%x", ret, (char *)ret + (cl << (12 + i * 9)));
-            }
-            for (int c = i - 1; c >= (int)PageSize; c--)
-            {
-                KDebugPrint("f");
-                UINT64 np = 0x1FF - (Length >> (c * 9));
-                KPAGEHEADER *en = ResolvePageHeader(freemem);
-                en->Header.Address = (UINT64)freemem >> 12;
+            UINT64 Remaining = (Count << (9 * i)) - (Length);
 
-                KDebugPrint("NP %x FRMEM %x LEN %x C %x EN %x", np, freemem, Length, c, en);
-                // VmmInsert(VmmPageLevel(_NosPhysicalMemoryImage, c), en, np);
-                freemem += np << (12 + c * 9);
-                Length -= np << (c * 9);
+            KDebugPrint("Remaining : %d pages", Remaining);
+
+            if (Remaining)
+            {
+                __MmFillRemainingPages(((UINT64)ret >> 12) + (Length << (9 * PageSize)), PageSize, Remaining);
             }
             return ret;
         }
-        else
-        {
-            KDebugPrint("RETURNED NULL VMM ALLOC");
-        }
-        // else
-        // {
-        //     cl += 0x200;
-        //     cl &= ~0x1FF;
-        // }
     }
     return NULL;
 }

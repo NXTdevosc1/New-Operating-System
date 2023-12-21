@@ -104,13 +104,12 @@ void NOSINTERNAL KiPhysicalMemoryManagerInit()
 
     // Init Physical Allocator
     // TODO : Currently 3 Levels, supports only allocations < 512GB
-    VmmCreate(_NosPhysicalMemoryImage, 3, VmmBuffer, sizeof(KPAGEHEADER) - sizeof(VMMHEADER));
+    VmmCreate(_NosPhysicalMemoryImage, 3, VmmBuffer, sizeof(KPAGEHEADER));
     NOS_MEMORY_DESCRIPTOR cmem = {0}; // copy mem
     BOOLEAN usecmem2 = FALSE;
     NOS_MEMORY_DESCRIPTOR cmem2 = {0}; // copy mem
 
-    KPAGEHEADER *CurrentHeader = PageHeaders;
-
+    KPAGEHEADER *hdr;
     char *CurrentPageAddress = PageBase;
     UINT64 CurrentPageNumber = 0;
     // Calculate and rearrange
@@ -128,6 +127,7 @@ void NOSINTERNAL KiPhysicalMemoryManagerInit()
 
                     if (!(Mem->Attributes & MM_DESCRIPTOR_ALLOCATED))
                     {
+
                         memcpy(&cmem, Mem, sizeof *Mem);
                         KDebugPrint("ADDR %x-%x NUMPG %x VADDR %x", cmem.PhysicalAddress, (UINT64)cmem.PhysicalAddress + (cmem.NumPages << 12), cmem.NumPages);
                         if (cmem.NumPages >= (HUGEPAGE + ExcessBytes((UINT64)cmem.PhysicalAddress >> 12, HUGEPAGE)))
@@ -146,10 +146,13 @@ void NOSINTERNAL KiPhysicalMemoryManagerInit()
                                     __halt();
                             }
 
-                            KPAGEHEADER *hdr = PageHeaders + CurrentPageNumber;
-                            hdr->Header.Address = (UINT64)HugeStart >> 12;
+                            for (UINT64 i = 0; i < NumHugePages << 18; i++)
+                            {
+                                hdr = PageHeaders + CurrentPageNumber + i;
+                                hdr->Header.Address = ((UINT64)HugeStart >> 12) + i;
+                            }
 
-                            VmmInsert(VmmPageLevel(_NosPhysicalMemoryImage, 2), hdr, NumHugePages);
+                            VmmInsert(VmmPageLevel(_NosPhysicalMemoryImage, 2), PageHeaders + CurrentPageNumber, NumHugePages);
                             CurrentPageNumber += NumHugePages << 18;
 
                             KDebugPrint("%d HUGE PAGES at %x REML %d at %x REMR %d at %x", NumHugePages, HugeStart, RemainingLeft, cmem.PhysicalAddress, RemainingRight, (UINT64)cmem.PhysicalAddress + ((RemainingLeft + (NumHugePages << 18) << 12)));
@@ -176,10 +179,13 @@ void NOSINTERNAL KiPhysicalMemoryManagerInit()
                             UINT64 RemainingLeft = (LargeStart - (char *)cmem.PhysicalAddress) >> 12;
                             UINT64 RemainingRight = cmem.NumPages - (RemainingLeft + (NumLargePages << 9));
 
-                            KPAGEHEADER *hdr = PageHeaders + CurrentPageNumber;
-                            hdr->Header.Address = (UINT64)LargeStart >> 12;
+                            for (UINT64 i = 0; i < NumLargePages << 9; i++)
+                            {
+                                hdr = PageHeaders + CurrentPageNumber + i;
+                                hdr->Header.Address = ((UINT64)LargeStart >> 12) + i;
+                            }
 
-                            VmmInsert(VmmPageLevel(_NosPhysicalMemoryImage, 1), hdr, NumLargePages);
+                            VmmInsert(VmmPageLevel(_NosPhysicalMemoryImage, 1), PageHeaders + CurrentPageNumber, NumLargePages);
                             CurrentPageNumber += NumLargePages << 9;
 
                             KDebugPrint("%d LARGE PAGES at %x REML %d at %x REMR %d at %x", NumLargePages, LargeStart, RemainingLeft, cmem.PhysicalAddress, RemainingRight, (UINT64)cmem.PhysicalAddress + ((RemainingLeft + (NumLargePages << 9) << 12)));
@@ -198,11 +204,13 @@ void NOSINTERNAL KiPhysicalMemoryManagerInit()
                         }
                         if (cmem.NumPages)
                         {
-                            KPAGEHEADER *hdr = PageHeaders + CurrentPageNumber;
+                            for (UINT64 i = 0; i < cmem.NumPages; i++)
+                            {
+                                hdr = PageHeaders + CurrentPageNumber + i;
+                                hdr->Header.Address = ((UINT64)cmem.PhysicalAddress >> 12) + i;
+                            }
 
-                            hdr->Header.Address = (UINT64)cmem.PhysicalAddress >> 12;
-
-                            VmmInsert(VmmPageLevel(_NosPhysicalMemoryImage, 0), hdr, cmem.NumPages);
+                            VmmInsert(VmmPageLevel(_NosPhysicalMemoryImage, 0), PageHeaders + CurrentPageNumber, cmem.NumPages);
                             CurrentPageNumber += cmem.NumPages;
 
                             KDebugPrint("%d Individual 4KB pages at 0x%x-0x%x", cmem.NumPages, cmem.PhysicalAddress, ((UINT64)cmem.PhysicalAddress + (cmem.NumPages << 12)));
@@ -217,8 +225,6 @@ void NOSINTERNAL KiPhysicalMemoryManagerInit()
 
                         KDebugPrint("_________________");
                         // Map the pages
-                        HwMapVirtualMemory(GetCurrentPageTable(), Mem->PhysicalAddress, CurrentHeader, Mem->NumPages, PAGE_WRITE_ACCESS, 0);
-                        CurrentHeader += Mem->NumPages << 12;
                     }
                 }
             }
@@ -232,7 +238,7 @@ void NOSINTERNAL KiPhysicalMemoryManagerInit()
 
     for (UINT64 i = 0;; i++)
     {
-        PVOID p = MmRequestContiguousPages(0, 1);
+        PVOID p = MmRequestContiguousPages(0, 257);
         if (!p)
         {
             KDebugPrint("LVL0 : %u pages have been allocated", i);
