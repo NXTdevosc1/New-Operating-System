@@ -73,7 +73,7 @@ typedef struct _vmmpagehdr
 // Image setup required
 void HMAPI VmmCreate(HMIMAGE *Image, UINT8 NumLevels, void *Mem, UINT DescriptorSize);
 
-PVOID HMAPI VmmAllocate(HMIMAGE *Image, UINT Level, UINT64 Count);
+PVOID HMAPI VmmAllocate(HMIMAGE *Image, UINT Level, UINT64 Count, void **Header);
 
 #ifndef __VMMSRC
 void HMAPI VmmInsert(PVOID Level,

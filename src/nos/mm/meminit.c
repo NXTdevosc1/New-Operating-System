@@ -104,7 +104,7 @@ void NOSINTERNAL KiPhysicalMemoryManagerInit()
 
     // Init Physical Allocator
     // TODO : Currently 3 Levels, supports only allocations < 512GB
-    VmmCreate(_NosPhysicalMemoryImage, 3, VmmBuffer, sizeof(KPAGEHEADER));
+    VmmCreate(_NosPhysicalMemoryImage, 4, VmmBuffer, sizeof(KPAGEHEADER));
     NOS_MEMORY_DESCRIPTOR cmem = {0}; // copy mem
     BOOLEAN usecmem2 = FALSE;
     NOS_MEMORY_DESCRIPTOR cmem2 = {0}; // copy mem
@@ -232,20 +232,20 @@ void NOSINTERNAL KiPhysicalMemoryManagerInit()
         PhysicalMem = PhysicalMem->Next;
     } while (PhysicalMem);
 
-    KDebugPrint("NOS Optimized memory system initialized successfully.");
+    KDebugPrint("NOS Optimized memory system initialized successfully. Current page number %x, Total mem %d GB", CurrentPageNumber, CurrentPageNumber >> 18);
 
     __KiClearScreen(0xFF);
 
     for (UINT64 i = 0;; i++)
     {
-        PVOID p = MmRequestContiguousPages(0, 257);
+        PVOID p = MmRequestContiguousPages(0, 1);
         if (!p)
         {
-            KDebugPrint("LVL0 : %u pages have been allocated", i);
+            KDebugPrint("LVL0 : %u pages have been allocated, %d GB, %d Bytes", i, i >> 18, i << 12);
             KDebugPrint("Returned 1 page %x", p);
             break;
         }
-        KDebugPrint("PAGE %x", p);
+        // KDebugPrint("PAGE %x", p);
     }
 
     __KiClearScreen(0xFFFF);

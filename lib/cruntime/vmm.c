@@ -56,9 +56,12 @@ inline void HMAPI VmmInsert(PAGELEVEL_LENGTHCHAIN *Chain,
 {
 
     if (Desc->Address == 0)
-        KDebugPrint("NULL ADDRESS");
+    {
+        KDebugPrint("VMM ERROR (BUGCHECK): NULL ADDRESS Desc %x Length %x", Desc, Length);
+        // while (1)
+        //     __halt();
+    }
 
-    KDebugPrint("--- Insert desc %x len %x lvl %x addr %x", Desc, Length, Chain->Level, Desc->Address);
     Desc->Next = NULL;
     Chain->Bitmap68 |= (1ULL << (Length >> 6));
     if (_bittestandset64(Chain->Bitmap05 + (Length >> 6), Length & 0x3F))
@@ -135,28 +138,17 @@ inline BOOLEAN HMAPI VmmInstantLookup(PAGELEVEL_LENGTHCHAIN *Chain)
 
 // Each higher memory allocation maps a bitmap (2bit based bitmap)
 
-PVOID HMAPI VmmAllocate(HMIMAGE *Image, UINT Level, UINT64 Count)
+PVOID HMAPI VmmAllocate(HMIMAGE *Image, UINT Level, UINT64 Count, void **Header)
 {
-    if (Count > 0x1FF || !Count)
-    {
-        KDebugPrint("___VMMERR COUNT > 0x1FF || !COUNT");
-        while (1)
-            __halt();
-        return NULL;
-    }
+
     PAGELEVEL_LENGTHCHAIN *Ch = Image->Mem + Level;
     if (Ch->Cl.LenCurrent >= Count)
     {
     foundblock:
         PVOID Ret = (PVOID)(Ch->Cl.Header->Address << 12);
+        *Header = Ch->Cl.Header;
         ((char *)Ch->Cl.Header) += (Count << (9 * Level)) * Image->DescSize;
         Ch->Cl.LenCurrent -= Count;
-        if (!Ret)
-        {
-            KDebugPrint("BUG : RET = NULL");
-            while (1)
-                ;
-        }
         return Ret;
     }
     else if (VmmInstantLookup(Ch))
