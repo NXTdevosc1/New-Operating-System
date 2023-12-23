@@ -117,3 +117,5 @@ PVOID HMAPI oHmbAllocate(
     HMIMAGE *Image,
     UINT64 Length);
 BOOLEAN HMAPI oHmbFree(HMIMAGE *Image, void *Ptr);
+
+char *__KSerialMsg;

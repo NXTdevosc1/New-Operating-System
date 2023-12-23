@@ -54,13 +54,14 @@ inline void HMAPI VmmInsert(PAGELEVEL_LENGTHCHAIN *Chain,
                             VMMHEADER *Desc,
                             UINT64 Length)
 {
-
-    if (Desc->Address == 0)
-    {
-        KDebugPrint("VMM ERROR (BUGCHECK): NULL ADDRESS Desc %x Length %x", Desc, Length);
-        // while (1)
-        //     __halt();
-    }
+    if (!Length)
+        return;
+    // if (Desc->Address == 0)
+    // {
+    //     KDebugPrint("VMM ERROR (BUGCHECK): NULL ADDRESS Desc %x Length %x", Desc, Length);
+    //     // while (1)
+    //     //     __halt();
+    // }
 
     Desc->Next = NULL;
     Chain->Bitmap68 |= (1ULL << (Length >> 6));
@@ -142,7 +143,7 @@ PVOID HMAPI VmmAllocate(HMIMAGE *Image, UINT Level, UINT64 Count, void **Header)
 {
 
     PAGELEVEL_LENGTHCHAIN *Ch = Image->Mem + Level;
-    if (Ch->Cl.LenCurrent >= Count)
+    if (Ch->Cl.LenCurrent >= Count || (VmmInstantLookup(Ch) && Ch->Cl.LenStart >= Count))
     {
     foundblock:
         PVOID Ret = (PVOID)(Ch->Cl.Header->Address << 12);
@@ -150,11 +151,6 @@ PVOID HMAPI VmmAllocate(HMIMAGE *Image, UINT Level, UINT64 Count, void **Header)
         ((char *)Ch->Cl.Header) += (Count << (9 * Level)) * Image->DescSize;
         Ch->Cl.LenCurrent -= Count;
         return Ret;
-    }
-    else if (VmmInstantLookup(Ch))
-    {
-        if (Ch->Cl.LenStart >= Count)
-            goto foundblock;
     }
 
     return NULL;

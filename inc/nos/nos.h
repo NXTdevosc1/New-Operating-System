@@ -17,7 +17,7 @@
 
 #endif
 
-#define __TRACECALLS 1
+// #define __TRACECALLS 1
 
 #include <nosdef.h>
 #include <nosefi.h>
