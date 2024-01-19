@@ -139,7 +139,7 @@ inline BOOLEAN HMAPI VmmInstantLookup(PAGELEVEL_LENGTHCHAIN *Chain)
 
 // Each higher memory allocation maps a bitmap (2bit based bitmap)
 
-PVOID HMAPI VmmAllocate(HMIMAGE *Image, UINT Level, UINT64 Count, void **Header)
+PVOID HMAPI VmmAllocate(HMIMAGE *Image, UINT Level, UINT64 Count, void ***Header)
 {
 
     PAGELEVEL_LENGTHCHAIN *Ch = Image->Mem + Level;
@@ -147,8 +147,10 @@ PVOID HMAPI VmmAllocate(HMIMAGE *Image, UINT Level, UINT64 Count, void **Header)
     {
     foundblock:
         PVOID Ret = (PVOID)(Ch->Cl.Header->Address << 12);
-        *Header = Ch->Cl.Header;
-        ((char *)Ch->Cl.Header) += (Count << (9 * Level)) * Image->DescSize;
+        *Header = &Ch->Cl.Header;
+
+        // Leave the header for the editing
+        // ((char *)Ch->Cl.Header) += (Count << (9 * Level)) * Image->DescSize;
         Ch->Cl.LenCurrent -= Count;
         return Ret;
     }

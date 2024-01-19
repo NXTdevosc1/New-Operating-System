@@ -4,25 +4,26 @@
 
 char BootProcessorName[MAX_PROCESSOR_NAME_LENGTH];
 
-void CpuInitDescriptors(void* Processor);
+void CpuInitDescriptors(void *Processor);
 
-PROCESSOR* BootProcessor;
+PROCESSOR *BootProcessor;
 
 void CpuInitApicTimer();
 
 void CpuEnableFeatures();
 
-void KiInitBootCpu() {
+void KiInitBootCpu()
+{
     // Enable NMI
     __outbyte(0x70, __inbyte(0x70) & 0x7F);
     __inbyte(0x71);
 
     // Enable Parity/Channel Check
-	__outbyte(SYSTEM_CONTROL_PORT_B, __inbyte(SYSTEM_CONTROL_PORT_B) | (3 << 2));
+    __outbyte(SYSTEM_CONTROL_PORT_B, __inbyte(SYSTEM_CONTROL_PORT_B) | (3 << 2));
 
     // Disable PIC (Legacy Interrupt Router) to prevent intervention with newer routers
     __outbyte(0xA1, 0xFF);
-	__outbyte(0x21, 0xFF);
+    __outbyte(0x21, 0xFF);
 
     SerialLog("KernelInternals : Init Boot CPU");
     // CpuReadBrandName(BootProcessorName);
@@ -32,46 +33,45 @@ void KiInitBootCpu() {
     BootProcessor = KeRegisterProcessor(&Ident);
 
     CpuInitDescriptors(BootProcessor);
-    
-    
-
 }
 
 extern void KRNLAPI KeSchedulingSystemInit();
 
-
-NSTATUS ApicSpuriousInterruptHandler(INTERRUPT_HANDLER_DATA* HandlerData) {
+NSTATUS ApicSpuriousInterruptHandler(INTERRUPT_HANDLER_DATA *HandlerData)
+{
     KDebugPrint("***SPURIOUS_INTERRUPT***");
 
     // You should not send EOI for spurious interrupts
     return STATUS_SUCCESS;
 }
-void __declspec(noreturn) HwMultiProcessorEntry() {
+void __declspec(noreturn) HwMultiProcessorEntry()
+{
     CpuEnableFeatures();
     RFPROCESSOR Processor = KeGetCurrentProcessor();
     Processor->ProcessorEnabled = TRUE;
-    
-    
+
     CpuInitDescriptors(Processor);
-    
+
     // Enable APIC
     ApicWrite(0x80, 0); // Set TASK_PRIORITY
     ApicWrite(0xD0, 0); // Set LOGICAL_DESTINATION
     ApicWrite(0xE0, 0); // SET DESTINATION_FORMAT
     UINT8 Spurious;
-    if(!KeRegisterSystemInterrupt(0, &Spurious, TRUE, TRUE, ApicSpuriousInterruptHandler)) {
+    if (!KeRegisterSystemInterrupt(0, &Spurious, TRUE, TRUE, ApicSpuriousInterruptHandler))
+    {
         KDebugPrint("APIC Initialization failed. KeRegisterSystemInterrupt != TRUE.");
-        while(1) __halt();
+        while (1)
+            __halt();
     }
     ApicWrite(0xF0, 0x100 | Spurious); // Set SPURIOUS_INTERRUPT_VECTOR
-
 
     KeSchedulingSystemInit();
     // _disable();
     // KDebugPrint("P%u looping...", KeGetCurrentProcessorId());
 
     // idling
-    for(;;) __halt();
+    for (;;)
+        __halt();
 }
 
 #define PAT_MSR 0x277
@@ -84,25 +84,27 @@ void __declspec(noreturn) HwMultiProcessorEntry() {
 #define PAT_WRITE_BACK 6
 #define PAT_UNCACHED 7
 
-union {
-    struct {
+union
+{
+    struct
+    {
         UINT8 Values[8];
     } Fields;
     UINT64 PageAttrTable;
 } _Amd64PageAttributeTable = {
-        PAT_WRITE_BACK,
-        PAT_WRITE_COMBINING,
-        PAT_UNCACHEABLE,
-        PAT_WRITE_PROTECT,
-        PAT_WRITE_THROUGH,
-        PAT_WRITE_BACK,
-        PAT_WRITE_BACK,
-        PAT_WRITE_BACK
-};
+    PAT_WRITE_BACK,
+    PAT_WRITE_COMBINING,
+    PAT_UNCACHEABLE,
+    PAT_WRITE_PROTECT,
+    PAT_WRITE_THROUGH,
+    PAT_WRITE_BACK,
+    PAT_WRITE_BACK,
+    PAT_WRITE_BACK};
 
-void CpuEnableFeatures() {
-// Enable SSE and FPU Exceptions
-CPUID_DATA Cpuid;
+void CpuEnableFeatures()
+{
+    // Enable SSE and FPU Exceptions
+    CPUID_DATA Cpuid;
     // Clear EM and Set Monitor CoProcessor
     __writecr0((__readcr0() & ~(1 << 2)) | 2);
     // Enable OSFXCSR, OSXMMEXCPT, GLOBAL Pages
@@ -111,9 +113,11 @@ CPUID_DATA Cpuid;
 
     // NX (Required)
     __cpuid(&Cpuid, 0x80000001);
-    if(!(Cpuid.edx & (1 << 20))) {
+    if (!(Cpuid.edx & (1 << 20)))
+    {
         KDebugPrint("Execute-Disable Feature is required to run the OS.");
-        while(1) __halt();
+        while (1)
+            __halt();
     }
     __writemsr(0xC0000080, __readmsr(0xC0000080) | (1 << 11));
     // Page Attribute Table (Required)
@@ -121,28 +125,27 @@ CPUID_DATA Cpuid;
 
     __cpuid(&Cpuid, 1);
 
-    // XSAVE
-    if((Cpuid.ecx & (1 << 26))) {
-        // Enable OSXSAVE
-        __writecr4(__readcr4() | (1 << 18));
+    // // XSAVE
+    // if((Cpuid.ecx & (1 << 26))) {
+    //     // Enable OSXSAVE
+    //     __writecr4(__readcr4() | (1 << 18));
 
+    //     // AVX
+    //     if(!(Cpuid.ecx & (1 << 28))) {
+    //         KDebugPrint("Required AVX Feature not present");
+    //         while(1) __halt();
+    //     }
+    //     KDebugPrint("AVX Supported XCR0=%x", _xgetbv(0));
+    //     // Enable AVX
+    //     _xsetbv(_XCR_XFEATURE_ENABLED_MASK, 7);
 
-        // AVX
-        if(!(Cpuid.ecx & (1 << 28))) {
-            KDebugPrint("Required AVX Feature not present");
-            while(1) __halt();
-        }
-        KDebugPrint("AVX Supported XCR0=%x", _xgetbv(0));
-        // Enable AVX
-        _xsetbv(_XCR_XFEATURE_ENABLED_MASK, 7);
-
-        // AVX2
-        __cpuid(&Cpuid, 7);
-        if((Cpuid.ebx & (1 << 5))) {
-            KDebugPrint("AVX2 Supported");
-        }
-    } else {
-        KDebugPrint("Required XSAVE Feature not present.");
-        while(1) __halt();
-    }
+    //     // AVX2
+    //     __cpuid(&Cpuid, 7);
+    //     if((Cpuid.ebx & (1 << 5))) {
+    //         KDebugPrint("AVX2 Supported");
+    //     }
+    // } else {
+    //     KDebugPrint("Required XSAVE Feature not present.");
+    //     while(1) __halt();
+    // }
 }

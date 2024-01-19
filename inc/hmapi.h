@@ -55,7 +55,7 @@ typedef struct _HMUSERHEADER
 typedef struct _HMIMAGE
 {
     HMUSERHEADER User;
-    UINT64 Rsv[0x200];
+    UINT64 Rsv[0x117];
 
 } HMIMAGE;
 #endif
@@ -73,7 +73,7 @@ typedef struct _vmmpagehdr
 // Image setup required
 void HMAPI VmmCreate(HMIMAGE *Image, UINT8 NumLevels, void *Mem, UINT DescriptorSize);
 
-PVOID HMAPI VmmAllocate(HMIMAGE *Image, UINT Level, UINT64 Count, void **Header);
+PVOID HMAPI VmmAllocate(HMIMAGE *Image, UINT Level, UINT64 Count, void ***Header);
 
 #ifndef __VMMSRC
 void HMAPI VmmInsert(PVOID Level,
@@ -91,13 +91,10 @@ BOOLEAN HMAPI VmmInstantLookup(PVOID *Level);
 
 typedef struct _HMBLK
 {
-
-    UINT64 PrevOrLast : 55;
-    UINT64 PrevLength : 8;
     UINT64 Used : 1;
-    UINT64 Next : 55;
-    UINT64 EndingBlock : 1;
-    UINT64 Length : 8;
+    UINT64 Length : 9;
+    UINT64 PageMask : 54;
+    UINT64 Rsv;
 } HMBLK, *PHMBLK;
 
 #pragma pack(pop)

@@ -12,11 +12,12 @@ PVOID KRNLAPI MmAllocatePool(
 {
     if (!Size)
         return NULL;
+
     return oHmbAllocate(_NosKernelHeap, AlignForward(Size, 0x10) >> 4);
 }
 
 BOOLEAN KRNLAPI MmFreePool(
     void *Address)
 {
-    return FALSE;
+    return oHmbFree(_NosKernelHeap, Address);
 }

@@ -139,6 +139,7 @@ typedef volatile struct _EPROCESS
     // Memory Management
     void *VmSearchStart;
     void *VmSearchEnd;
+    HMIMAGE *VmImage;
 
 } EPROCESS, *PEPROCESS;
 

@@ -23,14 +23,14 @@ static void __forceinline __fastcall __MmFillRemainingPages(KPAGEHEADER *Desc, U
     __MmFillRemainingPages(Desc + (Count << (9 * Level)), Level + 1, Length >> 9);
 }
 
-PVOID KRNLAPI MmRequestContiguousPages(
+PVOID KRNLAPI MmAllocatePhysicalPages(
     UINT PageSize,
     UINT64 Length)
 {
 
     UINT64 Count = Length;
     PVOID ret = NULL;
-    KPAGEHEADER *Header;
+    KPAGEHEADER **Header;
     for (UINT i = PageSize; i < 3; i++, Count = AlignForward(Count, 0x200) >> 9)
     {
 
@@ -40,7 +40,9 @@ PVOID KRNLAPI MmRequestContiguousPages(
             UINT64 Remaining = (Count << (9 * (i - PageSize))) - (Length);
 
             if (Remaining)
-                __MmFillRemainingPages(Header + (Length << (9 * PageSize)), PageSize, Remaining);
+                __MmFillRemainingPages((*Header) + (Length << (9 * PageSize)), PageSize, Remaining);
+
+            *Header += (Length << (9 * PageSize));
 
             return ret;
         }
@@ -48,7 +50,8 @@ PVOID KRNLAPI MmRequestContiguousPages(
     return NULL;
 }
 
-void KRNLAPI MmFreePages(
-    PVOID Address)
+void KRNLAPI MmFreePhysicalPages(
+    PVOID Address,
+    UINT64 Count)
 {
 }

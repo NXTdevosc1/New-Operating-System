@@ -30,93 +30,72 @@ void HMAPI oHmbInitImage(
     Image->SrcFree = FreeRoutine;
 }
 
+typedef struct
+{
+    UINT64 Used : 1;
+    UINT64 Length : 8;
+    UINT64 OffsetToFooter : 48;
+} BLOCKHEADER;
+
+typedef struct
+{
+    BLOCKHEADER *Header;
+} BLOCKFOOTER;
+
 PVOID HMAPI oHmbAllocate(
     HMIMAGE *Image,
     UINT64 Length)
 {
-    Length++;
-    PHMBLK Mem;
-    if (Image->CurrentLength < Length &&
-        (Length > 0xFF || !oHmbLookup(Image) || Image->CurrentLength < Length))
+    UINT64 TargetLength = Length + 1; // 8 Bytes on top, 8 bytes on bottom
+    BLOCKHEADER *Blk;
+    BLOCKFOOTER *Footer;
+    if (TargetLength < 0x100 && (Image->CurrentLength >= TargetLength || (oHmbLookup(Image) && Image->InitialLength >= TargetLength)))
     {
-        Mem = Image->SrcAlloc(Image, AlignForward(Length, 0x100) >> 8);
-        if (!Mem)
+
+        Blk = Image->CurrentBlock;
+        Image->CurrentBlock += TargetLength;
+        Image->CurrentLength -= TargetLength;
+    }
+    else
+    {
+
+        // Allocate pages and fill the rest
+        Blk = Image->SrcAlloc(Image, AlignForward(TargetLength, 0x100) >> 8);
+        if (!Blk)
             return NULL;
-        if (Length & 0xFF)
+        if (TargetLength & 0xFF)
         {
-            PHMBLK Blk = Mem + Length;
-            oHmbSet(Image, Blk, 0x100 - (Length & 0xFF));
+            oHmbSet(Image, Blk + 1, ExcessBytes(TargetLength, 0x100));
+            KDebugPrint("Remaining of %x mem 0x%x %x bytes", Blk - Length, Blk + 1, ExcessBytes(TargetLength, 0x100) << 4);
         }
     }
-    else
-    {
-        __m128i *NextHeap = (__m128i *)Image->CurrentBlock + Length;
+    Blk->Used = 1;
+    Blk->Length = Length;
+    Blk->OffsetToFooter = (Length << 1) - 1;
 
-        *NextHeap = *(__m128i *)Image->CurrentBlock;
-        Mem = Image->CurrentBlock;
-        Image->CurrentBlock = (PVOID)NextHeap;
-        Image->CurrentLength -= Length;
-    }
-    Mem->Length = Length; // full block length
-    if ((UINT64)(Mem + Length) & 0xFF0)
-    {
-        (Mem + Length)->PrevLength = Length;
-        Mem->EndingBlock = 0;
-    }
-    else
-        Mem->EndingBlock = 1; // otherwise it's the last block in the page
-
-    Mem->Used = 1;
-    return Mem + 1;
+    Footer = Blk + Blk->OffsetToFooter;
+    Footer->Header = Blk;
+    return Blk + 1;
 }
 
 BOOLEAN HMAPI oHmbFree(HMIMAGE *Image, void *Ptr)
 {
-    PHMBLK Blk = ((PHMBLK)Ptr) - 1;
-    PHMBLK Prev = Blk - Blk->PrevLength, Next = Blk + Blk->Length;
-    if (!Blk->Used)
-        return FALSE;
+    BLOCKHEADER *Header = (BLOCKHEADER *)Ptr - 1;
+    BLOCKHEADER *Prev = ((BLOCKFOOTER *)(Header - 1))->Header;
 
-    KDebugPrint("FREE %x Length %u bytes", Blk, Blk->Length << 4);
-
-    if (!Blk->EndingBlock)
+    const UINT64 vhdr = (UINT64)Header;
+    if (!(vhdr & 0xFFF) && Header->Length >= 0x100)
     {
-        if (!Next->Used)
+        KDebugPrint("FREE PAGE %x LEN %x", Header, Header->Length);
+    }
+    else if (!Prev->Used)
+    {
+        Prev->Length += Header->Length;
+        if (Prev->Length >= 0x100)
         {
-            Blk->Length += Next->Length;
-
-            if (Blk->Length == 0x100)
-            {
-                KDebugPrint("Free pages ADDR %x", Blk);
-            }
-            else
-            {
-                (Blk + Blk->Length)->PrevLength = Blk->Length;
-            }
-            oHmbRemove(Image, Next, Next->Length);
-            oHmbSet(Image, Blk, Blk->Length);
+            KDebugPrint("FREE PAGE PREV %x HDR %x PREVLEN %x", Prev, Header, Prev->Length);
         }
     }
-    if (!((UINT64)Blk & 0xFF0))
-    {
-        if (!Prev->Used)
-        {
-            oHmbRemove(Image, Prev, Prev->Length);
-            oHmbSet(Image, Prev, Prev->Length + Blk->Length);
-        }
-        Prev->Length += Blk->Length;
-        if (Blk->EndingBlock)
-        {
-            KDebugPrint("Free pages 2 ADDR %x", Blk);
-        }
-        else
-        {
-            (Prev + Prev->Length)->PrevLength = Prev->Length;
-        }
-    }
-    Blk->Used = 0;
-
-    return TRUE;
 }
 // PVOID HMAPI oHmbAllocate(
 //     HMIMAGE *Image,
@@ -193,7 +172,7 @@ void printbmp(HMIMAGE *img)
 BOOLEAN HMAPI oHmbLookup(HMIMAGE *Image)
 {
     ULONG Index, Index2;
-    if (Image->InitialBlock)
+    if (Image->InitialBlock != Image->CurrentBlock)
     {
         oHmbRemove(Image, Image->InitialBlock, Image->InitialLength);
         oHmbSet(Image, Image->CurrentBlock, Image->CurrentLength);
@@ -203,10 +182,7 @@ BOOLEAN HMAPI oHmbLookup(HMIMAGE *Image)
 
     _BitScanReverse64(&Index2, Image->SubBmp[Index]);
     PHMBLK Blk = Image->HeapArray[Index2 + (Index << 6)];
-    if (Image->CurrentBlock == Blk)
-    {
-        return FALSE;
-    }
+
     Image->InitialBlock = Blk;
     Image->CurrentBlock = Blk;
     Image->InitialLength = Index2 + (Index << 6);
@@ -216,8 +192,7 @@ BOOLEAN HMAPI oHmbLookup(HMIMAGE *Image)
 
 void HMAPI oHmbSet(HMIMAGE *Image, PHMBLK Block, UINT8 Length /*in 16 Byte blocks*/)
 {
-
-    _bittestandset(&Image->BaseBitmap, Length >> 6);
+    Image->BaseBitmap |= (1ULL << (Length >> 6));
     Block->Next = 0;
 
     if (_bittestandset64(Image->SubBmp + (Length >> 6), Length & 0x3F))

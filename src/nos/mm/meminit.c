@@ -16,10 +16,7 @@ void KRNLAPI __KiClearScreen(UINT Color);
 PVOID __fastcall _KHeapAllocatePages(HMIMAGE *Image, UINT64 Count)
 {
     KDebugPrint("Src alloc");
-    // PVOID p = MmRequestContiguousPagesNoDesc(_NosPhysical4KBImage, Count);
-
-    // TODO : May return more than requested
-    return NULL;
+    return MmAllocatePhysicalPages(0, Count);
 }
 
 void __fastcall _KHeapFreePages(HMIMAGE *Image, PVOID Mem, UINT64 Count)
@@ -105,6 +102,8 @@ void NOSINTERNAL KiPhysicalMemoryManagerInit()
     // Init Physical Allocator
     // TODO : Currently 3 Levels, supports only allocations < 512GB
     VmmCreate(_NosPhysicalMemoryImage, 4, VmmBuffer, sizeof(KPAGEHEADER));
+    oHmbInitImage(_NosKernelHeap, _KHeapAllocatePages, _KHeapFreePages);
+
     NOS_MEMORY_DESCRIPTOR cmem = {0}; // copy mem
     BOOLEAN usecmem2 = FALSE;
     NOS_MEMORY_DESCRIPTOR cmem2 = {0}; // copy mem
@@ -129,7 +128,7 @@ void NOSINTERNAL KiPhysicalMemoryManagerInit()
                     {
 
                         memcpy(&cmem, Mem, sizeof *Mem);
-                        KDebugPrint("ADDR %x-%x NUMPG %x VADDR %x", cmem.PhysicalAddress, (UINT64)cmem.PhysicalAddress + (cmem.NumPages << 12), cmem.NumPages);
+                        KDebugPrint("ADDR %x-%x NUMPG %x", cmem.PhysicalAddress, (UINT64)cmem.PhysicalAddress + (cmem.NumPages << 12), cmem.NumPages);
                         if (cmem.NumPages >= (HUGEPAGE + ExcessBytes((UINT64)cmem.PhysicalAddress >> 12, HUGEPAGE)))
                         {
                             char *HugeStart = (char *)AlignForward((UINT64)cmem.PhysicalAddress, HUGEPAGE << 12);
@@ -238,14 +237,14 @@ void NOSINTERNAL KiPhysicalMemoryManagerInit()
 
     for (UINT64 i = 0;; i++)
     {
-        PVOID p = MmRequestContiguousPages(0, 1);
+        PVOID p = MmAllocatePool(0x20, 0);
+        MmFreePool(p);
         if (!p)
         {
-            KDebugPrint("LVL0 : %u pages have been allocated, %d GB, %d Bytes", i, i >> 18, i << 12);
-            KDebugPrint("Returned 1 page %x", p);
+            KDebugPrint("%u Pools have been allocated, %f GB, %d Bytes", i, i >> 18, i << 12);
             break;
         }
-        // KDebugPrint("PAGE %x", p);
+        KDebugPrint("Pools %x", p);
     }
 
     __KiClearScreen(0xFFFF);

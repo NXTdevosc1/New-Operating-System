@@ -16,14 +16,17 @@ typedef enum
     HugePageSize,
     MaxPageSize = HugePageSize
 } KPageSize;
-
-PVOID KRNLAPI MmRequestContiguousPagesNoDesc(
-    IN HMIMAGE *Image,
+PVOID KRNLAPI MmAllocatePhysicalPages(
+    IN UINT PageSize,
     IN UINT64 Length);
 
-PVOID KRNLAPI MmRequestContiguousPages(
-    UINT PageSize,
-    UINT64 Length);
+void KRNLAPI MmFreePhysicalPages(
+    IN PVOID Address,
+    IN UINT64 Count);
 
-void KRNLAPI MmFreePages(
-    PVOID Address);
+typedef struct _VMEMDESC
+{
+    VMMHEADER Header;
+    // UINT Attributes;
+
+} VIRTUAL_MEMORY_DESCRIPTOR;
