@@ -16,7 +16,7 @@ void KRNLAPI __KiClearScreen(UINT Color);
 PVOID __fastcall _KHeapAllocatePages(HMIMAGE *Image, UINT64 Count)
 {
     KDebugPrint("Src alloc");
-    return MmAllocatePhysicalPages(0, Count);
+    return KRequestMemory(REQUEST_PHYSICAL_MEMORY, NULL, MEM_AUTO, Count);
 }
 
 void __fastcall _KHeapFreePages(HMIMAGE *Image, PVOID Mem, UINT64 Count)
@@ -235,20 +235,20 @@ void NOSINTERNAL KiPhysicalMemoryManagerInit()
 
     __KiClearScreen(0xFF);
 
-    for (UINT64 i = 0;; i++)
-    {
-        PVOID p = MmAllocatePool(0x20, 0);
-        MmFreePool(p);
-        if (!p)
-        {
-            KDebugPrint("%u Pools have been allocated, %f GB, %d Bytes", i, i >> 18, i << 12);
-            break;
-        }
-        KDebugPrint("Pools %x", p);
-    }
+    // for (UINT64 i = 0;; i++)
+    // {
+    //     PVOID p = KlAllocatePool(0x20, 0);
+    //     KlFreePool(p);
+    //     if (!p)
+    //     {
+    //         KDebugPrint("%u Pools have been allocated, %f GB, %d Bytes", i, i >> 18, i << 12);
+    //         break;
+    //     }
+    //     KDebugPrint("Pools %x", p);
+    // }
 
-    __KiClearScreen(0xFFFF);
+    // __KiClearScreen(0xFFFF);
 
-    while (1)
-        __halt();
+    // while (1)
+    //     __halt();
 }

@@ -1,36 +1,31 @@
 #include <nos/nos.h>
-#include <mm.h>
 #include <nos/mm/physmem.h>
+#include <nos/mm/internal.h>
 
-static BOOLEAN Bgchk = FALSE;
-
-static void __forceinline __fastcall __MmFillRemainingPages(KPAGEHEADER *Desc, UINT Level, UINT64 Length)
+PVOID __fastcall iRequestPhysicalMemory(
+    PEPROCESS Process,
+    UINT Flags,
+    UINT64 Length)
 {
-    if (!Length)
-        return;
-    const UINT64 Count = Length & 0x1FF;
-
-#ifdef DEBUG
-    if (!Count)
+    HMIMAGE *Image = _NosPhysicalMemoryImage;
+    if (Flags & ALLOCATE_BELOW_4GB)
     {
-        KDebugPrint("PH BUG0");
+        Image = _PhysicalMemoryBelow4GB;
+        KDebugPrint("ALLOCATE_MEM < 4GB");
         while (1)
             __halt();
     }
-#endif
-
-    VmmInsert(VmmPageLevel(_NosPhysicalMemoryImage, Level), Desc, Count);
-    __MmFillRemainingPages(Desc + (Count << (9 * Level)), Level + 1, Length >> 9);
-}
-
-PVOID KRNLAPI MmAllocatePhysicalPages(
-    UINT PageSize,
-    UINT64 Length)
-{
 
     UINT64 Count = Length;
     PVOID ret = NULL;
     KPAGEHEADER **Header;
+    // TODO : Auto page size
+    UINT PageSize = 0;
+    if (Flags & MEM_LARGE_PAGES)
+        PageSize = 1;
+    if (Flags & MEM_HUGE_PAGES)
+        PageSize = 2;
+
     for (UINT i = PageSize; i < 3; i++, Count = AlignForward(Count, 0x200) >> 9)
     {
 
@@ -50,8 +45,7 @@ PVOID KRNLAPI MmAllocatePhysicalPages(
     return NULL;
 }
 
-void KRNLAPI MmFreePhysicalPages(
-    PVOID Address,
-    UINT64 Count)
+void KRNLAPI KFreePhysicalMemory(
+    PVOID Address)
 {
 }

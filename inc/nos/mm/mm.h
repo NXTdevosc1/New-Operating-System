@@ -2,7 +2,7 @@
 #include <nosdef.h>
 #include <nos/lock/lock.h>
 #include <hmapi.h>
-
+#include <kmem.h>
 typedef enum
 {
     ALLOCATE_BELOW_4GB = 1,
@@ -60,7 +60,15 @@ typedef struct _NOS_HEAP_TREE
     struct _NOS_HEAP_TREE *Next;
 } NOS_HEAP_TREE;
 
-NSTATUS KRNLAPI MmAllocatePhysicalMemory(UINT64 Flags, UINT64 NumPages, void **Ptr);
+// static inline NSTATUS MmAllocatePhysicalMemory(UINT64 Flags, UINT64 NumPages, void **Ptr)
+// {
+//     *Ptr = KRequestPhysicalMemory(Flags, (Flags & ALLOCATE_2MB_ALIGNED_MEMORY) ? LargePageSize : ((Flags & ALLOCATE_1GB_ALIGNED_MEMORY) ? (HugePageSize) : (NormalPageSize)), NumPages);
+//     if (!(*Ptr))
+//         return STATUS_OUT_OF_MEMORY;
+
+//     return STATUS_SUCCESS;
+// }
+
 #define AllocateObject(_obj) (MmAllocatePhysicalMemory(0, ConvertToPages(sizeof(*_obj)), &_obj))
 #define AllocateNextList(_nlist) AllocateObject(_nlist)
 BOOLEAN KRNLAPI MmFreePhysicalMemory(
@@ -78,13 +86,6 @@ BOOLEAN KRNLAPI MmFreeMemory(
     IN UINT64 NumPages);
 
 void NOSINTERNAL KiPhysicalMemoryManagerInit();
-
-PVOID KRNLAPI MmAllocatePool(
-    UINT64 Size,
-    UINT Flags);
-
-BOOLEAN KRNLAPI MmFreePool(
-    void *Address);
 
 NSTATUS KRNLAPI MmShareMemory(
     IN PEPROCESS Source,

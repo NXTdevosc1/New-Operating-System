@@ -2,9 +2,8 @@
 UINT64 _ObMaxHandles = 0;
 UINT64 _ObNumHandles = 0;
 
-
-volatile UINT64* _ObAllocationTable = NULL;
-volatile UINT64* _ObHandleAllocationTable = NULL;
+volatile UINT64 *_ObAllocationTable = NULL;
+volatile UINT64 *_ObHandleAllocationTable = NULL;
 
 POBJECT _ObObjectArray = NULL;
 POBJECT_REFERENCE _ObHandleArray = NULL;
@@ -17,32 +16,34 @@ POBJECT _ObObjectTypeEnds[OB_MAX_NUMBER_OF_TYPES] = {0};
 
 OBJECT_TYPE_DESCRIPTOR _ObObjectTypes[OB_MAX_NUMBER_OF_TYPES] = {0};
 
-void ObInitialize() {
+void ObInitialize()
+{
     KDebugPrint("Object Manager : Init");
     _ObMaxHandles = NosInitData->BootHeader->MaxHandles;
-    if(NosInitData->BootHeader->MaxHandles & 0x3F) {
+    if (NosInitData->BootHeader->MaxHandles & 0x3F)
+    {
         KDebugPrint("Object Manager ERROR : MaxHandles should be aligned by 64 entries.");
-        while(1) __halt();
+        while (1)
+            __halt();
     }
 
     _ObAllocationTableSize = AlignForward(_ObMaxHandles / 8, 0x1000);
 
     _ObObjectArraySize = AlignForward(_ObMaxHandles * sizeof(OBJECT_DESCRIPTOR), 0x1000);
-    
+
     _ObHandleArraySize = AlignForward(_ObMaxHandles * sizeof(OBJECT_REFERENCE_DESCRIPTOR), 0x1000);
 
-    MmAllocatePhysicalMemory(0, _ObAllocationTableSize >> 12, &_ObAllocationTable);
+    _ObAllocationTable = KRequestMemory(REQUEST_PHYSICAL_MEMORY, NULL, MEM_AUTO, _ObAllocationTableSize >> 12);
     KDebugPrint("Object Manager : Init  %x %x %x", _ObAllocationTableSize, _ObObjectArraySize, _ObHandleArraySize);
-    MmAllocatePhysicalMemory(0, _ObAllocationTableSize >> 12, &_ObHandleAllocationTable);
-    MmAllocatePhysicalMemory(0, _ObObjectArraySize >> 12, &_ObObjectArray);
-    MmAllocatePhysicalMemory(0, _ObHandleArraySize >> 12, &_ObHandleArray);
+    _ObHandleAllocationTable = KRequestMemory(REQUEST_PHYSICAL_MEMORY, NULL, MEM_AUTO, _ObAllocationTableSize >> 12);
+    _ObObjectArray = KRequestMemory(REQUEST_PHYSICAL_MEMORY, NULL, MEM_AUTO, _ObObjectArraySize >> 12);
+    _ObHandleArray = KRequestMemory(REQUEST_PHYSICAL_MEMORY, NULL, MEM_AUTO, _ObHandleArraySize >> 12);
 
-
-
-
-    if(!_ObAllocationTable || !_ObObjectArray || !_ObHandleAllocationTable || !_ObHandleArray) {
+    if (!_ObAllocationTable || !_ObObjectArray || !_ObHandleAllocationTable || !_ObHandleArray)
+    {
         KDebugPrint("Object Manager : Failed to allocate resources.");
-        while(1) __halt();
+        while (1)
+            __halt();
     }
     ZeroMemory(_ObAllocationTable, _ObAllocationTableSize);
     ZeroMemory(_ObHandleAllocationTable, _ObAllocationTableSize);
@@ -52,26 +53,32 @@ void ObInitialize() {
     KDebugPrint("Object Manager : Allocate Table : %u Bytes, Object Array : %u Bytes , Handle Array : %u Bytes", _ObAllocationTableSize, _ObObjectArraySize, _ObHandleArraySize);
 
     // Initialize Standard Object Types
-    for(int i = 0;i<SYSTEM_DEFINED_OBJECT_MAX;i++) {
+    for (int i = 0; i < SYSTEM_DEFINED_OBJECT_MAX; i++)
+    {
         ObRegisterObjectType(i, "System defined object.", NOS_MAJOR_VERSION, NOS_MINOR_VERSION);
     }
 
     _ObObjectTypes[OBJECT_THREAD].TotalCreatedObjects++; // Thread object id starts with 1 for compatibility
 }
 
-HANDLE ObiGetOpenHandle(POBJECT Object, PEPROCESS Process) {
+HANDLE ObiGetOpenHandle(POBJECT Object, PEPROCESS Process)
+{
     POBJECT_REFERENCE s = Object->References;
-    while(s) {
-        if(s->Process == Process) return ObiHandleByReference(s);
+    while (s)
+    {
+        if (s->Process == Process)
+            return ObiHandleByReference(s);
         s = s->Next;
     }
     return INVALID_HANDLE;
 }
 
-NSTATUS ObiCreateHandle(POBJECT Object, PEPROCESS Process, UINT64 Access, HANDLE* _OutHandle) {
+NSTATUS ObiCreateHandle(POBJECT Object, PEPROCESS Process, UINT64 Access, HANDLE *_OutHandle)
+{
     // Check if handle already exists
     HANDLE _h = ObiGetOpenHandle(Object, Process);
-    if(_h != INVALID_HANDLE) {
+    if (_h != INVALID_HANDLE)
+    {
         *_OutHandle = _h;
         return STATUS_HANDLE_ALREADY_OPEN;
     }
@@ -79,17 +86,21 @@ NSTATUS ObiCreateHandle(POBJECT Object, PEPROCESS Process, UINT64 Access, HANDLE
     POBJECT_REFERENCE Reference = NULL;
     {
         const UINT64 _max = _ObAllocationTableSize >> 3;
-        volatile UINT64* Bitmask = _ObHandleAllocationTable;
+        volatile UINT64 *Bitmask = _ObHandleAllocationTable;
         UINT Index;
-        for(UINT64 i = 0;i<_max;i++, Bitmask++) {
-    retry:
-            if(_BitScanForward64(&Index, ~(*Bitmask))) {
-                if(_interlockedbittestandset64(Bitmask, Index)) goto retry;
+        for (UINT64 i = 0; i < _max; i++, Bitmask++)
+        {
+        retry:
+            if (_BitScanForward64(&Index, ~(*Bitmask)))
+            {
+                if (_interlockedbittestandset64(Bitmask, Index))
+                    goto retry;
                 Reference = _ObHandleArray + (i << 6) + Index;
                 break;
             }
         }
-        if(!Reference) {
+        if (!Reference)
+        {
             *_OutHandle = INVALID_HANDLE;
             return STATUS_NO_FREE_SLOTS;
         }
@@ -99,9 +110,10 @@ NSTATUS ObiCreateHandle(POBJECT Object, PEPROCESS Process, UINT64 Access, HANDLE
     Reference->Process = Process;
     Reference->Access = Access;
     HANDLE Handle = ObiHandleByReference(Reference);
-    
+
     NSTATUS s;
-    if(NERROR((s = Object->EventHandler(Process, OBJECT_EVENT_OPEN, Handle, Access)))) {
+    if (NERROR((s = Object->EventHandler(Process, OBJECT_EVENT_OPEN, Handle, Access))))
+    {
         // De-Allocate the reference
         ObjZeroMemory(Reference);
         _interlockedbittestandreset64(_ObHandleAllocationTable + ((UINT64)Handle >> 6), (UINT64)Handle & 0x3F);
@@ -110,11 +122,14 @@ NSTATUS ObiCreateHandle(POBJECT Object, PEPROCESS Process, UINT64 Access, HANDLE
     }
     // Link the handle to the object
     UINT64 rflags = ExAcquireSpinLock(&Object->SpinLock);
-    if(Object->References) {
+    if (Object->References)
+    {
         Object->ReferencesLastNode->Next = Reference;
         Reference->Previous = Object->ReferencesLastNode;
         Object->ReferencesLastNode = Reference;
-    } else {
+    }
+    else
+    {
         Object->References = Reference;
         Object->ReferencesLastNode = Reference;
     }
@@ -125,16 +140,18 @@ NSTATUS ObiCreateHandle(POBJECT Object, PEPROCESS Process, UINT64 Access, HANDLE
     return STATUS_SUCCESS;
 }
 
-
-
-POBJECT ObiAllocateObject() {
+POBJECT ObiAllocateObject()
+{
     const UINT64 _max = _ObAllocationTableSize >> 3;
-    volatile UINT64* Bitmask = _ObAllocationTable;
+    volatile UINT64 *Bitmask = _ObAllocationTable;
     UINT Index;
-    for(UINT64 i = 0;i<_max;i++, Bitmask++) {
-retry:
-        if(_BitScanForward64(&Index, ~(*Bitmask))) {
-            if(_interlockedbittestandset64(Bitmask, Index)) goto retry;
+    for (UINT64 i = 0; i < _max; i++, Bitmask++)
+    {
+    retry:
+        if (_BitScanForward64(&Index, ~(*Bitmask)))
+        {
+            if (_interlockedbittestandset64(Bitmask, Index))
+                goto retry;
             POBJECT Object = _ObObjectArray + (i << 6) + Index;
             Object->Characteristics = OBJECT_PRESENT;
             return Object;
@@ -143,20 +160,24 @@ retry:
     return NULL;
 }
 
-void ObiFreeObject(POBJECT Object) {
+void ObiFreeObject(POBJECT Object)
+{
     UINT64 Index = (((UINT64)Object - (UINT64)_ObObjectArray) / sizeof(OBJECT_DESCRIPTOR));
     ObjZeroMemory(Object);
     _interlockedbittestandreset64(_ObAllocationTable + ((UINT64)Index >> 6), (UINT64)Index & 0x3F);
-
 }
 
-void ObiLinkChildObject(POBJECT Parent, POBJECT Child) {
+void ObiLinkChildObject(POBJECT Parent, POBJECT Child)
+{
     UINT64 rflags = ExAcquireSpinLock(&Parent->SpinLock);
 
-    if(!Parent->FirstChild) {
+    if (!Parent->FirstChild)
+    {
         Parent->FirstChild = Child;
         Parent->LastChild = Child;
-    } else {
+    }
+    else
+    {
         Child->PreviousChild = Parent->LastChild;
         Parent->LastChild->NextChild = Child;
         Parent->LastChild = Child;
@@ -165,23 +186,28 @@ void ObiLinkChildObject(POBJECT Parent, POBJECT Child) {
     ExReleaseSpinLock(&Parent->SpinLock, rflags);
 }
 
-void ObiUnlinkChildObject(POBJECT Parent, POBJECT Child) {
+void ObiUnlinkChildObject(POBJECT Parent, POBJECT Child)
+{
     UINT64 rflags = ExAcquireSpinLock(&Parent->SpinLock);
 
-    if(Parent->FirstChild != Child && Parent->LastChild != Child) {
+    if (Parent->FirstChild != Child && Parent->LastChild != Child)
+    {
         Child->PreviousChild->NextChild = Child->NextChild;
-    } else {
+    }
+    else
+    {
 
-        if(Parent->LastChild == Child) {
+        if (Parent->LastChild == Child)
+        {
             Parent->LastChild = Child->PreviousChild;
             Child->PreviousChild->NextChild = NULL;
         }
-        if(Parent->FirstChild == Child) {
+        if (Parent->FirstChild == Child)
+        {
             Parent->FirstChild = Child->NextChild;
             Child->NextChild->PreviousChild = NULL;
         }
     }
-
 
     ExReleaseSpinLock(&Parent->SpinLock, rflags);
 }

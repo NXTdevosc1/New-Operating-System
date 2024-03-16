@@ -94,14 +94,31 @@ void NOSENTRY NosSystemInit()
     KDebugPrint("VMM Testing...");
 
     KiPhysicalMemoryManagerInit();
+
     ObInitialize();
     KiInitBootCpu();
     KiInitStandardSubsystems();
 
-    __KiClearScreen(0xFFFFF);
+    KDebugPrint("PHYSTEST");
 
+    for (int i = 0; i < 3; i++)
+    {
+        PVOID p = KRequestMemory(REQUEST_PHYSICAL_MEMORY, NULL, MEM_LARGE_PAGES, 3);
+        KDebugPrint("p : %x", p);
+    }
+
+    KDebugPrint("VIRTTEST");
+
+    for (int i = 0; i < 3; i++)
+    {
+        PVOID p = KRequestMemory(REQUEST_VIRTUAL_MEMORY, NULL, MEM_LARGE_PAGES, 3);
+        KDebugPrint("p : %x", p);
+    }
+
+    __halt();
+    KDebugPrint("VMM Test finished");
     while (1)
-        __halt();
+        __KiClearScreen(0xFFFFF);
 
     UINT64 _EnumValue = 0;
     PETHREAD kInitThread = KeWalkThreads(KernelProcess, &_EnumValue);

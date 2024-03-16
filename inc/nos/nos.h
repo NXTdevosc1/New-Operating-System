@@ -35,7 +35,8 @@
 #include <ktime.h>
 #include <nos/console/console.h>
 #include <nos/pnp/pnp.h>
-#include <mm.h>
+#include <kmem.h>
+#include <klib.h>
 
 #define DEBUG 1
 
@@ -82,7 +83,7 @@ void KRNLAPI KDebugPrint(IN char *Message, ...);
 
 static inline char *KiMakeSystemNameA(char *Name, UINT16 len)
 {
-    char *n = MmAllocatePool(len + 1, 0);
+    char *n = KlAllocatePool(len + 1, 0);
     if (!n)
     {
         KDebugPrint("MakeSysName Failed!");
@@ -95,7 +96,7 @@ static inline char *KiMakeSystemNameA(char *Name, UINT16 len)
 
 static inline UINT16 *KiMakeSystemNameW(UINT16 *Name, UINT16 len)
 {
-    UINT16 *n = MmAllocatePool((len + 1) << 1, 0);
+    UINT16 *n = KlAllocatePool((len + 1) << 1, 0);
     if (!n)
     {
         KDebugPrint("MakeSysName Failed!");

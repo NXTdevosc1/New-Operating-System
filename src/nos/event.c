@@ -99,7 +99,7 @@ BOOLEAN KRNLAPI KeRegisterEventHandler(
     // Register the handler
 RegisterHandler:
 
-    EVTHANDLERSTRUCT *evth = MmAllocatePool(sizeof(EVTHANDLERSTRUCT), 0);
+    EVTHANDLERSTRUCT *evth = KlAllocatePool(sizeof(EVTHANDLERSTRUCT), 0);
     evth->Handler = EventHandler;
     evth->Previous = Event->LastHandler;
     evth->Next = NULL;
@@ -207,7 +207,7 @@ NSTATUS KRNLAPI KeSignalEvent(HANDLE EventHandle, void *Context, void **EventDes
     }
 
     // Allocate an event
-    EVTSTRUCT *Evt = MmAllocatePool(sizeof(EVTSTRUCT), 0);
+    EVTSTRUCT *Evt = KlAllocatePool(sizeof(EVTSTRUCT), 0);
     if (!Evt)
     {
         KDebugPrint("BUG1 : KE_SIGNAL_EVENT");
@@ -275,7 +275,7 @@ BOOLEAN KRNLAPI KeRemoveEvent(void *EventDescriptor)
     ExReleaseSpinLock(&Event->EventSignalSpinlock, cpf);
     ExMutexRelease(NULL, &Event->PreventDelete);
     // Free the event struct
-    MmFreePool(Evt);
+    KlFreePool(Evt);
 
     return TRUE;
 }

@@ -144,7 +144,7 @@ void KiInitMultitaskingSubsystem()
                                L"//NewOS/System/noskx64.exe",
                                NULL)))
         RaiseInitError(0);
-
+    InitVirtualMemoryManager(KernelProcess, (PVOID)0xFFFF800000000000, (PVOID)-1);
     KDebugPrint("MS");
 }
 

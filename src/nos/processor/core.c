@@ -40,21 +40,21 @@ void CpuInitDescriptors(PROCESSOR *Processor)
     // Setting up the TSS
 
     // RSP0 : Allocate CPU Internal Interrupts stack memory (INT 0-31)
-    if (!(Processor->Tss.rsp0 = (UINT64)MmAllocateMemory(KernelProcess, 0x10, PAGE_WRITE_ACCESS | PAGE_GLOBAL, PAGE_CACHE_WRITE_BACK)))
+    if (!(Processor->Tss.rsp0 = (UINT64)KRequestMemory(REQUEST_PHYSICAL_MEMORY, NULL, MEM_GLOBAL, 0x10)))
     {
         SerialLog("Failed to allocate interrupt memory.");
         while (1)
             ;
     }
     // IST1 : Allocate IRQ stack memory (INT 32-220)
-    if (!(Processor->Tss.ist1 = (UINT64)MmAllocateMemory(KernelProcess, 0x10, PAGE_WRITE_ACCESS | PAGE_GLOBAL, PAGE_CACHE_WRITE_BACK)))
+    if (!(Processor->Tss.ist1 = (UINT64)KRequestMemory(REQUEST_PHYSICAL_MEMORY, NULL, MEM_GLOBAL, 0x10)))
     {
         SerialLog("Failed to allocate interrupt memory.");
         while (1)
             ;
     }
     // IST2 : Allocate system interrupt stack memory (INT 221-255)
-    if (!(Processor->Tss.ist2 = (UINT64)MmAllocateMemory(KernelProcess, 0x10, PAGE_WRITE_ACCESS | PAGE_GLOBAL, PAGE_CACHE_WRITE_BACK)))
+    if (!(Processor->Tss.ist2 = (UINT64)KRequestMemory(REQUEST_PHYSICAL_MEMORY, NULL, MEM_GLOBAL, 0x10)))
     {
         SerialLog("Failed to allocate interrupt memory.");
         while (1)

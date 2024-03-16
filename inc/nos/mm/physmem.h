@@ -9,6 +9,8 @@ typedef struct
 } KPAGEHEADER;
 HMIMAGE _NosHeapImages[2];
 HMIMAGE *_NosPhysicalMemoryImage;
+HMIMAGE *_PhysicalMemoryBelow4GB;
+
 HMIMAGE *_NosKernelHeap;
 char *PageBase;
 // Allocates memory below 4gb
