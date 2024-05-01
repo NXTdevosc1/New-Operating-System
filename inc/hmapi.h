@@ -87,17 +87,7 @@ BOOLEAN HMAPI VmmInstantLookup(PVOID *Level);
 #define VmmPageLevel(Image, NumLvls) ((char *)Image->User.Buffer + VmmLevelLength(NumLvls))
 #endif
 
-#pragma pack(push, 0x10)
-
-typedef struct _HMBLK
-{
-    UINT64 Used : 1;
-    UINT64 Length : 9;
-    UINT64 PageMask : 54;
-    UINT64 Rsv;
-} HMBLK, *PHMBLK;
-
-#pragma pack(pop)
+#define VMM_NOMEMORY ((PVOID)-1)
 
 typedef PVOID(__fastcall *HMALLOCATE_ROUTINE)(HMIMAGE *Image, UINT64 PageCount);
 typedef void(__fastcall *HMFREE_ROUTINE)(HMIMAGE *Image, PVOID PageStart, UINT64 PageCount);
@@ -107,8 +97,10 @@ void HMAPI oHmbInitImage(
     HMALLOCATE_ROUTINE AllocateRoutine,
     HMFREE_ROUTINE FreeRoutine);
 
-void HMAPI oHmbSet(HMIMAGE *Image, PHMBLK Block, UINT8 Length /*in 16 Byte blocks*/);
-void HMAPI oHmbRemove(HMIMAGE *Image, PHMBLK Block, UINT8 Length);
+typedef struct _BLOCKHEADER BLOCKHEADER;
+
+void HMAPI oHmbSet(HMIMAGE *Image, BLOCKHEADER *Block, UINT8 Length /*in 16 Byte blocks*/);
+void HMAPI oHmbRemove(HMIMAGE *Image, BLOCKHEADER *Block, UINT8 Length);
 BOOLEAN HMAPI oHmbLookup(HMIMAGE *Image);
 PVOID HMAPI oHmbAllocate(
     HMIMAGE *Image,

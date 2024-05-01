@@ -20,8 +20,18 @@ void InitVirtualMemoryManager(PEPROCESS Process, PVOID SearchStart, PVOID Search
     VmmCreate(Process->VmImage, 4, Process->VmImage + 1, sizeof(KPAGEHEADER));
     KPAGEHEADER *Major = KlAllocatePool(sizeof(KPAGEHEADER), 0);
     ObjZeroMemory(Major);
+    Major->Length = 0x200;
     VmmInsert(VmmPageLevel(Process->VmImage, 3), Major, 256);
     // TODO : Copy page table of the kernel
+}
+
+static __forceinline void __VmmFillRemainingMemory(KPAGEHEADER *Source, UINT Lvl, UINT64 Length)
+{
+    if (!Length)
+        return;
+    const UINT64 Count = Length & 0x1FF;
+    KPAGEHEADER *Hdr = KlAllocatePool(sizeof(KPAGEHEADER) * 512, 0);
+    Hdr->Header.Address = Source->Header.Address;
 }
 
 PVOID __fastcall iRequestVirtualMemory(
@@ -41,14 +51,25 @@ PVOID __fastcall iRequestVirtualMemory(
     PVOID ret;
     for (int i = PageSz; i < 4; i++, Count = AlignForward(Count, 0x200) >> 9)
     {
-        if ((ret = VmmAllocate(Process->VmImage, i, Count, &Hdr)))
+        KDebugPrint("valloc %d", i);
+        if ((ret = VmmAllocate(Process->VmImage, i, Count, &Hdr)) != VMM_NOMEMORY)
         {
-
+            KPAGEHEADER *Page = *Hdr;
+            KDebugPrint("VALLOC_SUCCESS len %d PSZ %d FoundPSZ %d ADDR %x RemainingLen %d", Length, PageSz, i, ret, Page->Length);
+            Page->Length -= Count;
+            Page->Header.Address += (Count << (12 + (9 * i)));
+            if (i != PageSz)
+            {
+                UINT64 Remaining = (Count << (9 * (i - PageSz))) - (Length);
+                KDebugPrint("Remaining")
+                    __MmFillRemainingPages(Page + (Length << (9 * PageSz)), PageSz, Remaining);
+            }
             return ret;
         }
     }
+    KDebugPrint("VALLOC_FAILED len %d PSZ %d", Length, PageSz);
 
-    return (PVOID)(0x0234);
+    return (PVOID)(0x1234);
 }
 void KRNLAPI iFreeVirtualMemory(PEPROCESS Process, PVOID Address, UINT PageLength, UINT64 PageCount)
 {

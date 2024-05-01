@@ -26,22 +26,29 @@ PVOID __fastcall iRequestPhysicalMemory(
     if (Flags & MEM_HUGE_PAGES)
         PageSize = 2;
 
+    // KDebugPrint("----- IreqPhys Flags %x Len %d", Flags, Length);
+
     for (UINT i = PageSize; i < 3; i++, Count = AlignForward(Count, 0x200) >> 9)
     {
+        // KDebugPrint("Attemp PS%d COUNT %d", i, Count);
 
-        if ((ret = VmmAllocate(_NosPhysicalMemoryImage, i, Count, &Header)))
+        if ((ret = VmmAllocate(_NosPhysicalMemoryImage, i, Count, &Header)) != VMM_NOMEMORY)
         {
 
-            UINT64 Remaining = (Count << (9 * (i - PageSize))) - (Length);
+            // KDebugPrint("iRequestPhys returning %x", ret);
 
-            if (Remaining)
+            if (i != PageSize)
+            {
+                UINT64 Remaining = (Count << (9 * (i - PageSize))) - (Length);
                 __MmFillRemainingPages((*Header) + (Length << (9 * PageSize)), PageSize, Remaining);
+            }
 
             *Header += (Length << (9 * PageSize));
 
             return ret;
         }
     }
+    // KDebugPrint("iRequestPhys Failed, flags %x length %d", Flags, Length);
     return NULL;
 }
 

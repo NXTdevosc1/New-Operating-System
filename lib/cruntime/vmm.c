@@ -145,17 +145,17 @@ PVOID HMAPI VmmAllocate(HMIMAGE *Image, UINT Level, UINT64 Count, void ***Header
     PAGELEVEL_LENGTHCHAIN *Ch = Image->Mem + Level;
     if (Ch->Cl.LenCurrent >= Count || (VmmInstantLookup(Ch) && Ch->Cl.LenStart >= Count))
     {
-    foundblock:
         PVOID Ret = (PVOID)(Ch->Cl.Header->Address << 12);
         *Header = &Ch->Cl.Header;
 
         // Leave the header for the editing
         // ((char *)Ch->Cl.Header) += (Count << (9 * Level)) * Image->DescSize;
         Ch->Cl.LenCurrent -= Count;
+
         return Ret;
     }
 
-    return NULL;
+    return VMM_NOMEMORY;
 }
 
 // MANAGED BY the parent allocator (depends wheter physical allocator, or virtual address allocator)

@@ -12,7 +12,8 @@ KRequestMemory(
     UINT Flags,
     UINT64 Length)
 {
-
+    if (!Process)
+        Process = KernelProcess;
     return MemRequests[RequestType](Process, Flags, Length);
 }
 

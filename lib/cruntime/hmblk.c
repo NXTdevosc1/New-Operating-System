@@ -1,6 +1,16 @@
 #include <hmdef.h>
-#include <mm.h>
+#include <hmapi.h>
 #include <xmmintrin.h>
+
+typedef struct _BLOCKHEADER
+{
+    UINT64 Next : 56;
+    UINT64 Length : 8;
+
+    UINT64 PrevOrLast : 56;
+    UINT64 Used : 1;
+    UINT64 PageLength : 2;
+} BLOCKHEADER;
 
 typedef struct _HMIMAGE
 {
@@ -9,15 +19,15 @@ typedef struct _HMIMAGE
     HMALLOCATE_ROUTINE SrcAlloc;
     HMFREE_ROUTINE SrcFree;
 
-    PHMBLK InitialBlock;
+    BLOCKHEADER *InitialBlock;
     UINT64 InitialLength;
 
-    PHMBLK CurrentBlock;
+    BLOCKHEADER *CurrentBlock;
     UINT8 CurrentLength;
 
     UINT32 BaseBitmap;
     UINT64 SubBmp[4];
-    PHMBLK HeapArray[256];
+    BLOCKHEADER *HeapArray[256];
 } HMIMAGE;
 
 void HMAPI oHmbInitImage(
@@ -32,13 +42,6 @@ void HMAPI oHmbInitImage(
 
 typedef struct
 {
-    UINT64 Used : 1;
-    UINT64 Length : 8;
-    UINT64 OffsetToFooter : 48;
-} BLOCKHEADER;
-
-typedef struct
-{
     BLOCKHEADER *Header;
 } BLOCKFOOTER;
 
@@ -46,9 +49,9 @@ PVOID HMAPI oHmbAllocate(
     HMIMAGE *Image,
     UINT64 Length)
 {
-    UINT64 TargetLength = Length + 1; // 8 Bytes on top, 8 bytes on bottom
+    UINT64 TargetLength = Length + 1; // 16 Bytes on top, 8 bytes on bottom
     BLOCKHEADER *Blk;
-    BLOCKFOOTER *Footer;
+    // BLOCKFOOTER *Footer;
     if (TargetLength < 0x100 && (Image->CurrentLength >= TargetLength || (oHmbLookup(Image) && Image->InitialLength >= TargetLength)))
     {
 
@@ -71,31 +74,32 @@ PVOID HMAPI oHmbAllocate(
     }
     Blk->Used = 1;
     Blk->Length = Length;
-    Blk->OffsetToFooter = (Length << 1) - 1;
+    // Blk->OffsetToFooter = (Length << 1) - 1;
 
-    Footer = Blk + Blk->OffsetToFooter;
-    Footer->Header = Blk;
+    // Footer = Blk + Blk->OffsetToFooter;
+    // Footer->Header = Blk;
     return Blk + 1;
 }
 
 BOOLEAN HMAPI oHmbFree(HMIMAGE *Image, void *Ptr)
 {
-    BLOCKHEADER *Header = (BLOCKHEADER *)Ptr - 1;
-    BLOCKHEADER *Prev = ((BLOCKFOOTER *)(Header - 1))->Header;
+    return FALSE;
+    // BLOCKHEADER *Header = (BLOCKHEADER *)Ptr - 1;
+    // BLOCKHEADER *Prev = ((BLOCKFOOTER *)(Header - 1))->Header;
 
-    const UINT64 vhdr = (UINT64)Header;
-    if (!(vhdr & 0xFFF) && Header->Length >= 0x100)
-    {
-        KDebugPrint("FREE PAGE %x LEN %x", Header, Header->Length);
-    }
-    else if (!Prev->Used)
-    {
-        Prev->Length += Header->Length;
-        if (Prev->Length >= 0x100)
-        {
-            KDebugPrint("FREE PAGE PREV %x HDR %x PREVLEN %x", Prev, Header, Prev->Length);
-        }
-    }
+    // const UINT64 vhdr = (UINT64)Header;
+    // if (!(vhdr & 0xFFF) && Header->Length >= 0x100)
+    // {
+    //     KDebugPrint("FREE PAGE %x LEN %x", Header, Header->Length);
+    // }
+    // else if (!Prev->Used)
+    // {
+    //     Prev->Length += Header->Length;
+    //     if (Prev->Length >= 0x100)
+    //     {
+    //         KDebugPrint("FREE PAGE PREV %x HDR %x PREVLEN %x", Prev, Header, Prev->Length);
+    //     }
+    // }
 }
 // PVOID HMAPI oHmbAllocate(
 //     HMIMAGE *Image,
@@ -119,7 +123,7 @@ BOOLEAN HMAPI oHmbFree(HMIMAGE *Image, void *Ptr)
 //         if (!Mem)
 //             return NULL;
 
-//         PHMBLK Desc0 = Mem, Desc1 = (PHMBLK)((char *)Mem + ((Length - 2) << 4));
+//         BLOCKHEADER* Desc0 = Mem, Desc1 = (BLOCKHEADER*)((char *)Mem + ((Length - 2) << 4));
 //         // Desc0->Addr = (UINT64)(Desc0 + 1) >> 4;
 //         // Desc0->MainBlk = 1;
 //         // Desc1->Addr = (UINT64)(Desc1 + 1) >> 4;
@@ -132,7 +136,7 @@ BOOLEAN HMAPI oHmbFree(HMIMAGE *Image, void *Ptr)
 //         }
 //         return Desc0 + 1;
 //     }
-//     PHMBLK Desc = Image->SrcAlloc(Image, NumPages);
+//     BLOCKHEADER* Desc = Image->SrcAlloc(Image, NumPages);
 //     // Desc->Addr = (UINT64)(Desc + 1) >> 4;
 //     // Desc->MainBlk = 1;
 //     return Desc + 1;
@@ -181,7 +185,7 @@ BOOLEAN HMAPI oHmbLookup(HMIMAGE *Image)
         return FALSE;
 
     _BitScanReverse64(&Index2, Image->SubBmp[Index]);
-    PHMBLK Blk = Image->HeapArray[Index2 + (Index << 6)];
+    BLOCKHEADER *Blk = Image->HeapArray[Index2 + (Index << 6)];
 
     Image->InitialBlock = Blk;
     Image->CurrentBlock = Blk;
@@ -190,17 +194,17 @@ BOOLEAN HMAPI oHmbLookup(HMIMAGE *Image)
     return TRUE;
 }
 
-void HMAPI oHmbSet(HMIMAGE *Image, PHMBLK Block, UINT8 Length /*in 16 Byte blocks*/)
+void HMAPI oHmbSet(HMIMAGE *Image, BLOCKHEADER *Block, UINT8 Length /*in 16 Byte blocks*/)
 {
     Image->BaseBitmap |= (1ULL << (Length >> 6));
     Block->Next = 0;
 
     if (_bittestandset64(Image->SubBmp + (Length >> 6), Length & 0x3F))
     {
-        PHMBLK baseblk = Image->HeapArray[Length];
-        ((PHMBLK)baseblk->PrevOrLast)->Next = (UINT64)Block; // set lastblock.next
-        Block->PrevOrLast = baseblk->PrevOrLast;             // set block.previous
-        baseblk->PrevOrLast = (UINT64)Block;                 // set firstblack.last
+        BLOCKHEADER *baseblk = Image->HeapArray[Length];
+        ((BLOCKHEADER *)baseblk->PrevOrLast)->Next = (UINT64)Block; // set lastblock.next
+        Block->PrevOrLast = baseblk->PrevOrLast;                    // set block.previous
+        baseblk->PrevOrLast = (UINT64)Block;                        // set firstblack.last
     }
     else
     {
@@ -209,7 +213,7 @@ void HMAPI oHmbSet(HMIMAGE *Image, PHMBLK Block, UINT8 Length /*in 16 Byte block
     }
 }
 
-void HMAPI oHmbRemove(HMIMAGE *Image, PHMBLK Block, UINT8 Length)
+void HMAPI oHmbRemove(HMIMAGE *Image, BLOCKHEADER *Block, UINT8 Length)
 {
     if (Block->PrevOrLast == (UINT64)Block)
     {
@@ -224,13 +228,13 @@ void HMAPI oHmbRemove(HMIMAGE *Image, PHMBLK Block, UINT8 Length)
     else if (Image->HeapArray[Length] == Block)
     {
         // Starting heap
-        ((PHMBLK)Block->Next)->PrevOrLast = Block->PrevOrLast; // set next with last block
-        Image->HeapArray[Length] = (PVOID)Block->Next;         // set arr with next block
+        ((BLOCKHEADER *)Block->Next)->PrevOrLast = Block->PrevOrLast; // set next with last block
+        Image->HeapArray[Length] = (PVOID)Block->Next;                // set arr with next block
     }
     else
     {
         // Middle/Ending Heap
-        ((PHMBLK)Block->PrevOrLast)->Next = Block->Next; // set previous block with value of next block
+        ((BLOCKHEADER *)Block->PrevOrLast)->Next = Block->Next; // set previous block with value of next block
         if (Block->Next == 0)
         { // ending heap
             Image->HeapArray[Length]->PrevOrLast = Block->PrevOrLast;

@@ -6,6 +6,8 @@ typedef struct
 {
     VMMHEADER Header;
     PEPROCESS Process;
+
+    UINT64 Length;
 } KPAGEHEADER;
 HMIMAGE _NosHeapImages[2];
 HMIMAGE *_NosPhysicalMemoryImage;

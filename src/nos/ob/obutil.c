@@ -38,7 +38,7 @@ void ObInitialize()
     _ObHandleAllocationTable = KRequestMemory(REQUEST_PHYSICAL_MEMORY, NULL, MEM_AUTO, _ObAllocationTableSize >> 12);
     _ObObjectArray = KRequestMemory(REQUEST_PHYSICAL_MEMORY, NULL, MEM_AUTO, _ObObjectArraySize >> 12);
     _ObHandleArray = KRequestMemory(REQUEST_PHYSICAL_MEMORY, NULL, MEM_AUTO, _ObHandleArraySize >> 12);
-
+    KDebugPrint("ob %x %x %x", _ObAllocationTable, _ObObjectArray, _ObHandleAllocationTable);
     if (!_ObAllocationTable || !_ObObjectArray || !_ObHandleAllocationTable || !_ObHandleArray)
     {
         KDebugPrint("Object Manager : Failed to allocate resources.");
