@@ -1,6 +1,6 @@
 #include <nos/mm/physmem.h>
 
-NSTATUS KRNLAPI MmAllocatePhysicalMemory(UINT64 Flags, UINT64 NumPages, void **Ptr)
+NSTATUS KRNLAPI _PreOsMmAllocatePhysicalMemory(UINT64 Flags, UINT64 NumPages, void **Ptr)
 {
     if (Flags & ALLOCATE_BELOW_4GB)
     {

@@ -71,19 +71,19 @@ typedef struct _NOS_HEAP_TREE
 
 #define AllocateObject(_obj) (MmAllocatePhysicalMemory(0, ConvertToPages(sizeof(*_obj)), &_obj))
 #define AllocateNextList(_nlist) AllocateObject(_nlist)
-BOOLEAN KRNLAPI MmFreePhysicalMemory(
-    IN void *PhysicalMemory,
-    IN UINT64 NumPages);
+// BOOLEAN KRNLAPI MmFreePhysicalMemory(
+//     IN void *PhysicalMemory,
+//     IN UINT64 NumPages);
 
-PVOID KRNLAPI MmAllocateMemory(
-    IN PEPROCESS Process,
-    IN UINT64 NumPages,
-    IN UINT64 PageAttributes,
-    IN UINT64 CachePolicy);
-BOOLEAN KRNLAPI MmFreeMemory(
-    IN PEPROCESS Process,
-    IN void *Mem,
-    IN UINT64 NumPages);
+// PVOID KRNLAPI MmAllocateMemory(
+//     IN PEPROCESS Process,
+//     IN UINT64 NumPages,
+//     IN UINT64 PageAttributes,
+//     IN UINT64 CachePolicy);
+// BOOLEAN KRNLAPI MmFreeMemory(
+//     IN PEPROCESS Process,
+//     IN void *Mem,
+//     IN UINT64 NumPages);
 
 void NOSINTERNAL KiPhysicalMemoryManagerInit();
 

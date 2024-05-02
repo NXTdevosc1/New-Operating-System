@@ -34,6 +34,7 @@ typedef enum
 #define MEM_WRITECOMBINE 0x40
 #define MEM_WRITE_THROUGH 0x80
 #define MEM_COMMIT 0x100
+#define MEM_CONTIGUOUS 0x200
 
 PVOID KRNLAPI
 KRequestMemory(

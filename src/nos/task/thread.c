@@ -1,6 +1,8 @@
 #include <nos/nos.h>
 #include <nos/task/process.h>
 #include <nos/processor/hw.h>
+#include <nos/mm/mm.h>
+#include <kmem.h>
 
 NSTATUS ThreadEvtHandler(PEPROCESS Process, UINT Event, HANDLE Handle, UINT64 Access)
 {
@@ -105,8 +107,8 @@ NSTATUS KRNLAPI KeCreateThread(
 
     Thread->Registers.rflags = 0x200; // Interrupt enable
     // Allocate the stack (TODO : Use a dynamic stack)
-    PVOID Stack = MmAllocateMemory(Process, 0x10, PAGE_WRITE_ACCESS, 0);
-    KDebugPrint("CS");
+
+    PVOID Stack = KRequestMemory(REQUEST_VIRTUAL_MEMORY, Process, MEM_COMMIT, 0x10);
     Thread->StackMem = Stack;
     Thread->StackPages = 0x10;
 

@@ -3,109 +3,109 @@
 
 #define PAGE_HALFPTR ((UINT64)0x8000000)
 
-PVOID MmiPreosAllocateMemory(
-    IN UINT64 NumPages,
-    IN UINT64 PageAttributes,
-    IN UINT64 CachePolicy)
-{
-    UINT64 Flags = 0;
-    if (PageAttributes & PAGE_2MB)
-        Flags |= ALLOCATE_2MB_ALIGNED_MEMORY;
-    void *Ptr;
-    if (NERROR(MmAllocatePhysicalMemory(Flags, NumPages, &Ptr)))
-    {
-        KDebugPrint("MMI_PREOS_AM : FAILED 0");
-        while (1)
-            __halt();
-        return NULL;
-    }
-    void *VirtualAddress = HwFindAvailableAddressSpace(
-        GetCurrentPageTable(),
-        NumPages,
-        NosInitData->NosKernelImageBase,
-        (void *)-1,
-        PageAttributes);
-    if (!VirtualAddress)
-    {
-        // FREE MEMORY
-        KDebugPrint("MM_PREOS_ALLOC_MEM FAILED");
-        while (1)
-            ;
-    }
-    UINT64 LogicalPages = (PageAttributes & PAGE_2MB) ? (NumPages << 9) : (NumPages);
-    // Map the pages then release the process lock
-    HwMapVirtualMemory(
-        GetCurrentPageTable(),
-        Ptr,
-        VirtualAddress,
-        NumPages,
-        PageAttributes,
-        CachePolicy);
-    return VirtualAddress;
-}
+// PVOID MmiPreosAllocateMemory(
+//     IN UINT64 NumPages,
+//     IN UINT64 PageAttributes,
+//     IN UINT64 CachePolicy)
+// {
+//     UINT64 Flags = 0;
+//     if (PageAttributes & PAGE_2MB)
+//         Flags |= ALLOCATE_2MB_ALIGNED_MEMORY;
+//     void *Ptr;
+//     if (NERROR(MmAllocatePhysicalMemory(Flags, NumPages, &Ptr)))
+//     {
+//         KDebugPrint("MMI_PREOS_AM : FAILED 0");
+//         while (1)
+//             __halt();
+//         return NULL;
+//     }
+//     void *VirtualAddress = HwFindAvailableAddressSpace(
+//         GetCurrentPageTable(),
+//         NumPages,
+//         NosInitData->NosKernelImageBase,
+//         (void *)-1,
+//         PageAttributes);
+//     if (!VirtualAddress)
+//     {
+//         // FREE MEMORY
+//         KDebugPrint("MM_PREOS_ALLOC_MEM FAILED");
+//         while (1)
+//             ;
+//     }
+//     UINT64 LogicalPages = (PageAttributes & PAGE_2MB) ? (NumPages << 9) : (NumPages);
+//     // Map the pages then release the process lock
+//     HwMapVirtualMemory(
+//         GetCurrentPageTable(),
+//         Ptr,
+//         VirtualAddress,
+//         NumPages,
+//         PageAttributes,
+//         CachePolicy);
+//     return VirtualAddress;
+// }
 
-PVOID KRNLAPI MmAllocateMemory(
-    IN PEPROCESS Process,
-    IN UINT64 NumPages,
-    IN UINT64 PageAttributes,
-    IN UINT64 CachePolicy)
-{
+// PVOID KRNLAPI MmAllocateMemory(
+//     IN PEPROCESS Process,
+//     IN UINT64 NumPages,
+//     IN UINT64 PageAttributes,
+//     IN UINT64 CachePolicy)
+// {
 
-    if (!Process)
-    {
+//     if (!Process)
+//     {
 
-        if (!KernelProcess)
-            return MmiPreosAllocateMemory(NumPages, PageAttributes, CachePolicy);
-        Process = KernelProcess;
-    }
-    // TODO : Allocate Fragmented memory instead of contiguous memory
-    UINT64 Flags = 0;
-    if (PageAttributes & PAGE_2MB)
-        Flags |= ALLOCATE_2MB_ALIGNED_MEMORY;
-    if (PageAttributes & PAGE_HALFPTR)
-        Flags |= ALLOCATE_BELOW_4GB;
+//         if (!KernelProcess)
+//             return MmiPreosAllocateMemory(NumPages, PageAttributes, CachePolicy);
+//         Process = KernelProcess;
+//     }
+//     // TODO : Allocate Fragmented memory instead of contiguous memory
+//     UINT64 Flags = 0;
+//     if (PageAttributes & PAGE_2MB)
+//         Flags |= ALLOCATE_2MB_ALIGNED_MEMORY;
+//     if (PageAttributes & PAGE_HALFPTR)
+//         Flags |= ALLOCATE_BELOW_4GB;
 
-    PageAttributes &= ~PAGE_HALFPTR;
+//     PageAttributes &= ~PAGE_HALFPTR;
 
-    void *Ptr;
-    if (NERROR(MmAllocatePhysicalMemory(Flags, NumPages, &Ptr)))
-    {
-        KDebugPrint("MMI_AM : FAILED 0");
-        while (1)
-            __halt();
-    }
-    KDebugPrint("VA");
-    void *VirtualAddress = KeFindAvailableAddressSpace(
-        Process,
-        NumPages,
-        Process->VmSearchStart,
-        Process->VmSearchEnd,
-        PageAttributes);
+//     void *Ptr;
+//     if (NERROR(MmAllocatePhysicalMemory(Flags, NumPages, &Ptr)))
+//     {
+//         KDebugPrint("MMI_AM : FAILED 0");
+//         while (1)
+//             __halt();
+//     }
+//     KDebugPrint("VA");
+//     void *VirtualAddress = KeFindAvailableAddressSpace(
+//         Process,
+//         NumPages,
+//         Process->VmSearchStart,
+//         Process->VmSearchEnd,
+//         PageAttributes);
 
-    KDebugPrint("V2A");
+//     KDebugPrint("V2A");
 
-    if (!VirtualAddress)
-    {
-        KDebugPrint("NO ADDR SPACE");
-        // FREE MEMORY
-        while (1)
-            ;
-    }
-    UINT64 LogicalPages = (PageAttributes & PAGE_2MB) ? (NumPages << 9) : (NumPages);
-    Process->VmSearchStart = (void *)((UINT64)VirtualAddress + (LogicalPages << 12));
-    // Map the pages then release the process lock
-    HwMapVirtualMemory(
-        Process->PageTable,
-        Ptr,
-        VirtualAddress,
-        NumPages,
-        PageAttributes,
-        CachePolicy);
-    KDebugPrint("V3A");
+//     if (!VirtualAddress)
+//     {
+//         KDebugPrint("NO ADDR SPACE");
+//         // FREE MEMORY
+//         while (1)
+//             ;
+//     }
+//     UINT64 LogicalPages = (PageAttributes & PAGE_2MB) ? (NumPages << 9) : (NumPages);
+//     Process->VmSearchStart = (void *)((UINT64)VirtualAddress + (LogicalPages << 12));
+//     // Map the pages then release the process lock
+//     HwMapVirtualMemory(
+//         Process->PageTable,
+//         Ptr,
+//         VirtualAddress,
+//         NumPages,
+//         PageAttributes,
+//         CachePolicy);
+//     KDebugPrint("V3A");
 
-    ProcessReleaseControlLock(Process, PROCESS_CONTROL_MANAGE_ADDRESS_SPACE);
-    return VirtualAddress;
-}
+//     ProcessReleaseControlLock(Process, PROCESS_CONTROL_MANAGE_ADDRESS_SPACE);
+//     return VirtualAddress;
+// }
 
 BOOLEAN KRNLAPI MmFreeMemory(
     IN PEPROCESS Process,

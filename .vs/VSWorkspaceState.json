@@ -11,6 +11,6 @@
     "\\src\\nos\\sys",
     "\\src\\nos\\task"
   ],
-  "SelectedNode": "\\src\\nos\\task\\thread.c",
+  "SelectedNode": "\\src\\boot\\efi\\amd64\\bootx64.inf",
   "PreviewInSolutionExplorer": false
 }
