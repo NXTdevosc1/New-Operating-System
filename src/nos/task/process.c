@@ -7,7 +7,7 @@ NSTATUS ProcessEvt(PEPROCESS Process, UINT Event, HANDLE Handle, UINT64 Access)
 {
     return STATUS_SUCCESS;
 }
-
+BOOLEAN PreOsExtendedSpaceBoolean = TRUE;
 NSTATUS KRNLAPI KeCreateProcess(
     IN OPT PEPROCESS ParentProcess,
     OUT PEPROCESS *OutProcess,
@@ -64,10 +64,28 @@ NSTATUS KRNLAPI KeCreateProcess(
     if (Process->Subsystem == SUBSYSTEM_NATIVE)
     {
         // Kernel mode process
-        Process->VmSearchStart = NosInitData->NosKernelImageBase;
-        Process->VmSearchEnd = (void *)-1;
+        Process->VmSearchStart = (PVOID)0xFFFFF00000000000;
+        Process->VmSearchEnd = (void *)KeReserveExtendedSpace(1);
         Process->PageTable = GetCurrentPageTable();
+        if (*OutProcess == KernelProcess)
+        {
+            PreOsExtendedSpaceBoolean = FALSE;
+        }
+        else
+        {
+            // Another kernel mode process
+            Process->VmImage = KernelProcess->VmImage;
+            goto KmodeSkipVmSetup;
+        }
     }
+    else
+    {
+        Process->VmSearchStart = (PVOID)0x1000;
+        Process->VmSearchEnd = (PVOID)0x800000000000;
+    }
+    InitVirtualMemoryManager(Process);
+KmodeSkipVmSetup:
+    KDebugPrint("VMSETUP");
     // Create main thread
     UINT ThreadCreateFlags = 0;
     if ((CreateFlags & PROCESS_CREATE_IDLE))
@@ -144,7 +162,6 @@ void KiInitMultitaskingSubsystem()
                                L"//NewOS/System/noskx64.exe",
                                NULL)))
         RaiseInitError(0);
-    InitVirtualMemoryManager(KernelProcess, (PVOID)0xFFFF800000000000, (PVOID)-1);
     KDebugPrint("MS");
 }
 

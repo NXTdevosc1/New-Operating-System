@@ -145,10 +145,18 @@ NSTATUS KRNLAPI MmShareMemory(
 }
 
 UINT64 ExtendedSpaceLength = 0;
-
+extern BOOLEAN PreOsExtendedSpaceBoolean;
 void *KeReserveExtendedSpace(
     UINT64 NumPages)
 {
+    if (!PreOsExtendedSpaceBoolean)
+    {
+        KDebugPrint("KeReserveExtendedSpace called while PreOsExtendedSpaceBoolean is Disabled.");
+        while (1)
+            ;
+        KeRaiseException(STATUS_FATAL_ERROR);
+    }
+
     UINT64 exspace = _interlockedadd64(&ExtendedSpaceLength, NumPages << 12) - (NumPages << 12);
     PVOID p = (void *)((((UINT64)-1) - 0xFFF) - (NumPages << 12) - (exspace));
     KDebugPrint("KERNEL : Reserve Extended Space %x-%x", p, (UINT64)p + (NumPages << 12));

@@ -13,17 +13,17 @@ Attr : 0000000000000020 Name : syscruntime.dll Size : 8192 NL : 15 .dll
 Attr : 0000000000000020 Name : osusr.dll Size : 105472 NL : 9 .dll
 Attr : 0000000000000020 Name : acpisys.dll Size : 3584 NL : 11 .dll
 Attr : 0000000000000020 Name : cruntime.dll Size : 8192 NL : 12 .dll
-Kernel File Size : 457216
+Kernel File Size : 459264
 Test2 : test123
 System Heap:
 7CE00000
 OPT_HDR_SIZE : 240 FALIGN : 512
 Allocating System Pages : 000000007CE00000
 Image Physical Base : 000000007CE00000 , Image Base : 0000000000000000, Entry point : 00000000000011E0
-Copying section .tex VADDR : 0000000000001000 PTR : 0000000000000400, SZ : 0000000000022200
-Copying section .rda VADDR : 0000000000024000 PTR : 0000000000022600, SZ : 0000000000003C00
-Copying section .dat VADDR : 0000000000028000 PTR : 0000000000026200, SZ : 000000000008E0A0
-Copying section .pda VADDR : 00000000000B7000 PTR : 000000000006F200, SZ : 0000000000000800
+Copying section .tex VADDR : 0000000000001000 PTR : 0000000000000400, SZ : 0000000000022600
+Copying section .rda VADDR : 0000000000024000 PTR : 0000000000022A00, SZ : 0000000000003E00
+Copying section .dat VADDR : 0000000000028000 PTR : 0000000000026800, SZ : 000000000008E0A0
+Copying section .pda VADDR : 00000000000B7000 PTR : 000000000006F800, SZ : 0000000000000A00
 RELOC 0000000000000000  SZ 0000000000000000
 Loading DLL :
 syscruntime.dll
@@ -39,8 +39,8 @@ RELOC 0000000000005000  SZ 0000000000000010
 RELOCATING to 00000000000B8000...
 Loading DLL :
 noskx64.exe
-ETVA : 0000000000026C50, ET : 000000007CE26C50
-NR : 0000000000027114, NPR : 0000000000026E50, EATR : 0000000000026C78
+ETVA : 0000000000026E30, ET : 000000007CE26E30
+NR : 00000000000272F4, NPR : 0000000000027030, EATR : 0000000000026E58
 Test : test123
 Dll Name : nosk
 Searching Symbol : KDebugPrint
@@ -115,15 +115,15 @@ Boot Processor : 970 LARGE PAGES at 2A00000 REML 353 at 289F000 REMR 310 at 7BE0
 Boot Processor : 353 Individual 4KB pages at 0x289F000-0x2A00000
 Boot Processor : 310 Individual 4KB pages at 0x7BE00000-0x7BF36000
 Boot Processor : _________________
-Boot Processor : ADDR 7BF56000-7CD20000 NUMPG DCA
-Boot Processor : 6 LARGE PAGES at 7C000000 REML 170 at 7BF56000 REMR 288 at 7CC00000
+Boot Processor : ADDR 7BF56000-7CD1F000 NUMPG DC9
+Boot Processor : 6 LARGE PAGES at 7C000000 REML 170 at 7BF56000 REMR 287 at 7CC00000
 Boot Processor : 170 Individual 4KB pages at 0x7BF56000-0x7C000000
-Boot Processor : 288 Individual 4KB pages at 0x7CC00000-0x7CD20000
+Boot Processor : 287 Individual 4KB pages at 0x7CC00000-0x7CD1F000
 Boot Processor : _________________
 Boot Processor : ADDR 7FE00000-7FE7E000 NUMPG 7E
 Boot Processor : 126 Individual 4KB pages at 0x7FE00000-0x7FE7E000
 Boot Processor : _________________
-Boot Processor : NOS Optimized memory system initialized successfully. Current page number 7A7F3, Total mem 1 GB
+Boot Processor : NOS Optimized memory system initialized successfully. Current page number 7A7F2, Total mem 1 GB
 Boot Processor : PHYSTEST
 Boot Processor : Src alloc
 Boot Processor : Remaining of 289EFE0 mem 0x289F010 FD0 bytes
@@ -145,8 +145,16 @@ Boot Processor : KernelInternals : Init Boot CPU
 Boot Processor : Src alloc
 Boot Processor : Remaining of 7BDFEDC0 mem 0x7BE00010 DB0 bytes
 Boot Processor : GDT and TSS Loaded successfully
+Boot Processor : KERNEL : Reserve Extended Space FFFFF82985FFE000-FFFFF82985FFF000
+Boot Processor : INITVM 289F0E0 PID 0
+Boot Processor : VMIMG 7BE32000
+Boot Processor : Inserted Fill ADDR FFFFF00000000 LVL 0 Len 1FE
+Boot Processor : Inserted Fill ADDR FFFFF000001FE LVL 1 Len 2F
+Boot Processor : Inserted Fill ADDR FFFFF00005FFE LVL 2 Len A6
+Boot Processor : Inserted Fill ADDR FFFFF02985FFE LVL 3 Len 10
+Boot Processor : VMSETUP
 Boot Processor : Src alloc
-Boot Processor : Remaining of 7BE30690 mem 0x7BE32010 680 bytes
+Boot Processor : Remaining of 7BE36690 mem 0x7BE38010 680 bytes
 Boot Processor : System Create Thread PID=0 TID=1
 Boot Processor : VA
 Boot Processor : Acquire CTRL BIT 1 PROCESS 289F0E0
@@ -154,23 +162,9 @@ Boot Processor : V2A
 Boot Processor : V3A
 Boot Processor : Release CTRL BIT 1 PROCESS 289F0E0
 Boot Processor : CS
-Boot Processor : INITVM 289F0E0
-Boot Processor : VMIMG 7BE34000
 Boot Processor : MS
 Boot Processor : VIRTTEST
-Boot Processor : valloc 1
-Boot Processor : valloc 2
-Boot Processor : valloc 3
-Boot Processor : VALLOC_SUCCESS len 3 PSZ 1 FoundPSZ 3 ADDR 0 RemainingLen 512
-Boot Processor : p : 0
-Boot Processor : valloc 1
-Boot Processor : valloc 2
-Boot Processor : valloc 3
-Boot Processor : VALLOC_SUCCESS len 3 PSZ 1 FoundPSZ 3 ADDR 8000000000000 RemainingLen 511
-Boot Processor : p : 8000000000000
-Boot Processor : valloc 1
-Boot Processor : valloc 2
-Boot Processor : valloc 3
-Boot Processor : VALLOC_SUCCESS len 3 PSZ 1 FoundPSZ 3 ADDR 10000000000000 RemainingLen 510
-Boot Processor : p : 10000000000000
+Boot Processor : p : FFFFF00000000000
+Boot Processor : p : FFFFF00000001000
+Boot Processor : p : FFFFF00000002000
 Boot Processor : VMM Test finished

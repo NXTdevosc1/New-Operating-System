@@ -98,4 +98,4 @@ NSTATUS KRNLAPI MmShareMemory(
 void *KeReserveExtendedSpace(
     UINT64 NumPages);
 
-void InitVirtualMemoryManager(PEPROCESS Process, PVOID SearchStart, PVOID SearchEnd);
+void InitVirtualMemoryManager(PEPROCESS Process);

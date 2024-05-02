@@ -116,7 +116,7 @@ void NOSENTRY NosSystemInit()
 
     for (int i = 0; i < 3; i++)
     {
-        PVOID p = KRequestMemory(REQUEST_VIRTUAL_MEMORY, NULL, MEM_LARGE_PAGES, 3);
+        PVOID p = KRequestMemory(REQUEST_VIRTUAL_MEMORY, NULL, MEM_AUTO, 1);
         KDebugPrint("p : %x", p);
     }
 
