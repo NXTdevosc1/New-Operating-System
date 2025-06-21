@@ -25,10 +25,8 @@ char __finf[0x2000] = {0}; // Used to request file info
 /*
  * NOS AMD64 UEFI Bootloader Entry Point
  * The bootloader should :
- * - Initialize Graphics Output
+ * - Initialize Graphics Output Protocol
  * - Retreive the boot device & partition
- * - Query all partitions
- * - if there are multiple partitions with multiple OSes, prompt the user to select which OS to run
  * - Load kernel and drivers
  * - Get the memory map
  * - Disable Watchdog Timer
