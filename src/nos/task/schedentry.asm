@@ -102,7 +102,7 @@ __idle:
     jmp .__halt
 ; in case of a bug
     cli
-    mov rax, 0xdeadbeef
+    mov rax, 0xFFFFFFFFFFFFFFFF
     hlt
     jmp $
 
