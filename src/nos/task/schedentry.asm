@@ -95,7 +95,7 @@ __idle:
     shr rdx, SCHEDSHIFT ; 1024 Task switches / s
     mov [rbx + 0x380], edx ; Initial Count
     ;mov dword [rbx + 0xB0], 0 ; Eoi
-    mov rax, 0xcafebabecabeface ; HALT
+    mov rax, 0xAAAAAAAAAAAAAAAA ; HALT
     sti
 .__halt:
     hlt
